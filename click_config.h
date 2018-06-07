@@ -1,1 +1,1 @@
-#define CLICK	1
+#define CLICK	0
