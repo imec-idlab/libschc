@@ -10,35 +10,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "log.h"
-
 #include "pt/pt.h"
 #include "jsmn.h"
 #include "compressor.h"
 #include "rules.h"
 #include "schc_config.h"
-
-#define DEBUG_PRINTF(...) 	log_print_string(__VA_ARGS__)
-#define SERVER 				0
-
-// changes on server/client
-static direction DI;
-static uip_ipaddr_t node_ip_6;
-
-jsmn_parser json_parser;
-jsmntok_t json_token[64];
-
-// buffers to store headers so we can compare rules and headers
-unsigned char ipv6_header_fields[IPV6_FIELDS][MAX_IPV6_FIELD_LENGTH];
-unsigned char udp_header_fields[UDP_FIELDS][MAX_UDP_FIELD_LENGTH];
-unsigned char coap_header_fields[COAP_FIELDS][MAX_COAP_FIELD_LENGTH];
-
-void schc_init_task(void (*timer_task)()) {
-}
-
-void schc_post_task(void (*timer_task)(uint32_t uid), uint16_t time_ms, uint32_t device_id) {
-	// add_device_timer(device_id, time_ms, timer_task);
-}
 
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
