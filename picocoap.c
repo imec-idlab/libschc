@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "picocoap.h"
+#include "click_config.h"
 
 
 //
@@ -578,5 +579,6 @@ int8_t coap_compute_option_header_len(int32_t opt_delta, int32_t opt_len)
 	return len;
 
 }
-
-// ELEMENT_PROVIDES(schcCOAP)
+#if CLICK
+ELEMENT_PROVIDES(schcCOAP)
+#endif

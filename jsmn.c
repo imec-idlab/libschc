@@ -1,4 +1,5 @@
 #include "jsmn.h"
+#include "click_config.h"
 
 /**
  * Allocates a fresh unused token from the token pull.
@@ -312,3 +313,6 @@ void jsmn_init(jsmn_parser *parser) {
 	parser->toksuper = -1;
 }
 
+#if CLICK
+ELEMENT_PROVIDES(schcJSON)
+#endif

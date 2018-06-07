@@ -17,7 +17,9 @@
 #include "compressor.h"
 #include "schc_config.h"
 
-#if SERVER
+#include "click_config.h"
+
+#if CLICK
 #include <click/config.h>
 #endif
 
@@ -1538,6 +1540,10 @@ uint16_t compute_checksum(unsigned char *data) {
 	return 0;
 }
 
-#if SERVER
+// ToDo
+// is this the only way how we can integrate
+// on both server and client?
+#if CLICK
 ELEMENT_PROVIDES(schcCOMPRESSOR)
+ELEMENT_REQUIRES(schcJSON schcCOAP)
 #endif
