@@ -12,8 +12,9 @@
 
 #include "pt/pt.h"
 #include "jsmn.h"
-#include "compressor.h"
+#include "picocoap.h"
 #include "rules.h"
+#include "compressor.h"
 #include "schc_config.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
