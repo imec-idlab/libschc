@@ -17,6 +17,10 @@
 #include "compressor.h"
 #include "schc_config.h"
 
+#if SERVER
+#include <click/config.h>
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1533,3 +1537,7 @@ uint16_t compute_checksum(unsigned char *data) {
 
 	return 0;
 }
+
+#if SERVER
+ELEMENT_PROVIDES(schcCOMPRESSOR)
+#endif

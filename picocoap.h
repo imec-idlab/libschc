@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <click/config.h>
+// #include <click/config.h>
 #include <stddef.h>
 #include <stdint.h>
 
