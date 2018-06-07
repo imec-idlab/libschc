@@ -1,5 +1,4 @@
 #include "jsmn.h"
-#include "click_config.h"
 
 /**
  * Allocates a fresh unused token from the token pull.
