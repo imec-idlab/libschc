@@ -1,6 +1,8 @@
 #ifndef COMPRESSOR_CONFIG_H_
 #define COMPRESSOR_CONFIG_H_
 
+#include "schc_config.h"
+
 // protocol definitions
 #define UDP_HLEN				8
 #define IP6_HLEN				40

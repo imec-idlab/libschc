@@ -1,7 +1,7 @@
 #ifndef __JSMN_H_
 #define __JSMN_H_
 
-#include "click_config.h"
+#include "config.h"
 #include <stddef.h>
 
 #if CLICK

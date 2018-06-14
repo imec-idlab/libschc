@@ -15,7 +15,7 @@ extern "C" {
 
 int8_t schc_fragmenter_init();
 int8_t schc_fragment(const uint8_t *data, uint16_t mtu, uint16_t total_length,
-		uint32_t device_id, void (*callback)(void));
+		uint32_t device_id, void (*callback)(uint8_t* data, uint16_t length));
 
 #ifdef __cplusplus
 }

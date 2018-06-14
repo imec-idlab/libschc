@@ -10,8 +10,10 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "fragmenter.h"
+#include "config.h"
 #include "schc_config.h"
+
+#include "fragmenter.h"
 
 // keep track of the active connections
 struct fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
@@ -179,7 +181,7 @@ int8_t schc_fragment(const uint8_t *data, uint16_t mtu, uint16_t total_length,
 	}
 
 	if( (mtu + conn->data_ptr) > conn->tail_ptr) { // this is the last packet
-		prepare_packet();
+		// prepare_packet( );
 	}
 
 

@@ -20,11 +20,6 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "click_config.h"
-
-#if CLICK
-#include <click/config.h>
-#endif
 
 
 ///

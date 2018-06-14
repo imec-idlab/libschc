@@ -2,8 +2,11 @@
 #include <stddef.h>
 #include <string.h>
 #include "picocoap.h"
-#include "click_config.h"
+#include "config.h"
 
+#if CLICK
+#include <click/config.h>
+#endif
 
 //
 // Getters
