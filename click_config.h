@@ -1,1 +1,0 @@
-#define CLICK	0

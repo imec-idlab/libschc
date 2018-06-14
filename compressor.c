@@ -15,13 +15,24 @@
 #include "picocoap.h"
 #include "rules.h"
 #include "compressor.h"
+#include "config.h"
 #include "schc_config.h"
-
-#include "click_config.h"
 
 #if CLICK
 #include <click/config.h>
 #endif
+
+// changes on server/client
+static direction DI;
+static uip_ipaddr_t node_ip_6;
+
+jsmn_parser json_parser;
+jsmntok_t json_token[JSON_TOKENS];
+
+// buffers to store headers so we can compare rules and headers
+unsigned char ipv6_header_fields[IPV6_FIELDS][MAX_IPV6_FIELD_LENGTH];
+unsigned char udp_header_fields[UDP_FIELDS][MAX_UDP_FIELD_LENGTH];
+unsigned char coap_header_fields[COAP_FIELDS][MAX_COAP_FIELD_LENGTH];
 
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
@@ -1282,12 +1293,9 @@ static const struct schc_device* get_device_rules(uint32_t device_id) {
  * @return error codes on error
  *
  */
-uint8_t schc_init(uint8_t src[16]) {
+uint8_t schc_compressor_init(uint8_t src[16]) {
 	jsmn_init(&json_parser);
 	set_node_ip(src);
-
-	// ToDo
-	// recover fragmentation from backup
 
 	return 1;
 }
