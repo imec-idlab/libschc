@@ -13,10 +13,6 @@
 extern "C" {
 #endif
 
-// the total rule size in bytes
-#define RULE_SIZE_BYTES			1
-#define MAX_HEADER_LENGTH		128
-
 uint8_t schc_compressor_init(uint8_t src[16]);
 int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length);
 

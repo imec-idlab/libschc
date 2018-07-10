@@ -3,6 +3,22 @@
 
 #include "schc_config.h"
 
+/**
+ * Return code: No error. Indicates successful completion of an SCHC
+ * operation.
+ */
+#define SCHC_SUCCESS 			0
+
+/**
+ * Return code: Error. Generic indication that an SCHC operation went wrong
+ */
+#define SCHC_FAILURE			-1
+
+/**
+ * Return code: Error. Generic indication that no fragmentation was needed
+ */
+#define SCHC_NO_FRAGMENTATION	-2
+
 // protocol definitions
 #define UDP_HLEN				8
 #define IP6_HLEN				40
@@ -14,6 +30,9 @@
 // (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
 #define MAX_IPV6_FIELD_LENGTH	8
 #define MAX_UDP_FIELD_LENGTH	2
+
+// fixed fragmentation definitions
+#define WINDOW_SIZE_BITS		1
 
 typedef enum {
 	UP = 0, DOWN = 1, BI = 2
@@ -57,15 +76,6 @@ struct schc_rule {
 	struct schc_field content[COAP_FIELDS];
 };
 
-typedef struct fragmentation_t {
-	uint32_t device_id;
-	uint8_t* data_ptr;
-	uint8_t* tail_ptr;
-	uint8_t rule_id;
-	uint8_t MIC[4];
-	uint16_t mtu;
-} fragmentation_t;
-
 struct schc_device {
 	uint32_t id;
 	uint8_t ipv6_count;
@@ -80,7 +90,6 @@ typedef uint16_t uip_ip6addr_t[8];
 typedef uip_ip6addr_t uip_ipaddr_t;
 
 struct uip_udpip_hdr {
-#if UIP_CONF_IPV6
   /* IPv6 header. */
   uint8_t vtc,
     tcf;
@@ -88,19 +97,6 @@ struct uip_udpip_hdr {
   uint8_t len[2];
   uint8_t proto, ttl;
   uip_ip6addr_t srcipaddr, destipaddr;
-#else /* UIP_CONF_IPV6 */
-  /* IP header. */
-  uint8_t vhl,
-    tos,
-    len[2],
-    ipid[2],
-    ipoffset[2],
-    ttl,
-    proto;
-  uint16_t ipchksum;
-  uint16_t srcipaddr[2],
-    destipaddr[2];
-#endif /* UIP_CONF_IPV6 */
 
   /* UDP header. */
   uint16_t srcport,
