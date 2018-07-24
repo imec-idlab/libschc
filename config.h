@@ -3,22 +3,6 @@
 
 #include "schc_config.h"
 
-/**
- * Return code: No error. Indicates successful completion of an SCHC
- * operation.
- */
-#define SCHC_SUCCESS 			0
-
-/**
- * Return code: Error. Generic indication that an SCHC operation went wrong
- */
-#define SCHC_FAILURE			-1
-
-/**
- * Return code: Error. Generic indication that no fragmentation was needed
- */
-#define SCHC_NO_FRAGMENTATION	-2
-
 // protocol definitions
 #define UDP_HLEN				8
 #define IP6_HLEN				40

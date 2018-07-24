@@ -15,10 +15,52 @@ extern "C" {
 
 #include "schc_config.h"
 
+/**
+ * Return code: Indicator. Generic indication that a fragment was received
+ */
+#define SCHC_FRAG_INPUT			2
+
+/**
+ * Return code: Indicator. Generic indication that an acknowledgment was received
+ */
+#define SCHC_ACK_INPUT			1
+
+/**
+ * Return code: No error. Indicates successful completion of an SCHC
+ * operation.
+ */
+#define SCHC_SUCCESS 			0
+
+/**
+ * Return code: Error. Generic indication that an SCHC operation went wrong
+ */
+#define SCHC_FAILURE			-1
+
+/**
+ * Return code: Error. Generic indication that no fragmentation was needed
+ */
+#define SCHC_NO_FRAGMENTATION	-2
+
+
 typedef enum {
-	INIT = 0, SEND = 1, RESEND = 2, WAIT_BITMAP = 3, END = 4, ERROR = 5
+	INIT_TX = 0, SEND = 1, RESEND = 2, WAIT_BITMAP = 3, END_TX = 4, ERROR = 5
 } tx_state;
 
+typedef enum {
+	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_END = 2, END_RX = 3, ABORT = 4
+} rx_state;
+
+typedef struct schc_mbuf_t {
+	/* the selected slot */
+	uint8_t slot;
+	/* start of memory block */
+	uint8_t* ptr;
+	/* length of the fragment */
+	uint16_t len;
+	/* pointer to the next fragment*/
+	struct schc_mbuf_t *next;
+} schc_mbuf_t;
+	
 
 typedef struct schc_fragmentation_ack_t {
 	/* the rule id included in the ack */
@@ -69,6 +111,8 @@ typedef struct schc_fragmentation_t {
 	uint8_t attempts;
 	/* the current state for the sending device */
 	tx_state TX_STATE;
+	/* the current state for the receiving device */
+	rx_state RX_STATE;
 	/* the function to call when the fragmenter has something to send */
 	void (*send)(uint8_t* data, uint16_t length);
 	/* initialization function of the timer task */
@@ -77,16 +121,25 @@ typedef struct schc_fragmentation_t {
 	void (*post_timer_task)(void (*timer_task)(), uint16_t time_ms);
 	/* the last received ack */
 	schc_fragmentation_ack_t ack;
+	/* the start of the mbuf chain */
+	schc_mbuf_t *head;
 } schc_fragmentation_t;
 
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn);
-int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn,
-		uint8_t device_id);
+
+
+int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t* data, uint16_t length));
 // int8_t schc_fragment(schc_fragmentation_t* tx_conn);
 int8_t schc_fragment();
+int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
+
+int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn,
+		uint8_t device_id);
+void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
+		uint8_t device_id);
+int8_t schc_fragment_input(uint8_t* data, uint16_t len,
+		schc_fragmentation_t* tx_conn, uint8_t device_id);
+
 void set_tx_conn(schc_fragmentation_t* tx_conn);
-int8_t schc_reassemble(const uint8_t *data, uint16_t total_length,
-		uint32_t device_id);
 
 #ifdef __cplusplus
 }
