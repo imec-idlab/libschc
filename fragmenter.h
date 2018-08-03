@@ -121,10 +121,10 @@ typedef struct schc_fragmentation_t {
 	rx_state RX_STATE;
 	/* the function to call when the fragmenter has something to send */
 	void (*send)(uint8_t* data, uint16_t length);
-	/* initialization function of the timer task */
-	void (*init_timer_task)(void (*timer_task)());
 	/* the timer task */
-	void (*post_timer_task)(void (*timer_task)(), uint16_t time_ms);
+	void (*post_timer_task)(void (*timer_task)(), uint16_t time_ms, void *arg);
+	/* indicates whether the retransmission timer is running */
+	uint8_t rtrm_timer_state;
 	/* the last received ack */
 	schc_fragmentation_ack_t ack;
 	/* the start of the mbuf chain */
@@ -134,8 +134,7 @@ typedef struct schc_fragmentation_t {
 
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t* data, uint16_t length));
-// int8_t schc_fragment(schc_fragmentation_t* tx_conn);
-int8_t schc_fragment();
+int8_t schc_fragment(void *c);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
 
 int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn,
@@ -143,8 +142,6 @@ int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn,
 void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint8_t device_id);
 int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id);
-
-void set_tx_conn(schc_fragmentation_t* tx_conn);
 
 #ifdef __cplusplus
 }

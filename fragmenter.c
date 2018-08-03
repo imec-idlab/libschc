@@ -18,15 +18,11 @@
 
 // keep track of the active connections
 struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
-static struct schc_fragmentation_t* tx_connection;
 static uint8_t fragmentation_buffer[MAX_MTU_LENGTH];
 
 // keep track of the mbuf's
 static uint32_t MBUF_PTR;
 static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
-
-// forward declarations
-schc_fragmentation_t* get_tx_conn();
 
 // ToDo
 // create file bit_array.c?
@@ -692,10 +688,6 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 	conn->frag_cnt = 0;
 	conn->attempts = 0;
 
-	if (conn->init_timer_task != NULL) {
-		conn->init_timer_task(&schc_fragment);
-	}
-
 	compute_mic(conn); // calculate MIC over compressed, unfragmented packet
 
 	return 1;
@@ -726,7 +718,6 @@ static void reset_connection(schc_fragmentation_t* conn) {
 	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES);
 	/* reset function callbacks */
 	conn->send = NULL;
-	conn->init_timer_task = NULL;
 	conn->post_timer_task = NULL;
 	conn->TX_STATE = INIT_TX;
 	conn->RX_STATE = RECV_WINDOW;
@@ -909,24 +900,39 @@ static void discard_fragment() {
 
 /**
  * sets the retransmission timer to re-enter the fragmentation loop
+ * and changes the retransmission_timer flag
  *
  * @param conn 			a pointer to the connection
  *
  */
 static void set_retrans_timer(schc_fragmentation_t* conn) {
+	conn->rtrm_timer_state = 1;
 	// conn->post_timer_task(&schc_fragment, conn->dc);
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms", conn->dc);
 }
 
 /**
  * stops the retransmission timer
+ * by changing the retransmission_timer flag
  *
  * @param conn 			a pointer to the connection
  *
  */
 static void stop_retrans_timer(schc_fragmentation_t* conn) {
-	// conn->post_timer_task(&schc_fragment, conn->dc);
+	conn->rtrm_timer_state = 0;
 	DEBUG_PRINTF("stop_retrans_timer()");
+}
+
+/**
+ * executes the state when the retransmission timer has expired
+ *
+ * @param conn 			a pointer to the connection
+ *
+ */
+static void retransmission_timer_expired(schc_fragmentation_t* conn) {
+	if(conn->rtrm_timer_state) {
+		// execute
+	}
 }
 
 /**
@@ -936,9 +942,8 @@ static void stop_retrans_timer(schc_fragmentation_t* conn) {
  *
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
-	// conn->post_timer_task(&schc_fragment, conn->dc);
 	DEBUG_PRINTF("set_dc_timer(): for %d ms", conn->dc);
-	schc_fragment(); // todo should be called from callback
+	conn->post_timer_task(&schc_fragment, conn->dc, conn);
 }
 
 /**
@@ -1238,24 +1243,24 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t*
 /**
  * the sender state machine
  *
- * @param tx_conn		a pointer to the tx connection structure
+ * @param 	c			a pointer to the tx connection structure
  *
  * @return 	 0			TBD
  *        	-1			failed to initialize the connection
  *        	-2			no fragmentation was needed for this packet
  *
  */
-// TODO
-// int8_t schc_fragment(schc_fragmentation_t* tx_conn) {
-int8_t schc_fragment(){
-	schc_fragmentation_t* tx_conn = get_tx_conn();
+int8_t schc_fragment(void *c) {
+	schc_fragmentation_t* tx_conn = (schc_fragmentation_t*) c;
 
 	switch(tx_conn->TX_STATE) {
 	case INIT_TX: {
 		int8_t ret = init_tx_connection(tx_conn);
 		if (!ret) {
 			return SCHC_FAILURE;
-		} else if(ret < 0) {
+		} else if (ret < 0) {
+			tx_conn->send(tx_conn->data_ptr,
+					(tx_conn->tail_ptr - tx_conn->data_ptr)); // send packet right away
 			return SCHC_NO_FRAGMENTATION;
 		}
 		tx_conn->TX_STATE = SEND;
@@ -1298,7 +1303,7 @@ int8_t schc_fragment(){
 				tx_conn->window = !tx_conn->window; // change window
 				tx_conn->window_cnt++;
 				tx_conn->TX_STATE = SEND;
-				schc_fragment();
+				schc_fragment(tx_conn);
 			} else if(has_no_more_fragments(tx_conn) && tx_conn->ack.mic) {
 
 			}
@@ -1311,7 +1316,7 @@ int8_t schc_fragment(){
 			tx_conn->attempts++;
 			tx_conn->frag_cnt = 0;
 			tx_conn->TX_STATE = RESEND;
-			schc_fragment();
+			schc_fragment(tx_conn);
 		}
 		break;
 	}
@@ -1372,17 +1377,6 @@ int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	return 0;
 }
 
-// TODO
-// REMOVE
-// ARGUMENT IN SCHC_FRAGMENT
-void set_tx_conn(schc_fragmentation_t* tx_conn) {
-	tx_connection = tx_conn;
-}
-
-schc_fragmentation_t* get_tx_conn() {
-	return tx_connection;
-}
-
 /**
  * This function should be called whenever an ack is received
  *
@@ -1411,7 +1405,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		tx_conn->ack.mic = mic[0];
 		if (tx_conn->ack.mic) { // end transmission
 			tx_conn->TX_STATE = END_TX;
-			schc_fragment();
+			schc_fragment(tx_conn);
 			return;
 		} // else continue with bitmap decoding and retransmission
 	}
@@ -1432,7 +1426,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	copy_bits(tx_conn->ack.bitmap, 0, resend_window, 0, (MAX_WIND_FCN + 1));
 
 	// continue with state machine
-	schc_fragment();
+	schc_fragment(tx_conn);
 }
 
 /**
