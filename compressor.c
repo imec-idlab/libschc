@@ -1372,7 +1372,7 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length) 
 		printf("%02X ", buf[i]);
 	}
 
-    printf("\n\n");
+    printf("\nCompressed packet length %d \n\n", new_pkt_length);
 	// return the new length of the packet
 	return new_pkt_length;
 }

@@ -17,6 +17,7 @@
 
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
+#define MIC_C_SIZE_BITS			1
 
 typedef enum {
 	UP = 0, DOWN = 1, BI = 2

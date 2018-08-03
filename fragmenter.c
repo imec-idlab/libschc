@@ -18,7 +18,7 @@
 
 // keep track of the active connections
 struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
-static struct schc_fragmentation_t tx_connection;
+static struct schc_fragmentation_t* tx_connection;
 static uint8_t fragmentation_buffer[MAX_MTU_LENGTH];
 
 // keep track of the mbuf's
@@ -103,8 +103,8 @@ static void copy_bits(uint8_t DST[], uint32_t dst_pos, uint8_t SRC[], uint32_t s
 	uint32_t i;
 	uint32_t k = 0;
 
-	for(i = 0; i < len; i++) {
-		uint8_t src_val = ((128 >> ( (k + src_pos) % 8)) & SRC[((k + src_pos) / 8)] );
+	for(i = 0; i < len; i++) { // for each bit
+		uint8_t src_val = ((128 >> ( (k + src_pos) % 8)) & SRC[((k + src_pos) / 8)]);
 		if(src_val) {
 			set_bits(DST, i + dst_pos, 1);
 		}
@@ -115,24 +115,70 @@ static void copy_bits(uint8_t DST[], uint32_t dst_pos, uint8_t SRC[], uint32_t s
 /**
  * compare two bit arrays
  *
- * @param 	DST			the array to compare
- * @param 	SRC			the array to compare with
+ * @param 	SRC1		the array to compare
+ * @param 	SRC2		the array to compare with
  * @param 	len			the number of consecutive bits to compare
  *
  * @return	1			both arrays match
  * 			0			the arrays differ
  *
  */
-static uint8_t compare_bits(uint8_t DST[], uint8_t SRC[], uint32_t len) {
+static uint8_t compare_bits(uint8_t SRC1[], uint8_t SRC2[], uint32_t len) {
 	uint32_t i;
 
 	for (i = 0; i < len; i++) {
-		if ( (DST[i / 8] & (128 >> (i % 8) )) != (SRC[i / 8] & (128 >> (i % 8) )) ) {
+		if ( (SRC1[i / 8] & (128 >> (i % 8) )) != (SRC2[i / 8] & (128 >> (i % 8) )) ) {
 			return 0;
 		}
 	}
 
 	return 1;
+}
+
+/**
+ * shift a number of bits to the left
+ *
+ * @param 	SRC			the array to shift
+ * @param	len			the length of the array
+ * @param 	shift		the number of consecutive bits to shift
+ *
+ */
+static void shift_bits_left(uint8_t SRC[], uint16_t len, uint32_t shift) {
+	uint32_t i = 0; uint32_t j = 0;
+
+	uint8_t start = shift / 8;
+	uint8_t rest = shift % 8;
+
+	for(i = start; i < len; i++) {
+		uint8_t value = (SRC[i] << rest) | (SRC[i + 1] >> (8 - rest));
+		SRC[j] = value;
+		j++;
+	}
+
+}
+
+/**
+ * shift a number of bits to the right
+ *
+ * @param 	SRC			the array to shift
+ * @param	len			the length of the array
+ * @param 	shift		the number of consecutive bits to shift
+ *
+ */
+static void shift_bits_right(uint8_t SRC[], uint16_t len, uint32_t shift) {
+	uint32_t i = 0;
+
+	uint8_t start = shift / 8;
+	uint8_t rest = shift % 8;
+	uint8_t previous = 0;
+
+	for(i = 0; i < len; i++) {
+		if(start <= i) {
+			previous = SRC[i - start];
+		}
+		uint8_t value = (previous << (8 - rest)) | SRC[i + start] >> rest;
+		SRC[i + start] = value;
+	}
 }
 
 /**
@@ -182,6 +228,57 @@ static void print_bitmap(uint8_t bitmap[], uint32_t length) {
 		uint8_t bit = bitmap[i / 8] & 128 >> (i % 8);
 		printf("%d ", bit ? 1 : 0);
 	}
+}
+
+/**
+ * get the FCN value
+ *
+ * @param  fragment		a pointer to the fragment to retrieve the FCN from
+ *
+ * @return FCN			the FCN as indicated by the fragment
+ *
+ * @note   only FCN values up to 16 bits are currently supported
+ *
+ */
+static uint16_t get_fcn_value(uint8_t* fragment) {
+	uint8_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS;
+
+	return (uint16_t) get_bits(fragment, offset, FCN_SIZE_BITS);
+}
+
+/**
+ * get the ALL-1 FCN value
+ *
+ * @return FCN			the FCN as indicated by the fragment
+ *
+ * @note   only FCN values up to 16 bits are currently supported
+ *
+ */
+static uint16_t get_max_fcn_value() {
+	uint8_t fcn[2] = { 0 };
+	set_bits(fcn, 0, FCN_SIZE_BITS);
+
+	return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
+}
+
+/**
+ * get the length of the zero padding
+ * added to the end of the buffer
+ *
+ * @return padding		the length of the padding
+ *
+ */
+static uint8_t get_padding_length(uint8_t byte) {
+	uint8_t counter = 0; uint8_t i;
+	for(i = 0; i < 8; i++) {
+		if( !(byte & 1 << (i % 8)) ) {
+			counter++;
+		} else {
+			break;
+		}
+	}
+
+	return counter;
 }
 
 /**
@@ -239,6 +336,13 @@ static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 	return SCHC_SUCCESS;
 }
 
+/**
+ * returns the last chain in the mbuf linked list
+ *
+ * @param  head			the head of the list
+ *
+ * @return tail			the last mbuf in the linked list
+ */
 static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 	schc_mbuf_t *curr = head;
 
@@ -249,11 +353,122 @@ static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 	return curr;
 }
 
+/**
+ * sort the complete mbuf chain based on fragment counter
+ *
+ * @param  head			double pointer to the head of the list
+ *
+ */
+static void mbuf_sort(schc_mbuf_t **head) {
+	schc_mbuf_t *hd = *head;
+	*head = NULL;
+
+	while (hd != NULL) {
+		schc_mbuf_t **curr = &hd;
+		schc_mbuf_t **next = &hd->next;
+		uint8_t swapped = 0;
+
+		while (*next != NULL) {
+			if ((*next)->frag_cnt < (*curr)->frag_cnt) { // swap pointers for curr and curr->next
+				schc_mbuf_t **temp;
+				temp = *curr;
+				*curr = *next;
+				*next = temp;
+
+				temp = (*curr)->next;
+				(*curr)->next = (*next)->next;
+				(*next)->next = temp;
+
+				curr = &(*curr)->next;
+				swapped = 1;
+			} else {   // no swap. advance both pointer-pointers
+				curr = next;
+				next = &(*next)->next;
+			}
+		}
+
+		*next = *head;
+		if (swapped) {
+			*head = *curr;
+			*curr = NULL;
+		} else {
+			*head = hd;
+			break;
+		}
+	}
+}
+
+/**
+ * remove the fragmentation headers and
+ * concat the data bits of the complete mbuf chain
+ *
+ * @param  head			double pointer to the head of the list
+ *
+ */
+static void mbuf_format(schc_mbuf_t **head) {
+	schc_mbuf_t **curr = &(*head);
+	schc_mbuf_t **next = &(*head)->next;
+	schc_mbuf_t **prev = NULL;
+
+	while (*curr != NULL) {
+		uint8_t fcn = get_fcn_value((*curr)->ptr);
+		uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
+				+ FCN_SIZE_BITS;
+		// todo
+		// check offset * 8 > len
+		// packet in previous previous buffer
+		// not supported yet
+
+		if(prev == NULL) {
+			// first
+			if (fcn == MAX_WIND_FCN) { // add rule id if first packet and first time we process
+				(*curr)->offset = offset - RULE_SIZE_BITS;
+				uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
+				copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
+
+				shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
+				shift_bits_right((*curr)->ptr, (*curr)->len, RULE_SIZE_BITS); // shift right to make room for rule id
+				clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
+				copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
+			} else { // not the first time we process
+				// todo
+				DEBUG_PRINTF(
+						"mbuf_format(): first fragment missing for not the first time we process");
+				// (*curr)->offset = offset;
+				// shift_bits_left((*curr)->ptr, (*curr)->len, offset);
+			}
+		} else {
+			// normal
+			if (fcn == get_max_fcn_value()) {
+				offset += (MIC_SIZE_BYTES * 8);
+			}
+			(*curr)->offset = offset + (*prev)->offset;
+			clear_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*prev)->offset);
+			copy_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*curr)->ptr, offset, (*prev)->offset); // copy bits with previous offset to previous mbuf
+			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
+			if(fcn == get_max_fcn_value()) {
+				(*curr)->len = (*curr)->len - (((*curr)->offset + get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8); // update length
+			}
+		}
+
+		// advance both pointer-pointers
+		prev = curr;
+		curr = next;
+		next = &(*next)->next;
+	}
+}
+
+/**
+ * print the complete mbuf chain
+ *
+ * @param  head			the head of the list
+ *
+ */
 static void mbuf_print(schc_mbuf_t *head) {
 	int i = 0;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: %x", i, curr->ptr);
+		DEBUG_PRINTF("%d: %x", curr->frag_cnt, curr->ptr);
 		log_print_data(curr->ptr, curr->len);
 		curr = curr->next;
 		i++;
@@ -268,7 +483,7 @@ static void mbuf_print(schc_mbuf_t *head) {
  * Calculates the Message Integrity Check (MIC)
  * which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)
  *
- * @param data 			pointer to the data packet
+ * @param conn 			pointer to the connection
  *
  * @return checksum 	the computed checksum
  *
@@ -284,20 +499,35 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
+	schc_mbuf_t *curr = NULL; uint8_t mbc = 0;
 	uint16_t len = (conn->tail_ptr - conn->data_ptr);
+	if(len == 0) { // this is an RX connection: calculate MIC over received mbuf chain
+		curr = conn->head;
+		while(curr->next != NULL) {
+			len += curr->len; // get total length of mbuf chain
+			curr = curr->next;
+		}
+		len += curr->len;
+		conn->data_ptr = conn->head->ptr; // set data_ptr to first mbuf
+		curr = conn->head;
+	}
 
 	while (i < len) {
-		byte = conn->data_ptr[i - 1];
+		if (mbc >= curr->len) { // update data ptr to point to next mbuf
+			conn->data_ptr = curr->ptr;
+			mbc = 0;
+		}
+		byte = conn->data_ptr[i];
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
-		i++;
+		i++; mbc++;
 	}
 
 	crc = ~crc;
-	uint8_t mic[4] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),
+	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),
 			((crc & 0xFF00) >> 8), ((crc & 0xFF)) };
 
 	memcpy((uint8_t *) conn->mic, mic, 4);
@@ -364,7 +594,7 @@ static void set_fragmentation_bit(schc_fragmentation_t* conn) {
 /**
  * get the window bit
  *
- * @param data			a pointer to the fragment to retrieve the window number from
+ * @param fragment		a pointer to the fragment to retrieve the window number from
  *
  * @return window		the window number as indicated by the fragment
  *
@@ -376,34 +606,25 @@ static uint8_t get_window_bit(uint8_t* fragment) {
 }
 
 /**
- * get the FCN value
+ * get the MIC value
  *
- * @param  data			a pointer to the fragment to retrieve the FCN from
- *
- * @return FCN			the FCN as indicated by the fragment
- *
- * @note   only FCN values up to 16 bits are currently supported
+ * @param  fragment		a pointer to the fragment to retrieve the MIC from
+ * @param  mic
  *
  */
-static uint16_t get_fcn_value(uint8_t* fragment) {
-	uint8_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS;
+static void get_received_mic(uint8_t* fragment, uint8_t mic[]) {
+	uint8_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS + FCN_SIZE_BITS;
 
-	return (uint16_t) get_bits(fragment, offset, FCN_SIZE_BITS);
+	copy_bits(mic, 0, fragment, offset, (MIC_SIZE_BYTES * 8));
 }
 
-/**
- * get the ALL-1 FCN value
- *
- * @return FCN			the FCN as indicated by the fragment
- *
- * @note   only FCN values up to 16 bits are currently supported
- *
- */
-static uint16_t get_max_fcn_value() {
-	uint8_t fcn[2] = { 0 };
-	set_bits(fcn, 0, FCN_SIZE_BITS);
+static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
+	uint8_t value = get_max_fcn_value() - frag - 1;
+	if(frag == get_max_fcn_value()) {
+		value = get_max_fcn_value();
+	}
 
-	return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
+	conn->frag_cnt = value;
 }
 
 /**
@@ -451,7 +672,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 	}
 
 	memcpy(conn->rule_id, (uint8_t*) (conn->data_ptr + 0), RULE_SIZE_BYTES); // set rule id
-	set_fragmentation_bit(conn); // set fragmentation bit in the rule id
+	// set_fragmentation_bit(conn); // set fragmentation bit in the rule id
 
 	conn->tail_ptr = (uint8_t*) (conn->data_ptr + conn->packet_len); // set end of packet
 
@@ -566,7 +787,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 
 	// set window bit
 	uint8_t window[1] = { conn->window << (8 - WINDOW_SIZE_BITS) };
-	copy_bits(fragmentation_buffer, bit_offset, window, 0, 1); // right after dtag
+	copy_bits(fragmentation_buffer, bit_offset, window, 0, WINDOW_SIZE_BITS); // right after dtag
 
 	bit_offset += WINDOW_SIZE_BITS;
 
@@ -691,7 +912,7 @@ static void stop_retrans_timer(schc_fragmentation_t* conn) {
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	// conn->post_timer_task(&schc_fragment, conn->dc);
 	DEBUG_PRINTF("set_dc_timer(): for %d ms", conn->dc);
-	schc_fragment();
+	schc_fragment(); // todo should be called from callback
 }
 
 /**
@@ -706,29 +927,39 @@ static void send_fragment(schc_fragmentation_t* conn) {
 	memset(fragmentation_buffer, 0, MAX_MTU_LENGTH);
 
 	// set fragmentation header
-	uint16_t bit_offset = set_fragmentation_header(conn, fragmentation_buffer);
+	uint16_t header_offset = set_fragmentation_header(conn, fragmentation_buffer);
 
 	uint16_t packet_bit_offset = has_no_more_fragments(conn);
 	uint16_t packet_len = 0; uint16_t total_byte_offset; uint8_t remaining_bit_offset;
 
 	if(!packet_bit_offset) { // normal fragment
 		packet_len = conn->mtu;
-		packet_bit_offset = ((conn->mtu * 8) - bit_offset)
+		packet_bit_offset = ((conn->mtu * 8) - header_offset)
 				* (conn->frag_cnt - 1); // the number of bits left to copy
 	}
 
-	total_byte_offset = packet_bit_offset / 8;
-	remaining_bit_offset = packet_bit_offset % 8;
+	uint32_t packet_bits = ((packet_len * 8) - header_offset);
 
-	if(!packet_len) { // all-1 fragment
-		packet_len = conn->tail_ptr - (conn->data_ptr
-				+ total_byte_offset)
-				+ (ceil((bit_offset + remaining_bit_offset) / 8));
+	total_byte_offset = packet_bit_offset / 8;
+	remaining_bit_offset = (packet_bit_offset % 8);
+
+	if (!packet_len) { // all-1 fragment
+		packet_bits = (((conn->tail_ptr - conn->data_ptr) * 8)
+				- ((total_byte_offset * 8) + remaining_bit_offset))
+				- RULE_SIZE_BITS; // rule was not sent and is thus deducted from the total length
+
+		// todo
+		// check if last byte contains 0x0
+		// because padding is added
+
+		uint8_t padding = (8 - ((header_offset + packet_bits) % 8));
+		uint8_t zerobuf[1] = { 0 };
+		copy_bits(fragmentation_buffer, header_offset + packet_bits, zerobuf, 0, padding); // add padding
+
+		packet_len = (padding + header_offset + packet_bits) / 8; // last packet length
 	}
 
-	uint32_t packet_bits = ((packet_len * 8) - bit_offset);
-
-	copy_bits(fragmentation_buffer, bit_offset,
+	copy_bits(fragmentation_buffer, header_offset,
 			(conn->data_ptr + total_byte_offset),
 			(remaining_bit_offset + RULE_SIZE_BITS), packet_bits); // copy bits
 
@@ -746,9 +977,28 @@ static void send_fragment(schc_fragmentation_t* conn) {
  *
  */
 static void send_ack(schc_fragmentation_t* conn) {
-	uint8_t ack[3] = { 0 };
-	uint8_t packet_len = 3;
+	uint8_t ack[RULE_SIZE_BYTES + DTAG_SIZE_BYTES + BITMAP_SIZE_BYTES] = { 0 };
+	uint8_t offset = RULE_SIZE_BITS;
 
+	copy_bits(ack, 0, conn->ack.rule_id, 0, offset); // set rule id
+	copy_bits(ack, offset, conn->ack.dtag, 0, DTAG_SIZE_BITS); // set dtag
+	offset += DTAG_SIZE_BITS;
+	uint8_t window[1] = { conn->window << (8 - WINDOW_SIZE_BITS) }; // set window
+	copy_bits(ack, offset, window, 0, WINDOW_SIZE_BITS);
+	offset += WINDOW_SIZE_BITS;
+	if(conn->ack.fcn == get_max_fcn_value()) { // all-1 window
+		uint8_t c[1] = { conn->ack.mic << (8 - MIC_C_SIZE_BITS) }; // set mic c bit
+		copy_bits(ack, offset, c, 0, MIC_C_SIZE_BITS);
+		offset += MIC_C_SIZE_BITS;
+	}
+	if(!conn->ack.mic) { // if mic c bit is 0 (zero by default)
+		copy_bits(ack, offset, conn->bitmap, 0, (BITMAP_SIZE_BYTES * 8)); // copy the bitmap
+		offset += (BITMAP_SIZE_BYTES * 8); // todo must be encoded
+	}
+
+	uint8_t packet_len = ((offset - 1) / 8) + 1;
+	DEBUG_PRINTF("send_ack(): sending ack for fragment %d with length %d in bits %d",
+			conn->frag_cnt, packet_len, offset);
 	conn->send(ack, packet_len);
 }
 
@@ -767,56 +1017,100 @@ static void send_ack(schc_fragmentation_t* conn) {
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	schc_mbuf_t* tail = get_mbuf_tail(rx_conn->head); // get last received fragment
 
+	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, RULE_SIZE_BITS); // set the connection it's rule id
 	uint8_t window = get_window_bit(tail->ptr); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr); // the fcn value from the fragment
+	rx_conn->ack.fcn = fcn;
+
+	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
+	tail->frag_cnt = (rx_conn->frag_cnt + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
-
+		DEBUG_PRINTF("RECV WINDOW");
 		if(rx_conn->window != window) { // unexpected window
+			DEBUG_PRINTF("w != window");
 			discard_fragment();
 			rx_conn->RX_STATE = RECV_WINDOW;
 		} else if(window == rx_conn->window) { // expected window
+			set_local_bitmap(rx_conn); // indicate that we received a fragment
+			DEBUG_PRINTF("w == window");
 			if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
+				DEBUG_PRINTF("not all-x");
 				rx_conn->RX_STATE = RECV_WINDOW;
-				set_local_bitmap(rx_conn);
 			} else if(fcn == 0) { // all-0
-				set_local_bitmap(rx_conn);
+				DEBUG_PRINTF("all-0");
 				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
 				send_ack(rx_conn); // send local bitmap
 			} else if(fcn == get_max_fcn_value()) { // all-1
-				/*if(received_mic() != expected_mic()) { // mic wrong
-					set_local_bitmap(rx_conn);
-					send_ack(rx_conn);
+				DEBUG_PRINTF("all-1");
+				uint8_t recv_mic[MIC_SIZE_BYTES] = { 0 };
+				get_received_mic(tail->ptr, recv_mic);
+				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
+				mbuf_print(rx_conn->head);
+				compute_mic(rx_conn); // so we can compute the mic
+
+				if(!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
 					rx_conn->RX_STATE = WAIT_END;
+					rx_conn->ack.mic = 0;
 				} else { // mic right
-					set_local_bitmap(rx_conn);
-					send_ack(rx_conn);
 					rx_conn->RX_STATE = END_RX;
-				} */
+					rx_conn->ack.mic = 1;
+				}
+				send_ack(rx_conn);
 			}
 		}
-
-		DEBUG_PRINTF("BITMAP: ");
-		print_bitmap(rx_conn->bitmap, rx_conn->frag_cnt);
-		rx_conn->frag_cnt++;
-
 		break;
 	}
 	case WAIT_NEXT_WINDOW: {
+		DEBUG_PRINTF("WAIT NEXT WINDOW");
 		if (window == (!rx_conn->window)) { // next window
+			DEBUG_PRINTF("w != window");
+			rx_conn->window_cnt++;
 			if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
+				DEBUG_PRINTF("not all-x");
 				rx_conn->window = !rx_conn->window; // set expected window to next window
 				clear_bitmap(rx_conn);
 				rx_conn->RX_STATE = RECV_WINDOW; // return to receiving window
 			} else if(fcn == 0) { // all-0
+				DEBUG_PRINTF("all-0");
 				rx_conn->window = !rx_conn->window;
 				clear_bitmap(rx_conn);
-				set
+				set_local_bitmap(rx_conn);
+			}
+		} else if(window == rx_conn->window) { // expected window
+			DEBUG_PRINTF("w == window");
+			if(fcn == 0) { // all-0
+				DEBUG_PRINTF("all-0");
+				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+				send_ack(rx_conn);
+			} else if(fcn == get_max_fcn_value()) { // all-1
+				DEBUG_PRINTF("all-1");
+				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+				discard_fragment();
+			} else if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
+				DEBUG_PRINTF("not all-x");
+				set_local_bitmap(rx_conn);
+				if(rx_conn->frag_cnt == get_max_fcn_value()) { // bitmap is full
+					// todo bitmap should only be sent when all bits are set to 1
+					send_ack(rx_conn);
+				}
 			}
 		}
+		break;
+	}
+	case END_RX: {
+		break;
 	}
 	}
+
+	DEBUG_PRINTF("BITMAP: ");
+	print_bitmap(rx_conn->bitmap, (get_max_fcn_value() + 1));
+
+	// todo
+	// after each fragment has been received
+	// the inactivity timer should be initialized
 
 	// ToDo
 	// free connection if last fragment
@@ -844,7 +1138,8 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t*
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		reset_connection(&schc_rx_conns[i]);
 		schc_rx_conns[i].send = send;
-		schc_rx_conns[i].frag_cnt = 1;
+		schc_rx_conns[i].frag_cnt = 0;
+		schc_rx_conns[i].window_cnt = 0;
 	}
 
 	// initializes the mbuf pool
@@ -853,6 +1148,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t*
 		MBUF_POOL[i].ptr = NULL;
 		MBUF_POOL[i].len = 0;
 		MBUF_POOL[i].next = NULL;
+		MBUF_POOL[i].offset = 0;
 	}
 
 	return 1;
@@ -892,20 +1188,20 @@ int8_t schc_fragment(){
 		if(has_no_more_fragments(tx_conn)) {
 			DEBUG_PRINTF("schc_fragment(): all-1 window");
 			tx_conn->fcn = (pow(2, FCN_SIZE_BITS) - 1); // all 1-window
-			send_fragment(tx_conn);
-			set_retrans_timer(tx_conn);
 			tx_conn->TX_STATE = WAIT_BITMAP;
+			set_retrans_timer(tx_conn);
+			send_fragment(tx_conn);
 		} else if(tx_conn->fcn == 0 && !has_no_more_fragments(tx_conn)) { // all-0 window
 			DEBUG_PRINTF("schc_fragment(): all-0 window");
-			send_fragment(tx_conn);
+			tx_conn->TX_STATE = WAIT_BITMAP;
 			tx_conn->fcn = MAX_WIND_FCN; // reset the FCN
 			set_retrans_timer(tx_conn);
-			tx_conn->TX_STATE = WAIT_BITMAP;
+			send_fragment(tx_conn);
 		} else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
 			DEBUG_PRINTF("schc_fragment(): normal fragment");
-			send_fragment(tx_conn);
 			tx_conn->fcn--;
 			tx_conn->TX_STATE = SEND;
+			send_fragment(tx_conn);
 			set_dc_timer(tx_conn);
 		}
 
@@ -999,11 +1295,11 @@ int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 // REMOVE
 // ARGUMENT IN SCHC_FRAGMENT
 void set_tx_conn(schc_fragmentation_t* tx_conn) {
-	memcpy(&tx_connection, tx_conn, sizeof(schc_fragmentation_t));
+	tx_connection = tx_conn;
 }
 
 schc_fragmentation_t* get_tx_conn() {
-	return &tx_connection;
+	return tx_connection;
 }
 
 /**
@@ -1071,8 +1367,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  * @return 	SCHC_FAILURE	no free connections were found
  *
  */
-int8_t schc_fragment_input(uint8_t* data, uint16_t len,
-		schc_fragmentation_t* tx_conn, uint8_t device_id) {
+int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id) {
 	schc_fragmentation_t *conn;
 
 	// get a connection for the device
@@ -1086,8 +1381,6 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len,
 	if(err != SCHC_SUCCESS) {
 		return SCHC_FAILURE;
 	}
-
-	mbuf_print(conn->head);
 
 	schc_reassemble(conn);
 

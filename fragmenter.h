@@ -57,6 +57,10 @@ typedef struct schc_mbuf_t {
 	uint8_t* ptr;
 	/* length of the fragment */
 	uint16_t len;
+	/* the fragment to which the mbuf belongs to */
+	uint8_t frag_cnt;
+	/* the bit offset when formatted */
+	uint8_t offset;
 	/* pointer to the next fragment*/
 	struct schc_mbuf_t *next;
 } schc_mbuf_t;
@@ -73,6 +77,8 @@ typedef struct schc_fragmentation_ack_t {
 	uint8_t dtag[1];
 	/* the MIC bit received in the ack */
 	uint8_t mic;
+	/* the fcn value this ack belongs to */
+	uint8_t fcn;
 
 } schc_fragmentation_ack_t;
 
@@ -136,8 +142,7 @@ int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn,
 		uint8_t device_id);
 void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint8_t device_id);
-int8_t schc_fragment_input(uint8_t* data, uint16_t len,
-		schc_fragmentation_t* tx_conn, uint8_t device_id);
+int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id);
 
 void set_tx_conn(schc_fragmentation_t* tx_conn);
 
