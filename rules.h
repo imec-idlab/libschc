@@ -55,6 +55,27 @@ const static struct schc_rule ipv6_rule2 = {
 		}
 };
 
+const static struct schc_rule ipv6_rule3 = {
+		3, 10, 10, 10,
+		{
+			//	field, 			   MSB,len,	 pos,dir, 	val,			MO,			CDA
+				{ "version", 		0, 1,	 1, BI, 	{6},			&equal, 	NOTSENT },
+				{ "traffic class", 	0, 1,	 1, BI, 	{0},			&equal, 	NOTSENT },
+				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&equal, 	NOTSENT },
+				{ "length", 		0, 2,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
+				{ "next header", 	0, 1, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
+				{ "hop limit", 		0, 1, 	 1, BI, 	{32}, 			&equal, 	NOTSENT },
+				{ "src prefix",		0, 8,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&equal, 	NOTSENT },
+				{ "src iid",		0, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+						&equal, 	NOTSENT },
+				{ "dest prefix",	0, 8, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&equal, 	NOTSENT },
+				{ "dest iid",		48, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05},
+						&ignore, 	NOTSENT },
+		}
+};
+
 const static struct schc_rule udp_rule1 = {
 		1, 4, 4, 4,
 		{
@@ -78,10 +99,10 @@ const static struct schc_rule udp_rule2 = {
 const static struct schc_rule udp_rule3 = {
 		3, 4, 4, 4,
 		{
-				{ "src port", 		12, 2,	 1, BI, 	{34, 16}, 		&MSB,		LSB },
-				{ "dest port", 		12, 2,	 1, BI, 	{34, 16}, 		&MSB,		LSB },
-				{ "length", 		0, 	2,	 1, BI, 	{0, 0},			&ignore,	COMPLENGTH },
-				{ "checksum", 		0, 	2,	 1, BI, 	{0, 0},			&ignore,	COMPCHK },
+				{ "src port", 		0, 2, 	 1, BI, 	{0x5B, 0x07}, 		&equal,		NOTSENT },
+				{ "dest port", 		0, 2, 	 1, BI, 	{0x5B, 0x07}, 		&equal,		NOTSENT },
+				{ "length", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
+				{ "checksum", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
 };
 
@@ -90,19 +111,18 @@ const static struct schc_rule udp_rule3 = {
 
 // GET temperature value
 const static struct schc_rule coap_rule1 = {
-		1, 4, 10, 10,
+		1, 8, 7, 8,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
-				{ "type",			0,	1,	 1, DOWN,	{CT_NON},		&equal, 	NOTSENT	},
+				{ "type",			0,	1,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
 				{ "token length",	0,	1,	 1, BI,		{2},			&equal,		NOTSENT },
+				{ "code",			0,	1,	 1, UP,		{CC_POST},		&equal,		NOTSENT },
 				{ "code",			0,	1,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
-				{ "message ID",		0,	2,	 1, BI,		{93, 180},		&ignore,	VALUESENT }, // 23988
-				{ "token",			0,	2,	 1, BI,		{33, 250},		&equal,		NOTSENT }, // 0x21fa
-				{ "uri-host", 		0,	11,  1, DOWN,	"example.net",	&equal,		NOTSENT },
-				{ "uri-path", 		0,	1,   1, DOWN,	"3",			&equal,		NOTSENT },
-				{ "uri-path", 		0,	4,	 2, DOWN,	"[\"temp\",\"humi\",\"batt\",\"r\"]",
+				{ "message ID",		0,	2,	 1, BI,		{0x23, 0xBB},	&ignore,	VALUESENT }, // 23988
+				{ "token",			0,	2,	 1, BI,		{0x21, 0xFA},	&equal,		NOTSENT }, // 0x21fa
+				{ "uri-path", 		0,	4,	 2, BI,		"[\"temp\",\"humi\",\"batt\",\"r\"]",
 						&matchmap,		MAPPINGSENT },
-				{ "uri-query", 		0,	13,  1, DOWN,	"date=21122017",&equal,		NOTSENT }
+				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
 
 		}
 };
@@ -142,13 +162,13 @@ const static struct schc_rule coap_rule3 = {
 };
 
 // save rules in flash
-const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
+const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2, &ipv6_rule3 };
 const struct schc_rule* schc_udp_rules[] =
 		{ &udp_rule1, &udp_rule2, &udp_rule3 };
 const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2,
 		&coap_rule3 };
 
-struct schc_device node1 = { 1, 2, &schc_ipv6_rules, 3, &schc_udp_rules,
+struct schc_device node1 = { 1, 3, &schc_ipv6_rules, 3, &schc_udp_rules,
 		3, &schc_coap_rules };
 struct schc_device node2 = { 2, 2, &schc_ipv6_rules, 3, &schc_udp_rules,
 		3, &schc_coap_rules };

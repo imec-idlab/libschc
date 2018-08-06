@@ -16,6 +16,10 @@
 
 #include "fragmenter.h"
 
+#if CLICK
+#include <click/config.h>
+#endif
+
 // keep track of the active connections
 struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
 static uint8_t fragmentation_buffer[MAX_MTU_LENGTH];
@@ -23,6 +27,11 @@ static uint8_t fragmentation_buffer[MAX_MTU_LENGTH];
 // keep track of the mbuf's
 static uint32_t MBUF_PTR;
 static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
+
+#if !DYNAMIC_MEMORY
+uint8_t schc_buf[SCHC_BUFSIZE] = { 0 };
+uint8_t buf_ptr = 0;
+#endif
 
 // ToDo
 // create file bit_array.c?
@@ -466,7 +475,6 @@ static void mbuf_print(schc_mbuf_t *head) {
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
 		DEBUG_PRINTF("%d: %x", curr->frag_cnt, curr->ptr);
-		log_print_data(curr->ptr, curr->len);
 		curr = curr->next;
 		i++;
 	}
@@ -563,6 +571,7 @@ static schc_fragmentation_t* get_connection(uint32_t device_id) {
 		for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 			if (schc_rx_conns[i].device_id == 0) { // look for an empty connection
 				conn = &schc_rx_conns[i];
+				schc_rx_conns[i].device_id = device_id;
 				break;
 			}
 		}
@@ -727,7 +736,6 @@ static void reset_connection(schc_fragmentation_t* conn) {
 	memset(conn->ack.dtag, 0, 1);
 	conn->ack.mic = 0;
 	conn->head = NULL;
-	conn->head->next = NULL;
 }
 
 /**
@@ -994,10 +1002,10 @@ static void send_fragment(schc_fragmentation_t* conn) {
 			(conn->data_ptr + total_byte_offset),
 			(remaining_bit_offset + RULE_SIZE_BITS), packet_bits); // copy bits
 
-	DEBUG_PRINTF("send_fragment(): sending fragment %d with length %d",
-			conn->frag_cnt, packet_len);
+	DEBUG_PRINTF("send_fragment(): sending fragment %d with length %d to device %d",
+			conn->frag_cnt, packet_len, conn->device_id);
 
-	conn->send(fragmentation_buffer, packet_len);
+	conn->send(fragmentation_buffer, packet_len, conn->device_id);
 }
 
 /**
@@ -1028,9 +1036,9 @@ static void send_ack(schc_fragmentation_t* conn) {
 	}
 
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
-	DEBUG_PRINTF("send_ack(): sending ack for fragment %d with length %d in bits %d",
-			conn->frag_cnt, packet_len, offset);
-	conn->send(ack, packet_len);
+	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
+			conn->frag_cnt, packet_len, offset, conn->device_id);
+	conn->send(ack, packet_len, conn->device_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1202,6 +1210,14 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	// free connection if last fragment
 	// set the mbuf chain (len & ptr) to 0
 	// set head to NULL
+	// SHOULD BE DONE BY APPLICATION
+	// notify application about last fragment
+	// then application should loop over mbuf chain
+	// create a new packet
+	// forward to the network
+	// and free buffers
+
+	// better to handle memory inside library!!
 
 	return 0;
 }
@@ -1214,7 +1230,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  * @return error codes on error
  *
  */
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, void (*send)(uint8_t* data, uint16_t length)){
+int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
+		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id)) {
 	uint32_t i;
 
 	// initializes the schc tx connection
@@ -1260,7 +1277,8 @@ int8_t schc_fragment(void *c) {
 			return SCHC_FAILURE;
 		} else if (ret < 0) {
 			tx_conn->send(tx_conn->data_ptr,
-					(tx_conn->tail_ptr - tx_conn->data_ptr)); // send packet right away
+					(tx_conn->tail_ptr - tx_conn->data_ptr),
+					tx_conn->device_id); // send packet right away
 			return SCHC_NO_FRAGMENTATION;
 		}
 		tx_conn->TX_STATE = SEND;
@@ -1366,13 +1384,15 @@ int8_t schc_fragment(void *c) {
  *
  */
 int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
-		uint8_t device_id) {
+		uint32_t device_id) {
 	if (tx_conn->TX_STATE == WAIT_BITMAP
 			&& compare_bits(tx_conn->rule_id, data, RULE_SIZE_BITS)) { // acknowledgment
-		return SCHC_ACK_INPUT;
+		schc_ack_input(data, len, tx_conn, device_id);
 	} else {
-		return SCHC_FRAG_INPUT;
+		schc_fragment_input((uint8_t*) data, len, device_id);
 	}
+
+	// todo return last fragment received??
 
 	return 0;
 }
@@ -1387,7 +1407,7 @@ int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  *
  */
 void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
-		uint8_t device_id) {
+		uint32_t device_id) {
 	uint8_t bit_offset = RULE_SIZE_BITS;
 
 	copy_bits(tx_conn->ack.dtag, (8 - DTAG_SIZE_BITS), (uint8_t*) data,
@@ -1434,7 +1454,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  * an open connection is picked for the device
  * out of a pool of connections to keep track of the packet
  *
- * @param 	mbuf			a pointer to the allocated memory buffer
+ * @param 	data			a pointer to the data packet
  * @param 	len				the length of the received packet
  * @param 	tx_conn			a pointer to the tx initialization structure
  * @param 	device_id		the device id from the rx source
@@ -1442,7 +1462,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  * @return 	SCHC_FAILURE	no free connections were found
  *
  */
-int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id) {
+int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint32_t device_id) {
 	schc_fragmentation_t *conn;
 
 	// get a connection for the device
@@ -1452,7 +1472,17 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id) {
 		return SCHC_FAILURE;
 	}
 
-	int8_t err = mbuf_push(&conn->head, data, len);
+	uint8_t* fragment;
+#if DYNAMIC_MEMORY
+		fragment = (uint8_t*) malloc(len); // allocate memory for fragment
+		memcpy(fragment, data, len);
+#else
+		fragment = (uint8_t*) (schc_buf + buf_ptr);
+		memcpy((uint8_t*) (schc_buf + buf_ptr), data, len); // take fixed memory block
+		buf_ptr += buff_len;
+#endif
+
+	int8_t err = mbuf_push(&conn->head, fragment, len);
 	if(err != SCHC_SUCCESS) {
 		return SCHC_FAILURE;
 	}
@@ -1461,3 +1491,7 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint8_t device_id) {
 
 	return SCHC_SUCCESS;
 }
+
+#if CLICK
+ELEMENT_PROVIDES(schcFRAGMENTER)
+#endif
