@@ -910,32 +910,8 @@ static void discard_fragment() {
  */
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->rtrm_timer_state = 1;
-	// conn->post_timer_task(&schc_fragment, conn->dc);
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms", conn->dc);
-}
-
-/**
- * stops the retransmission timer
- * by changing the retransmission_timer flag
- *
- * @param conn 			a pointer to the connection
- *
- */
-static void stop_retrans_timer(schc_fragmentation_t* conn) {
-	conn->rtrm_timer_state = 0;
-	DEBUG_PRINTF("stop_retrans_timer()");
-}
-
-/**
- * executes the state when the retransmission timer has expired
- *
- * @param conn 			a pointer to the connection
- *
- */
-static void retransmission_timer_expired(schc_fragmentation_t* conn) {
-	if(conn->rtrm_timer_state) {
-		// execute
-	}
+	conn->post_timer_task(&schc_fragment, conn->dc, conn);
 }
 
 /**
@@ -1034,6 +1010,34 @@ static void send_ack(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
 			conn->frag_cnt, conn->device_id, packet_len, offset);
 	conn->send(ack, packet_len, conn->device_id);
+}
+
+/**
+ * composes an all-empty fragment based on the parameters
+ * found in the connection
+ * and calls the callback function to transmit the packet
+ *
+ * @param conn 			a pointer to the connection
+ *
+ */
+static void send_empty(schc_fragmentation_t* conn) {
+	// set and reset buffer
+	memset(fragmentation_buffer, 0, MAX_MTU_LENGTH);
+
+	// set fragmentation header
+	uint16_t header_offset = set_fragmentation_header(conn, fragmentation_buffer);
+
+	uint8_t padding = header_offset % 8;
+	uint8_t zerobuf[1] = { 0 };
+	copy_bits(fragmentation_buffer, header_offset, zerobuf, 0, padding); // add padding
+
+	uint8_t packet_len = (padding + header_offset) / 8;
+
+	DEBUG_PRINTF("send_empty(): sending all-x empty to device %d with length %d (%d b)",
+			conn->device_id, packet_len, header_offset);
+
+	conn->send(fragmentation_buffer, packet_len, conn->device_id);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1307,10 +1311,23 @@ int8_t schc_fragment(void *c) {
 	}
 	case WAIT_BITMAP: {
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
-		if ((tx_conn->ack.window[0] == tx_conn->window)
+		if(tx_conn->attempts >= MAX_ACK_REQUESTS) {
+			DEBUG_PRINTF("send abort"); // todo
+			tx_conn->TX_STATE = ERROR;
+			tx_conn->rtrm_timer_state = 0; // stop retransmission timer
+			schc_fragment(tx_conn);
+		} else if(tx_conn->rtrm_timer_state) { // timer expired
+			DEBUG_PRINTF("send empty all-x"); // todo
+			tx_conn->attempts++;
+			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
+			set_retrans_timer(tx_conn);
+		} else if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // ack contains mic check
+			tx_conn->TX_STATE = END_TX;
+			schc_fragment(tx_conn);
+		} else if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap, (MAX_WIND_FCN + 1))) {
 			if(!has_no_more_fragments(tx_conn)) { // no missing fragments & more fragments
-				stop_retrans_timer(tx_conn);
+				tx_conn->rtrm_timer_state = 0; // stop retransmission timer
 				clear_bitmap(tx_conn);
 				tx_conn->window = !tx_conn->window; // change window
 				tx_conn->window_cnt++;
@@ -1319,8 +1336,7 @@ int8_t schc_fragment(void *c) {
 			} else if(has_no_more_fragments(tx_conn) && tx_conn->ack.mic) {
 
 			}
-		} else if(tx_conn->ack.window[0] != tx_conn->window) {
-			// unexpected window
+		} else if(tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
 			discard_fragment();
 			tx_conn->TX_STATE = WAIT_BITMAP;
 		} else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
@@ -1329,7 +1345,9 @@ int8_t schc_fragment(void *c) {
 			tx_conn->frag_cnt = 0;
 			tx_conn->TX_STATE = RESEND;
 			schc_fragment(tx_conn);
-		}
+		}// else if() { // mic and bitmap check succeeded
+			//tx_conn->TX_STATE = END_TX;
+		//}
 		break;
 	}
 	case RESEND: {
@@ -1352,10 +1370,13 @@ int8_t schc_fragment(void *c) {
 	}
 	case END_TX: {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
-		stop_retrans_timer(tx_conn);
+		tx_conn->rtrm_timer_state = 0;
 		// ToDo
 		// stay alive to answer empty all-1 fragments, indicating lost ack(s)
 		return SCHC_SUCCESS;
+	}
+	case ERROR: {
+		DEBUG_PRINTF("ERROR");
 	}
 	}
 
@@ -1412,16 +1433,15 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 			bit_offset, WINDOW_SIZE_BITS); // get window
 	bit_offset += WINDOW_SIZE_BITS;
 
-	if (has_no_more_fragments(tx_conn)) { // ack contains mic check
+	if(has_no_more_fragments(tx_conn)) {
 		uint8_t mic[1] = { 0 };
 		copy_bits(mic, 7, (uint8_t*) data, bit_offset, 1);
 		bit_offset += 1;
 		tx_conn->ack.mic = mic[0];
-		if (tx_conn->ack.mic) { // end transmission
-			tx_conn->TX_STATE = END_TX;
+		if(mic[0]) { // do not process bitmap
 			schc_fragment(tx_conn);
 			return;
-		} // else continue with bitmap decoding and retransmission
+		}
 	}
 
 	// ToDo
