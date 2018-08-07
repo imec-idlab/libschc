@@ -1008,7 +1008,7 @@ static void send_ack(schc_fragmentation_t* conn) {
 
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
-			conn->frag_cnt, conn->device_id, packet_len, offset);
+			conn->device_id, conn->frag_cnt, packet_len, offset);
 	conn->send(ack, packet_len, conn->device_id);
 }
 
@@ -1333,10 +1333,9 @@ int8_t schc_fragment(void *c) {
 			tx_conn->rtrm_timer_state = 0; // stop retransmission timer
 			schc_fragment(tx_conn);
 		} else if (tx_conn->rtrm_timer_state) { // timer expired
-			DEBUG_PRINTF("send empty all-x"); // todo
 			tx_conn->attempts++;
-			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
 			set_retrans_timer(tx_conn);
+			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
 		} else if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
 			discard_fragment();
 			tx_conn->TX_STATE = WAIT_BITMAP;
