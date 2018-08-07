@@ -1047,9 +1047,9 @@ static void send_empty(schc_fragmentation_t* conn) {
 /**
  * the receiver state machine
  *
- * @param data			a pointer to the connection
+ * @param 	conn		a pointer to the connection
  *
- * @return 	 0			TBD
+ * @return 	0			TBD
  *
  */
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
