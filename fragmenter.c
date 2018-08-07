@@ -420,38 +420,31 @@ static void mbuf_format(schc_mbuf_t **head) {
 		uint8_t fcn = get_fcn_value((*curr)->ptr);
 		uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
 				+ FCN_SIZE_BITS;
+
 		// todo
 		// check offset * 8 > len
 		// packet in previous previous buffer
 		// not supported yet
 
-		if(prev == NULL) {
-			// first
-			if (fcn == MAX_WIND_FCN) { // add rule id if first packet and first time we process
-				(*curr)->offset = offset - RULE_SIZE_BITS;
-				uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
-				copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
+		if(prev == NULL) { // first
+			(*curr)->offset = offset - RULE_SIZE_BITS;
+			uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
+			copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
 
-				shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
-				shift_bits_right((*curr)->ptr, (*curr)->len, RULE_SIZE_BITS); // shift right to make room for rule id
-				clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
-				copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
-			} else { // not the first time we process
-				// todo
-				DEBUG_PRINTF(
-						"mbuf_format(): first fragment missing for not the first time we process");
-				// (*curr)->offset = offset;
-				// shift_bits_left((*curr)->ptr, (*curr)->len, offset);
-			}
-		} else {
-			// normal
+			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
+
+			clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
+			copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
+		} else { // normal
 			if (fcn == get_max_fcn_value()) {
 				offset += (MIC_SIZE_BYTES * 8);
 			}
-			(*curr)->offset = offset + (*prev)->offset;
 			clear_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*prev)->offset);
 			copy_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*curr)->ptr, offset, (*prev)->offset); // copy bits with previous offset to previous mbuf
-			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
+
+			(*curr)->offset = offset + (*prev)->offset;
+			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left to remove headers
+
 			if(fcn == get_max_fcn_value()) {
 				(*curr)->len = (*curr)->len - (((*curr)->offset + get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8); // update length
 			}
@@ -461,6 +454,7 @@ static void mbuf_format(schc_mbuf_t **head) {
 		prev = curr;
 		curr = next;
 		next = &(*next)->next;
+
 	}
 }
 
@@ -471,10 +465,10 @@ static void mbuf_format(schc_mbuf_t **head) {
  *
  */
 static void mbuf_print(schc_mbuf_t *head) {
-	int i = 0;
+	uint8_t i = 0;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: %x", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
 		curr = curr->next;
 		i++;
 	}
@@ -504,7 +498,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
-	schc_mbuf_t *curr = NULL; uint8_t mbc = 0;
+	schc_mbuf_t *curr = NULL; uint8_t k = 0;
 	uint16_t len = (conn->tail_ptr - conn->data_ptr);
 	if(len == 0) { // this is an RX connection: calculate MIC over received mbuf chain
 		curr = conn->head;
@@ -518,17 +512,18 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	}
 
 	while (i < len) {
-		if (mbc >= curr->len) { // update data ptr to point to next mbuf
+		if (k >= curr->len) { // update data ptr to point to next mbuf
+			curr = curr->next;
 			conn->data_ptr = curr->ptr;
-			mbc = 0;
+			k = 0;
 		}
-		byte = conn->data_ptr[i];
+		byte = conn->data_ptr[k];
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
-		i++; mbc++;
+		i++; k++;
 	}
 
 	crc = ~crc;
@@ -1037,7 +1032,7 @@ static void send_ack(schc_fragmentation_t* conn) {
 
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
-			conn->frag_cnt, packet_len, offset, conn->device_id);
+			conn->frag_cnt, conn->device_id, packet_len, offset);
 	conn->send(ack, packet_len, conn->device_id);
 }
 
@@ -1474,13 +1469,13 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint32_t device_id) {
 
 	uint8_t* fragment;
 #if DYNAMIC_MEMORY
-		fragment = (uint8_t*) malloc(len); // allocate memory for fragment
-		memcpy(fragment, data, len);
+	fragment = (uint8_t*) malloc(len); // allocate memory for fragment
 #else
-		fragment = (uint8_t*) (schc_buf + buf_ptr);
-		memcpy((uint8_t*) (schc_buf + buf_ptr), data, len); // take fixed memory block
-		buf_ptr += buff_len;
+	fragment = (uint8_t*) (schc_buf + buf_ptr); // take fixed memory block
+	buf_ptr += buff_len;
 #endif
+
+	memcpy(fragment, data, len);
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
 	if(err != SCHC_SUCCESS) {

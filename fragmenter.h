@@ -88,9 +88,9 @@ typedef struct schc_fragmentation_t {
 	/* the length of the packet */
 	uint16_t packet_len;
 	/* a pointer to the start of the unfragmented, compressed packet */
-	const uint8_t* data_ptr;
+	uint8_t* data_ptr;
 	/* the start of the packet + the total length */
-	const uint8_t* tail_ptr;
+	uint8_t* tail_ptr;
 	/* the rule which will be applied to the header */
 	uint8_t rule_id[RULE_SIZE_BYTES];
 	/* the maximum transfer unit of this connection */
