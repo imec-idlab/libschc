@@ -1211,8 +1211,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	// create a new packet
 	// forward to the network
 	// and free buffers
-
-	// better to handle memory inside library!!
+	// by calling mbuf_chain_free()
 
 	return 0;
 }
