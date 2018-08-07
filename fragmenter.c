@@ -29,8 +29,8 @@ static uint32_t MBUF_PTR;
 static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
 
 #if !DYNAMIC_MEMORY
+static uint8_t buf_ptr = 0;
 uint8_t schc_buf[SCHC_BUFSIZE] = { 0 };
-uint8_t buf_ptr = 0;
 #endif
 
 // ToDo
@@ -1479,7 +1479,7 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint32_t device_id) {
 #else
 		fragment = (uint8_t*) (schc_buf + buf_ptr);
 		memcpy((uint8_t*) (schc_buf + buf_ptr), data, len); // take fixed memory block
-		buf_ptr += buff_len;
+		buf_ptr += len;
 #endif
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
