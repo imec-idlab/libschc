@@ -898,6 +898,21 @@ static uint8_t get_next_fragment_from_bitmap(schc_fragmentation_t* conn) {
  *
  */
 static void discard_fragment() {
+	// todo
+	return;
+}
+
+/**
+ * abort an ongoing transmission because the
+ * inactivity timer has expired
+ *
+ * @param conn 			a pointer to the connection
+ *
+ */
+static void abort_connection(schc_fragmentation_t* conn) {
+	// todo
+	DEBUG_PRINTF("abort_connection(): inactivity timer expired");
+	conn->RX_STATE = END_RX;
 	return;
 }
 
@@ -909,7 +924,7 @@ static void discard_fragment() {
  *
  */
 static void set_retrans_timer(schc_fragmentation_t* conn) {
-	conn->rtrm_timer_state = 1;
+	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms", conn->dc);
 	conn->post_timer_task(&schc_fragment, conn->dc, conn);
 }
@@ -923,6 +938,20 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("set_dc_timer(): for %d ms", conn->dc);
 	conn->post_timer_task(&schc_fragment, conn->dc, conn);
+}
+
+/**
+ * sets the inactivity timer to re-enter the fragmentation loop
+ * and changes the retransmission_timer flag
+ *
+ * @param conn 			a pointer to the connection
+ *
+ */
+static void set_inactivity_timer(schc_fragmentation_t* conn) {
+	conn->timer_flag = 1;
+	conn->fragment_input = 0;
+	DEBUG_PRINTF("set_inactivity_timer(): for %d ms", conn->dc);
+	conn->post_timer_task(&schc_reassemble, conn->dc, conn);
 }
 
 /**
@@ -1064,9 +1093,14 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
 	tail->frag_cnt = (rx_conn->frag_cnt + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 
+	set_inactivity_timer(rx_conn);
+
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
 		DEBUG_PRINTF("RECV WINDOW");
+		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+			abort_connection(rx_conn); break;
+		}
 		if(rx_conn->window != window) { // unexpected window
 			DEBUG_PRINTF("w != window");
 			discard_fragment();
@@ -1104,6 +1138,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_NEXT_WINDOW: {
 		DEBUG_PRINTF("WAIT NEXT WINDOW");
+		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+			abort_connection(rx_conn); break;
+		}
 		if (window == (!rx_conn->window)) { // next window
 			DEBUG_PRINTF("w != window");
 			rx_conn->window_cnt++;
@@ -1161,6 +1198,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		break;
 	}
 	case WAIT_END: {
+		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+			abort_connection(rx_conn); break;
+		}
 		get_received_mic(tail->ptr, recv_mic);
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
 		mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
@@ -1241,6 +1281,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_rx_conns[i].send = send;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
+		schc_rx_conns[i].fragment_input = 0;
 	}
 
 	// initializes the mbuf pool
@@ -1258,16 +1299,14 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 /**
  * the sender state machine
  *
- * @param 	c			a pointer to the tx connection structure
+ * @param 	tx_conn		a pointer to the tx connection structure
  *
  * @return 	 0			TBD
  *        	-1			failed to initialize the connection
  *        	-2			no fragmentation was needed for this packet
  *
  */
-int8_t schc_fragment(void *c) {
-	schc_fragmentation_t* tx_conn = (schc_fragmentation_t*) c;
-
+int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	switch(tx_conn->TX_STATE) {
 	case INIT_TX: {
 		int8_t ret = init_tx_connection(tx_conn);
@@ -1316,14 +1355,14 @@ int8_t schc_fragment(void *c) {
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
 						(MAX_WIND_FCN + 1))) {
 			if (!has_no_more_fragments(tx_conn)) { // no missing fragments & more fragments
-				tx_conn->rtrm_timer_state = 0; // stop retransmission timer
+				tx_conn->timer_flag = 0; // stop retransmission timer
 				clear_bitmap(tx_conn);
 				tx_conn->window = !tx_conn->window; // change window
 				tx_conn->window_cnt++;
 				tx_conn->TX_STATE = SEND;
 				schc_fragment(tx_conn);
 			} else if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) {
-				tx_conn->rtrm_timer_state = 0;
+				tx_conn->timer_flag = 0;
 				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn);
 			}
@@ -1331,10 +1370,10 @@ int8_t schc_fragment(void *c) {
 		if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
 			DEBUG_PRINTF("send abort"); // todo
 			tx_conn->TX_STATE = ERROR;
-			tx_conn->rtrm_timer_state = 0; // stop retransmission timer
+			tx_conn->timer_flag = 0; // stop retransmission timer
 			schc_fragment(tx_conn);
 		}
-		if (tx_conn->rtrm_timer_state) { // timer expired
+		if (tx_conn->timer_flag) { // timer expired
 			tx_conn->attempts++;
 			set_retrans_timer(tx_conn);
 			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
@@ -1373,7 +1412,7 @@ int8_t schc_fragment(void *c) {
 	}
 	case END_TX: {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
-		tx_conn->rtrm_timer_state = 0;
+		tx_conn->timer_flag = 0;
 		// ToDo
 		// stay alive to answer empty all-1 fragments, indicating lost ack(s)
 		return SCHC_SUCCESS;
@@ -1476,17 +1515,18 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  * @param 	tx_conn			a pointer to the tx initialization structure
  * @param 	device_id		the device id from the rx source
  *
- * @return 	SCHC_FAILURE	no free connections were found
+ * @return 	conn			the connection
  *
  */
-int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint32_t device_id) {
+schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
+		uint32_t device_id) {
 	schc_fragmentation_t *conn;
 
 	// get a connection for the device
 	conn = get_connection(device_id);
 	if (!conn) { // return if there was no connection available
 		DEBUG_PRINTF("schc_fragment_input(): no free connections found!");
-		return SCHC_FAILURE;
+		return NULL;
 	}
 
 	uint8_t* fragment;
@@ -1501,12 +1541,12 @@ int8_t schc_fragment_input(uint8_t* data, uint16_t len, uint32_t device_id) {
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
 	if(err != SCHC_SUCCESS) {
-		return SCHC_FAILURE;
+		return NULL;
 	}
 
-	schc_reassemble(conn);
+	conn->fragment_input = 1; // set fragment input to 1, to distinguish between inactivity callbacks
 
-	return SCHC_SUCCESS;
+	return conn;
 }
 
 #if CLICK
