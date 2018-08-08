@@ -540,46 +540,6 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 }
 
 /**
- * find a connection based on a device id
- * or open a new connection if there was no connection
- * for this device yet
- *
- * @param 	device_id	the id of the device to open a connection for
- *
- * @return 	conn		a pointer to the selected connection
- * 			0 			if no free connections are available
- *
- */
-static schc_fragmentation_t* get_connection(uint32_t device_id) {
-	uint8_t i; schc_fragmentation_t *conn;
-	conn = 0;
-
-	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
-		// first look for the the old connection
-		if (schc_rx_conns[i].device_id == device_id) {
-			conn = &schc_rx_conns[i];
-			break;
-		}
-	}
-
-	if (conn == 0) { // check if we were given an old connection
-		for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
-			if (schc_rx_conns[i].device_id == 0) { // look for an empty connection
-				conn = &schc_rx_conns[i];
-				schc_rx_conns[i].device_id = device_id;
-				break;
-			}
-		}
-	}
-
-	if(conn) {
-		DEBUG_PRINTF("get_connection(): selected connection %d for device %d", i, device_id);
-	}
-
-	return conn;
-}
-
-/**
  * set the fragmentation bit in the layered rule id
  *
  * @param conn 			a pointer to the connection
@@ -926,7 +886,7 @@ static void abort_connection(schc_fragmentation_t* conn) {
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms", conn->dc);
-	conn->post_timer_task(&schc_fragment, conn->dc, conn);
+	conn->post_timer_task(&schc_fragment, conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -937,7 +897,7 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("set_dc_timer(): for %d ms", conn->dc);
-	conn->post_timer_task(&schc_fragment, conn->dc, conn);
+	conn->post_timer_task(&schc_fragment, conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -949,9 +909,8 @@ static void set_dc_timer(schc_fragmentation_t* conn) {
  */
 static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
-	conn->fragment_input = 0;
 	DEBUG_PRINTF("set_inactivity_timer(): for %d ms", conn->dc);
-	conn->post_timer_task(&schc_reassemble, conn->dc, conn);
+	conn->post_timer_task(&schc_reassemble, conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -1074,6 +1033,46 @@ static void send_empty(schc_fragmentation_t* conn) {
 ////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * find a connection based on a device id
+ * or open a new connection if there was no connection
+ * for this device yet
+ *
+ * @param 	device_id	the id of the device to open a connection for
+ *
+ * @return 	conn		a pointer to the selected connection
+ * 			0 			if no free connections are available
+ *
+ */
+schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
+	uint8_t i; schc_fragmentation_t *conn;
+	conn = 0;
+
+	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
+		// first look for the the old connection
+		if (schc_rx_conns[i].device_id == device_id) {
+			conn = &schc_rx_conns[i];
+			break;
+		}
+	}
+
+	if (conn == 0) { // check if we were given an old connection
+		for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
+			if (schc_rx_conns[i].device_id == 0) { // look for an empty connection
+				conn = &schc_rx_conns[i];
+				schc_rx_conns[i].device_id = device_id;
+				break;
+			}
+		}
+	}
+
+	if(conn) {
+		DEBUG_PRINTF("schc_get_connection(): selected connection %d for device %d", i, device_id);
+	}
+
+	return conn;
+}
+
+/**
  * the receiver state machine
  *
  * @param 	conn		a pointer to the connection
@@ -1093,12 +1092,14 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
 	tail->frag_cnt = (rx_conn->frag_cnt + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 
-	set_inactivity_timer(rx_conn);
+	if(rx_conn->RX_STATE != END_RX) {
+		set_inactivity_timer(rx_conn);
+	}
 
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
 		DEBUG_PRINTF("RECV WINDOW");
-		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+		if(rx_conn->timer_flag && !rx_conn->fragment_input) { // inactivity timer expired
 			abort_connection(rx_conn); break;
 		}
 		if(rx_conn->window != window) { // unexpected window
@@ -1138,7 +1139,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_NEXT_WINDOW: {
 		DEBUG_PRINTF("WAIT NEXT WINDOW");
-		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+		if(rx_conn->timer_flag && !rx_conn->fragment_input) { // inactivity timer expired
 			abort_connection(rx_conn); break;
 		}
 		if (window == (!rx_conn->window)) { // next window
@@ -1198,7 +1199,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		break;
 	}
 	case WAIT_END: {
-		if(rx_conn->timer_flag && rx_conn->fragment_input) { // inactivity timer expired
+		DEBUG_PRINTF("WAIT END");
+		if(rx_conn->timer_flag && !rx_conn->fragment_input) { // inactivity timer expired
 			abort_connection(rx_conn); break;
 		}
 		get_received_mic(tail->ptr, recv_mic);
@@ -1227,6 +1229,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 
 	} break;
 	case END_RX: {
+		DEBUG_PRINTF("END RX");
 		if (fcn != get_max_fcn_value()) { // not all-1
 			DEBUG_PRINTF("not all-x");
 			discard_fragment();
@@ -1240,6 +1243,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 
 	DEBUG_PRINTF("BITMAP: ");
 	print_bitmap(rx_conn->bitmap, (get_max_fcn_value() + 1));
+	rx_conn->fragment_input = 0;
 
 	// todo
 	// after each fragment has been received
@@ -1433,25 +1437,20 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
  * @param 	tx_conn			a pointer to the tx initialization structure
  * @param 	device_id		the device id from the rx source
  *
- * @return 	SCHC_ACK_INPUT	an acknowledgment was received
- * 							schc_ack_input() should be called
- * 		   	SCHC_FRAG_INPUT	a fragment was received:
- * 		   					the application should allocate memory
- * 		   					for further processing with schc_fragment_input()
- *
  */
-int8_t schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
+schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint32_t device_id) {
 	if (tx_conn->TX_STATE == WAIT_BITMAP
 			&& compare_bits(tx_conn->rule_id, data, RULE_SIZE_BITS)) { // acknowledgment
 		schc_ack_input(data, len, tx_conn, device_id);
+		return tx_conn;
 	} else {
-		schc_fragment_input((uint8_t*) data, len, device_id);
+		schc_fragmentation_t* rx_conn = schc_fragment_input((uint8_t*) data, len, device_id);
+		return rx_conn;
 	}
 
-	// todo return last fragment received??
-
-	return 0;
+	// todo
+	// how to return if last fragment received??
 }
 
 /**
@@ -1523,7 +1522,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	schc_fragmentation_t *conn;
 
 	// get a connection for the device
-	conn = get_connection(device_id);
+	conn = schc_get_connection(device_id);
 	if (!conn) { // return if there was no connection available
 		DEBUG_PRINTF("schc_fragment_input(): no free connections found!");
 		return NULL;
