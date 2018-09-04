@@ -289,6 +289,25 @@ static uint8_t get_padding_length(uint8_t byte) {
 	return counter;
 }
 
+
+/**
+ * get a bitmap mask for a number of bits
+ *
+ * @param len			the number of bits to set
+ *
+ * @return padding		the bitmask
+ *
+ */
+static uint32_t get_bit_mask(uint8_t len) {
+	int mask = 0; int i;
+
+	for (i = 0; i < len; i++) {
+	    mask = (1 << len) - 1;
+	}
+
+	return mask;
+}
+
 /**
  * add an item to the end of the mbuf list
  * if head is NULL, the first item of the list
@@ -568,6 +587,113 @@ static void mbuf_print(schc_mbuf_t *head) {
 	}
 }
 
+
+/**
+ * Returns the number of bits the current header exists off
+ *
+ * @param  mbuf 		the mbuf to find th offset for
+ *
+ * @return length 		the length of the header
+ *
+ */
+static uint32_t get_header_length(schc_mbuf_t *mbuf) {
+	uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
+			+ FCN_SIZE_BITS;
+
+	uint8_t fcn = get_fcn_value(mbuf->ptr);
+
+	if (fcn == get_max_fcn_value()) {
+		offset += (MIC_SIZE_BYTES * 8);
+	}
+
+	return offset;
+}
+
+/**
+ * Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain
+ * which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)
+ *
+ * @param  head			the head of the list
+ *
+ * @return checksum 	the computed checksum
+ *
+ */
+static unsigned int mbuf_compute_mic(schc_mbuf_t *head) {
+	schc_mbuf_t *curr = head;
+	schc_mbuf_t *prev = NULL;
+
+	uint32_t total_offset = 0;
+	uint32_t offset = 0;
+	uint8_t first = 1;
+	int i, j, k;
+	uint16_t len;
+	uint8_t start;
+	uint8_t rest;
+	uint8_t prev_offset = 0;
+	uint32_t crc, crc_mask;
+	uint8_t byte;
+	crc = 0xFFFFFFFF;
+
+	while (curr != NULL) {
+		uint8_t fcn = get_fcn_value(curr->ptr);
+		uint8_t cont = 1;
+		offset = (get_header_length(curr) + prev_offset);
+
+		i = offset;
+		len = (curr->len * 8);
+		start = offset / 8;
+		rest = offset % 8;
+		j = start;
+
+		while (cont) {
+			if (prev == NULL && first) { // first
+				byte = (curr->ptr[0] << (8 - RULE_SIZE_BITS))
+						| (curr->ptr[1] >> RULE_SIZE_BITS);
+				first = 0;
+			} else {
+				i += 8;
+				if (i >= len) {
+					prev_offset = (i - len);
+					if (curr->next != NULL) {
+						uint32_t next_offset = get_header_length(curr->next);
+						uint8_t start_next = next_offset / 8;
+
+						uint32_t mask = get_bit_mask(rest);
+						byte = (curr->ptr[j] << rest)
+								| (curr->next->ptr[start_next] & mask);
+					}
+					cont = 0;
+				} else {
+					byte = (curr->ptr[j] << rest)
+							| (curr->ptr[j + 1] >> (8 - rest));
+				}
+
+				j++;
+			}
+			if (fcn != get_max_fcn_value()) { // this has something to do with the padding added to the end??
+				crc = crc ^ byte;
+				for (k = 7; k >= 0; k--) {    // do eight times.
+					crc_mask = -(crc & 1);
+					crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
+				}
+				// DEBUG_PRINTF("0x%02X ", byte);
+			}
+		}
+
+		prev = curr;
+		curr = curr->next;
+	}
+
+	crc = ~crc;
+	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24),
+			((crc & 0xFF0000) >> 16), ((crc & 0xFF00) >> 8), ((crc & 0xFF)) };
+
+	DEBUG_PRINTF("compute_mic(): MIC is %02X%02X%02X%02X \n", mic[0], mic[1], mic[2],
+			mic[3]);
+
+	return crc;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -582,8 +708,8 @@ static void mbuf_print(schc_mbuf_t *head) {
  *
  */
 static unsigned int compute_mic(schc_fragmentation_t *conn) {
-	int i, j;
-	unsigned int byte, crc, mask;
+	int i, j; uint8_t byte;
+	unsigned int crc, mask;
 
 	// ToDo
 	// check conn->mic length
@@ -592,32 +718,16 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
-	schc_mbuf_t *curr = NULL; uint8_t k = 0;
 	uint16_t len = (conn->tail_ptr - conn->data_ptr);
-	if(len == 0) { // this is an RX connection: calculate MIC over received mbuf chain
-		curr = conn->head;
-		while(curr->next != NULL) {
-			len += curr->len; // get total length of mbuf chain
-			curr = curr->next;
-		}
-		len += curr->len;
-		conn->data_ptr = conn->head->ptr; // set data_ptr to first mbuf
-		curr = conn->head;
-	}
 
 	while (i < len) {
-		if (k >= curr->len) { // update data ptr to point to next mbuf
-			curr = curr->next;
-			conn->data_ptr = curr->ptr;
-			k = 0;
-		}
-		byte = conn->data_ptr[k];
+		byte = conn->data_ptr[i];
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
-		i++; k++;
+		i++;
 	}
 
 	crc = ~crc;
@@ -626,9 +736,8 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 
 	memcpy((uint8_t *) conn->mic, mic, 4);
 
-	DEBUG_PRINTF("compute_mic(): MIC for device %d is %02X%02X%02X%02X",
+	DEBUG_PRINTF("compute_mic(): MIC for device %d is %02X%02X%02X%02X \n",
 			conn->device_id, mic[0], mic[1], mic[2], mic[3]);
-
 
 	return crc;
 }
@@ -1215,12 +1324,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			} else if(fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
 				get_received_mic(tail->ptr, recv_mic);
-				mbuf_print(rx_conn->head);
+
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
 				mbuf_print(rx_conn->head);
-				mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
-				mbuf_print(rx_conn->head);
-				compute_mic(rx_conn); // so we can compute the mic
+				mbuf_compute_mic(rx_conn->head); // compute the mic over the mbuf chain
+
 				if (!compare_bits(rx_conn->mic, recv_mic,
 						(MIC_SIZE_BYTES * 8))) { // mic wrong
 					rx_conn->RX_STATE = WAIT_END;
@@ -1258,12 +1366,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			} else if(fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
 				get_received_mic(tail->ptr, recv_mic);
-				mbuf_print(rx_conn->head);
+
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
 				mbuf_print(rx_conn->head);
-				mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
-				mbuf_print(rx_conn->head);
-				compute_mic(rx_conn); // so we can compute the mic
+				mbuf_compute_mic(rx_conn->head); // compute the mic over the mbuf chain
+
 				if (!compare_bits(rx_conn->mic, recv_mic,
 						(MIC_SIZE_BYTES * 8))) { // mic wrong
 					rx_conn->RX_STATE = WAIT_END;
@@ -1304,12 +1411,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			abort_connection(rx_conn); break;
 		}
 		get_received_mic(tail->ptr, recv_mic);
-		mbuf_print(rx_conn->head);
+
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
 		mbuf_print(rx_conn->head);
-		mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
-		mbuf_print(rx_conn->head);
-		compute_mic(rx_conn); // so we can compute the mic
+		mbuf_compute_mic(rx_conn->head); // compute the mic over the mbuf chain
+
 		if (!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
 			rx_conn->ack.mic = 0;
 			rx_conn->RX_STATE = WAIT_END;
@@ -1338,6 +1444,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		} else { // all-1
 			DEBUG_PRINTF("all-1");
 			send_ack(rx_conn);
+			mbuf_sort(&rx_conn->head); // sort the mbuf chain
+			mbuf_format(&rx_conn->head); // remove headers to pass to application
 		}
 		break;
 	}
@@ -1415,6 +1523,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	switch(tx_conn->TX_STATE) {
 	case INIT_TX: {
+		DEBUG_PRINTF("INIT_TX");
 		int8_t ret = init_tx_connection(tx_conn);
 		if (!ret) {
 			return SCHC_FAILURE;
@@ -1429,6 +1538,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		break;
 	}
 	case SEND: {
+		DEBUG_PRINTF("SEND");
 		set_local_bitmap(tx_conn);
 		tx_conn->frag_cnt++;
 
@@ -1441,26 +1551,30 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		} else if(tx_conn->fcn == 0 && !has_no_more_fragments(tx_conn)) { // all-0 window
 			DEBUG_PRINTF("schc_fragment(): all-0 window");
 			tx_conn->TX_STATE = WAIT_BITMAP;
+			send_fragment(tx_conn);
 			tx_conn->fcn = MAX_WIND_FCN; // reset the FCN
 			set_retrans_timer(tx_conn);
-			send_fragment(tx_conn);
 		} else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
 			DEBUG_PRINTF("schc_fragment(): normal fragment");
-			tx_conn->fcn--;
 			tx_conn->TX_STATE = SEND;
 			send_fragment(tx_conn);
+			tx_conn->fcn--;
 			set_dc_timer(tx_conn);
 		}
 
 		break;
 	}
 	case WAIT_BITMAP: {
+		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
+
 
 		if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
 						(MAX_WIND_FCN + 1))) {
+			DEBUG_PRINTF("w == w && bitmap = local bitmap");
 			if (!has_no_more_fragments(tx_conn)) { // no missing fragments & more fragments
+				DEBUG_PRINTF("no missing fragments & more fragments to come");
 				tx_conn->timer_flag = 0; // stop retransmission timer
 				clear_bitmap(tx_conn);
 				tx_conn->window = !tx_conn->window; // change window
@@ -1468,27 +1582,34 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				tx_conn->TX_STATE = SEND;
 				schc_fragment(tx_conn);
 			} else if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) {
+				DEBUG_PRINTF("no more fragments, MIC ok");
 				tx_conn->timer_flag = 0;
 				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn);
 			}
+			break;
 		}
+		else if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
+			DEBUG_PRINTF("w != w, discard fragment"); // todo
+			discard_fragment();
+			tx_conn->TX_STATE = WAIT_BITMAP;
+		}
+
 		if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
-			DEBUG_PRINTF("send abort"); // todo
+			DEBUG_PRINTF("tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
 			tx_conn->TX_STATE = ERROR;
 			tx_conn->timer_flag = 0; // stop retransmission timer
 			schc_fragment(tx_conn);
 		}
 		if (tx_conn->timer_flag) { // timer expired
+			DEBUG_PRINTF("timer expired"); // todo
 			tx_conn->attempts++;
 			set_retrans_timer(tx_conn);
 			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
 		}
-		if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
-			discard_fragment();
-			tx_conn->TX_STATE = WAIT_BITMAP;
-		} else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
+		else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
 				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
+			DEBUG_PRINTF("bitmap contains the missing fragments");
 			tx_conn->attempts++;
 			tx_conn->frag_cnt = 0;
 			tx_conn->TX_STATE = RESEND;
@@ -1499,9 +1620,11 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		break;
 	}
 	case RESEND: {
+		DEBUG_PRINTF("RESEND");
 		// get the next fragment offset
 		tx_conn->frag_cnt = get_next_fragment_from_bitmap(tx_conn); // send_fragment() uses frag_cnt to transmit a particular fragment
 		if (!tx_conn->frag_cnt) { // no more missing fragments to send
+			DEBUG_PRINTF("no more missing fragments to send");
 			tx_conn->TX_STATE = WAIT_BITMAP;
 			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN + 1);
 			set_retrans_timer(tx_conn);
