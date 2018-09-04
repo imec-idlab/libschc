@@ -111,6 +111,7 @@ static void copy_bits(uint8_t DST[], uint32_t dst_pos, uint8_t SRC[], uint32_t s
 	for(i = 0; i < len; i++) { // for each bit
 		uint8_t src_val = ((128 >> ( (k + src_pos) % 8)) & SRC[((k + src_pos) / 8)]);
 		if(src_val) {
+			// DEBUG_PRINTF("set bits for %d at position %d len is %d", DST[i+dst_pos], i+dst_pos, len);
 			set_bits(DST, i + dst_pos, 1);
 		}
 		k++;
@@ -233,6 +234,7 @@ static void print_bitmap(uint8_t bitmap[], uint32_t length) {
 		uint8_t bit = bitmap[i / 8] & 128 >> (i % 8);
 		printf("%d ", bit ? 1 : 0);
 	}
+	printf("\n"); // flush buffer
 }
 
 /**
@@ -360,6 +362,27 @@ static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 }
 
 /**
+ * returns the last chain in the mbuf linked list
+ *
+ * @param  head			the head of the list
+ * @param  mbuf			the mbuf to find the previous mbuf for
+ *
+ * @return prev			the previous mbuf
+ */
+static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
+	schc_mbuf_t *curr = head;
+
+	while (curr->next != mbuf) {
+		DEBUG_PRINTF(
+				"head is 0x%x, looking for 0x%x with curr 0x%x, next is 0x%x",
+				head, mbuf, curr, curr->next);
+		curr = curr->next;
+	}
+
+	return curr;
+}
+
+/**
  * sort the complete mbuf chain based on fragment counter
  *
  * @param  head			double pointer to the head of the list
@@ -413,21 +436,23 @@ static void mbuf_sort(schc_mbuf_t **head) {
  */
 static void mbuf_format(schc_mbuf_t **head) {
 	schc_mbuf_t **curr = &(*head);
-	schc_mbuf_t **next = &(*head)->next;
+	schc_mbuf_t **next = &((*head)->next);
 	schc_mbuf_t **prev = NULL;
 
+	uint8_t i = 0;
+	uint8_t counter = 1;
+	uint16_t total_bits_shifted = 0;
+
 	while (*curr != NULL) {
+		printf("(%d) ", i);
 		uint8_t fcn = get_fcn_value((*curr)->ptr);
 		uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
 				+ FCN_SIZE_BITS;
+		uint8_t overflow = 0;
 
-		// todo
-		// check offset * 8 > len
-		// packet in previous previous buffer
-		// not supported yet
-
-		if(prev == NULL) { // first
+		if (prev == NULL) { // first
 			(*curr)->offset = offset - RULE_SIZE_BITS;
+
 			uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
 			copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
 
@@ -435,26 +460,90 @@ static void mbuf_format(schc_mbuf_t **head) {
 
 			clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
 			copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
+
+			printf("first packet in chain 0x%x \n", *curr);
+			total_bits_shifted += (*curr)->offset;
 		} else { // normal
+
+			printf("fcn is %d (prev fcn is %d), max fcn is %d \n", fcn,
+					get_fcn_value((*prev)->ptr), get_max_fcn_value());
+
 			if (fcn == get_max_fcn_value()) {
 				offset += (MIC_SIZE_BYTES * 8);
+				printf("last packet in chain 0x%x \n", *curr);
 			}
-			clear_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*prev)->offset);
-			copy_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*curr)->ptr, offset, (*prev)->offset); // copy bits with previous offset to previous mbuf
+
+			int16_t start = ((*prev)->len * 8) - (*prev)->offset;
+			int16_t bits_to_copy = (*curr)->len * 8 - offset;
+			int16_t room_left = ((*prev)->len * 8) - start;
+
+			printf(
+					"starting from bit %d (offset %d) to copy %d bits of curr to prev buffer, room available: %d \n",
+					start, (*prev)->offset, bits_to_copy, room_left);
+
+			// copy (part of) curr buffer to prev
+			clear_bits((*prev)->ptr, ((*prev)->len * 8) - (*prev)->offset,
+					(*prev)->offset);
+			copy_bits((*prev)->ptr, ((*prev)->len * 8) - (*prev)->offset,
+					(*curr)->ptr, offset, (*prev)->offset);
+
+			if (room_left > bits_to_copy) {
+				// do not advance prev pointer and merge prev and curr in one buffer
+				printf(
+						"do not advance prev pointer: set offset to %d, total offset is %d, or set to %d \n",
+						start, (*prev)->offset,
+						((*prev)->len * 8) - (*prev)->offset);
+				(*prev)->offset = start + offset; // as if we would start from head
+				total_bits_shifted -= ((*curr)->len * 8); // do not include in offset, since this will be removed already
+				// remove curr from chain
+				if ((*curr)->next != NULL) {
+					(*prev)->next = (*curr)->next;
+					curr = next;
+				}
+				overflow = 1;
+				counter++;
+			} else {
+				printf("shifting %d bits left \n", offset + (*prev)->offset);
+				shift_bits_left((*curr)->ptr, (*curr)->len,
+						offset + (*prev)->offset); // shift left to remove headers and bits that were copied
+				overflow = 0;
+			}
 
 			(*curr)->offset = offset + (*prev)->offset;
-			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left to remove headers
+			total_bits_shifted += offset;
+		}
 
-			if(fcn == get_max_fcn_value()) {
-				(*curr)->len = (*curr)->len - (((*curr)->offset + get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8); // update length
+		if (!overflow) { // do not advance prev if this contains parts of 3 fragments
+			if (prev != NULL) {
+				prev = &(*prev)->next; // could be that we skipped a buffer
+			} else {
+				prev = curr;
 			}
 		}
 
-		// advance both pointer-pointers
-		prev = curr;
-		curr = next;
-		next = &(*next)->next;
+		i++;
 
+		curr = next; // advance both pointer-pointers
+		next = &(*next)->next;
+	}
+
+	uint8_t j = 0;
+	curr = &(*head);
+	for (j = 0; j < i; j++) {
+		if (j >= (i - counter)) {
+			// todo
+			// clear mbuf memory
+			printf("ready to remove %d \n", (*curr)->frag_cnt);
+			printf("update length of last in chain to %d \n",
+					(total_bits_shifted
+							- get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8);
+
+			(*curr)->len = (total_bits_shifted
+					- get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8; // update length
+			(*curr)->next = NULL;
+			break;
+		}
+		curr = &(*curr)->next;
 	}
 }
 
@@ -465,10 +554,15 @@ static void mbuf_format(schc_mbuf_t **head) {
  *
  */
 static void mbuf_print(schc_mbuf_t *head) {
-	uint8_t i = 0;
+	uint8_t i = 0; uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
+		// DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("0x%X", curr);
+		for (j = 0; j < curr->len; j++) {
+			printf("0x%02X ", curr->ptr[j]);
+		}
+		printf("\n");
 		curr = curr->next;
 		i++;
 	}
@@ -1087,6 +1181,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, RULE_SIZE_BITS); // set the connection it's rule id
 	uint8_t window = get_window_bit(tail->ptr); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr); // the fcn value from the fragment
+	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 	rx_conn->ack.fcn = fcn;
 
 	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
@@ -1120,7 +1215,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			} else if(fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
 				get_received_mic(tail->ptr, recv_mic);
+				mbuf_print(rx_conn->head);
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_print(rx_conn->head);
 				mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
 				mbuf_print(rx_conn->head);
 				compute_mic(rx_conn); // so we can compute the mic
@@ -1149,6 +1246,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				DEBUG_PRINTF("not all-x");
 				rx_conn->window = !rx_conn->window; // set expected window to next window
 				clear_bitmap(rx_conn);
+				set_local_bitmap(rx_conn);
 				rx_conn->RX_STATE = RECV_WINDOW; // return to receiving window
 			} else if(fcn == 0) { // all-0
 				DEBUG_PRINTF("all-0");
@@ -1160,7 +1258,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			} else if(fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
 				get_received_mic(tail->ptr, recv_mic);
+				mbuf_print(rx_conn->head);
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_print(rx_conn->head);
 				mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
 				mbuf_print(rx_conn->head);
 				compute_mic(rx_conn); // so we can compute the mic
@@ -1204,7 +1304,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			abort_connection(rx_conn); break;
 		}
 		get_received_mic(tail->ptr, recv_mic);
+		mbuf_print(rx_conn->head);
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
+		mbuf_print(rx_conn->head);
 		mbuf_format(&rx_conn->head); // remove the fragmentation headers and concat the data bits
 		mbuf_print(rx_conn->head);
 		compute_mic(rx_conn); // so we can compute the mic
