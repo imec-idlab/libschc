@@ -754,7 +754,7 @@ static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
 		value = get_max_fcn_value();
 	}
 
-	conn->frag_cnt = value;
+	conn->fcn = value;
 }
 
 /**
@@ -1261,13 +1261,14 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 	rx_conn->ack.fcn = fcn;
 
-	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
+	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->fcn
+	rx_conn->frag_cnt++;
 
 	if (window == (!rx_conn->window)) {
 		DEBUG_PRINTF("window_cnt++ \n");
 		rx_conn->window_cnt++;
 	}
-	tail->frag_cnt = (rx_conn->frag_cnt + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
+	tail->frag_cnt = (rx_conn->fcn + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 
 	if(rx_conn->RX_STATE != END_RX) {
 		set_inactivity_timer(rx_conn);
