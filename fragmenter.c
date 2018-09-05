@@ -455,115 +455,73 @@ static void mbuf_sort(schc_mbuf_t **head) {
  */
 static void mbuf_format(schc_mbuf_t **head) {
 	schc_mbuf_t **curr = &(*head);
-	schc_mbuf_t **next = &((*head)->next);
-	schc_mbuf_t **prev = NULL;
+		schc_mbuf_t **next = &((*head)->next);
+		schc_mbuf_t **prev = NULL;
 
-	uint8_t i = 0;
-	uint8_t counter = 1;
-	uint16_t total_bits_shifted = 0;
+		uint8_t i = 0; uint8_t counter = 1; uint16_t total_bits_shifted = 0;
 
-	while (*curr != NULL) {
-		printf("(%d) ", i);
-		uint8_t fcn = get_fcn_value((*curr)->ptr);
-		uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
-				+ FCN_SIZE_BITS;
-		uint8_t overflow = 0;
+		while (*curr != NULL) {
+			uint8_t fcn = get_fcn_value((*curr)->ptr);
+			uint32_t offset = RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS
+					+ FCN_SIZE_BITS; uint8_t overflow = 0;
 
-		if (prev == NULL) { // first
-			(*curr)->offset = offset - RULE_SIZE_BITS;
 
-			uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
-			copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
+			if(prev == NULL) { // first
+				(*curr)->offset = offset - RULE_SIZE_BITS;
 
-			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
+				uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
+				copy_bits(rule_id, 0, (*curr)->ptr, 0, RULE_SIZE_BITS);
 
-			clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
-			copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
+				shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
 
-			printf("first packet in chain 0x%x \n", *curr);
-			total_bits_shifted += (*curr)->offset;
-		} else { // normal
+				clear_bits((*curr)->ptr, 0, RULE_SIZE_BITS); // set rule id at first position
+				copy_bits((*curr)->ptr, 0, rule_id, 0, RULE_SIZE_BITS);
 
-			printf("fcn is %d (prev fcn is %d), max fcn is %d \n", fcn,
-					get_fcn_value((*prev)->ptr), get_max_fcn_value());
-
-			if (fcn == get_max_fcn_value()) {
-				offset += (MIC_SIZE_BYTES * 8);
-				printf("last packet in chain 0x%x \n", *curr);
-			}
-
-			int16_t start = ((*prev)->len * 8) - (*prev)->offset;
-			int16_t bits_to_copy = (*curr)->len * 8 - offset;
-			int16_t room_left = ((*prev)->len * 8) - start;
-
-			printf(
-					"starting from bit %d (offset %d) to copy %d bits of curr to prev buffer, room available: %d \n",
-					start, (*prev)->offset, bits_to_copy, room_left);
-
-			// copy (part of) curr buffer to prev
-			clear_bits((*prev)->ptr, ((*prev)->len * 8) - (*prev)->offset,
-					(*prev)->offset);
-			copy_bits((*prev)->ptr, ((*prev)->len * 8) - (*prev)->offset,
-					(*curr)->ptr, offset, (*prev)->offset);
-
-			if (room_left > bits_to_copy) {
-				// do not advance prev pointer and merge prev and curr in one buffer
-				printf(
-						"do not advance prev pointer: set offset to %d, total offset is %d, or set to %d \n",
-						start, (*prev)->offset,
-						((*prev)->len * 8) - (*prev)->offset);
-				(*prev)->offset = start + offset; // as if we would start from head
-				total_bits_shifted -= ((*curr)->len * 8); // do not include in offset, since this will be removed already
-				// remove curr from chain
-				if ((*curr)->next != NULL) {
-					(*prev)->next = (*curr)->next;
-					curr = next;
+				total_bits_shifted += (*curr)->offset;
+			} else { // normal
+				if (fcn == get_max_fcn_value()) {
+					offset += (MIC_SIZE_BYTES * 8);
+					DEBUG_PRINTF("last packet in chain 0x%x \n", *curr);
 				}
-				overflow = 1;
-				counter++;
-			} else {
-				printf("shifting %d bits left \n", offset + (*prev)->offset);
-				shift_bits_left((*curr)->ptr, (*curr)->len,
-						offset + (*prev)->offset); // shift left to remove headers and bits that were copied
-				overflow = 0;
+
+				int16_t start = ((*prev)->len * 8) - (*prev)->offset;
+				int16_t room_left = ((*prev)->len * 8) - start;
+				int16_t bits_to_copy = (*curr)->len * 8 - offset;
+
+				// copy (part of) curr buffer to prev
+				clear_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*prev)->offset);
+				copy_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*curr)->ptr, offset, (*prev)->offset);
+
+				if(room_left > bits_to_copy) {
+					// do not advance pointer and merge prev and curr in one buffer
+					(*prev)->offset = start + offset;
+					if((*curr)->next != NULL) {
+						(*prev)->next = (*curr)->next;
+						curr = next;
+					}
+					overflow = 1;
+				} else {
+					// shift bits left
+					shift_bits_left((*curr)->ptr, (*curr)->len, offset + (*prev)->offset); // shift left to remove headers and bits that were copied
+					overflow = 0;
+				}
+
+				(*curr)->offset = offset + (*prev)->offset;
 			}
 
-			(*curr)->offset = offset + (*prev)->offset;
-			total_bits_shifted += offset;
-		}
-
-		if (!overflow) { // do not advance prev if this contains parts of 3 fragments
-			if (prev != NULL) {
-				prev = &(*prev)->next; // could be that we skipped a buffer
-			} else {
-				prev = curr;
+			if(!overflow) { // do not advance prev if this contains parts of 3 fragments
+				if(prev != NULL) {
+					prev = &(*prev)->next; // could be that we skipped a buffer
+				} else {
+					prev = curr;
+				}
 			}
+
+			i++;
+
+			curr = next; // advance both pointer-pointers
+			next = &(*next)->next;
 		}
-
-		i++;
-
-		curr = next; // advance both pointer-pointers
-		next = &(*next)->next;
-	}
-
-	uint8_t j = 0;
-	curr = &(*head);
-	for (j = 0; j < i; j++) {
-		if (j >= (i - counter)) {
-			// todo
-			// clear mbuf memory
-			printf("ready to remove %d \n", (*curr)->frag_cnt);
-			printf("update length of last in chain to %d \n",
-					(total_bits_shifted
-							- get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8);
-
-			(*curr)->len = (total_bits_shifted
-					- get_padding_length((*curr)->ptr[(*curr)->len - 1])) / 8; // update length
-			(*curr)->next = NULL;
-			break;
-		}
-		curr = &(*curr)->next;
-	}
 }
 
 /**
@@ -618,20 +576,18 @@ static uint32_t get_header_length(schc_mbuf_t *mbuf) {
  * @return checksum 	the computed checksum
  *
  */
-static unsigned int mbuf_compute_mic(schc_mbuf_t *head) {
-	schc_mbuf_t *curr = head;
+static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
+	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
 
-	uint32_t total_offset = 0;
+	int i, j, k;
 	uint32_t offset = 0;
 	uint8_t first = 1;
-	int i, j, k;
 	uint16_t len;
-	uint8_t start;
-	uint8_t rest;
+	uint8_t start, rest, byte;
 	uint8_t prev_offset = 0;
 	uint32_t crc, crc_mask;
-	uint8_t byte;
+
 	crc = 0xFFFFFFFF;
 
 	while (curr != NULL) {
@@ -688,6 +644,8 @@ static unsigned int mbuf_compute_mic(schc_mbuf_t *head) {
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24),
 			((crc & 0xFF0000) >> 16), ((crc & 0xFF00) >> 8), ((crc & 0xFF)) };
 
+	memcpy((uint8_t *) conn->mic, mic, MIC_SIZE_BYTES);
+
 	DEBUG_PRINTF("compute_mic(): MIC is %02X%02X%02X%02X \n", mic[0], mic[1], mic[2],
 			mic[3]);
 
@@ -734,7 +692,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),
 			((crc & 0xFF00) >> 8), ((crc & 0xFF)) };
 
-	memcpy((uint8_t *) conn->mic, mic, 4);
+	memcpy((uint8_t *) conn->mic, mic, MIC_SIZE_BYTES);
 
 	DEBUG_PRINTF("compute_mic(): MIC for device %d is %02X%02X%02X%02X \n",
 			conn->device_id, mic[0], mic[1], mic[2], mic[3]);
@@ -1184,17 +1142,20 @@ static void send_ack(schc_fragmentation_t* conn) {
 	copy_bits(ack, 0, conn->ack.rule_id, 0, offset); // set rule id
 	copy_bits(ack, offset, conn->ack.dtag, 0, DTAG_SIZE_BITS); // set dtag
 	offset += DTAG_SIZE_BITS;
+
 	uint8_t window[1] = { conn->window << (8 - WINDOW_SIZE_BITS) }; // set window
 	copy_bits(ack, offset, window, 0, WINDOW_SIZE_BITS);
 	offset += WINDOW_SIZE_BITS;
+
 	if(conn->ack.fcn == get_max_fcn_value()) { // all-1 window
 		uint8_t c[1] = { conn->ack.mic << (8 - MIC_C_SIZE_BITS) }; // set mic c bit
 		copy_bits(ack, offset, c, 0, MIC_C_SIZE_BITS);
 		offset += MIC_C_SIZE_BITS;
 	}
+
 	if(!conn->ack.mic) { // if mic c bit is 0 (zero by default)
-		copy_bits(ack, offset, conn->bitmap, 0, (BITMAP_SIZE_BYTES * 8)); // copy the bitmap
-		offset += (BITMAP_SIZE_BYTES * 8); // todo must be encoded
+		copy_bits(ack, offset, conn->bitmap, 0, (MAX_WIND_FCN + 1)); // copy the bitmap
+		offset += (MAX_WIND_FCN + 1); // todo must be encoded
 	}
 
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
@@ -1294,6 +1255,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	rx_conn->ack.fcn = fcn;
 
 	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->frag_cnt
+
+	if (window == (!rx_conn->window)) {
+		DEBUG_PRINTF("window_cnt++ \n");
+		rx_conn->window_cnt++;
+	}
 	tail->frag_cnt = (rx_conn->frag_cnt + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 
 	if(rx_conn->RX_STATE != END_RX) {
@@ -1327,7 +1293,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
 				mbuf_print(rx_conn->head);
-				mbuf_compute_mic(rx_conn->head); // compute the mic over the mbuf chain
+				mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
 
 				if (!compare_bits(rx_conn->mic, recv_mic,
 						(MIC_SIZE_BYTES * 8))) { // mic wrong
@@ -1349,7 +1315,6 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		}
 		if (window == (!rx_conn->window)) { // next window
 			DEBUG_PRINTF("w != window");
-			rx_conn->window_cnt++;
 			if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
 				DEBUG_PRINTF("not all-x");
 				rx_conn->window = !rx_conn->window; // set expected window to next window
@@ -1567,7 +1532,6 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case WAIT_BITMAP: {
 		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
-
 
 		if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
