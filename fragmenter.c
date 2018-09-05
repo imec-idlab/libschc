@@ -944,14 +944,10 @@ static void set_local_bitmap(schc_fragmentation_t* conn) {
 
 	uint8_t frag = conn->frag_cnt - (get_max_fcn_value() * conn->window_cnt);
 
-	uint8_t value = get_max_fcn_value() - frag - 1;
-	if (frag == get_max_fcn_value()) {
-		value = get_max_fcn_value();
-	}
 
-	DEBUG_PRINTF("frag %d, value %d \n", frag, value);
+	DEBUG_PRINTF("frag %d \n", frag);
 
-	set_bits(conn->bitmap, value, 1);
+	set_bits(conn->bitmap, frag, 1);
 	print_bitmap(conn->bitmap, MAX_WIND_FCN + 1);
 }
 
