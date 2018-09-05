@@ -748,7 +748,7 @@ static void get_received_mic(uint8_t* fragment, uint8_t mic[]) {
  * @param  frag			the fcn value
  *
  */
-static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
+static void set_conn_fcn(schc_fragmentation_t* conn, uint8_t frag) {
 	uint8_t value = get_max_fcn_value() - frag - 1;
 	if(frag == get_max_fcn_value()) {
 		value = get_max_fcn_value();
@@ -1261,8 +1261,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 	rx_conn->ack.fcn = fcn;
 
-	set_conn_frag_cnt(rx_conn, fcn); // set rx_conn->fcn
-	rx_conn->frag_cnt++;
+	set_conn_fcn(rx_conn, fcn); // set rx_conn->fcn
+	rx_conn->frag_cnt = rx_conn->fcn * (rx_conn->window_cnt + 1);
 
 	if (window == (!rx_conn->window)) {
 		DEBUG_PRINTF("window_cnt++ \n");
