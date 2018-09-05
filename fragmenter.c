@@ -1568,6 +1568,11 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
 
+		DEBUG_PRINTF("resend_window");
+		print_bitmap(resend_window, (MAX_WIND_FCN + 1));
+
+		DEBUG_PRINTF("tx_conn->ack.bitmap");
+		print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
 
 		if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
@@ -1601,12 +1606,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_conn->timer_flag = 0; // stop retransmission timer
 			schc_fragment(tx_conn);
 		}
-		if (tx_conn->timer_flag) { // timer expired
-			DEBUG_PRINTF("timer expired"); // todo
-			tx_conn->attempts++;
-			set_retrans_timer(tx_conn);
-			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
-		}
+
 		else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
 				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
 			DEBUG_PRINTF("bitmap contains the missing fragments");
@@ -1614,7 +1614,14 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_conn->frag_cnt = 0;
 			tx_conn->TX_STATE = RESEND;
 			schc_fragment(tx_conn);
-		} // else if() { // mic and bitmap check succeeded
+		}
+		if (tx_conn->timer_flag) { // timer expired
+			DEBUG_PRINTF("timer expired"); // todo
+			tx_conn->attempts++;
+			set_retrans_timer(tx_conn);
+			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
+		}
+		// else if() { // mic and bitmap check succeeded
 		  //tx_conn->TX_STATE = END_TX;
 		  //}
 		break;
