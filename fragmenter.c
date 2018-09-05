@@ -984,7 +984,7 @@ static void decode_bitmap(schc_fragmentation_t* conn) {
 static uint8_t is_bitmap_full(schc_fragmentation_t* conn) {
 	uint8_t i;
 	for (i = 0; i < MAX_WIND_FCN; i++) {
-		if (!(conn->bitmap[i / 8] & 1 << (i % 8))) {
+		if (!(conn->bitmap[i / 8] & 128 >> (i % 8))) {
 			return 0;
 		}
 	}
@@ -1033,7 +1033,7 @@ static void discard_fragment() {
 static void abort_connection(schc_fragmentation_t* conn) {
 	// todo
 	DEBUG_PRINTF("abort_connection(): inactivity timer expired");
-	conn->RX_STATE = END_RX;
+	// conn->RX_STATE = END_RX;
 	return;
 }
 
@@ -1154,6 +1154,9 @@ static void send_ack(schc_fragmentation_t* conn) {
 	}
 
 	if(!conn->ack.mic) { // if mic c bit is 0 (zero by default)
+		DEBUG_PRINTF("ack.bitmap is");
+		print_bitmap(conn->bitmap, (BITMAP_SIZE_BYTES * 8));
+
 		copy_bits(ack, offset, conn->bitmap, 0, (MAX_WIND_FCN + 1)); // copy the bitmap
 		offset += (MAX_WIND_FCN + 1); // todo must be encoded
 	}
@@ -1161,6 +1164,7 @@ static void send_ack(schc_fragmentation_t* conn) {
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
 			conn->device_id, conn->frag_cnt, packet_len, offset);
+	print_bitmap(ack, offset);
 	conn->send(ack, packet_len, conn->device_id);
 }
 
@@ -1359,8 +1363,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
 				discard_fragment();
 			} else if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
-				DEBUG_PRINTF("not all-x");
 				set_local_bitmap(rx_conn);
+				DEBUG_PRINTF("not all-x, bitmap is full? %d", is_bitmap_full(rx_conn));
 				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
 				if(is_bitmap_full(rx_conn)) { // bitmap is full, i.e. the last fragment is received
 					rx_conn->ack.mic = 0; // bitmap will be sent when c = 0

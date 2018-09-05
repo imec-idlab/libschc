@@ -50,6 +50,9 @@ typedef enum {
 	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_END = 2, END_RX = 3, ABORT = 4
 } rx_state;
 
+// the maximum bitmap length
+#define BITMAP_SIZE_BYTES		4
+
 typedef struct schc_mbuf_t {
 	/* the selected slot */
 	uint8_t slot;
