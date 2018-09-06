@@ -748,13 +748,15 @@ static void get_received_mic(uint8_t* fragment, uint8_t mic[]) {
  * @param  frag			the fcn value
  *
  */
-static void set_conn_fcn(schc_fragmentation_t* conn, uint8_t frag) {
-	uint8_t value = get_max_fcn_value() - frag - 1;
+static uint8_t set_conn_fcn(schc_fragmentation_t* conn, uint8_t frag) {
+	uint8_t value = MAX_WIND_FCN - frag;
 	if(frag == get_max_fcn_value()) {
 		value = get_max_fcn_value();
 	}
 
 	conn->fcn = value;
+
+	return value;
 }
 
 /**
@@ -940,7 +942,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
  *
  */
 static void set_local_bitmap(schc_fragmentation_t* conn) {
-	uint8_t frag = conn->frag_cnt - (get_max_fcn_value() * conn->window_cnt);
+	uint8_t frag = conn->frag_cnt - (MAX_WIND_FCN * conn->window_cnt);
 	set_bits(conn->bitmap, frag, 1);
 
 	DEBUG_PRINTF(
@@ -1265,14 +1267,16 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 	rx_conn->ack.fcn = fcn;
 
-	set_conn_fcn(rx_conn, fcn); // set rx_conn->fcn
-
 	if (window == (!rx_conn->window)) {
 		rx_conn->window_cnt++;
 	}
 
-	tail->frag_cnt = (rx_conn->fcn + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
+	set_conn_fcn(rx_conn, fcn); // set rx_conn->fcn
+
+	tail->frag_cnt = (rx_conn->fcn + (MAX_WIND_FCN * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
 	rx_conn->frag_cnt = tail->frag_cnt;
+
+	DEBUG_PRINTF("tail->frag_cnt is %d, rx_conn->fcn is %d ", tail->frag_cnt, rx_conn->fcn);
 
 	if(rx_conn->RX_STATE != END_RX) {
 		set_inactivity_timer(rx_conn);
