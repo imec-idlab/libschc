@@ -940,14 +940,10 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
  *
  */
 static void set_local_bitmap(schc_fragmentation_t* conn) {
-	DEBUG_PRINTF("set_local_bitmap(): frag cnt is %d \n", conn->frag_cnt);
-
 	uint8_t frag = conn->frag_cnt - (get_max_fcn_value() * conn->window_cnt);
-
-
-	DEBUG_PRINTF("frag %d \n", frag);
-
 	set_bits(conn->bitmap, frag, 1);
+
+	DEBUG_PRINTF("set_local_bitmap(): at index %d \n", frag);
 	print_bitmap(conn->bitmap, MAX_WIND_FCN + 1);
 }
 
@@ -1546,17 +1542,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		break;
 	}
 	case WAIT_BITMAP: {
-		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
-
-		DEBUG_PRINTF("resend_window");
-		print_bitmap(resend_window, (MAX_WIND_FCN + 1));
-
-		DEBUG_PRINTF("LOCAL BITMAP");
-		print_bitmap(tx_conn->bitmap, (MAX_WIND_FCN + 1));
-
-		DEBUG_PRINTF("tx_conn->ack.bitmap");
-		print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
 
 		if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
@@ -1568,6 +1554,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				clear_bitmap(tx_conn);
 				tx_conn->window = !tx_conn->window; // change window
 				tx_conn->window_cnt++;
+				tx_conn->fcn = MAX_WIND_FCN;
 				tx_conn->TX_STATE = SEND;
 				schc_fragment(tx_conn);
 			} else if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) {
@@ -1709,27 +1696,14 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	copy_bits(tx_conn->ack.bitmap, 0, (uint8_t*) data, bit_offset,
 			(MAX_WIND_FCN + 1));
 
-	DEBUG_PRINTF("ACK BITMAP");
-	print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
-
-	DEBUG_PRINTF("BITMAP");
-	print_bitmap(tx_conn->bitmap, (MAX_WIND_FCN + 1));
-
-
 	// copy bits for retransmit bitmap to intermediate buffer
 	uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 };
 	xor_bits(resend_window, tx_conn->bitmap, tx_conn->ack.bitmap,
 			(MAX_WIND_FCN + 1)); // to indicate which fragments to retransmit
 
-	DEBUG_PRINTF("RESEND WINDOW");
-	print_bitmap(resend_window, (MAX_WIND_FCN + 1));
-
 	// copy retransmit bitmap for current window to ack.bitmap
 	memset(tx_conn->ack.bitmap, 0, BITMAP_SIZE_BYTES);
 	copy_bits(tx_conn->ack.bitmap, 0, resend_window, 0, (MAX_WIND_FCN + 1));
-
-	DEBUG_PRINTF("BITMAP");
-	print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
 
 	// continue with state machine
 	schc_fragment(tx_conn);
