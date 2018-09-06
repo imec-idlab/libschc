@@ -582,7 +582,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 
 	int i, j, k;
 	uint32_t offset = 0;
-	uint8_t first = 1;
+	uint8_t first = 1; uint8_t last = 0;
 	uint16_t len;
 	uint8_t start, rest, byte;
 	uint8_t prev_offset = 0;
@@ -602,9 +602,10 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 		j = start;
 
 		while (cont) {
-			if (prev == NULL && first) { // first
+			if (prev == NULL && first) { // first byte(s) originally contained the rule id
 				byte = (curr->ptr[0] << (8 - RULE_SIZE_BITS))
 						| (curr->ptr[1] >> RULE_SIZE_BITS);
+				prev_offset = (RULE_SIZE_BYTES * 8) - RULE_SIZE_BITS;
 				first = 0;
 			} else {
 				i += 8;
@@ -617,6 +618,8 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 						uint32_t mask = get_bit_mask(rest);
 						byte = (curr->ptr[j] << rest)
 								| (curr->next->ptr[start_next] & mask);
+					} else {
+						last = 1;
 					}
 					cont = 0;
 				} else {
@@ -626,13 +629,13 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 
 				j++;
 			}
-			if (fcn != get_max_fcn_value()) { // this has something to do with the padding added to the end??
+			if (!last) { // this has something to do with the padding added to the end??
 				crc = crc ^ byte;
 				for (k = 7; k >= 0; k--) {    // do eight times.
 					crc_mask = -(crc & 1);
 					crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 				}
-				// DEBUG_PRINTF("0x%02X ", byte);
+				DEBUG_PRINTF("0x%02X ", byte);
 			}
 		}
 
@@ -751,7 +754,7 @@ static void get_received_mic(uint8_t* fragment, uint8_t mic[]) {
 static uint8_t set_conn_fcn(schc_fragmentation_t* conn, uint8_t frag) {
 	uint8_t value = MAX_WIND_FCN - frag;
 	if(frag == get_max_fcn_value()) {
-		value = get_max_fcn_value();
+		value = conn->frag_cnt + 1;
 	}
 
 	conn->fcn = value;
@@ -948,7 +951,7 @@ static void set_local_bitmap(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF(
 			"set_local_bitmap(): for frag_cnt %d and max fcn val %d at index %d \n",
 			conn->frag_cnt, get_max_fcn_value(), frag);
-	print_bitmap(conn->bitmap, MAX_WIND_FCN + 1);
+	print_bitmap(conn->bitmap, get_max_fcn_value());
 }
 
 /**
@@ -1042,7 +1045,7 @@ static void discard_fragment() {
 static void abort_connection(schc_fragmentation_t* conn) {
 	// todo
 	DEBUG_PRINTF("abort_connection(): inactivity timer expired");
-	// conn->RX_STATE = END_RX;
+	conn->RX_STATE = END_RX;
 	return;
 }
 
@@ -1432,8 +1435,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	}
 
-	DEBUG_PRINTF("BITMAP: ");
-	print_bitmap(rx_conn->bitmap, (get_max_fcn_value() + 1));
+	DEBUG_PRINTF("\n");
 	rx_conn->fragment_input = 0;
 
 	// todo
