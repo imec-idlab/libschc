@@ -1274,8 +1274,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		rx_conn->window_cnt++;
 	}
 
-	rx_conn->frag_cnt = rx_conn->fcn * (rx_conn->window_cnt + 1);
 	tail->frag_cnt = (rx_conn->fcn + (get_max_fcn_value() * rx_conn->window_cnt)); // set frag_cnt belonging to mbuf
+	rx_conn->frag_cnt = tail->frag_cnt;
 
 	if(rx_conn->RX_STATE != END_RX) {
 		set_inactivity_timer(rx_conn);
