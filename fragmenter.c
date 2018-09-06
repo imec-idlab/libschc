@@ -1270,7 +1270,6 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	set_conn_fcn(rx_conn, fcn); // set rx_conn->fcn
 
 	if (window == (!rx_conn->window)) {
-		DEBUG_PRINTF("window_cnt++ \n");
 		rx_conn->window_cnt++;
 	}
 
