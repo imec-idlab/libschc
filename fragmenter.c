@@ -940,10 +940,12 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
  *
  */
 static void set_local_bitmap(schc_fragmentation_t* conn) {
-	uint8_t frag = conn->frag_cnt - (MAX_WIND_FCN * conn->window_cnt);
+	uint8_t frag = conn->frag_cnt - (get_max_fcn_value() * conn->window_cnt);
 	set_bits(conn->bitmap, frag, 1);
 
-	DEBUG_PRINTF("set_local_bitmap(): at index %d \n", frag);
+	DEBUG_PRINTF(
+			"set_local_bitmap(): for frag_cnt %d and max fcn val %d at index %d \n",
+			conn->frag_cnt, get_max_fcn_value(), frag);
 	print_bitmap(conn->bitmap, MAX_WIND_FCN + 1);
 }
 
