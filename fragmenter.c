@@ -265,7 +265,8 @@ static uint16_t get_max_fcn_value() {
 	uint8_t fcn[2] = { 0 };
 	set_bits(fcn, 0, FCN_SIZE_BITS);
 
-	return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
+	// return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
+	return MAX_WIND_FCN;
 }
 
 /**
