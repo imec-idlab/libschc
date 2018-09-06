@@ -1612,7 +1612,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			DEBUG_PRINTF("no more missing fragments to send");
 			clear_bitmap(tx_conn);
 			tx_conn->TX_STATE = WAIT_BITMAP;
-			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN + 1);
+			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN);
 			set_retrans_timer(tx_conn);
 		} else {
 			DEBUG_PRINTF("schc_fragment(): sending missing fragments for bitmap: ");
