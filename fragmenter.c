@@ -256,7 +256,7 @@ static uint16_t get_fcn_value(uint8_t* fragment) {
 /**
  * get the ALL-1 FCN value
  *
- * @return FCN			the FCN as indicated by the fragment
+ * @return FCN			the all-1 fcn value
  *
  * @note   only FCN values up to 16 bits are currently supported
  *
@@ -265,8 +265,7 @@ static uint16_t get_max_fcn_value() {
 	uint8_t fcn[2] = { 0 };
 	set_bits(fcn, 0, FCN_SIZE_BITS);
 
-	// return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
-	return MAX_WIND_FCN;
+	return (uint16_t) get_bits(fcn, 0, FCN_SIZE_BITS);
 }
 
 /**
@@ -941,7 +940,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
  *
  */
 static void set_local_bitmap(schc_fragmentation_t* conn) {
-	uint8_t frag = conn->frag_cnt - (get_max_fcn_value() * conn->window_cnt);
+	uint8_t frag = conn->frag_cnt - (MAX_WIND_FCN * conn->window_cnt);
 	set_bits(conn->bitmap, frag, 1);
 
 	DEBUG_PRINTF("set_local_bitmap(): at index %d \n", frag);
