@@ -1166,9 +1166,6 @@ static void send_ack(schc_fragmentation_t* conn) {
 	}
 
 	if(!conn->ack.mic) { // if mic c bit is 0 (zero by default)
-		DEBUG_PRINTF("ack.bitmap is");
-		print_bitmap(conn->bitmap, (BITMAP_SIZE_BYTES * 8));
-
 		copy_bits(ack, offset, conn->bitmap, 0, (MAX_WIND_FCN + 1)); // copy the bitmap
 		offset += (MAX_WIND_FCN + 1); // todo must be encoded
 	}
@@ -1176,7 +1173,7 @@ static void send_ack(schc_fragmentation_t* conn) {
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b)",
 			conn->device_id, conn->frag_cnt, packet_len, offset);
-	print_bitmap(ack, offset);
+
 	conn->send(ack, packet_len, conn->device_id);
 }
 
