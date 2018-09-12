@@ -318,7 +318,7 @@ static void mbuf_print(schc_mbuf_t *head) {
 	uint8_t i = 0; uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		// DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
 		// DEBUG_PRINTF("0x%X", curr);
 		for (j = 0; j < curr->len; j++) {
 			printf("0x%02X ", curr->ptr[j]);
@@ -770,7 +770,7 @@ static void get_received_mic(uint8_t* fragment, uint8_t mic[]) {
 static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
 	uint8_t value = MAX_WIND_FCN - frag;
 	if(frag == get_max_fcn_value()) {
-		value = conn->frag_cnt + 1;
+		value = (conn->window_cnt + 1) * get_max_fcn_value();
 	} else {
 		value += (conn->window_cnt * (MAX_WIND_FCN + 1));
 	}
@@ -969,12 +969,12 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 static void set_local_bitmap(schc_fragmentation_t* conn) {
 	int8_t frag = (((MAX_WIND_FCN + 1) - conn->fcn) - 1);
 	if(frag < 0) {
-		frag = MAX_WIND_FCN + 1;
+		frag = MAX_WIND_FCN;
 	}
 	set_bits(conn->bitmap, frag, 1);
 
 	DEBUG_PRINTF("set_local_bitmap(): for fcn %d at index %d \n", conn->fcn, frag);
-	print_bitmap(conn->bitmap, get_max_fcn_value());
+	print_bitmap(conn->bitmap, MAX_WIND_FCN + 1);
 }
 
 /**
@@ -1174,6 +1174,7 @@ static void send_fragment(schc_fragmentation_t* conn) {
 			"send_fragment(): sending fragment %d with length %d to device %d",
 			conn->frag_cnt, packet_len, conn->device_id);
 	conn->send(fragmentation_buffer, packet_len, conn->device_id);
+
 }
 
 /**
@@ -1202,7 +1203,6 @@ static void send_ack(schc_fragmentation_t* conn) {
 	}
 
 	if(!conn->ack.mic) { // if mic c bit is 0 (zero by default)
-
 		DEBUG_PRINTF("send_ack(): sending bitmap");
 		copy_bits(ack, offset, conn->bitmap, 0, MAX_WIND_FCN + 1); // copy the bitmap
 		offset += MAX_WIND_FCN + 1; // todo must be encoded
@@ -1556,6 +1556,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case SEND: {
 		DEBUG_PRINTF("SEND");
 		tx_conn->frag_cnt++;
+		DEBUG_PRINTF("with FCN %d, window count %d, frag count %d", tx_conn->fcn , tx_conn->window_cnt, tx_conn->frag_cnt);
 		if(has_no_more_fragments(tx_conn)) {
 			DEBUG_PRINTF("schc_fragment(): all-1 window");
 			tx_conn->fcn = (pow(2, FCN_SIZE_BITS) - 1); // all 1-window
@@ -1643,12 +1644,13 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case RESEND: {
 		DEBUG_PRINTF("RESEND");
 		// get the next fragment offset; set frag_cnt
-		tx_conn->frag_cnt = get_next_fragment_from_bitmap(tx_conn); // send_fragment() uses frag_cnt to transmit a particular fragment
+		tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt) + get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
 
 		DEBUG_PRINTF("schc_fragment(): sending missing fragments for bitmap: ");
 		print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
 		tx_conn->fcn = ((MAX_WIND_FCN + 1) * (tx_conn->window_cnt + 1))
 				- tx_conn->frag_cnt;
+		DEBUG_PRINTF("with FCN %d, window count %d, frag count %d", tx_conn->fcn , tx_conn->window_cnt, tx_conn->frag_cnt);
 		if(!get_next_fragment_from_bitmap(tx_conn)) { // check if this was the last fragment
 			DEBUG_PRINTF("schc_fragment(): last missing fragment to send");
 			tx_conn->TX_STATE = WAIT_BITMAP;
