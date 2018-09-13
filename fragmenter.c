@@ -1586,6 +1586,13 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
 
+		if (tx_conn->timer_flag) { // timer expired
+			DEBUG_PRINTF("timer expired"); // todo
+			tx_conn->attempts++;
+			set_retrans_timer(tx_conn);
+			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
+			break;
+		}
 		if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
 			DEBUG_PRINTF("tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
 			tx_conn->TX_STATE = ERROR;
@@ -1631,13 +1638,6 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_conn->timer_flag = 0; // stop retransmission timer
 			tx_conn->TX_STATE = RESEND;
 			schc_fragment(tx_conn);
-			break;
-		}
-		if (tx_conn->timer_flag) { // timer expired
-			DEBUG_PRINTF("timer expired"); // todo
-			tx_conn->attempts++;
-			set_retrans_timer(tx_conn);
-			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
 			break;
 		}
 		break;
