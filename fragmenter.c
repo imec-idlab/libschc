@@ -1175,7 +1175,6 @@ static void send_fragment(schc_fragmentation_t* conn) {
 			"send_fragment(): sending fragment %d with length %d to device %d",
 			conn->frag_cnt, packet_len, conn->device_id);
 	conn->send(fragmentation_buffer, packet_len, conn->device_id);
-
 }
 
 /**
@@ -1601,11 +1600,11 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_conn->TX_STATE = WAIT_BITMAP;
 			break;
 		}
-		if ((tx_conn->ack.window[0] == tx_conn->window)
-				&& compare_bits(resend_window, tx_conn->ack.bitmap,
-						(MAX_WIND_FCN + 1))) {
-			DEBUG_PRINTF("w == w && bitmap = local bitmap");
-			if (!has_no_more_fragments(tx_conn)) { // no missing fragments & more fragments
+		if (tx_conn->ack.window[0] == tx_conn->window) {
+			DEBUG_PRINTF("w == w");
+			if (!has_no_more_fragments(tx_conn)
+					&& compare_bits(resend_window, tx_conn->ack.bitmap,
+							(MAX_WIND_FCN + 1))) { // no missing fragments & more fragments
 				DEBUG_PRINTF("no missing fragments & more fragments to come");
 				tx_conn->timer_flag = 0; // stop retransmission timer
 				clear_bitmap(tx_conn);
