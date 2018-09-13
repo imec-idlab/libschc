@@ -1605,7 +1605,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
 			DEBUG_PRINTF("bitmap contains the missing fragments");
 			tx_conn->attempts++;
-			tx_conn->frag_cnt = 0;
+			tx_conn->frag_cnt = (tx_conn->window_cnt) * (MAX_WIND_FCN + 1);
 			tx_conn->timer_flag = 0; // stop retransmission timer
 			tx_conn->TX_STATE = RESEND;
 			schc_fragment(tx_conn);
