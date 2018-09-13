@@ -1620,6 +1620,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				tx_conn->timer_flag = 0;
 				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn);
+				break;
 			}
 		}
 		if (!compare_bits(resend_window, tx_conn->ack.bitmap,
@@ -1655,7 +1656,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			DEBUG_PRINTF("schc_fragment(): last missing fragment to send");
 			tx_conn->TX_STATE = WAIT_BITMAP;
 			send_fragment(tx_conn); // retransmit the fragment
-			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN);
+			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN + 1);
 			set_retrans_timer(tx_conn);
 		} else {
 			tx_conn->TX_STATE = RESEND;
@@ -1739,6 +1740,9 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	bit_offset += WINDOW_SIZE_BITS;
 
 	uint8_t bitmap_len = (MAX_WIND_FCN + 1);
+
+	DEBUG_PRINTF("has no more fragments %d, frag count %d",
+			has_no_more_fragments(tx_conn), tx_conn->frag_cnt);
 
 	if(has_no_more_fragments(tx_conn)) { // all-1 window
 		uint8_t mic[1] = { 0 };
