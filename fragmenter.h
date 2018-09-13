@@ -130,7 +130,7 @@ typedef struct schc_fragmentation_t {
 	/* indicates whether a timer has expired */
 	uint8_t timer_flag;
 	/* indicates if a fragment is received or this is a callback */
-	uint8_t fragment_input;
+	uint8_t input;
 	/* the last received ack */
 	schc_fragmentation_ack_t ack;
 	/* the start of the mbuf chain */

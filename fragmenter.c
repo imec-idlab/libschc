@@ -1370,7 +1370,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_NEXT_WINDOW: {
 		DEBUG_PRINTF("WAIT NEXT WINDOW");
-		if(rx_conn->timer_flag && !rx_conn->fragment_input) { // inactivity timer expired
+		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
 			abort_connection(rx_conn); break;
 		}
 		if (window == (!rx_conn->window)) { // next window
@@ -1435,7 +1435,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_END: {
 		DEBUG_PRINTF("WAIT END");
-		if(rx_conn->timer_flag && !rx_conn->fragment_input) { // inactivity timer expired
+		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
 			abort_connection(rx_conn); break;
 		}
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
@@ -1486,7 +1486,10 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		break;
 	}
 	}
+
+	rx_conn->input = 0;
 	DEBUG_PRINTF("\n");
+
 	return 0;
 }
 
@@ -1511,7 +1514,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_rx_conns[i].send = send;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
-		schc_rx_conns[i].fragment_input = 0;
+		schc_rx_conns[i].input = 0;
 	}
 
 	// initializes the mbuf pool
@@ -1571,8 +1574,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			send_fragment(tx_conn);
 			tx_conn->fcn = MAX_WIND_FCN; // reset the FCN
 			set_retrans_timer(tx_conn);
-		} // else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
-			else if(!has_no_more_fragments(tx_conn)) { // normal fragment
+		} else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
 			DEBUG_PRINTF("schc_fragment(): normal fragment");
 			tx_conn->TX_STATE = SEND;
 			send_fragment(tx_conn);
@@ -1586,8 +1588,8 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		DEBUG_PRINTF("WAIT_BITMAP");
 		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
 
-		if (tx_conn->timer_flag) { // timer expired
-			DEBUG_PRINTF("timer expired"); // todo
+		if (tx_conn->timer_flag && !tx_conn->input) { // timer expired
+			DEBUG_PRINTF("retransmission timer expired");
 			tx_conn->attempts++;
 			set_retrans_timer(tx_conn);
 			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
@@ -1645,7 +1647,8 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case RESEND: {
 		DEBUG_PRINTF("RESEND");
 		// get the next fragment offset; set frag_cnt
-		tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt) + get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
+		tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt)
+				+ get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
 
 		DEBUG_PRINTF("schc_fragment(): sending missing fragments for bitmap: ");
 		print_bitmap(tx_conn->ack.bitmap, (MAX_WIND_FCN + 1));
@@ -1679,6 +1682,8 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		break;
 	}
 	}
+
+	tx_conn->input = 0;
 
 	return 0;
 }
@@ -1720,13 +1725,6 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint32_t device_id) {
 	DEBUG_PRINTF("schc_ack_input(): received ack");
 
-	int i;
-	for(i = 0; i < len; i++) {
-		printf("%02X ", data[i]);
-	}
-
-	DEBUG_PRINTF("");
-
 	uint8_t bit_offset = RULE_SIZE_BITS;
 
 	memset(tx_conn->ack.dtag, 0, 1); // clear dtag from prev reception
@@ -1741,8 +1739,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 
 	uint8_t bitmap_len = (MAX_WIND_FCN + 1);
 
-	DEBUG_PRINTF("has no more fragments %d, frag count %d",
-			has_no_more_fragments(tx_conn), tx_conn->frag_cnt);
+	tx_conn->input = 1;
 
 	if(has_no_more_fragments(tx_conn)) { // all-1 window
 		uint8_t mic[1] = { 0 };
@@ -1815,7 +1812,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 
-	conn->fragment_input = 1; // set fragment input to 1, to distinguish between inactivity callbacks
+	conn->input = 1; // set fragment input to 1, to distinguish between inactivity callbacks
 
 	return conn;
 }
