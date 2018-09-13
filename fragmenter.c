@@ -1035,10 +1035,11 @@ static uint8_t is_bitmap_full(schc_fragmentation_t* conn) {
  * 			0			no more fragments to retransmit
  *
  */
-static uint8_t get_next_fragment_from_bitmap(schc_fragmentation_t* conn) {
-	uint32_t i;
+static uint16_t get_next_fragment_from_bitmap(schc_fragmentation_t* conn) {
+	uint16_t i;
 
-	for (i = conn->frag_cnt; i <= MAX_WIND_FCN; i++) {
+	uint8_t start = (conn->frag_cnt) - ((MAX_WIND_FCN + 1)* conn->window_cnt);
+	for (i = start; i <= MAX_WIND_FCN; i++) {
 		uint8_t bit = conn->ack.bitmap[i / 8] & 128 >> (i % 8);
 		if(bit) {
 			return (i + 1);
