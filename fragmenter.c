@@ -1614,14 +1614,15 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				tx_conn->frag_cnt = (tx_conn->window_cnt) * (MAX_WIND_FCN + 1);
 				tx_conn->TX_STATE = SEND;
 				schc_fragment(tx_conn);
-			} else if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // mic and bitmap check succeeded
+			}
+			if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // mic and bitmap check succeeded
 				DEBUG_PRINTF("no more fragments, MIC ok");
 				tx_conn->timer_flag = 0;
 				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn);
 			}
-			break;
-		} else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
+		}
+		if (!compare_bits(resend_window, tx_conn->ack.bitmap,
 				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
 			DEBUG_PRINTF("bitmap contains the missing fragments");
 			tx_conn->attempts++;
