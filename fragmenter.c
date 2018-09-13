@@ -1601,16 +1601,6 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_conn->TX_STATE = WAIT_BITMAP;
 			break;
 		}
-		if (!compare_bits(resend_window, tx_conn->ack.bitmap,
-				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
-			DEBUG_PRINTF("bitmap contains the missing fragments");
-			tx_conn->attempts++;
-			tx_conn->frag_cnt = (tx_conn->window_cnt) * (MAX_WIND_FCN + 1);
-			tx_conn->timer_flag = 0; // stop retransmission timer
-			tx_conn->TX_STATE = RESEND;
-			schc_fragment(tx_conn);
-			break;
-		}
 		if ((tx_conn->ack.window[0] == tx_conn->window)
 				&& compare_bits(resend_window, tx_conn->ack.bitmap,
 						(MAX_WIND_FCN + 1))) {
@@ -1631,6 +1621,15 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn);
 			}
+			break;
+		} else if (!compare_bits(resend_window, tx_conn->ack.bitmap,
+				(MAX_WIND_FCN + 1))) { //ack.bitmap contains the missing fragments
+			DEBUG_PRINTF("bitmap contains the missing fragments");
+			tx_conn->attempts++;
+			tx_conn->frag_cnt = (tx_conn->window_cnt) * (MAX_WIND_FCN + 1);
+			tx_conn->timer_flag = 0; // stop retransmission timer
+			tx_conn->TX_STATE = RESEND;
+			schc_fragment(tx_conn);
 			break;
 		}
 		if (tx_conn->timer_flag) { // timer expired
