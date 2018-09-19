@@ -1481,6 +1481,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		rx_conn->window_cnt++;
 	}
 
+	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
+
 	set_inactivity_timer(rx_conn);
 
 	switch (rx_conn->RX_STATE) {
@@ -2033,8 +2035,6 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	memcpy(fragment, data, len);
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
-	schc_mbuf_t* tail = get_mbuf_tail(conn->head);
-	tail->frag_cnt = conn->frag_cnt;
 
 	mbuf_print(conn->head);
 
