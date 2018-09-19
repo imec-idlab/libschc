@@ -1483,7 +1483,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 
 	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
 
-	set_inactivity_timer(rx_conn);
+	if(rx_conn->input) { // set inactivity timer if the loop was triggered by a fragment input
+		set_inactivity_timer(rx_conn);
+	}
 
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
@@ -1495,24 +1497,25 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			break;
 		}
 		else if(window == rx_conn->window) { // expected window
-			DEBUG_PRINTF("w == window"); uint8_t is_empty_all_x = 0;
-			if(!empty_all_0(tail) || !empty_all_1(tail)) {
-				set_local_bitmap(rx_conn); // indicate that we received a fragment
-			} else {
-				is_empty_all_x = 1;
-				discard_fragment(rx_conn);
-			}
+			DEBUG_PRINTF("w == window");
 			if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
 				DEBUG_PRINTF("not all-x");
+				set_local_bitmap(rx_conn);
 				rx_conn->RX_STATE = RECV_WINDOW;
 			} else if(fcn == 0) { // all-0
 				DEBUG_PRINTF("all-0");
+				if(!empty_all_0(tail)){
+					set_local_bitmap(rx_conn); // indicate that we received a fragment
+				} else {
+					discard_fragment(rx_conn);
+				}
 				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
 				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 				send_ack(rx_conn); // send local bitmap
 			} else if(fcn == get_max_fcn_value()) { // all-1
-				if(!is_empty_all_x) {
+				if(!empty_all_1(tail)) {
 					DEBUG_PRINTF("all-1");
+					set_local_bitmap(rx_conn);
 					mbuf_sort(&rx_conn->head); // sort the mbuf chain
 
 					tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
@@ -1530,9 +1533,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 						rx_conn->RX_STATE = END_RX;
 						rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
 						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-						mbuf_format(&rx_conn->head); // remove headers to pass to application
-						return 1; // end reception
+						send_ack(rx_conn);
+						return 2; // stay alive to answer lost acks
 					}
+				} else {
+					discard_fragment(rx_conn);
 				}
 				send_ack(rx_conn);
 			}
@@ -1584,8 +1589,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 						rx_conn->RX_STATE = END_RX;
 						rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
 						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-						mbuf_format(&rx_conn->head); // remove headers to pass to application
-						return 1; // end reception
+						send_ack(rx_conn);
+						return 2; // stay alive to answer lost acks
 					}
 					set_local_bitmap(rx_conn);
 				}
@@ -1653,15 +1658,21 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
 				set_local_bitmap(rx_conn);
 				send_ack(rx_conn);
-				mbuf_sort(&rx_conn->head); // sort the mbuf chain
-				mbuf_format(&rx_conn->head); // remove headers to pass to application
-				return 1; // end reception
+				return 2; // stay alive to answer lost acks
 			}
 		}
 
 	} break;
 	case END_RX: {
 		DEBUG_PRINTF("END RX");
+		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+			// end the transmission
+			mbuf_sort(&rx_conn->head); // sort the mbuf chain
+			mbuf_format(&rx_conn->head); // remove headers to pass to application
+			// todo
+			// call function to forward to ipv6 network
+			return 1; // end reception
+		}
 		if (fcn != get_max_fcn_value()) { // not all-1
 			DEBUG_PRINTF("not all-x");
 			discard_fragment(rx_conn);
@@ -1675,7 +1686,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		break;
 	}
 	}
-	DEBUG_PRINTF("\n");
+
 	return 0;
 }
 
@@ -2031,10 +2042,15 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 #endif
 
 	memcpy(fragment, data, len);
+	DEBUG_PRINTF("fragment length %d", len);
+	for(int i = 0; i < len; i++) {
+		printf("%02x ", data[i]);
+	}
+	DEBUG_PRINTF("\n");
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
 
-	mbuf_print(conn->head);
+	// mbuf_print(conn->head);
 
 	if(err != SCHC_SUCCESS) {
 		return NULL;
