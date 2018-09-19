@@ -55,7 +55,7 @@ typedef enum {
 
 typedef struct schc_mbuf_t {
 	/* the selected slot */
-	uint8_t slot;
+	uint32_t slot;
 	/* start of memory block */
 	uint8_t* ptr;
 	/* length of the fragment */
@@ -141,6 +141,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id));
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
+void schc_reset(schc_fragmentation_t* conn);
 
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len,
 		schc_fragmentation_t* rx_conn, uint32_t device_id);
@@ -149,6 +150,9 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		uint32_t device_id);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
+
+uint16_t get_mbuf_len(schc_mbuf_t *head);
+void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr);
 
 #ifdef __cplusplus
 }
