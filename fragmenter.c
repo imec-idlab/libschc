@@ -345,7 +345,7 @@ static void mbuf_print(schc_mbuf_t *head) {
  */
 static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 	// scroll to next free mbuf slot
-	uint16_t i;
+	uint32_t i;
 	for(i = 0; i < SCHC_CONF_MBUF_POOL_LEN; i++) {
 		if(MBUF_POOL[i].len == 0 && MBUF_POOL[i].ptr == NULL) {
 			break;
@@ -386,24 +386,6 @@ static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 	return SCHC_SUCCESS;
 }
 
-
-/**
- * returns the last chain in the mbuf linked list
- *
- * @param  head			the head of the list
- *
- * @return tail			the last mbuf in the linked list
- */
-static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
-	schc_mbuf_t *curr = head;
-
-	while (curr->next != NULL) {
-		curr = curr->next;
-	}
-
-	return curr;
-}
-
 /**
  * returns the last chain in the mbuf linked list
  *
@@ -425,15 +407,140 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 	return curr;
 }
 
-static void mbuf_delete(schc_mbuf_t *mbuf) {
-	DEBUG_PRINTF("mbuf_delete(): delete fragment");
-	// todo
-	// delete fragment
+/**
+ * delete a mbuf from the chain
+ *
+ * @param  head			the head of the list
+ * @param  mbuf			the mbuf to delete
+ *
+ */
+static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
+	uint32_t slot = 0;
+
+	slot = mbuf->slot;
+	schc_mbuf_t *prev = NULL;
+
 	if(mbuf->next != NULL) {
-		// schc_mbuf_t *prev = get_prev_mbuf(mbuf);
-		DEBUG_PRINTF("mbuf_delete(): chain next to prev");
+		if(mbuf == *head) {
+			DEBUG_PRINTF("mbuf_delete(): set head");
+			(*head) = mbuf->next;
+		}
+		if(prev != NULL) {
+			DEBUG_PRINTF("mbuf_delete(): chain next to prev");
+			prev = get_prev_mbuf(*head, mbuf);
+			prev->next = mbuf->next;
+		}
 	}
+
+	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool", slot);
+#if DYNAMIC_MEMORY
+	free(mbuf->ptr);
+#else
+	memset(mbuf->ptr, 0, mbuf->len);
+#endif
+
 	// clear slot in mbuf pool
+	MBUF_POOL[slot].next = NULL;
+	MBUF_POOL[slot].frag_cnt = 0;
+	MBUF_POOL[slot].len = 0;
+	MBUF_POOL[slot].ptr = NULL;
+}
+
+/**
+ * check if an mbuf with the same fragment number already exists
+ * and overwrite if so
+ *
+ * @param  	head			the head of the list
+ * @param  	frag			the fragment number to overwrite
+ * @param	mbuf			the fragment to overwrite with
+ *
+ * @return 	0				no matching fragment found
+ * 			1				overwrote a matching packet
+ */
+static uint8_t mbuf_overwrite(schc_mbuf_t **head, uint16_t frag, schc_mbuf_t* mbuf) {
+	schc_mbuf_t *curr = *head;
+
+	while (curr->next != NULL) {
+		if(curr->frag_cnt == frag) {
+			mbuf_delete(head, curr);
+			return 1;
+		}
+		curr = curr->next;
+	}
+
+	return 0;
+}
+
+/**
+ * returns the total length of the mbuf
+ *
+ * @param  head			the head of the list
+ *
+ * @return len			the total length of the fragment
+ */
+uint16_t get_mbuf_len(schc_mbuf_t *head) {
+	schc_mbuf_t *curr = head; uint32_t total_len = 0; uint32_t total_offset = 0;
+
+	while (curr != NULL) {
+		total_len += (curr->len * 8);
+		total_offset += curr->offset;
+
+		curr = curr->next;
+	}
+
+	return ((total_len - total_offset) / 8);
+}
+
+/**
+ * returns the last chain in the mbuf linked list
+ *
+ * @param  head			the head of the list
+ *
+ * @return tail			the last mbuf in the linked list
+ */
+static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
+	schc_mbuf_t *curr = head;
+
+	while (curr->next != NULL) {
+		curr = curr->next;
+	}
+
+	return curr;
+}
+
+/**
+ * copy the byte alligned contents of the mbuf chain to
+ * the passed pointer
+ *
+ * @param  head			the head of the list
+ * @param  ptr			the pointer to copy the contents to
+ */
+void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr) {
+	schc_mbuf_t *curr = head; uint16_t pos = 0;
+
+	while (curr != NULL) {
+		memcpy((uint8_t*) (ptr + pos), (uint8_t*) (curr->ptr + pos), curr->len);
+		pos += curr->len;
+
+		curr = curr->next;
+	}
+}
+
+
+/**
+ * delete all fragments chained in an mbuf
+ *
+ * @param  head			the head of the list
+ */
+void mbuf_clean(schc_mbuf_t **head) {
+	schc_mbuf_t *curr = *head;
+	schc_mbuf_t *temp = NULL;
+
+	while (curr != NULL) {
+		temp = curr->next;
+		mbuf_delete(head, curr);
+		curr = temp;
+	}
 }
 
 
@@ -517,7 +624,6 @@ static void mbuf_format(schc_mbuf_t **head) {
 			} else { // normal
 				if (fcn == get_max_fcn_value()) {
 					offset += (MIC_SIZE_BYTES * 8);
-					DEBUG_PRINTF("last packet in chain 0x%x \n", *curr);
 				}
 
 				int16_t start = ((*prev)->len * 8) - (*prev)->offset;
@@ -542,7 +648,7 @@ static void mbuf_format(schc_mbuf_t **head) {
 					overflow = 0;
 				}
 
-				(*curr)->offset = offset + (*prev)->offset;
+				(*curr)->offset = offset;
 			}
 
 			if(!overflow) { // do not advance prev if this contains parts of 3 fragments
@@ -658,16 +764,17 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 				j++;
 			}
 
-			if (!last) { // hack in order not to include padding
+			if (!last) { // todo
+				// hack in order not to include padding
 				crc = crc ^ byte;
 				for (k = 7; k >= 0; k--) {    // do eight times.
 					crc_mask = -(crc & 1);
 					crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 				}
-				printf("0x%02X ", byte);
+				// printf("0x%02X ", byte);
 			}
 		}
-		printf("\n");
+		// printf("\n");
 
 		prev = curr;
 		curr = curr->next;
@@ -852,7 +959,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
  * @param conn 			a pointer to the connection to reset
  *
  */
-static void reset_connection(schc_fragmentation_t* conn) {
+void schc_reset(schc_fragmentation_t* conn) {
 	/* reset connection variables */
 	conn->mtu = 0;
 	conn->fcn = 0;
@@ -863,7 +970,6 @@ static void reset_connection(schc_fragmentation_t* conn) {
 	conn->dtag = 0;
 	conn->window = 0;
 	conn->window_cnt = 0;
-	conn->dc = 0;
 	conn->frag_cnt = 0;
 	conn->attempts = 0;
 	conn->timer_flag = 0;
@@ -871,8 +977,6 @@ static void reset_connection(schc_fragmentation_t* conn) {
 	memset(conn->mic, 0, MIC_SIZE_BYTES);
 	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES);
 	/* reset function callbacks */
-	conn->send = NULL;
-	conn->post_timer_task = NULL;
 	conn->TX_STATE = INIT_TX;
 	conn->RX_STATE = RECV_WINDOW;
 	/* reset ack structure */
@@ -880,6 +984,9 @@ static void reset_connection(schc_fragmentation_t* conn) {
 	memset(conn->ack.window, 0, 1);
 	memset(conn->ack.dtag, 0, 1);
 	conn->ack.mic = 0;
+	if(conn->head != NULL ){
+		mbuf_clean(&conn->head);
+	}
 	conn->head = NULL;
 }
 
@@ -1057,9 +1164,9 @@ static uint16_t get_next_fragment_from_bitmap(schc_fragmentation_t* conn) {
  *
  */
 static void discard_fragment(schc_fragmentation_t* conn) {
-	// todo
 	DEBUG_PRINTF("discard_fragment():");
 	schc_mbuf_t* tail = get_mbuf_tail(conn->head); // get last received fragment
+	mbuf_delete(&conn->head, tail);
 	return;
 }
 
@@ -1112,6 +1219,47 @@ static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_inactivity_timer(): for %d ms", conn->dc);
 	conn->post_timer_task(&schc_reassemble, conn->device_id, conn->dc, conn);
+}
+
+/**
+ * checks if the fragment inside the mbuf is
+ * an all-0 empty
+ *
+ * @param mbuf 			a pointer to the mbuf
+ *
+ * @return 	0			this is not an empty all-0
+ * 			1			this is an empty all-0
+ *
+ */
+static uint8_t empty_all_0(schc_mbuf_t* mbuf) {
+	uint8_t offset = RULE_SIZE_BITS + FCN_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS;
+	uint8_t len = (mbuf->len * 8);
+
+	if((len - offset) > 8) { // if number of bits is larger than 8, there was payload
+		return 0;
+	}
+	return 1;
+}
+
+/**
+ * checks if the fragment inside the mbuf is
+ * an all-1 empty
+ *
+ * @param mbuf 			a pointer to the mbuf
+ *
+ * @return 	0			this is not an empty all-1
+ * 			1			this is an empty all-1
+ *
+ */
+static uint8_t empty_all_1(schc_mbuf_t* mbuf) {
+	uint8_t offset = RULE_SIZE_BITS + FCN_SIZE_BITS + DTAG_SIZE_BITS
+			+ WINDOW_SIZE_BITS + (MIC_SIZE_BYTES * 8);
+	uint8_t len = (mbuf->len * 8);
+
+	if ((len - offset) > 8) { // if number of bits is larger than 8, there was payload
+		return 0;
+	}
+	return 1;
 }
 
 /**
@@ -1333,8 +1481,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		rx_conn->window_cnt++;
 	}
 
-	set_conn_frag_cnt(rx_conn, fcn);
-	tail->frag_cnt = rx_conn->frag_cnt; // set frag_cnt belonging to mbuf
+	set_inactivity_timer(rx_conn);
 
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
@@ -1346,8 +1493,13 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			break;
 		}
 		else if(window == rx_conn->window) { // expected window
-			DEBUG_PRINTF("w == window");
-			set_local_bitmap(rx_conn); // indicate that we received a fragment
+			DEBUG_PRINTF("w == window"); uint8_t is_empty_all_x = 0;
+			if(!empty_all_0(tail) || !empty_all_1(tail)) {
+				set_local_bitmap(rx_conn); // indicate that we received a fragment
+			} else {
+				is_empty_all_x = 1;
+				discard_fragment(rx_conn);
+			}
 			if(fcn != 0 && fcn != get_max_fcn_value()) { // not all-x
 				DEBUG_PRINTF("not all-x");
 				rx_conn->RX_STATE = RECV_WINDOW;
@@ -1357,25 +1509,28 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 				send_ack(rx_conn); // send local bitmap
 			} else if(fcn == get_max_fcn_value()) { // all-1
-				DEBUG_PRINTF("all-1");
-				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				if(!is_empty_all_x) {
+					DEBUG_PRINTF("all-1");
+					mbuf_sort(&rx_conn->head); // sort the mbuf chain
 
-				tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
-				get_received_mic(tail->ptr, recv_mic);
-				DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
+					tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
+					get_received_mic(tail->ptr, recv_mic);
+					DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
 
-				mbuf_print(rx_conn->head);
-				mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+					mbuf_print(rx_conn->head);
+					mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
 
-				if (!compare_bits(rx_conn->mic, recv_mic,
-						(MIC_SIZE_BYTES * 8))) { // mic wrong
-					rx_conn->RX_STATE = WAIT_END;
-					rx_conn->ack.mic = 0;
-				} else { // mic right
-					rx_conn->RX_STATE = END_RX;
-					rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
-					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-					schc_reassemble(rx_conn);
+					if (!compare_bits(rx_conn->mic, recv_mic,
+							(MIC_SIZE_BYTES * 8))) { // mic wrong
+						rx_conn->RX_STATE = WAIT_END;
+						rx_conn->ack.mic = 0;
+					} else { // mic right
+						rx_conn->RX_STATE = END_RX;
+						rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
+						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+						mbuf_format(&rx_conn->head); // remove headers to pass to application
+						return 1; // end reception
+					}
 				}
 				send_ack(rx_conn);
 			}
@@ -1397,39 +1552,52 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->RX_STATE = RECV_WINDOW; // return to receiving window
 			} else if(fcn == 0) { // all-0
 				DEBUG_PRINTF("all-0");
-				rx_conn->window = !rx_conn->window;
-				clear_bitmap(rx_conn);
-				set_local_bitmap(rx_conn);
+				if(empty_all_0(tail)) {
+					discard_fragment(rx_conn); // remove last fragment (empty)
+				} else {
+					rx_conn->window = !rx_conn->window;
+					clear_bitmap(rx_conn);
+					set_local_bitmap(rx_conn);
+				}
 				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 				send_ack(rx_conn);
 			} else if(fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
-				mbuf_sort(&rx_conn->head); // sort the mbuf chain
-				tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
-				get_received_mic(tail->ptr, recv_mic);
-				DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
+				if(empty_all_1(tail)) {
+					discard_fragment(rx_conn); // remove last fragment (empty)
+				} else {
+					mbuf_sort(&rx_conn->head); // sort the mbuf chain
+					tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
+					get_received_mic(tail->ptr, recv_mic);
+					DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
 
-				mbuf_print(rx_conn->head);
-				mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+					mbuf_print(rx_conn->head);
+					mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
 
-				if (!compare_bits(rx_conn->mic, recv_mic,
-						(MIC_SIZE_BYTES * 8))) { // mic wrong
-					rx_conn->RX_STATE = WAIT_END;
-					rx_conn->ack.mic = 0;
-				} else { // mic right
-					rx_conn->RX_STATE = END_RX;
-					rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
-					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-					schc_reassemble(rx_conn);
+					if (!compare_bits(rx_conn->mic, recv_mic,
+							(MIC_SIZE_BYTES * 8))) { // mic wrong
+						rx_conn->RX_STATE = WAIT_END;
+						rx_conn->ack.mic = 0;
+					} else { // mic right
+						rx_conn->RX_STATE = END_RX;
+						rx_conn->ack.fcn = get_max_fcn_value(); // c bit is set when ack.fcn is max
+						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+						mbuf_format(&rx_conn->head); // remove headers to pass to application
+						return 1; // end reception
+					}
+					set_local_bitmap(rx_conn);
 				}
-				set_local_bitmap(rx_conn);
 				send_ack(rx_conn);
 			}
 		} else if(window == rx_conn->window) { // expected window
 			DEBUG_PRINTF("w == window");
 			if(fcn == 0) { // all-0
-				DEBUG_PRINTF("all-0");
-				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+				if(empty_all_0(tail)) {
+					discard_fragment(rx_conn);
+				} else {
+					DEBUG_PRINTF("all-0");
+					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+				}
 				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 				send_ack(rx_conn);
 			} else if(fcn == get_max_fcn_value()) { // all-1
@@ -1483,6 +1651,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
 				set_local_bitmap(rx_conn);
 				send_ack(rx_conn);
+				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_format(&rx_conn->head); // remove headers to pass to application
+				return 1; // end reception
 			}
 		}
 
@@ -1497,7 +1668,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			send_ack(rx_conn);
 			mbuf_sort(&rx_conn->head); // sort the mbuf chain
 			mbuf_format(&rx_conn->head); // remove headers to pass to application
-			return 1;
+			return 1; // end reception
 		}
 		break;
 	}
@@ -1519,11 +1690,11 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	uint32_t i;
 
 	// initializes the schc tx connection
-	reset_connection(tx_conn);
+	schc_reset(tx_conn);
 
 	// initializes the schc rx connections
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
-		reset_connection(&schc_rx_conns[i]);
+		schc_reset(&schc_rx_conns[i]);
 		schc_rx_conns[i].send = send;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
@@ -1848,6 +2019,9 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 
+	uint16_t fcn = get_fcn_value(data);
+	set_conn_frag_cnt(conn, fcn);
+
 	uint8_t* fragment;
 #if DYNAMIC_MEMORY
 	fragment = (uint8_t*) malloc(len); // allocate memory for fragment
@@ -1859,6 +2033,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	memcpy(fragment, data, len);
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
+	mbuf_print(conn->head);
+
 	if(err != SCHC_SUCCESS) {
 		return NULL;
 	}
