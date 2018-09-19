@@ -1887,7 +1887,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case END_TX: {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
 		tx_conn->timer_flag = 0;
-		reset_connection(tx_conn);
+		schc_reset(tx_conn);
 		// ToDo
 		// stay alive to answer empty all-1 fragments, indicating lost ack(s)
 		return SCHC_SUCCESS;
