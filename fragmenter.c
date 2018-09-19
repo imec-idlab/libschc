@@ -1118,10 +1118,13 @@ static void set_inactivity_timer(schc_fragmentation_t* conn) {
  * composes a packet based on the type of the packet
  * and calls the callback function to transmit the packet
  *
- * @param conn 			a pointer to the connection
+ * @param 	conn 			a pointer to the connection
+ *
+ * @ret		0				the packet was not sent
+ * 			1				the packet was transmitted
  *
  */
-static void send_fragment(schc_fragmentation_t* conn) {
+static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	memset(fragmentation_buffer, 0, MAX_MTU_LENGTH); // set and reset buffer
 
 	uint16_t header_offset = set_fragmentation_header(conn, fragmentation_buffer); // set fragmentation header
@@ -1176,7 +1179,7 @@ static void send_fragment(schc_fragmentation_t* conn) {
 	// if(conn->frag_cnt != 10 || ATTEMPTS == 1) {
 		DEBUG_PRINTF("send_fragment(): sending fragment %d with length %d to device %d",
 			conn->frag_cnt, packet_len, conn->device_id);
-		conn->send(fragmentation_buffer, packet_len, conn->device_id);
+		return conn->send(fragmentation_buffer, packet_len, conn->device_id);
 	/*} else {
 		ATTEMPTS++;
 	}*/
@@ -1188,8 +1191,11 @@ static void send_fragment(schc_fragmentation_t* conn) {
  *
  * @param conn 			a pointer to the connection
  *
+ * @ret		0				the packet was not sent
+ * 			1				the packet was transmitted
+ *
  */
-static void send_ack(schc_fragmentation_t* conn) {
+static uint8_t send_ack(schc_fragmentation_t* conn) {
 	uint8_t ack[RULE_SIZE_BYTES + DTAG_SIZE_BYTES + BITMAP_SIZE_BYTES] = { 0 };
 	uint8_t offset = RULE_SIZE_BITS;
 
@@ -1225,7 +1231,7 @@ static void send_ack(schc_fragmentation_t* conn) {
 
 	DEBUG_PRINTF("");
 
-	conn->send(ack, packet_len, conn->device_id);
+	return conn->send(ack, packet_len, conn->device_id);
 }
 
 /**
@@ -1235,8 +1241,11 @@ static void send_ack(schc_fragmentation_t* conn) {
  *
  * @param conn 			a pointer to the connection
  *
+ * @ret		0				the packet was not sent
+ * 			1				the packet was transmitted
+ *
  */
-static void send_empty(schc_fragmentation_t* conn) {
+static uint8_t send_empty(schc_fragmentation_t* conn) {
 	// set and reset buffer
 	memset(fragmentation_buffer, 0, MAX_MTU_LENGTH);
 
@@ -1252,8 +1261,7 @@ static void send_empty(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("send_empty(): sending all-x empty to device %d with length %d (%d b)",
 			conn->device_id, packet_len, header_offset);
 
-	conn->send(fragmentation_buffer, packet_len, conn->device_id);
-
+	return conn->send(fragmentation_buffer, packet_len, conn->device_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1545,6 +1553,8 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
  *
  */
 int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
+	uint8_t fcn = 0; uint8_t frag_cnt = 0;
+
 	switch(tx_conn->TX_STATE) {
 	case INIT_TX: {
 		DEBUG_PRINTF("INIT_TX");
@@ -1564,27 +1574,45 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case SEND: {
 		DEBUG_PRINTF("SEND");
 		tx_conn->frag_cnt++;
-		DEBUG_PRINTF("with FCN %d, window count %d, frag count %d", tx_conn->fcn , tx_conn->window_cnt, tx_conn->frag_cnt);
 		if(has_no_more_fragments(tx_conn)) {
 			DEBUG_PRINTF("schc_fragment(): all-1 window");
+			fcn = tx_conn->fcn;
 			tx_conn->fcn = (pow(2, FCN_SIZE_BITS) - 1); // all 1-window
-			tx_conn->TX_STATE = WAIT_BITMAP;
-			set_local_bitmap(tx_conn); // set bitmap according to fcn
-			send_fragment(tx_conn);
-			set_retrans_timer(tx_conn);
+			if(send_fragment(tx_conn) ) { // only continue when packet was transmitted
+				tx_conn->TX_STATE = WAIT_BITMAP;
+				set_local_bitmap(tx_conn); // set bitmap according to fcn
+				set_retrans_timer(tx_conn);
+			} else {
+				DEBUG_PRINTF(
+						"schc_fragment(): channel occupied retrying in %d ms",
+						tx_conn->dc);
+				tx_conn->frag_cnt--;
+				tx_conn->fcn = fcn; // reset fcn and frag_count before retrying
+				set_dc_timer(tx_conn);
+			}
 		} else if(tx_conn->fcn == 0 && !has_no_more_fragments(tx_conn)) { // all-0 window
 			DEBUG_PRINTF("schc_fragment(): all-0 window");
-			tx_conn->TX_STATE = WAIT_BITMAP;
-			set_local_bitmap(tx_conn); // set bitmap according to fcn
-			send_fragment(tx_conn);
-			tx_conn->fcn = MAX_WIND_FCN; // reset the FCN
-			set_retrans_timer(tx_conn);
+			if (send_fragment(tx_conn)) {
+				tx_conn->TX_STATE = WAIT_BITMAP;
+				set_local_bitmap(tx_conn); // set bitmap according to fcn
+				tx_conn->fcn = MAX_WIND_FCN; // reset the FCN
+				set_retrans_timer(tx_conn);
+			} else {
+				DEBUG_PRINTF(
+						"schc_fragment(): channel occupied retrying in %d ms",
+						tx_conn->dc);
+				tx_conn->frag_cnt--;
+				set_dc_timer(tx_conn);
+			}
 		} else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
 			DEBUG_PRINTF("schc_fragment(): normal fragment");
-			tx_conn->TX_STATE = SEND;
-			send_fragment(tx_conn);
-			set_local_bitmap(tx_conn); // set bitmap according to fcn
-			tx_conn->fcn--;
+			if(send_fragment(tx_conn)) {
+				tx_conn->TX_STATE = SEND;
+				set_local_bitmap(tx_conn); // set bitmap according to fcn
+				tx_conn->fcn--;
+			} else {
+				tx_conn->frag_cnt--;
+			}
 			set_dc_timer(tx_conn);
 		}
 		break;
@@ -1642,9 +1670,12 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		}
 		if (tx_conn->timer_flag) { // timer expired
 			DEBUG_PRINTF("timer expired"); // todo
-			tx_conn->attempts++;
-			set_retrans_timer(tx_conn);
-			send_empty(tx_conn); // requests retransmission of all-x ack with empty all-x
+			if(send_empty(tx_conn)) { // requests retransmission of all-x ack with empty all-x
+				tx_conn->attempts++;
+				set_retrans_timer(tx_conn);
+			} else {
+				set_dc_timer(tx_conn);
+			}
 			break;
 		}
 		break;
@@ -1652,6 +1683,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case RESEND: {
 		DEBUG_PRINTF("RESEND");
 		// get the next fragment offset; set frag_cnt
+		frag_cnt = tx_conn->frag_cnt;
 		tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt) + get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
 
 		DEBUG_PRINTF("schc_fragment(): sending missing fragments for bitmap: ");
@@ -1661,13 +1693,21 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		DEBUG_PRINTF("with FCN %d, window count %d, frag count %d", tx_conn->fcn , tx_conn->window_cnt, tx_conn->frag_cnt);
 		if(!get_next_fragment_from_bitmap(tx_conn)) { // check if this was the last fragment
 			DEBUG_PRINTF("schc_fragment(): last missing fragment to send");
-			tx_conn->TX_STATE = WAIT_BITMAP;
-			send_fragment(tx_conn); // retransmit the fragment
-			tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN + 1);
-			set_retrans_timer(tx_conn);
+			if(send_fragment(tx_conn)) { // retransmit the fragment
+				tx_conn->TX_STATE = WAIT_BITMAP;
+				tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (MAX_WIND_FCN + 1);
+				set_retrans_timer(tx_conn);
+			} else {
+				tx_conn->frag_cnt = frag_cnt;
+				set_dc_timer(tx_conn);
+			}
+
 		} else {
-			tx_conn->TX_STATE = RESEND;
-			send_fragment(tx_conn); // retransmit the fragment
+			if(send_fragment(tx_conn)) { // retransmit the fragment
+				tx_conn->TX_STATE = RESEND;
+			} else {
+				tx_conn->frag_cnt = frag_cnt;
+			}
 			set_dc_timer(tx_conn);
 		}
 
@@ -1676,6 +1716,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case END_TX: {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
 		tx_conn->timer_flag = 0;
+		reset_connection(tx_conn);
 		// ToDo
 		// stay alive to answer empty all-1 fragments, indicating lost ack(s)
 		return SCHC_SUCCESS;

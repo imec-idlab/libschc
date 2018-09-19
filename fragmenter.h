@@ -123,7 +123,7 @@ typedef struct schc_fragmentation_t {
 	/* the current state for the receiving device */
 	rx_state RX_STATE;
 	/* the function to call when the fragmenter has something to send */
-	void (*send)(uint8_t* data, uint16_t length, uint32_t device_id);
+	uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id);
 	/* the timer task */
 	void (*post_timer_task)(void (*timer_task)(void* conn), uint32_t device_id,
 			uint16_t time_ms, void *arg);
