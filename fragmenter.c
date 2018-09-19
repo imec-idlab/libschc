@@ -1757,7 +1757,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				set_retrans_timer(tx_conn);
 			} else {
 				DEBUG_PRINTF(
-						"schc_fragment(): channel occupied retrying in %d ms",
+						"schc_fragment(): radio occupied retrying in %d ms",
 						tx_conn->dc);
 				tx_conn->frag_cnt--;
 				tx_conn->fcn = fcn; // reset fcn and frag_count before retrying
@@ -1772,7 +1772,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				set_retrans_timer(tx_conn);
 			} else {
 				DEBUG_PRINTF(
-						"schc_fragment(): channel occupied retrying in %d ms",
+						"schc_fragment(): radio occupied retrying in %d ms",
 						tx_conn->dc);
 				tx_conn->frag_cnt--;
 				set_dc_timer(tx_conn);
@@ -1890,8 +1890,6 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
 		tx_conn->timer_flag = 0;
 		schc_reset(tx_conn);
-		// ToDo
-		// stay alive to answer empty all-1 fragments, indicating lost ack(s)
 		return SCHC_SUCCESS;
 		break;
 	}
@@ -1915,8 +1913,8 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
  */
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint32_t device_id) {
-	if ( (tx_conn->TX_STATE == WAIT_BITMAP || tx_conn->TX_STATE == RESEND) &&
-					compare_bits(tx_conn->rule_id, data, RULE_SIZE_BITS)) { // acknowledgment
+	if ((tx_conn->TX_STATE == WAIT_BITMAP || tx_conn->TX_STATE == RESEND)
+			&& compare_bits(tx_conn->rule_id, data, RULE_SIZE_BITS)) { // acknowledgment
 		schc_ack_input(data, len, tx_conn, device_id);
 		return tx_conn;
 	} else {
