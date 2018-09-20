@@ -501,6 +501,8 @@ uint16_t get_mbuf_len(schc_mbuf_t *head) {
 static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 	schc_mbuf_t *curr = head;
 
+	DEBUG_PRINTF("head has frag %d and addr %x", head->frag_cnt, head);
+
 	while (curr->next != NULL) {
 		curr = curr->next;
 	}
@@ -1671,6 +1673,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			mbuf_format(&rx_conn->head); // remove headers to pass to application
 			// todo
 			// call function to forward to ipv6 network
+			schc_reset(rx_conn);
 			return 1; // end reception
 		}
 		if (fcn != get_max_fcn_value()) { // not all-1
@@ -2042,11 +2045,6 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 #endif
 
 	memcpy(fragment, data, len);
-	DEBUG_PRINTF("fragment length %d", len);
-	for(int i = 0; i < len; i++) {
-		printf("%02x ", data[i]);
-	}
-	DEBUG_PRINTF("\n");
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
 
