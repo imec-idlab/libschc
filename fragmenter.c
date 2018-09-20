@@ -431,7 +431,7 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 			prev->next = mbuf->next;
 		}
 	} else {
-		DEBUG_PRINTF("mbuf_delete(): last is head");
+		DEBUG_PRINTF("mbuf_delete(): last is head, delete head");
 		(*head) = NULL;
 	}
 
