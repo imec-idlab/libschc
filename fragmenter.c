@@ -1889,14 +1889,16 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		uint8_t last = 0;
 
 		if(get_next_fragment_from_bitmap(tx_conn) == get_max_fcn_value()) {
-			tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->data_ptr) / tx_conn->mtu) + 1;
+			tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->data_ptr)
+					/ tx_conn->mtu) + 1;
 			tx_conn->fcn = get_max_fcn_value();
 			last = 1;
 		} else {
-			tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt) + get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
+			tx_conn->frag_cnt = (((MAX_WIND_FCN + 1) * tx_conn->window_cnt)
+				+ get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
 			tx_conn->fcn = ((MAX_WIND_FCN + 1) * (tx_conn->window_cnt + 1))
 					- tx_conn->frag_cnt;
-			if(get_next_fragment_from_bitmap(tx_conn)) {
+			if (!get_next_fragment_from_bitmap(tx_conn)) {
 				last = 1;
 			}
 		}
@@ -1930,7 +1932,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	case END_TX: {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
 		tx_conn->timer_flag = 0;
-		// schc_reset(tx_conn); // todo ??
+		schc_reset(tx_conn); // todo ??
 		return SCHC_SUCCESS;
 		break;
 	}
