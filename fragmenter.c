@@ -430,6 +430,9 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 			prev = get_prev_mbuf(*head, mbuf);
 			prev->next = mbuf->next;
 		}
+	} else {
+		DEBUG_PRINTF("mbuf_delete(): last is head");
+		(*head) = NULL;
 	}
 
 	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool", slot);
@@ -501,7 +504,9 @@ uint16_t get_mbuf_len(schc_mbuf_t *head) {
 static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 	schc_mbuf_t *curr = head;
 
-	DEBUG_PRINTF("head has frag %d and addr %x", head->frag_cnt, head);
+	if(head == NULL) {
+		return NULL;
+	}
 
 	while (curr->next != NULL) {
 		curr = curr->next;
@@ -963,29 +968,34 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
  */
 void schc_reset(schc_fragmentation_t* conn) {
 	/* reset connection variables */
-	conn->mtu = 0;
-	conn->fcn = 0;
-	conn->data_ptr = 0;
-	conn->tail_ptr = 0;
 	conn->device_id = 0;
 	conn->packet_len = 0;
+	conn->data_ptr = 0;
+	conn->tail_ptr = 0;
+	conn->dc = 0;
+	conn->mtu = 0;
+	conn->fcn = 0;
 	conn->dtag = 0;
-	conn->window = 0;
-	conn->window_cnt = 0;
 	conn->frag_cnt = 0;
-	conn->attempts = 0;
-	conn->timer_flag = 0;
-	memset(conn->rule_id, 0, RULE_SIZE_BYTES);
-	memset(conn->mic, 0, MIC_SIZE_BYTES);
 	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES);
-	/* reset function callbacks */
+	conn->attempts = 0;
 	conn->TX_STATE = INIT_TX;
 	conn->RX_STATE = RECV_WINDOW;
+	conn->window = 0;
+	conn->window_cnt = 0;
+	conn->timer_flag = 0;
+	conn->input = 0;
+	memset(conn->rule_id, 0, RULE_SIZE_BYTES);
+	memset(conn->mic, 0, MIC_SIZE_BYTES);
+
 	/* reset ack structure */
+	memset(conn->ack.rule_id, 0, RULE_SIZE_BYTES);
 	memset(conn->ack.bitmap, 0, BITMAP_SIZE_BYTES);
 	memset(conn->ack.window, 0, 1);
 	memset(conn->ack.dtag, 0, 1);
 	conn->ack.mic = 0;
+	conn->ack.fcn = 0;
+
 	if(conn->head != NULL ){
 		mbuf_clean(&conn->head);
 	}
@@ -1649,6 +1659,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			}
 			if (fcn == get_max_fcn_value()) { // all-1
 				DEBUG_PRINTF("all-1");
+				if (empty_all_1(tail)) {
+					discard_fragment(rx_conn); // remove last fragment (empty)
+				}
 				send_ack(rx_conn);
 			}
 		} else { // mic right
