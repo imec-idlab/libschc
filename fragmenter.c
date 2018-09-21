@@ -1650,6 +1650,12 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
 		tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
 
+		if(tail == NULL) { // hack
+			// rx_conn->timer_flag or rx_conn->input has not been changed
+			abort_connection(rx_conn); // todo
+			break;
+		}
+
 		get_received_mic(tail->ptr, recv_mic);
 		DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
 
