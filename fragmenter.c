@@ -425,15 +425,14 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 			DEBUG_PRINTF("mbuf_delete(): set head");
 			(*head) = mbuf->next;
 		}
-		if(prev != NULL) {
-			DEBUG_PRINTF("mbuf_delete(): chain next to prev");
-			prev = get_prev_mbuf(*head, mbuf);
-			prev->next = mbuf->next;
-		}
 	} else {
 		if(mbuf == *head) { // head is last fragment
 			DEBUG_PRINTF("mbuf_delete(): mbuf is head, delete head");
 			(*head) = NULL;
+		} else {
+			DEBUG_PRINTF("mbuf_delete(): chain next to prev");
+			prev = get_prev_mbuf(*head, mbuf);
+			prev->next = mbuf->next;
 		}
 	}
 
@@ -1194,7 +1193,7 @@ static void discard_fragment(schc_fragmentation_t* conn) {
 static void abort_connection(schc_fragmentation_t* conn) {
 	// todo
 	DEBUG_PRINTF("abort_connection(): inactivity timer expired");
-	conn->RX_STATE = END_RX;
+	schc_reset(conn);
 	return;
 }
 
@@ -1504,6 +1503,10 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	switch (rx_conn->RX_STATE) {
 	case RECV_WINDOW: {
 		DEBUG_PRINTF("RECV WINDOW");
+		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+			abort_connection(rx_conn); // todo
+			break;
+		}
 		if(rx_conn->window != window) { // unexpected window
 			DEBUG_PRINTF("w != window");
 			discard_fragment(rx_conn);
@@ -1560,8 +1563,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_NEXT_WINDOW: {
 		DEBUG_PRINTF("WAIT NEXT WINDOW");
-		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			abort_connection(rx_conn); break;
+		if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+			abort_connection(rx_conn); // todo
+			break;
 		}
 		if (window == (!rx_conn->window)) { // next window
 			DEBUG_PRINTF("w != window");
@@ -1639,8 +1643,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	}
 	case WAIT_END: {
 		DEBUG_PRINTF("WAIT END");
-		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			abort_connection(rx_conn); break;
+		if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+			abort_connection(rx_conn); // todo
+			break;
 		}
 		mbuf_sort(&rx_conn->head); // sort the mbuf chain
 		tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
