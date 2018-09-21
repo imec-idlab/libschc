@@ -431,8 +431,10 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 			prev->next = mbuf->next;
 		}
 	} else {
-		DEBUG_PRINTF("mbuf_delete(): last is head, delete head");
-		(*head) = NULL;
+		if(mbuf == *head) { // head is last fragment
+			DEBUG_PRINTF("mbuf_delete(): mbuf is head, delete head");
+			(*head) = NULL;
+		}
 	}
 
 	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool", slot);
