@@ -47,7 +47,7 @@ typedef enum {
 } tx_state;
 
 typedef enum {
-	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_END = 2, END_RX = 3, ABORT = 4
+	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_MISSING_FRAG = 2, WAIT_END = 3, END_RX = 4, ABORT = 5
 } rx_state;
 
 typedef enum {
