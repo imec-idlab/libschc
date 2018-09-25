@@ -1502,226 +1502,233 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		rx_conn->window_cnt++;
 	}
 
+	set_conn_frag_cnt(rx_conn, fcn);
 	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
 
 	if(rx_conn->input) { // set inactivity timer if the loop was triggered by a fragment input
 		set_inactivity_timer(rx_conn);
 	}
 
-	switch (rx_conn->RX_STATE) {
-	case RECV_WINDOW: {
-		DEBUG_PRINTF("RECV WINDOW");
-		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			abort_connection(rx_conn); // todo
-			break;
-		}
-		if(rx_conn->window != window) { // unexpected window
-			DEBUG_PRINTF("w != window");
-			discard_fragment(rx_conn);
-			rx_conn->RX_STATE = RECV_WINDOW;
-			break;
-		}
-		else if(window == rx_conn->window) { // expected window
-			DEBUG_PRINTF("w == window");
-			if(fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
-				DEBUG_PRINTF("not all-x");
-				set_local_bitmap(rx_conn);
-				rx_conn->RX_STATE = RECV_WINDOW;
-			} else if(fcn == 0) { // all-0
-				DEBUG_PRINTF("all-0");
-				if(!empty_all_0(tail, rx_conn)){
-					set_local_bitmap(rx_conn); // indicate that we received a fragment
-				} else {
-					discard_fragment(rx_conn);
-				}
-				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
-				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
-				send_ack(rx_conn); // send local bitmap
-			} else if(fcn == get_max_fcn_value(rx_conn)) { // all-1
-				if(!empty_all_1(tail, rx_conn)) {
-					DEBUG_PRINTF("all-1");
-					set_local_bitmap(rx_conn);
-					mbuf_sort(&rx_conn->head); // sort the mbuf chain
-
-					tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
-					get_received_mic(tail->ptr, recv_mic, rx_conn);
-					DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
-
-					mbuf_print(rx_conn->head);
-					mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
-
-					if (!compare_bits(rx_conn->mic, recv_mic,
-							(MIC_SIZE_BYTES * 8))) { // mic wrong
-						rx_conn->RX_STATE = WAIT_END;
-						rx_conn->ack.mic = 0;
-					} else { // mic right
-						rx_conn->RX_STATE = END_RX;
-						rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
-						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-						send_ack(rx_conn);
-						return 2; // stay alive to answer lost acks
-					}
-				} else {
-					discard_fragment(rx_conn);
-				}
-				send_ack(rx_conn);
+	if (rx_conn->mode == ACK_ALWAYS) {
+		switch (rx_conn->RX_STATE) {
+		case RECV_WINDOW: {
+			DEBUG_PRINTF("RECV WINDOW");
+			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+				abort_connection(rx_conn); // todo
+				break;
 			}
-		}
-		break;
-	}
-	case WAIT_NEXT_WINDOW: {
-		DEBUG_PRINTF("WAIT NEXT WINDOW");
-		if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			abort_connection(rx_conn); // todo
-			break;
-		}
-		if (window == (!rx_conn->window)) { // next window
-			DEBUG_PRINTF("w != window");
-			if(fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
-				DEBUG_PRINTF("not all-x");
-				rx_conn->window = !rx_conn->window; // set expected window to next window
-				clear_bitmap(rx_conn);
-				set_local_bitmap(rx_conn);
-				rx_conn->RX_STATE = RECV_WINDOW; // return to receiving window
-			} else if(fcn == 0) { // all-0
-				DEBUG_PRINTF("all-0");
-				if(empty_all_0(tail, rx_conn)) {
-					discard_fragment(rx_conn); // remove last fragment (empty)
-				} else {
-					rx_conn->window = !rx_conn->window;
-					clear_bitmap(rx_conn);
-					set_local_bitmap(rx_conn);
-				}
-				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
-				send_ack(rx_conn);
-			} else if(fcn == get_max_fcn_value(rx_conn)) { // all-1
-				DEBUG_PRINTF("all-1");
-				if(empty_all_1(tail, rx_conn)) {
-					discard_fragment(rx_conn); // remove last fragment (empty)
-				} else {
-					mbuf_sort(&rx_conn->head); // sort the mbuf chain
-					tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
-					get_received_mic(tail->ptr, recv_mic, rx_conn);
-					DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
-
-					mbuf_print(rx_conn->head);
-					mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
-
-					if (!compare_bits(rx_conn->mic, recv_mic,
-							(MIC_SIZE_BYTES * 8))) { // mic wrong
-						rx_conn->RX_STATE = WAIT_END;
-						rx_conn->ack.mic = 0;
-					} else { // mic right
-						rx_conn->RX_STATE = END_RX;
-						rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
-						rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-						send_ack(rx_conn);
-						return 2; // stay alive to answer lost acks
-					}
-					set_local_bitmap(rx_conn);
-				}
-				send_ack(rx_conn);
-			}
-		} else if(window == rx_conn->window) { // expected window
-			DEBUG_PRINTF("w == window");
-			if(fcn == 0) { // all-0
-				if(empty_all_0(tail, rx_conn)) {
-					discard_fragment(rx_conn);
-				} else {
-					DEBUG_PRINTF("all-0");
-					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
-				}
-				rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
-				send_ack(rx_conn);
-			} else if(fcn == get_max_fcn_value(rx_conn)) { // all-1
-				DEBUG_PRINTF("all-1");
-				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+			if (rx_conn->window != window) { // unexpected window
+				DEBUG_PRINTF("w != window");
 				discard_fragment(rx_conn);
-			} else if(fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
-				set_local_bitmap(rx_conn);
-				DEBUG_PRINTF("not all-x, is bitmap full? %d", is_bitmap_full(rx_conn));
-				rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
-				if(is_bitmap_full(rx_conn)) { // bitmap is full; the last fragment of a retransmission is received
+				rx_conn->RX_STATE = RECV_WINDOW;
+				break;
+			} else if (window == rx_conn->window) { // expected window
+				DEBUG_PRINTF("w == window");
+				if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
+					DEBUG_PRINTF("not all-x");
+					set_local_bitmap(rx_conn);
+					rx_conn->RX_STATE = RECV_WINDOW;
+				} else if (fcn == 0) { // all-0
+					DEBUG_PRINTF("all-0");
+					if (!empty_all_0(tail, rx_conn)) {
+						set_local_bitmap(rx_conn); // indicate that we received a fragment
+					} else {
+						discard_fragment(rx_conn);
+					}
+					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
 					rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
+					send_ack(rx_conn); // send local bitmap
+				} else if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+					if (!empty_all_1(tail, rx_conn)) {
+						DEBUG_PRINTF("all-1");
+						set_local_bitmap(rx_conn);
+						mbuf_sort(&rx_conn->head); // sort the mbuf chain
+
+						tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
+						get_received_mic(tail->ptr, recv_mic, rx_conn);
+						DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0],
+								recv_mic[1], recv_mic[2], recv_mic[3]);
+
+						mbuf_print(rx_conn->head);
+						mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+
+						if (!compare_bits(rx_conn->mic, recv_mic,
+								(MIC_SIZE_BYTES * 8))) { // mic wrong
+							rx_conn->RX_STATE = WAIT_END;
+							rx_conn->ack.mic = 0;
+						} else { // mic right
+							rx_conn->RX_STATE = END_RX;
+							rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
+							rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+							send_ack(rx_conn);
+							return 2; // stay alive to answer lost acks
+						}
+					} else {
+						discard_fragment(rx_conn);
+					}
 					send_ack(rx_conn);
 				}
 			}
-		}
-		break;
-	}
-	case WAIT_END: {
-		DEBUG_PRINTF("WAIT END");
-		if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			abort_connection(rx_conn); // todo
 			break;
 		}
-		mbuf_sort(&rx_conn->head); // sort the mbuf chain
-		tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
-
-		if(tail == NULL) { // hack
-			// rx_conn->timer_flag or rx_conn->input has not been changed
-			abort_connection(rx_conn); // todo
-			break;
-		}
-
-		get_received_mic(tail->ptr, recv_mic, rx_conn);
-		DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1], recv_mic[2], recv_mic[3]);
-
-		mbuf_print(rx_conn->head);
-		mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
-
-		if (!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
-			DEBUG_PRINTF("mic wrong");
-			rx_conn->ack.mic = 0;
-			rx_conn->RX_STATE = WAIT_END;
-			if (window == rx_conn->window) { // expected window
-				DEBUG_PRINTF("expected window");
-				set_local_bitmap(rx_conn);
+		case WAIT_NEXT_WINDOW: {
+			DEBUG_PRINTF("WAIT NEXT WINDOW");
+			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+				abort_connection(rx_conn); // todo
+				break;
 			}
-			if (fcn == get_max_fcn_value(rx_conn)) { // all-1
-				DEBUG_PRINTF("all-1");
-				if (empty_all_1(tail, rx_conn)) {
-					discard_fragment(rx_conn); // remove last fragment (empty)
+			if (window == (!rx_conn->window)) { // next window
+				DEBUG_PRINTF("w != window");
+				if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
+					DEBUG_PRINTF("not all-x");
+					rx_conn->window = !rx_conn->window; // set expected window to next window
+					clear_bitmap(rx_conn);
+					set_local_bitmap(rx_conn);
+					rx_conn->RX_STATE = RECV_WINDOW; // return to receiving window
+				} else if (fcn == 0) { // all-0
+					DEBUG_PRINTF("all-0");
+					if (empty_all_0(tail, rx_conn)) {
+						discard_fragment(rx_conn); // remove last fragment (empty)
+					} else {
+						rx_conn->window = !rx_conn->window;
+						clear_bitmap(rx_conn);
+						set_local_bitmap(rx_conn);
+					}
+					rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
+					send_ack(rx_conn);
+				} else if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+					DEBUG_PRINTF("all-1");
+					if (empty_all_1(tail, rx_conn)) {
+						discard_fragment(rx_conn); // remove last fragment (empty)
+					} else {
+						mbuf_sort(&rx_conn->head); // sort the mbuf chain
+						tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
+						get_received_mic(tail->ptr, recv_mic, rx_conn);
+						DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0],
+								recv_mic[1], recv_mic[2], recv_mic[3]);
+
+						mbuf_print(rx_conn->head);
+						mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+
+						if (!compare_bits(rx_conn->mic, recv_mic,
+								(MIC_SIZE_BYTES * 8))) { // mic wrong
+							rx_conn->RX_STATE = WAIT_END;
+							rx_conn->ack.mic = 0;
+						} else { // mic right
+							rx_conn->RX_STATE = END_RX;
+							rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
+							rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+							send_ack(rx_conn);
+							return 2; // stay alive to answer lost acks
+						}
+						set_local_bitmap(rx_conn);
+					}
+					send_ack(rx_conn);
 				}
-				send_ack(rx_conn);
+			} else if (window == rx_conn->window) { // expected window
+				DEBUG_PRINTF("w == window");
+				if (fcn == 0) { // all-0
+					if (empty_all_0(tail, rx_conn)) {
+						discard_fragment(rx_conn);
+					} else {
+						DEBUG_PRINTF("all-0");
+						rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+					}
+					rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
+					send_ack(rx_conn);
+				} else if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+					DEBUG_PRINTF("all-1");
+					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+					discard_fragment(rx_conn);
+				} else if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
+					set_local_bitmap(rx_conn);
+					DEBUG_PRINTF("not all-x, is bitmap full? %d",
+							is_bitmap_full(rx_conn));
+					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
+					if (is_bitmap_full(rx_conn)) { // bitmap is full; the last fragment of a retransmission is received
+						rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
+						send_ack(rx_conn);
+					}
+				}
 			}
-		} else { // mic right
-			DEBUG_PRINTF("mic correct");
-			if (window == rx_conn->window) { // expected window
-				DEBUG_PRINTF("expected window");
-				rx_conn->RX_STATE = END_RX;
-				rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
-				rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-				set_local_bitmap(rx_conn);
-				send_ack(rx_conn);
-				return 2; // stay alive to answer lost acks
-			}
+			break;
 		}
+		case WAIT_END: {
+			DEBUG_PRINTF("WAIT END");
+			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+				abort_connection(rx_conn); // todo
+				break;
+			}
+			mbuf_sort(&rx_conn->head); // sort the mbuf chain
+			tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
 
-	} break;
-	case END_RX: {
-		DEBUG_PRINTF("END RX");
-		if(rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-			// end the transmission
-			mbuf_sort(&rx_conn->head); // sort the mbuf chain
-			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
-			// todo
-			// call function to forward to ipv6 network
-			schc_reset(rx_conn);
-			return 1; // end reception
+			if (tail == NULL) { // hack
+				// rx_conn->timer_flag or rx_conn->input has not been changed
+				abort_connection(rx_conn); // todo
+				break;
+			}
+
+			get_received_mic(tail->ptr, recv_mic, rx_conn);
+			DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0], recv_mic[1],
+					recv_mic[2], recv_mic[3]);
+
+			mbuf_print(rx_conn->head);
+			mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+
+			if (!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
+				DEBUG_PRINTF("mic wrong");
+				rx_conn->ack.mic = 0;
+				rx_conn->RX_STATE = WAIT_END;
+				if (window == rx_conn->window) { // expected window
+					DEBUG_PRINTF("expected window");
+					set_local_bitmap(rx_conn);
+				}
+				if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+					DEBUG_PRINTF("all-1");
+					if (empty_all_1(tail, rx_conn)) {
+						discard_fragment(rx_conn); // remove last fragment (empty)
+					}
+					send_ack(rx_conn);
+				}
+			} else { // mic right
+				DEBUG_PRINTF("mic correct");
+				if (window == rx_conn->window) { // expected window
+					DEBUG_PRINTF("expected window");
+					rx_conn->RX_STATE = END_RX;
+					rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
+					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+					set_local_bitmap(rx_conn);
+					send_ack(rx_conn);
+					return 2; // stay alive to answer lost acks
+				}
+			}
+
 		}
-		if (fcn != get_max_fcn_value(rx_conn)) { // not all-1
-			DEBUG_PRINTF("not all-x");
-			discard_fragment(rx_conn);
-		} else { // all-1
-			DEBUG_PRINTF("all-1");
-			send_ack(rx_conn);
-			mbuf_sort(&rx_conn->head); // sort the mbuf chain
-			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
-			return 1; // end reception
+			break;
+		case END_RX: {
+			DEBUG_PRINTF("END RX");
+			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+				// end the transmission
+				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
+				// todo
+				// call function to forward to ipv6 network
+				schc_reset(rx_conn);
+				return 1; // end reception
+			}
+			if (fcn != get_max_fcn_value(rx_conn)) { // not all-1
+				DEBUG_PRINTF("not all-x");
+				discard_fragment(rx_conn);
+			} else { // all-1
+				DEBUG_PRINTF("all-1");
+				send_ack(rx_conn);
+				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
+				return 1; // end reception
+			}
+			break;
 		}
-		break;
-	}
+		}
 	}
 
 	return 0;
@@ -2073,7 +2080,6 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
  *
  * @param 	data			a pointer to the data packet
  * @param 	len				the length of the received packet
- * @param 	tx_conn			a pointer to the tx initialization structure
  * @param 	device_id		the device id from the rx source
  *
  * @return 	conn			the connection
@@ -2089,9 +2095,6 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		DEBUG_PRINTF("schc_fragment_input(): no free connections found!");
 		return NULL;
 	}
-
-	uint16_t fcn = get_fcn_value(data, conn);
-	set_conn_frag_cnt(conn, fcn);
 
 	uint8_t* fragment;
 #if DYNAMIC_MEMORY
