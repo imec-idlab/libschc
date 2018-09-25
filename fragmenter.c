@@ -1493,6 +1493,12 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	uint8_t window = get_window_bit(tail->ptr, rx_conn); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr, rx_conn); // the fcn value from the fragment
 
+	if(rx_conn->mode == NO_ACK) { // can not find fragment from fcn value
+		rx_conn->frag_cnt++; // update fragment counter
+	} else {
+		set_conn_frag_cnt(rx_conn, fcn);
+	}
+
 	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 
 	rx_conn->fcn = fcn;
@@ -1502,7 +1508,6 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		rx_conn->window_cnt++;
 	}
 
-	set_conn_frag_cnt(rx_conn, fcn);
 	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
 
 	if(rx_conn->input) { // set inactivity timer if the loop was triggered by a fragment input
@@ -1727,6 +1732,47 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				return 1; // end reception
 			}
 			break;
+		}
+		}
+	} else if (rx_conn->mode == NO_ACK) {
+		switch (rx_conn->RX_STATE) {
+		case RECV_WINDOW: {
+			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
+				abort_connection(rx_conn); // todo no send abort
+				break;
+			}
+			if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+				// clear inactivity timer
+				rx_conn->timer_flag = 0;
+				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				tail = get_mbuf_tail(rx_conn->head); // get new tail before looking for mic
+				get_received_mic(tail->ptr, recv_mic, rx_conn);
+				DEBUG_PRINTF("MIC is %02X%02X%02X%02X", recv_mic[0],
+						recv_mic[1], recv_mic[2], recv_mic[3]);
+
+				mbuf_print(rx_conn->head);
+				mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
+
+				if (!compare_bits(rx_conn->mic, recv_mic,
+						(MIC_SIZE_BYTES * 8))) { // mic wrong
+					abort_connection(rx_conn); // todo no send abort
+				} else { // mic right
+					rx_conn->RX_STATE = END_RX;
+					rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
+					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+					return 1;
+				}
+			}
+			break;
+		}
+		case END_RX: {
+			DEBUG_PRINTF("END RX"); // end the transmission
+			mbuf_sort(&rx_conn->head); // sort the mbuf chain
+			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
+			// todo
+			// call function to forward to ipv6 network
+			schc_reset(rx_conn);
+			return 1; // end reception
 		}
 		}
 	}
