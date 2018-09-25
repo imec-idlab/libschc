@@ -34,10 +34,6 @@ typedef enum {
 	APPIID = 7
 } CDA;
 
-typedef enum {
-	NOACK = 0, ACKALWAYS = 1, ACKONERROR = 2
-} reliability_mode;
-
 struct schc_field {
 	char field[32];
 	uint8_t msb_length; // custom added field

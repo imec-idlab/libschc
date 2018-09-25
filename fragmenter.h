@@ -50,6 +50,10 @@ typedef enum {
 	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_END = 2, END_RX = 3, ABORT = 4
 } rx_state;
 
+typedef enum {
+	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3
+} reliability_mode;
+
 // the maximum bitmap length
 #define BITMAP_SIZE_BYTES		4
 
@@ -135,6 +139,18 @@ typedef struct schc_fragmentation_t {
 	schc_fragmentation_ack_t ack;
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
+	/* the reliability mode */
+	reliability_mode mode;
+	/* the rule size in bits */
+	uint8_t RULE_SIZE;
+	/* the fcn size in bits */
+	uint8_t FCN_SIZE;
+	/* the maximum number of fragments per window */
+	uint8_t MAX_WND_FCN;
+	/* the window size in bits */
+	uint8_t WINDOW_SIZE;
+	/* the dtag size in bits */
+	uint8_t DTAG_SIZE;
 } schc_fragmentation_t;
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
