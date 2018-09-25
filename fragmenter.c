@@ -1790,191 +1790,248 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	uint8_t fcn = 0; uint8_t frag_cnt = 0;
 
-	switch(tx_conn->TX_STATE) {
-	case INIT_TX: {
-		DEBUG_PRINTF("INIT_TX");
-		int8_t ret = init_tx_connection(tx_conn);
-		if (!ret) {
-			return SCHC_FAILURE;
-		} else if (ret < 0) {
-			tx_conn->send(tx_conn->data_ptr,
-					(tx_conn->tail_ptr - tx_conn->data_ptr),
-					tx_conn->device_id); // send packet right away
-			return SCHC_NO_FRAGMENTATION;
-		}
-		tx_conn->TX_STATE = SEND;
-		schc_fragment(tx_conn);
-		break;
-	}
-	case SEND: {
-		DEBUG_PRINTF("SEND");
-		tx_conn->frag_cnt++;
-		tx_conn->attempts = 0; // reset number of attempts
-
-		if(has_no_more_fragments(tx_conn)) {
-			DEBUG_PRINTF("schc_fragment(): all-1 window");
-			fcn = tx_conn->fcn;
-			tx_conn->fcn = (pow(2, tx_conn->FCN_SIZE) - 1); // all 1-window
-			if(send_fragment(tx_conn) ) { // only continue when packet was transmitted
-				tx_conn->TX_STATE = WAIT_BITMAP;
-				set_local_bitmap(tx_conn); // set bitmap according to fcn
-				set_retrans_timer(tx_conn);
-			} else {
-				DEBUG_PRINTF(
-						"schc_fragment(): radio occupied retrying in %d ms",
-						tx_conn->dc);
-				tx_conn->frag_cnt--;
-				tx_conn->fcn = fcn; // reset fcn and frag_count before retrying
-				set_dc_timer(tx_conn);
+	if (tx_conn->mode == ACK_ALWAYS) {
+		switch (tx_conn->TX_STATE) {
+		case INIT_TX: {
+			DEBUG_PRINTF("INIT_TX");
+			int8_t ret = init_tx_connection(tx_conn);
+			if (!ret) {
+				return SCHC_FAILURE;
+			} else if (ret < 0) {
+				tx_conn->send(tx_conn->data_ptr,
+						(tx_conn->tail_ptr - tx_conn->data_ptr),
+						tx_conn->device_id); // send packet right away
+				return SCHC_NO_FRAGMENTATION;
 			}
-		} else if(tx_conn->fcn == 0 && !has_no_more_fragments(tx_conn)) { // all-0 window
-			DEBUG_PRINTF("schc_fragment(): all-0 window");
-			if (send_fragment(tx_conn)) {
-				tx_conn->TX_STATE = WAIT_BITMAP;
-				set_local_bitmap(tx_conn); // set bitmap according to fcn
-				tx_conn->fcn = tx_conn->MAX_WND_FCN; // reset the FCN
-				set_retrans_timer(tx_conn);
-			} else {
-				DEBUG_PRINTF(
-						"schc_fragment(): radio occupied retrying in %d ms",
-						tx_conn->dc);
-				tx_conn->frag_cnt--;
-				set_dc_timer(tx_conn);
-			}
-		} else if(tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
-			DEBUG_PRINTF("schc_fragment(): normal fragment");
-			if(send_fragment(tx_conn)) {
-				tx_conn->TX_STATE = SEND;
-				set_local_bitmap(tx_conn); // set bitmap according to fcn
-				tx_conn->fcn--;
-			} else {
-				tx_conn->frag_cnt--;
-			}
-			set_dc_timer(tx_conn);
-		}
-		break;
-	}
-	case WAIT_BITMAP: {
-		DEBUG_PRINTF("WAIT_BITMAP");
-		uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
-
-		if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
-			DEBUG_PRINTF("tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
-			tx_conn->TX_STATE = ERROR;
-			tx_conn->timer_flag = 0; // stop retransmission timer
-			// send_abort();
+			tx_conn->TX_STATE = SEND;
 			schc_fragment(tx_conn);
 			break;
 		}
-		if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
-			DEBUG_PRINTF("w != w, discard fragment");
-			discard_fragment(tx_conn);
-			tx_conn->TX_STATE = WAIT_BITMAP;
+		case SEND: {
+			DEBUG_PRINTF("SEND");
+			tx_conn->frag_cnt++;
+			tx_conn->attempts = 0; // reset number of attempts
+
+			if (has_no_more_fragments(tx_conn)) {
+				DEBUG_PRINTF("schc_fragment(): all-1 window");
+				fcn = tx_conn->fcn;
+				tx_conn->fcn = (pow(2, tx_conn->FCN_SIZE) - 1); // all 1-window
+				if (send_fragment(tx_conn)) { // only continue when packet was transmitted
+					tx_conn->TX_STATE = WAIT_BITMAP;
+					set_local_bitmap(tx_conn); // set bitmap according to fcn
+					set_retrans_timer(tx_conn);
+				} else {
+					DEBUG_PRINTF(
+							"schc_fragment(): radio occupied retrying in %d ms",
+							tx_conn->dc);
+					tx_conn->frag_cnt--;
+					tx_conn->fcn = fcn; // reset fcn and frag_count before retrying
+					set_dc_timer(tx_conn);
+				}
+			} else if (tx_conn->fcn == 0 && !has_no_more_fragments(tx_conn)) { // all-0 window
+				DEBUG_PRINTF("schc_fragment(): all-0 window");
+				if (send_fragment(tx_conn)) {
+					tx_conn->TX_STATE = WAIT_BITMAP;
+					set_local_bitmap(tx_conn); // set bitmap according to fcn
+					tx_conn->fcn = tx_conn->MAX_WND_FCN; // reset the FCN
+					set_retrans_timer(tx_conn);
+				} else {
+					DEBUG_PRINTF(
+							"schc_fragment(): radio occupied retrying in %d ms",
+							tx_conn->dc);
+					tx_conn->frag_cnt--;
+					set_dc_timer(tx_conn);
+				}
+			} else if (tx_conn->fcn != 0 && !has_no_more_fragments(tx_conn)) { // normal fragment
+				DEBUG_PRINTF("schc_fragment(): normal fragment");
+				if (send_fragment(tx_conn)) {
+					tx_conn->TX_STATE = SEND;
+					set_local_bitmap(tx_conn); // set bitmap according to fcn
+					tx_conn->fcn--;
+				} else {
+					tx_conn->frag_cnt--;
+				}
+				set_dc_timer(tx_conn);
+			}
 			break;
 		}
-		if (tx_conn->ack.window[0] == tx_conn->window) {
-			DEBUG_PRINTF("w == w");
-			if (!has_no_more_fragments(tx_conn)
-					&& compare_bits(resend_window, tx_conn->ack.bitmap,
-							(tx_conn->MAX_WND_FCN + 1))) { // no missing fragments & more fragments
-				DEBUG_PRINTF("no missing fragments & more fragments to come");
+		case WAIT_BITMAP: {
+			DEBUG_PRINTF("WAIT_BITMAP");
+			uint8_t resend_window[BITMAP_SIZE_BYTES] = { 0 }; // if ack.bitmap is all-0, there are no packets to retransmit
+
+			if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
+				DEBUG_PRINTF(
+						"tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
+				tx_conn->TX_STATE = ERROR;
 				tx_conn->timer_flag = 0; // stop retransmission timer
-				clear_bitmap(tx_conn);
-				tx_conn->window = !tx_conn->window; // change window
-				tx_conn->window_cnt++;
-				tx_conn->fcn = tx_conn->MAX_WND_FCN;
-				tx_conn->frag_cnt = (tx_conn->window_cnt) * (tx_conn->MAX_WND_FCN + 1);
-				tx_conn->TX_STATE = SEND;
-				schc_fragment(tx_conn);
-			}
-			if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // mic and bitmap check succeeded
-				DEBUG_PRINTF("no more fragments, MIC ok");
-				tx_conn->timer_flag = 0; // stop retransmission timer
-				tx_conn->TX_STATE = END_TX;
+				// send_abort();
 				schc_fragment(tx_conn);
 				break;
 			}
+			if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
+				DEBUG_PRINTF("w != w, discard fragment");
+				discard_fragment(tx_conn);
+				tx_conn->TX_STATE = WAIT_BITMAP;
+				break;
+			}
+			if (tx_conn->ack.window[0] == tx_conn->window) {
+				DEBUG_PRINTF("w == w");
+				if (!has_no_more_fragments(tx_conn)
+						&& compare_bits(resend_window, tx_conn->ack.bitmap,
+								(tx_conn->MAX_WND_FCN + 1))) { // no missing fragments & more fragments
+					DEBUG_PRINTF(
+							"no missing fragments & more fragments to come");
+					tx_conn->timer_flag = 0; // stop retransmission timer
+					clear_bitmap(tx_conn);
+					tx_conn->window = !tx_conn->window; // change window
+					tx_conn->window_cnt++;
+					tx_conn->fcn = tx_conn->MAX_WND_FCN;
+					tx_conn->frag_cnt = (tx_conn->window_cnt)
+							* (tx_conn->MAX_WND_FCN + 1);
+					tx_conn->TX_STATE = SEND;
+					schc_fragment(tx_conn);
+				}
+				if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // mic and bitmap check succeeded
+					DEBUG_PRINTF("no more fragments, MIC ok");
+					tx_conn->timer_flag = 0; // stop retransmission timer
+					tx_conn->TX_STATE = END_TX;
+					schc_fragment(tx_conn);
+					break;
+				}
+			}
+			if (!compare_bits(resend_window, tx_conn->ack.bitmap,
+					(tx_conn->MAX_WND_FCN + 1))) { //ack.bitmap contains the missing fragments
+				DEBUG_PRINTF("bitmap contains the missing fragments");
+				tx_conn->attempts++;
+				tx_conn->frag_cnt = (tx_conn->window_cnt)
+						* (tx_conn->MAX_WND_FCN + 1);
+				tx_conn->timer_flag = 0; // stop retransmission timer
+				tx_conn->TX_STATE = RESEND;
+				schc_fragment(tx_conn);
+				break;
+			}
+			if (tx_conn->timer_flag) { // timer expired
+				DEBUG_PRINTF("timer expired"); // todo
+				if (send_empty(tx_conn)) { // requests retransmission of all-x ack with empty all-x
+					tx_conn->attempts++;
+					set_retrans_timer(tx_conn);
+				} else {
+					set_dc_timer(tx_conn);
+				}
+				break;
+			}
+			break;
 		}
-		if (!compare_bits(resend_window, tx_conn->ack.bitmap,
-			(tx_conn->MAX_WND_FCN + 1))) { //ack.bitmap contains the missing fragments
-			DEBUG_PRINTF("bitmap contains the missing fragments");
-			tx_conn->attempts++;
-			tx_conn->frag_cnt = (tx_conn->window_cnt) * (tx_conn->MAX_WND_FCN + 1);
-			tx_conn->timer_flag = 0; // stop retransmission timer
-			tx_conn->TX_STATE = RESEND;
+		case RESEND: {
+			DEBUG_PRINTF("RESEND");
+			// get the next fragment offset; set frag_cnt
+			frag_cnt = tx_conn->frag_cnt;
+			uint8_t last = 0;
+
+			if (get_next_fragment_from_bitmap(tx_conn)
+					== get_max_fcn_value(tx_conn)) {
+				tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->data_ptr)
+						/ tx_conn->mtu) + 1;
+				tx_conn->fcn = get_max_fcn_value(tx_conn);
+				last = 1;
+			} else {
+				tx_conn->frag_cnt = (((tx_conn->MAX_WND_FCN + 1)
+						* tx_conn->window_cnt)
+						+ get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
+				tx_conn->fcn = ((tx_conn->MAX_WND_FCN + 1)
+						* (tx_conn->window_cnt + 1)) - tx_conn->frag_cnt;
+				if (!get_next_fragment_from_bitmap(tx_conn)) {
+					last = 1;
+				}
+			}
+
+			DEBUG_PRINTF(
+					"schc_fragment(): sending missing fragments for bitmap: ");
+			print_bitmap(tx_conn->ack.bitmap, (tx_conn->MAX_WND_FCN + 1));
+			DEBUG_PRINTF("with FCN %d, window count %d, frag count %d",
+					tx_conn->fcn, tx_conn->window_cnt, tx_conn->frag_cnt);
+
+			if (last) { // check if this was the last fragment
+				DEBUG_PRINTF("schc_fragment(): last missing fragment to send");
+				if (send_fragment(tx_conn)) { // retransmit the fragment
+					tx_conn->TX_STATE = WAIT_BITMAP;
+					tx_conn->frag_cnt = (tx_conn->window_cnt + 1)
+							* (tx_conn->MAX_WND_FCN + 1);
+					set_retrans_timer(tx_conn);
+				} else {
+					tx_conn->frag_cnt = frag_cnt;
+					set_dc_timer(tx_conn);
+				}
+
+			} else {
+				if (send_fragment(tx_conn)) { // retransmit the fragment
+					tx_conn->TX_STATE = RESEND;
+				} else {
+					tx_conn->frag_cnt = frag_cnt;
+				}
+				set_dc_timer(tx_conn);
+			}
+
+			break;
+		}
+		case END_TX: {
+			DEBUG_PRINTF("schc_fragment(): end transmission cycle");
+			tx_conn->timer_flag = 0;
+			schc_reset(tx_conn); // todo ??
+			return SCHC_SUCCESS;
+			break;
+		}
+		case ERROR: {
+			DEBUG_PRINTF("ERROR");
+			break;
+		}
+		}
+	} else if (tx_conn->mode == NO_ACK) {
+		switch (tx_conn->TX_STATE) {
+		case INIT_TX: {
+			DEBUG_PRINTF("INIT_TX");
+			int8_t ret = init_tx_connection(tx_conn);
+			if (!ret) {
+				return SCHC_FAILURE;
+			} else if (ret < 0) {
+				tx_conn->send(tx_conn->data_ptr,
+						(tx_conn->tail_ptr - tx_conn->data_ptr),
+						tx_conn->device_id); // send packet right away
+				return SCHC_NO_FRAGMENTATION;
+			}
+			tx_conn->TX_STATE = SEND;
 			schc_fragment(tx_conn);
 			break;
 		}
-		if (tx_conn->timer_flag) { // timer expired
-			DEBUG_PRINTF("timer expired"); // todo
-			if(send_empty(tx_conn)) { // requests retransmission of all-x ack with empty all-x
-				tx_conn->attempts++;
-				set_retrans_timer(tx_conn);
+		case SEND: {
+			DEBUG_PRINTF("SEND");
+			tx_conn->frag_cnt++;
+
+			if (has_no_more_fragments(tx_conn)) { // last fragment
+				DEBUG_PRINTF("last fragment");
+				tx_conn->fcn = 1;
+				tx_conn->TX_STATE = END_TX;
 			} else {
-				set_dc_timer(tx_conn);
+				DEBUG_PRINTF("normal fragment");
+				tx_conn->fcn = 0;
+				tx_conn->TX_STATE = SEND;
 			}
+			if (!send_fragment(tx_conn)) { // only continue when packet was transmitted
+				DEBUG_PRINTF(
+						"schc_fragment(): radio occupied retrying in %d ms",
+						tx_conn->dc);
+				tx_conn->frag_cnt--;
+			}
+			set_dc_timer(tx_conn); // send next fragment in dc ms or end transmission
 			break;
 		}
-		break;
-	}
-	case RESEND: {
-		DEBUG_PRINTF("RESEND");
-		// get the next fragment offset; set frag_cnt
-		frag_cnt = tx_conn->frag_cnt;
-		uint8_t last = 0;
-
-		if(get_next_fragment_from_bitmap(tx_conn) == get_max_fcn_value(tx_conn)) {
-			tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->data_ptr)
-					/ tx_conn->mtu) + 1;
-			tx_conn->fcn = get_max_fcn_value(tx_conn);
-			last = 1;
-		} else {
-			tx_conn->frag_cnt = (((tx_conn->MAX_WND_FCN + 1) * tx_conn->window_cnt)
-				+ get_next_fragment_from_bitmap(tx_conn)); // send_fragment() uses frag_cnt to transmit a particular fragment
-			tx_conn->fcn = ((tx_conn->MAX_WND_FCN + 1) * (tx_conn->window_cnt + 1))
-					- tx_conn->frag_cnt;
-			if (!get_next_fragment_from_bitmap(tx_conn)) {
-				last = 1;
-			}
+		case END_TX: {
+			DEBUG_PRINTF("schc_fragment(): end transmission cycle");
+			schc_reset(tx_conn);
+			return SCHC_SUCCESS;
+			break;
 		}
-
-		DEBUG_PRINTF("schc_fragment(): sending missing fragments for bitmap: ");
-		print_bitmap(tx_conn->ack.bitmap, (tx_conn->MAX_WND_FCN + 1));
-		DEBUG_PRINTF("with FCN %d, window count %d, frag count %d", tx_conn->fcn , tx_conn->window_cnt, tx_conn->frag_cnt);
-
-		if(last) { // check if this was the last fragment
-			DEBUG_PRINTF("schc_fragment(): last missing fragment to send");
-			if(send_fragment(tx_conn)) { // retransmit the fragment
-				tx_conn->TX_STATE = WAIT_BITMAP;
-				tx_conn->frag_cnt = (tx_conn->window_cnt + 1) * (tx_conn->MAX_WND_FCN + 1);
-				set_retrans_timer(tx_conn);
-			} else {
-				tx_conn->frag_cnt = frag_cnt;
-				set_dc_timer(tx_conn);
-			}
-
-		} else {
-			if(send_fragment(tx_conn)) { // retransmit the fragment
-				tx_conn->TX_STATE = RESEND;
-			} else {
-				tx_conn->frag_cnt = frag_cnt;
-			}
-			set_dc_timer(tx_conn);
 		}
-
-		break;
-	}
-	case END_TX: {
-		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
-		tx_conn->timer_flag = 0;
-		schc_reset(tx_conn); // todo ??
-		return SCHC_SUCCESS;
-		break;
-	}
-	case ERROR: {
-		DEBUG_PRINTF("ERROR");
-		break;
-	}
 	}
 
 	return 0;
