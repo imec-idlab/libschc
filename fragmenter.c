@@ -1446,6 +1446,7 @@ static uint8_t send_empty(schc_fragmentation_t* conn) {
  *
  */
 static uint8_t send_tx_empty(schc_fragmentation_t* conn) {
+	DEBUG_PRINTF("send_tx_empty()");
 	return 0;
 }
 
@@ -2118,6 +2119,13 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		schc_fragment(tx_conn);
 	}
 
+	if (tx_conn->TX_STATE == END_TX) {
+		DEBUG_PRINTF("schc_fragment(): end transmission cycle");
+		tx_conn->timer_flag = 0;
+		schc_reset(tx_conn); // todo ??
+		return SCHC_SUCCESS;
+	}
+
 	/*
 	 * ACK ALWAYS MODE
 	 */
@@ -2191,13 +2199,6 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_fragment_resend(tx_conn);
 			break;
 		}
-		case END_TX: {
-			DEBUG_PRINTF("schc_fragment(): end transmission cycle");
-			tx_conn->timer_flag = 0;
-			schc_reset(tx_conn); // todo ??
-			return SCHC_SUCCESS;
-			break;
-		}
 		case ERROR: {
 			DEBUG_PRINTF("ERROR");
 			break;
@@ -2262,6 +2263,20 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				schc_fragment(tx_conn);
 				break;
 			}
+			if (tx_conn->timer_flag && !tx_conn->input) { // timer expired
+				DEBUG_PRINTF("timer expired"); // todo
+
+				if (!has_no_more_fragments(tx_conn)) { // more fragments to come
+					no_missing_fragments_more_to_come(tx_conn);
+					schc_fragment(tx_conn);
+				} else if (has_no_more_fragments(tx_conn)) {
+					tx_conn->timer_flag = 0; // stop retransmission timer
+					send_tx_empty(tx_conn); // todo
+					tx_conn->TX_STATE = WAIT_BITMAP;
+					set_dc_timer(tx_conn);
+				}
+				break;
+			}
 			if (tx_conn->ack.window[0] != tx_conn->window) { // unexpected window
 				DEBUG_PRINTF("w != w, discard fragment");
 				discard_fragment(tx_conn);
@@ -2283,20 +2298,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				DEBUG_PRINTF("received bitmap == local bitmap");
 				tx_conn->timer_flag = 0; // stop retransmission timer
 				tx_conn->TX_STATE = END_TX;
-				break;
-			}
-			if (tx_conn->timer_flag) { // timer expired
-				DEBUG_PRINTF("timer expired"); // todo
-
-				if (!has_no_more_fragments(tx_conn)) { // more fragments to come
-					no_missing_fragments_more_to_come(tx_conn);
-					schc_fragment(tx_conn);
-				} else if (has_no_more_fragments(tx_conn)) {
-					tx_conn->timer_flag = 0; // stop retransmission timer
-					send_tx_empty(tx_conn); // todo
-					tx_conn->TX_STATE = WAIT_BITMAP;
-					set_dc_timer(tx_conn);
-				}
+				schc_fragment(tx_conn); // end
 				break;
 			}
 			case RESEND:
@@ -2308,6 +2310,8 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		}
 		}
 	}
+
+	tx_conn->input = 0;
 
 	return 0;
 }
@@ -2347,16 +2351,8 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
  */
 void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint32_t device_id) {
-	DEBUG_PRINTF("schc_ack_input(): received ack");
-
-	int i;
-	for(i = 0; i < len; i++) {
-		printf("%02X ", data[i]);
-	}
-
-	DEBUG_PRINTF("");
-
 	uint8_t bit_offset = tx_conn->RULE_SIZE;
+	tx_conn->input = 1;
 
 	memset(tx_conn->ack.dtag, 0, 1); // clear dtag from prev reception
 	copy_bits(tx_conn->ack.dtag, (8 - tx_conn->DTAG_SIZE), (uint8_t*) data,
@@ -2369,9 +2365,6 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	bit_offset += tx_conn->WINDOW_SIZE;
 
 	uint8_t bitmap_len = (tx_conn->MAX_WND_FCN + 1);
-
-	DEBUG_PRINTF("has no more fragments %d, frag count %d",
-			has_no_more_fragments(tx_conn), tx_conn->frag_cnt);
 
 	if(has_no_more_fragments(tx_conn)) { // all-1 window
 		uint8_t mic[1] = { 0 };
