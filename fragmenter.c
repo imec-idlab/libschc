@@ -892,7 +892,7 @@ static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
 		value += (conn->window_cnt * (conn->MAX_WND_FCN + 1));
 	}
 
-	DEBUG_PRINTF("value is %d frag is %d", value, frag);
+	DEBUG_PRINTF("value is %d frag is %d, window count is %d", value, frag, conn->window_cnt);
 
 	conn->frag_cnt = value;
 }
@@ -1604,12 +1604,6 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	uint8_t window = get_window_bit(tail->ptr, rx_conn); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr, rx_conn); // the fcn value from the fragment
 
-	if(rx_conn->mode == NO_ACK) { // can not find fragment from fcn value
-		rx_conn->frag_cnt++; // update fragment counter
-	} else {
-		set_conn_frag_cnt(rx_conn, fcn);
-	}
-
 	DEBUG_PRINTF("fcn is %d, window is %d", fcn, window);
 
 	rx_conn->fcn = fcn;
@@ -1617,6 +1611,12 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 
 	if (window == (!rx_conn->window)) {
 		rx_conn->window_cnt++;
+	}
+
+	if(rx_conn->mode == NO_ACK) { // can not find fragment from fcn value
+		rx_conn->frag_cnt++; // update fragment counter
+	} else {
+		set_conn_frag_cnt(rx_conn, fcn);
 	}
 
 	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
@@ -1850,6 +1850,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 					if(is_bitmap_full(rx_conn, (rx_conn->MAX_WND_FCN + 1))) {
 						clear_bitmap(rx_conn);
 						rx_conn->window = !rx_conn->window;
+						rx_conn->window_cnt++;
 						rx_conn->RX_STATE = RECV_WINDOW;
 						break;
 					} else {
