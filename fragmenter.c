@@ -1144,11 +1144,12 @@ static void decode_bitmap(schc_fragmentation_t* conn) {
  * 1, starting from MAX_WIND_FCN
  *
  * @param conn 			a pointer to the connection
+ * @param len			the length of the bitmap
  *
  */
-static uint8_t is_bitmap_full(schc_fragmentation_t* conn) {
+static uint8_t is_bitmap_full(schc_fragmentation_t* conn, uint8_t len) {
 	uint8_t i;
-	for (i = 0; i < conn->MAX_WND_FCN + 1; i++) {
+	for (i = 0; i < len; i++) {
 		if (!(conn->bitmap[i / 8] & 128 >> (i % 8))) {
 			return 0;
 		}
@@ -1740,9 +1741,9 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				} else if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)) { // not all-x
 					set_local_bitmap(rx_conn);
 					DEBUG_PRINTF("not all-x, is bitmap full? %d",
-							is_bitmap_full(rx_conn));
+							is_bitmap_full(rx_conn, (rx_conn->MAX_WND_FCN + 1)));
 					rx_conn->RX_STATE = WAIT_NEXT_WINDOW;
-					if (is_bitmap_full(rx_conn)) { // bitmap is full; the last fragment of a retransmission is received
+					if (is_bitmap_full(rx_conn, (rx_conn->MAX_WND_FCN + 1))) { // bitmap is full; the last fragment of a retransmission is received
 						rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 						send_ack(rx_conn);
 					}
@@ -1845,7 +1846,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 						send_ack(rx_conn);
 						break;
 					}
-					if(is_bitmap_full(rx_conn)) {
+					set_local_bitmap(rx_conn);
+					if(is_bitmap_full(rx_conn, (rx_conn->MAX_WND_FCN + 1))) {
 						clear_bitmap(rx_conn);
 						rx_conn->window = !rx_conn->window;
 						rx_conn->RX_STATE = RECV_WINDOW;
@@ -1881,7 +1883,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			if (window == rx_conn->window) { // expected window
 				DEBUG_PRINTF("w == window");
 				if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)
-						&& is_bitmap_full(rx_conn)) { // not all-x and bitmap not full
+						&& is_bitmap_full(rx_conn, rx_conn->MAX_WND_FCN)) { // not all-x and bitmap not full
 					set_local_bitmap(rx_conn);
 					rx_conn->window = !rx_conn->window;
 					rx_conn->RX_STATE = RECV_WINDOW;
@@ -1904,6 +1906,16 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				return ret;
 			}
 			break;
+		}
+		case END_RX: {
+			DEBUG_PRINTF("END RX");
+			// end the transmission
+			mbuf_sort(&rx_conn->head); // sort the mbuf chain
+			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
+			// todo
+			// call function to forward to ipv6 network
+			schc_reset(rx_conn);
+			return 1; // end reception
 		}
 		}
 	}
