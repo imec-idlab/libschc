@@ -2110,8 +2110,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		if (!ret) {
 			return SCHC_FAILURE;
 		} else if (ret < 0) {
-			tx_conn->send(tx_conn->data_ptr,
-					(tx_conn->tail_ptr - tx_conn->data_ptr),
+			tx_conn->send(tx_conn->data_ptr, tx_conn->packet_len,
 					tx_conn->device_id); // send packet right away
 			return SCHC_NO_FRAGMENTATION;
 		}
