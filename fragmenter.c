@@ -527,7 +527,7 @@ void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr) {
 	schc_mbuf_t *curr = head; uint16_t pos = 0;
 
 	while (curr != NULL) {
-		memcpy((uint8_t*) (ptr + pos), (uint8_t*) (curr->ptr + pos), curr->len);
+		memcpy((uint8_t*) (ptr + pos), (uint8_t*) (curr->ptr), curr->len);
 		pos += curr->len;
 
 		curr = curr->next;
@@ -1466,7 +1466,7 @@ static uint8_t send_tx_empty(schc_fragmentation_t* conn) {
  *
  */
 schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
-	uint8_t i; schc_fragmentation_t *conn;
+	uint32_t i; schc_fragmentation_t *conn;
 	conn = 0;
 
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
@@ -1765,8 +1765,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				// end the transmission
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
 				mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
-				// todo
-				// call function to forward to ipv6 network
+				rx_conn->end_rx(rx_conn); // forward to ipv6 network
 				schc_reset(rx_conn);
 				return 1; // end reception
 			}
@@ -1812,8 +1811,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			DEBUG_PRINTF("END RX"); // end the transmission
 			mbuf_sort(&rx_conn->head); // sort the mbuf chain
 			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
-			// todo
-			// call function to forward to ipv6 network
+			rx_conn->end_rx(rx_conn); // forward to ipv6 network
 			schc_reset(rx_conn);
 			return 1; // end reception
 		}
@@ -1914,8 +1912,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			// end the transmission
 			mbuf_sort(&rx_conn->head); // sort the mbuf chain
 			mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
-			// todo
-			// call function to forward to ipv6 network
+			rx_conn->end_rx(rx_conn); // forward to ipv6 network
 			schc_reset(rx_conn);
 			return 1; // end reception
 		}
@@ -1934,7 +1931,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  *
  */
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id)) {
+		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
+		void (*end_rx)(schc_fragmentation_t* conn)) {
 	uint32_t i;
 
 	// initializes the schc tx connection
@@ -1944,6 +1942,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		schc_reset(&schc_rx_conns[i]);
 		schc_rx_conns[i].send = send;
+		schc_rx_conns[i].end_rx = end_rx;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
