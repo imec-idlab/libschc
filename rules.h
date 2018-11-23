@@ -120,7 +120,7 @@ const static struct schc_rule coap_rule1 = {
 				{ "code",			0,	1,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
 				{ "message ID",		0,	2,	 1, BI,		{0x23, 0xBB},	&ignore,	VALUESENT }, // 23988
 				{ "token",			0,	2,	 1, BI,		{0x21, 0xFA},	&equal,		NOTSENT }, // 0x21fa
-				{ "uri-path", 		0,	4,	 2, BI,		"[\"temp\",\"humi\",\"batt\",\"r\"]",
+				{ "uri-path", 		0,	4,	 2, BI,		"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
 						&matchmap,		MAPPINGSENT },
 				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
 
@@ -140,7 +140,7 @@ const static struct schc_rule coap_rule2 = {
 				{ "message ID",		12,	2,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
 				{ "message ID",		12,	2,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB },
 				{ "token",			0,	4,	 1, BI,		{0, 0, 0, 0},	&ignore,	VALUESENT }, // GET sensor value
-				{ "uri-path", 		0,	4,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]",
+				{ "uri-path", 		0,	4,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
 						&matchmap,		MAPPINGSENT },
 				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
 		}

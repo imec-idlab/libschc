@@ -130,8 +130,9 @@ typedef struct schc_fragmentation_t {
 	uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id);
 	/* the timer task */
 	void (*post_timer_task)(void (*timer_task)(void* conn), uint32_t device_id,
-			uint16_t time_ms, void *arg);
+			uint32_t time_ms, void *arg);
 	void (*end_rx)(struct schc_fragmentation_t *conn);
+	void (*remove_timer_entry)(uint32_t device_id);
 	/* indicates whether a timer has expired */
 	uint8_t timer_flag;
 	/* indicates if a fragment is received or this is a callback */
@@ -156,7 +157,8 @@ typedef struct schc_fragmentation_t {
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
-		void (*end_rx)(schc_fragmentation_t* conn));
+		void (*end_rx)(schc_fragmentation_t* conn),
+		void (*remove_timer_entry)(uint32_t device_id));
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
 void schc_reset(schc_fragmentation_t* conn);

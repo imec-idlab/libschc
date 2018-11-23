@@ -1202,6 +1202,7 @@ static void discard_fragment(schc_fragmentation_t* conn) {
 static void abort_connection(schc_fragmentation_t* conn) {
 	// todo
 	DEBUG_PRINTF("abort_connection(): inactivity timer expired");
+	conn->remove_timer_entry(conn->device_id);
 	schc_reset(conn);
 	return;
 }
@@ -1542,7 +1543,7 @@ static uint8_t wait_end(schc_fragmentation_t* rx_conn, schc_mbuf_t* tail) {
 
 	DEBUG_PRINTF("WAIT END");
 	if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-		abort_connection(rx_conn); // todo
+		abort_connection(rx_conn); // todo + reset connection (but first remove timer instance)
 		return 0;
 	}
 
@@ -1790,18 +1791,25 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 		switch (rx_conn->RX_STATE) {
 		case RECV_WINDOW: {
 			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
-				abort_connection(rx_conn); // todo no send abort
+				abort_connection(rx_conn);
+				// todo send abort
 				break;
 			}
 			if (fcn == get_max_fcn_value(rx_conn)) { // all-1
 				// clear inactivity timer
 				rx_conn->timer_flag = 0;
 				if(!mic_correct(rx_conn)) { // mic wrong
-					abort_connection(rx_conn); // todo no send abort
+					abort_connection(rx_conn);
+					// todo send abort
+					return 1;
 				} else { // mic correct
 					rx_conn->RX_STATE = END_RX;
 					rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
 					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
+
+					mbuf_sort(&rx_conn->head); // sort the mbuf chain
+					mbuf_format(&rx_conn->head, rx_conn); // remove headers to pass to application
+
 					return 1;
 				}
 			}
@@ -1932,7 +1940,8 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  */
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
-		void (*end_rx)(schc_fragmentation_t* conn)) {
+		void (*end_rx)(schc_fragmentation_t* conn),
+		void (*remove_timer_entry)(uint32_t device_id)) {
 	uint32_t i;
 
 	// initializes the schc tx connection
@@ -1943,6 +1952,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_reset(&schc_rx_conns[i]);
 		schc_rx_conns[i].send = send;
 		schc_rx_conns[i].end_rx = end_rx;
+		schc_rx_conns[i].remove_timer_entry = remove_timer_entry;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
