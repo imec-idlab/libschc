@@ -1933,7 +1933,12 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 /**
  * Initializes the SCHC fragmenter
  *
- * @param tx_conn		a pointer to the tx initialization structure
+ * @param tx_conn				a pointer to the tx initialization structure
+ * @param send					a pointer to the send callback
+ * @param end_rx				this function is called to indicate that
+ * 								the last rx timer has expired
+ * @param remove_timer_entry	some scheduler implementations need a callback
+ * 								to remove a timer entry for a certain device
  *
  * @return error codes on error
  *

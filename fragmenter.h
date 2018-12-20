@@ -131,7 +131,9 @@ typedef struct schc_fragmentation_t {
 	/* the timer task */
 	void (*post_timer_task)(void (*timer_task)(void* conn), uint32_t device_id,
 			uint32_t time_ms, void *arg);
+	/* this function is called when the last rx timer expires */
 	void (*end_rx)(struct schc_fragmentation_t *conn);
+	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(uint32_t device_id);
 	/* indicates whether a timer has expired */
 	uint8_t timer_flag;
