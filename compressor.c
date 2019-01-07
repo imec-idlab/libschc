@@ -915,6 +915,10 @@ static uint16_t schc_find_coap_rule_from_header(coap_pdu *pdu, uint8_t* coap_fie
 	uint8_t rule_is_found = 1;
 	uint8_t direction_field_length = 0;
 
+	if(coap_validate_pkt(pdu) != CE_NONE) {
+		return 0;
+	}
+
 	*coap_field_length = generate_coap_header_fields(pdu);
 
 	int j; int k;
