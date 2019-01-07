@@ -1081,7 +1081,7 @@ static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_of
 
 	// construct the CoAP header
 	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
-	coap_pdu coap_msg = { coap_buf, coap_length, MAX_COAP_MSG_SIZE };
+	coap_pdu coap_msg = { coap_buf, coap_length, coap_length };
 
 	// copy the payload and the CoAP header from the original data source
 	memcpy(coap_buf, (uint8_t *) header_ptr, coap_length);
