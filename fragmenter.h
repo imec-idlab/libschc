@@ -43,7 +43,7 @@ extern "C" {
 
 
 typedef enum {
-	INIT_TX = 0, SEND = 1, RESEND = 2, WAIT_BITMAP = 3, END_TX = 4, ERROR = 5
+	INIT_TX = 0, SEND = 1, RESEND = 2, WAIT_BITMAP = 3, END_TX = 4, ERR = 5
 } tx_state;
 
 typedef enum {

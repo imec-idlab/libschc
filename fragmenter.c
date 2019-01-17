@@ -1839,7 +1839,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			if (rx_conn->window != window) { // unexpected window
 				DEBUG_PRINTF("w != window");
 				discard_fragment(rx_conn);
-				rx_conn->RX_STATE = ERROR;
+				rx_conn->RX_STATE = ERR;
 				break;
 			} else if (window == rx_conn->window) { // expected window
 				DEBUG_PRINTF("w == window");
@@ -2156,7 +2156,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
 				DEBUG_PRINTF(
 						"tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
-				tx_conn->TX_STATE = ERROR;
+				tx_conn->TX_STATE = ERR;
 				tx_conn->timer_flag = 0; // stop retransmission timer
 				// send_abort();
 				schc_fragment(tx_conn);
@@ -2212,7 +2212,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			tx_fragment_resend(tx_conn);
 			break;
 		}
-		case ERROR: {
+		case ERR: {
 			DEBUG_PRINTF("ERROR");
 			break;
 		}
@@ -2270,7 +2270,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			if (tx_conn->attempts >= MAX_ACK_REQUESTS) {
 				DEBUG_PRINTF(
 						"tx_conn->attempts >= MAX_ACK_REQUESTS: send abort"); // todo
-				tx_conn->TX_STATE = ERROR;
+				tx_conn->TX_STATE = ERR;
 				tx_conn->timer_flag = 0; // stop retransmission timer
 				// send_abort();
 				schc_fragment(tx_conn);
