@@ -45,11 +45,11 @@ extern "C" {
  * so we can check the fields in the SCHC header
  */
 struct coap_option_names {
-	uint8_t id;
+	uint16_t id;
 	char name[16];
 };
 
-static struct coap_option_names coap_options[15] = {
+static struct coap_option_names coap_options[16] = {
 		{ 1, "if-match" },
 		{ 3, "uri-host" },
 		{ 4, "etag" },
@@ -64,7 +64,8 @@ static struct coap_option_names coap_options[15] = {
 		{ 20, "location-query" },
 		{ 35, "proxy-uri" },
 		{ 39, "proxy-scheme" },
-		{ 60, "size1" }
+		{ 60, "size1" },
+		{ 258, "no-response"}
 };
 
 ///
@@ -113,11 +114,13 @@ typedef enum coap_type {
 /// All known message request/response codes.
 ///
 typedef enum coap_code {
+	/* CoAP method codes */
 	CC_EMPTY = 0,
 	CC_GET = 1,
 	CC_POST = 2,
 	CC_PUT = 3,
 	CC_DELETE = 4,
+	/* CoAP response codes */
 	CC_CREATED = 65,
 	CC_DELETED = 66,
 	CC_VALID = 67,
@@ -164,7 +167,8 @@ typedef enum coap_option_number {
 	CON_LOCATION_QUERY = 20,
 	CON_PROXY_URI = 35,
 	CON_PROXY_SCHEME = 39,
-	CON_SIZE1 = 60
+	CON_SIZE1 = 60,
+	CON_NO_RESPONSE = 258
 } coap_option_number;
 
 ///

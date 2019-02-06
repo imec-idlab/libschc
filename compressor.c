@@ -897,7 +897,7 @@ static uint8_t generate_coap_header_fields(coap_pdu *pdu) {
 		field_length++;
 	}
 
-	return field_length;
+	return field_length; // the number of CoAP header fields (not bytes)
 }
 
 /**
