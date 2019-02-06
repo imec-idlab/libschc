@@ -8,7 +8,7 @@
 #define IP6_HLEN				40
 
 // total number of CoAP options available
-#define COAP_OPTIONS_LENGTH		15
+#define COAP_OPTIONS_LENGTH		16 // .. actually a picocoap variable
 
 // the number of bytes a field can contain
 // (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)

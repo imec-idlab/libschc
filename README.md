@@ -9,3 +9,7 @@ This repository contains both the compression aswell as the
 fragmentation mechanism.
 
 More information will follow soon.
+
+The library depends on two other libraries:
+- picocoap, which is used to parse and unparse the CoAP header
+- jsmn, used to parse json, as used in the rules

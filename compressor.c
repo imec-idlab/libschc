@@ -1402,11 +1402,11 @@ uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 	uint8_t udp_rule_id = (rule_id & TPL_MASK) >> TPL_SHIFT;
 	uint8_t coap_rule_id = (rule_id & APL_MASK) >> APL_SHIFT;
 	uint8_t is_fragmented = (rule_id & FRAG_MASK) >> FRAG_SHIFT;
-/*
+
 	printf("\n");
 	printf("Rule id: %d (0x%02X) = | %d | %d | %d | %d | \n", rule_id, rule_id, is_fragmented, coap_rule_id,
 	            udp_rule_id, ipv6_rule_id);
-*/
+
 	uint8_t* payload = (uint8_t *) (data + RULE_SIZE_BYTES);
 	uint8_t payload_length = total_length - RULE_SIZE_BYTES;
 
