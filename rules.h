@@ -5,8 +5,8 @@
 // output functions should be adapted
 // tie the output rules to the device which is sending
 #define IPV6_RULES				2
-#define UDP_RULES				3
-#define COAP_RULES				3
+#define UDP_RULES				2
+#define COAP_RULES				2
 
 #define DEVICE_COUNT			1
 
@@ -23,7 +23,7 @@ const static struct schc_rule ipv6_rule1 = {
 				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&equal, 	NOTSENT },
 				{ "length", 		0, 2,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
 				{ "next header", 	0, 1, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
-				{ "hop limit", 		0, 1, 	 1, BI, 	{32}, 			&equal, 	NOTSENT },
+				{ "hop limit", 		0, 1, 	 1, BI, 	{64}, 			&equal, 	NOTSENT },
 				{ "src prefix",		0, 8,	 1, BI,		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
 				{ "src iid",		0, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
