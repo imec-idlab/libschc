@@ -111,18 +111,18 @@ const static struct schc_rule udp_rule3 = {
 
 // GET temperature value
 const static struct schc_rule coap_rule1 = {
-		1, 8, 7, 8,
+		1, 9, 8, 9,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
 				{ "type",			0,	1,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
-				{ "token length",	0,	1,	 1, BI,		{2},			&equal,		NOTSENT },
-				{ "code",			0,	1,	 1, UP,		{CC_POST},		&equal,		NOTSENT },
-				{ "code",			0,	1,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
-				{ "message ID",		0,	2,	 1, BI,		{0x23, 0xBB},	&ignore,	VALUESENT }, // 23988
-				{ "token",			0,	2,	 1, BI,		{0x21, 0xFA},	&equal,		NOTSENT }, // 0x21fa
-				{ "uri-path", 		0,	4,	 2, BI,		"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
-						&matchmap,		MAPPINGSENT },
-				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
+				{ "token length",	0,	1,	 1, BI,		{4},			&equal,		NOTSENT },
+				{ "code",			0,	1,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
+				{ "message ID",		0,	2,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
+				{ "token",			24,	4,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB }, // by setting the last bytes to 0x00, we allow 8 bit variations
+				{ "uri-path", 		0,	5,	 1, BI,		"usage", 		&equal,		NOTSENT },
+				{ "no-response", 	0,	1,	 1, BI,		{0x1A}, 		&equal,		NOTSENT },
+				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT }
 
 		}
 };
