@@ -47,7 +47,7 @@ const static struct schc_rule ipv6_rule2 = {
 				{ "src prefix",	 	0,  8,	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
 				{ "src iid",		48, 8, 	 1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
-						&MSB, 	LSB }, // by setting the last bytes to 0x00, we allow 8 bit variations
+						&MSB, 	LSB }, // by setting the last 2 bytes to 0x00, we allow 16 bit variations
 				{ "dest prefix",	0,  8, 	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
 				{ "dest iid",		48, 8, 	 1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
@@ -88,7 +88,7 @@ const static struct schc_rule coap_rule1 = {
 				{ "code",			0,	1,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	2,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
 				{ "token",			24,	4,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB }, // by setting the last bytes to 0x00, we allow 8 bit variations
+						&MSB,		LSB }, // by setting the last byte to 0x00, we allow 8 bit variations
 				{ "uri-path", 		0,	5,	 1, BI,		"usage", 		&equal,		NOTSENT },
 				{ "no-response", 	0,	1,	 1, BI,		{0x1A}, 		&equal,		NOTSENT },
 				{ "payload marker",	0,	1,   1, BI, 	{255},			&equal,		NOTSENT }

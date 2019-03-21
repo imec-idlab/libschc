@@ -1169,7 +1169,10 @@ static uint8_t ignore(struct schc_field* target_field, unsigned char* field_valu
 static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value){
 	uint8_t i; uint8_t j;
 
+	// printf("MSB %s \n", target_field->field);
+
 	for (i = 0; i < target_field->field_length; i++) {
+		// printf("%d - %d ", target_field->target_value[i], field_value[i]);
 
 		// the byte to do the bitwise operation on
 		if( ( (i + 1) * 8) >=  target_field->msb_length) {
@@ -1190,6 +1193,9 @@ static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value){
 			unsigned char tv_rule = target_field->target_value[i] ;
 			unsigned char tv_header = field_value[i];
 
+			// printf("msb is %d tv rule %d, tv header %d i is %d \n", msb, tv_rule, tv_header, i);
+
+
 			if ( ( tv_rule & mask ) != ( tv_header & mask) ) {
 				return 0;
 			} else {
@@ -1202,6 +1208,7 @@ static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value){
 				return 0;
 			}
 		}
+		// printf("\n");
 	}
 }
 
