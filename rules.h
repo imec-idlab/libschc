@@ -8,7 +8,7 @@
 #define UDP_RULES				2
 #define COAP_RULES				2
 
-#define DEVICE_COUNT			1
+#define DEVICE_COUNT			2
 
 #include "pt/pt.h"
 #include "schc_config.h"
@@ -115,15 +115,16 @@ const static struct schc_rule coap_rule2 = {
 		}
 };
 
+// ToDo
+// back-end vs front-end
+// add to .gitignore
+// add rules-example.h
+
 // save rules in flash
 const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
 const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2 };
 const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2 };
 
-// ToDo
-// back-end vs front-end
-// add to .gitignore
-// add rules-example.h
 struct schc_device node1 = { 1, 3, &schc_ipv6_rules, 3, &schc_udp_rules, 3,
 		&schc_coap_rules };
 
