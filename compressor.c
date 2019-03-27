@@ -543,7 +543,7 @@ static uint16_t schc_find_ipv6_rule_from_header(struct uip_udpip_hdr *ip_udp_hea
 				if (!schc_ipv6_rules[i]->content[k].MO(&schc_ipv6_rules[i]->content[k],
 						ipv6_header_fields[j])) {
 					rule_is_found = 0;
-					//break;
+					break;
 				} else {
 					rule_is_found = 1;
 				}
