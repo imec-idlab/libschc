@@ -6,7 +6,7 @@
 // tie the output rules to the device which is sending
 #define IPV6_RULES				2
 #define UDP_RULES				2
-#define COAP_RULES				2
+#define COAP_RULES				3
 
 #define DEVICE_COUNT			2
 
@@ -80,7 +80,7 @@ const static struct schc_rule udp_rule2 = {
 
 // GET temperature value
 const static struct schc_rule coap_rule1 = {
-		1, 9, 8, 9,
+		1, 9, 7, 9,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
 				{ "type",			0,	1,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
@@ -115,18 +115,34 @@ const static struct schc_rule coap_rule2 = {
 		}
 };
 
-// ToDo
-// back-end vs front-end
-// add to .gitignore
-// add rules-example.h
+// GET temperature value
+const static struct schc_rule coap_rule3 = {
+		3, 8, 6, 8,
+		{
+				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
+				{ "type",			0,	1,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
+				{ "token length",	0,	1,	 1, BI,		{4},			&equal,		NOTSENT },
+				{ "code",			0,	1,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
+				{ "message ID",		0,	2,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
+				{ "token",			24,	4,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB }, // by setting the last byte to 0x00, we allow 8 bit variations
+				{ "uri-path", 		0,	5,	 1, BI,		"usage", 		&equal,		NOTSENT },
+				{ "no-response", 	0,	1,	 1, BI,		{0x1A}, 		&equal,		NOTSENT }
+
+		}
+};
 
 // save rules in flash
 const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
 const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2 };
-const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2 };
+const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3 };
 
-struct schc_device node1 = { 1, 3, &schc_ipv6_rules, 3, &schc_udp_rules, 3,
-		&schc_coap_rules };
+// ToDo
+// back-end vs front-end
+// add to .gitignore
+// add rules-example.h
+struct schc_device node1 = { 1, IPV6_RULES, &schc_ipv6_rules, UDP_RULES,
+		&schc_udp_rules, COAP_RULES, &schc_coap_rules };
 
 struct schc_device* devices[DEVICE_COUNT] = { &node1 };
 
