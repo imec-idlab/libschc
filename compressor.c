@@ -1083,12 +1083,6 @@ static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_of
 
 	uint8_t *header_ptr =  (uint8_t*) (data + IP6_HLEN + UDP_HLEN);
 
-	// add first byte of payload if there is a payload marker
-	// so we do not break previous implementations
-	/*if(header_ptr[coap_length - 1] == 0xFF) {
-		coap_length += 1;
-	}*/
-
 	// construct the CoAP header
 	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
 	coap_pdu coap_msg = { coap_buf, coap_length, coap_length };
@@ -1128,14 +1122,14 @@ static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_of
 static uint8_t equal(struct schc_field* target_field, unsigned char* field_value){
 	uint8_t i;
 
-	printf("compare %s \n", target_field->field);
+	// printf("compare %s \n", target_field->field);
 
 	for(i = 0; i < target_field->field_length; i++) {
-		printf("%d - %d ", target_field->target_value[i], field_value[i]);
+		// printf("%d - %d ", target_field->target_value[i], field_value[i]);
 		if(target_field->target_value[i] != field_value[i]){
 			return 0;
 		}
-		printf("\n");
+		// printf("\n");
 	}
 
 	// target value matches field value
