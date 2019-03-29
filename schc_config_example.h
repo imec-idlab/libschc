@@ -1,8 +1,6 @@
 #ifndef SCHC_CONFIG_H_
 #define SCHC_CONFIG_H_
 
-#include "log.h"
-
 #include <unistd.h>
 #include <inttypes.h>
 

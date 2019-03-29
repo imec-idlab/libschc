@@ -1067,41 +1067,33 @@ static uint8_t decompress_coap_rule(struct schc_device* device_rules, uint8_t ru
  *
  * @param schc_header pointer to the header in which to save the compressed header
  * @param schc_offset pointer to the offset in the compressed header
- * @param coap_length the length of the coap header
- * @param data pointer to the application generated data
+ * @param coap_pdu the CoAP message
  *
  * @return the CoAP rule id
  * 		   error codes on error
  *
  */
-static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_offset,
-		uint8_t coap_length, const uint8_t* data) {
+static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_offset, const coap_pdu* coap_msg) {
+	// check the buffer for determining the CoAP length
+	uint16_t coap_length = get_coap_offset(coap_msg);
+
 	if((coap_length + 1) > MAX_COAP_MSG_SIZE) {
 		DEBUG_PRINTF("compress_coap_header: CoAP buffer too small, aborting..");
 		return -1;
 	}
 
-	uint8_t *header_ptr =  (uint8_t*) (data + IP6_HLEN + UDP_HLEN);
-
-	// construct the CoAP header
-	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
-	coap_pdu coap_msg = { coap_buf, coap_length, coap_length };
-
-	// copy the payload and the CoAP header from the original data source
-	memcpy(coap_buf, (uint8_t *) header_ptr, coap_length);
-
 	// the number of CoAP fields, as returned by the compressor
 	uint8_t coap_fields = 0;
-	uint8_t coap_rule_id = schc_find_coap_rule_from_header(&coap_msg,
+	uint8_t coap_rule_id = schc_find_coap_rule_from_header(coap_msg,
 			&coap_fields);
 
 	// compress the header if the rule is not 0
 	if (coap_rule_id != 0) {
 		*schc_offset += schc_build_coap_header(
-				(unsigned char*) (schc_header + *schc_offset), &coap_msg,
+				(unsigned char*) (schc_header + *schc_offset), coap_msg,
 				coap_rule_id);
 	} else {
-		memcpy((unsigned char*) (schc_header + *schc_offset), header_ptr,
+		memcpy((unsigned char*) (schc_header + *schc_offset), coap_msg->buf,
 				coap_length);
 		*schc_offset += coap_length;
 	}
@@ -1318,7 +1310,7 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
  * Compresses a CoAP/UDP/IP packet
  *
  * @param data 			pointer to the packet
- * @param buf			pointer to the final packet buffer
+ * @param buf			pointer to the compressed packet buffer
  * @param total_length 	the length of the packet
  *
  * @return the length of the compressed packet
@@ -1333,19 +1325,19 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length) 
 	}
 
 	uint16_t schc_offset = RULE_SIZE_BYTES;
-	uint8_t coap_length = 0;
+	uint16_t coap_length = 0;
 
-	// the allocated buffer is still empty
-	memcpy(buf, (uint8_t*) (data + IP6_HLEN + UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN));
-	coap_pdu msg = { buf, (total_length - IP6_HLEN - UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN) };
+	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
+	memcpy(coap_buf, (uint8_t*) (data + IP6_HLEN + UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN)); // copy CoAP header
+	coap_pdu msg = { coap_buf, (total_length - IP6_HLEN - UDP_HLEN), MAX_COAP_MSG_SIZE };
+
+	memset(buf, 0, total_length);
+
 	// check the buffer for determining the CoAP length
 	coap_length = get_coap_offset(&msg);
-
-	memset(buf, 0, (total_length - IP6_HLEN - UDP_HLEN));
-
 	uint16_t payload_len = (total_length - IP6_HLEN - UDP_HLEN - coap_length);
 
-	int16_t coap_rule_id = compress_coap_header(buf, &schc_offset, coap_length, data);
+	int16_t coap_rule_id = compress_coap_header(buf, &schc_offset, &msg);
 	if(coap_rule_id < 0) {
 		DEBUG_PRINTF("schc_output: something went wrong compressing the CoAP header, aborting..");
 		return -1;
@@ -1471,41 +1463,6 @@ uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 		memcpy((unsigned char*) (header), (uint8_t *) (payload + *header_offset), IP6_HLEN);
 		*header_offset += IP6_HLEN;
 	}
-
-	/*
-
-	if (udp_rule_id != 0) {
-		ret = decompress_udp_rule(device_rules, udp_rule_id, data, header, header_offset);
-		if (ret == 0) {
-			return 0; // no rule was found
-		}
-	} else {
-		uint8_t *udp_ptr = (uint8_t *) (data + *header_offset);
-		uint8_t udp_len = UDP_HLEN + 1; uint8_t udp_offset = IP6_HLEN - 1;
-		if(coap_rule_id == 0) {
-			udp_len += 1; udp_offset -= 1;
-		}
-		memcpy((unsigned char*) (header + udp_offset), udp_ptr, udp_len);
-		*header_offset += UDP_HLEN;
-	}
-
-	if (ipv6_rule_id != 0) {
-		if (coap_rule_id == 0) {
-			*header_offset += 1;
-		}
-		ret = decompress_ipv6_rule(device_rules, ipv6_rule_id, data, header, header_offset);
-		if (ret == 0) {
-			return 0; // no rule was found
-		}
-	} else {
-		uint8_t ipv6_len = IP6_HLEN;
-		/*if(coap_rule_id == 0) {
-			*header_offset += 1; ipv6_len += 1;
-		}*/
-	/*
-		memcpy((unsigned char*) (header), (uint8_t *) (payload + *header_offset), ipv6_len);
-		*header_offset += IP6_HLEN;
-	}*/
 /*
 	printf("\n");
 	printf("+-----------------------------------------+\n");

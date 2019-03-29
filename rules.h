@@ -6,7 +6,7 @@
 // tie the output rules to the device which is sending
 #define IPV6_RULES				2
 #define UDP_RULES				2
-#define COAP_RULES				3
+#define COAP_RULES				4
 
 #define DEVICE_COUNT			2
 
@@ -132,10 +132,33 @@ const static struct schc_rule coap_rule3 = {
 		}
 };
 
+const static struct schc_rule coap_rule4 = {
+		4, 12, 12, 12,
+		{
+				{ "version",            0,      1,      1, BI,      {COAP_V1},		&equal,         NOTSENT },
+				{ "type",               0,  	1,      1, BI,      {CT_CON},		&equal,         NOTSENT },
+				{ "token length",       0,      1,      1, BI,      {8}, 			&equal,         NOTSENT },
+				{ "code",               0,     	1,		1, BI,      {CC_POST},      &equal,         NOTSENT },
+				{ "message ID",         0,      2,		1, BI,      {0x23, 0xBB},   &ignore,	    VALUESENT },
+				{ "token",             24,     	8,      1, BI,      {0x21, 0xFA, 0x01, 0x00},
+																					&ignore,        VALUESENT }, // by setting the last byte to 0x00, we allow 8 bit variations
+				{ "uri-path",           0,      2,      1, BI,      "rd",           &equal,         NOTSENT },
+                { "content-format",     0,     	1,      1, BI,      {0x28},         &equal,         NOTSENT },
+                { "uri-query",          0,      9,      1, BI,      {0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x30},
+                																	&equal,         NOTSENT },
+                { "uri-query",          0,      11,     1, BI,      {0x65, 0x70, 0x3D, 0x6D, 0x61, 0x67, 0x69, 0x63, 0x69, 0x61, 0x6E},
+                																	&equal,         NOTSENT },
+                { "uri-query",          0,      6,      1, BI,      {0x6C, 0x74, 0x3D, 0x31, 0x32, 0x31},
+                																	&equal,         NOTSENT },
+				{ "payload marker",   	0,      1,   	1, BI,		{255},			&equal,         NOTSENT } // respond with CONTENT
+               }
+
+};
+
 // save rules in flash
 const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
 const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2 };
-const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3 };
+const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3, &coap_rule4 };
 
 // ToDo
 // back-end vs front-end
