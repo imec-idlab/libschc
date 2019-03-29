@@ -1118,14 +1118,14 @@ static int16_t compress_coap_header(unsigned char *schc_header, uint8_t *schc_of
 static uint8_t equal(struct schc_field* target_field, unsigned char* field_value){
 	uint8_t i;
 
-	// printf("compare %s \n", target_field->field);
+	printf("compare %s \n", target_field->field);
 
 	for(i = 0; i < target_field->field_length; i++) {
-		// printf("%d - %d ", target_field->target_value[i], field_value[i]);
+		printf("%d - %d ", target_field->target_value[i], field_value[i]);
 		if(target_field->target_value[i] != field_value[i]){
 			return 0;
 		}
-		// printf("\n");
+		printf("\n");
 	}
 
 	// target value matches field value

@@ -99,8 +99,8 @@ const static struct schc_rule udp_rule2 = {
 const static struct schc_rule udp_rule3 = {
 		3, 4, 4, 4,
 		{
-				{ "src port", 		0, 2, 	 1, BI, 	{0x5B, 0x07}, 		&equal,		NOTSENT },
-				{ "dest port", 		0, 2, 	 1, BI, 	{0x5B, 0x07}, 		&equal,		NOTSENT },
+				{ "src port", 		0, 2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
+				{ "dest port", 		0, 2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
 				{ "length", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
 				{ "checksum", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
