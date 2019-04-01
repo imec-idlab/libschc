@@ -5,7 +5,7 @@
 // output functions should be adapted
 // tie the output rules to the device which is sending
 #define IPV6_RULES				2
-#define UDP_RULES				2
+#define UDP_RULES				3
 #define COAP_RULES				4
 
 #define DEVICE_COUNT			2
@@ -68,7 +68,6 @@ const static struct schc_rule udp_rule1 = {
 const static struct schc_rule udp_rule2 = {
 		2, 4, 4, 4,
 		{
-<<<<<<< HEAD
 				{ "src port", 		12, 2, 	 1, BI, 	{4, 48},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
 				{ "dest port", 		12, 2, 	 1, BI, 	{4, 48},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
 				{ "length", 		0,  2, 	 1, BI, 	{0, 0},			&ignore,	COMPLENGTH },
@@ -89,7 +88,7 @@ const static struct schc_rule udp_rule3 = {
 // it is important to use strings, identical to the ones
 // defined in coap.h for the options
 
-// GET temperature value
+// GET usage
 const static struct schc_rule coap_rule1 = {
 		1, 9, 7, 9,
 		{
@@ -126,7 +125,7 @@ const static struct schc_rule coap_rule2 = {
 		}
 };
 
-// GET temperature value
+// GET usage without payload (for test)
 const static struct schc_rule coap_rule3 = {
 		3, 8, 6, 8,
 		{
@@ -168,7 +167,7 @@ const static struct schc_rule coap_rule4 = {
 
 // save rules in flash
 const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
-const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2 };
+const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2, &udp_rule3 };
 const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3, &coap_rule4 };
 
 // ToDo
