@@ -4,7 +4,7 @@
 // ToDo
 // output functions should be adapted
 // tie the output rules to the device which is sending
-#define IPV6_RULES				2
+#define IPV6_RULES				3
 #define UDP_RULES				3
 #define COAP_RULES				4
 
@@ -23,7 +23,7 @@ const static struct schc_rule ipv6_rule1 = {
 				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 2,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
 				{ "next header", 	0, 1, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
-				{ "hop limit", 		0, 1, 	 1, BI, 	{64}, 			&equal, 	NOTSENT },
+				{ "hop limit", 		0, 1, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",		0, 8,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
 				{ "src iid",		0, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
@@ -52,6 +52,28 @@ const static struct schc_rule ipv6_rule2 = {
 						&equal, 	NOTSENT },
 				{ "dest iid",		48, 8, 	 1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
 						&MSB, 	LSB },
+		}
+};
+
+const static struct schc_rule ipv6_rule3 = {
+	//	id, up, down, length
+		3, 10, 10, 10,
+		{
+			//	field, 			   MSB,len,	 pos,dir, 	val,			MO,			CDA
+				{ "version", 		0, 1,	 1, BI, 	{6},			&equal, 	NOTSENT },
+				{ "traffic class", 	0, 1,	 1, BI, 	{0},			&ignore, 	NOTSENT },
+				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
+				{ "length", 		0, 2,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
+				{ "next header", 	0, 1, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
+				{ "hop limit", 		0, 1, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
+				{ "src prefix",		0, 8,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&equal, 	NOTSENT },
+				{ "src iid",		0, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
+						&equal, 	NOTSENT },
+				{ "dest prefix",	0, 8, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&equal, 	NOTSENT },
+				{ "dest iid",		56, 8, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&MSB, 		LSB },
 		}
 };
 
@@ -166,7 +188,7 @@ const static struct schc_rule coap_rule4 = {
 };
 
 // save rules in flash
-const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2 };
+const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2, &ipv6_rule3 };
 const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2, &udp_rule3 };
 const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3, &coap_rule4 };
 
