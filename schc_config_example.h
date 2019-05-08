@@ -12,6 +12,10 @@
 #define SCHC_CONF_RX_CONNS		1
 #define SCHC_CONF_MBUF_POOL_LEN	8
 
+#define USE_COAP				1
+#define USE_UDP					1
+#define USE_IPv6				1
+
 #define MAX_HEADER_LENGTH		256
 
 #define MAX_COAP_HEADER_LENGTH	64
