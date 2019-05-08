@@ -19,8 +19,8 @@ const static struct schc_rule ipv6_rule1 = {
 		{
 			//	field, 			   MSB,len,	 pos,dir, 	val,			MO,			CDA
 				{ "version", 		0, 1,	 1, BI, 	{6},			&equal, 	NOTSENT },
-				{ "traffic class", 	0, 1,	 1, BI, 	{0},			&equal, 	NOTSENT },
-				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&equal, 	NOTSENT },
+				{ "traffic class", 	0, 1,	 1, BI, 	{0},			&ignore, 	NOTSENT },
+				{ "flow label", 	0, 3,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 2,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
 				{ "next header", 	0, 1, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
 				{ "hop limit", 		0, 1, 	 1, BI, 	{64}, 			&equal, 	NOTSENT },
@@ -78,8 +78,8 @@ const static struct schc_rule udp_rule2 = {
 const static struct schc_rule udp_rule3 = {
 		3, 4, 4, 4,
 		{
-				{ "src port", 		0,	2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
-				{ "dest port", 		0, 	2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
+				{ "src port", 		0,	2, 	 1, BI, 	{0x13, 0x89}, 		&equal,		NOTSENT },
+				{ "dest port", 		0, 	2, 	 1, BI, 	{0x13, 0x88}, 		&equal,		NOTSENT },
 				{ "length", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
 				{ "checksum", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}

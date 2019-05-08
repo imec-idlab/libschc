@@ -163,7 +163,7 @@ coap_error coap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
 	}
 
 	// Check for Payload Marker
-	if (*ptr == 0xFF){
+	if (ptr != NULL && *ptr == 0xFF){
 		return CE_FOUND_PAYLOAD_MARKER;
 	}
 
@@ -224,6 +224,7 @@ coap_payload coap_get_payload(coap_pdu *pdu)
 	payload.val = NULL;
 
 	// Find Last Option
+
 	do {
 		err = coap_decode_option(pdu->buf+offset, pdu->len-offset, NULL, &option.len, &option.val);
 		if (err == CE_FOUND_PAYLOAD_MARKER || err == CE_END_OF_PACKET)
