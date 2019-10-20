@@ -1,15 +1,15 @@
-SCHC
-====
+# libschc: A C implementation of the Static Context Header Compression
 
-Static Context Header Compression is a header compression technique, 
-used in LPWAN's in order to enable tiny low-power microcontrollers
-to have an end-to-end IPv6 connection.
+Copyright (C) 2018-2019 by Bart Moons <bamoons.moons@ugent.be>
 
-This repository contains both the compression aswell as the
-fragmentation mechanism.
+ABOUT LIBSCHC
+=============
 
-More information will follow soon.
+libschc is a C implementation of the Static Context Header Compression, drafted by the IETF.
+It is a header compression technique, used in Low Power Wide Area Networks in order to enable 
+tiny low-power microcontrollers to have an end-to-end IPv6 connection. 
+This repository contains both the compression aswell as the fragmentation mechanism.
+For further information related to SCHC, see <https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/>.
 
-The library depends on two other libraries:
-- picocoap, which is used to parse and unparse the CoAP header
-- jsmn, used to parse json, as used in the rules
+DOCUMENTATION
+=============
