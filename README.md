@@ -111,12 +111,67 @@ uint16_t compute_checksum(unsigned char *data);
 The result should be a complete decompressed packet.
 
 ### Fragmenter
-
+The fragmenter and compressor are decoupled and require seperate initialization.
 ```
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, 
 		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
 		void (*remove_timer_entry)(uint32_t device_id))
+```
+The initilization function takes the following arguments:
+- `tx_conn`, which can be an empty `schc_fragmentation_t` struct, to hold the information of the sending device.
+- `send` requires a pointer to a callback function, which will transmit the fragment over any interface and requires a platform specific implementation
+- `end_rx` is called once the complete packet has been received (more information bellow)
+- `remove_timer_entry` had to be added for some platforms to remove timers once the complete transmission has been completed
+
+#### mbuf
+The fragmenter is built around the `mbuf` principle, derived from the BSD OS, where every fragment is part of a linked list. The fragmenter holds a preallocated number of slots, defined in `schc_config.h` with `#define SCHC_CONF_RX_CONNS`.
+Every received packet is added to the `MBUF_POOL`, containing a linked list of fragments for a particular connection.
+Once a transmission has been ended, the fragmenter will then glue together the different fragments.
+
+Upon reception of a fragment, the following function should be called:
+```
+schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn, uint32_t device_id)
+```
+- the `tx_conn` structure is used to check if the received frame was an acknowledgment and will return the `tx_conn` if so
+- the `device_id` is used to find out if the current device is involved in an ongoing transmission and will return the `rx_conn` if so
+
+These return values can be used in the application to perform corresponding actions, e.g:
+```
+uint8_t ret = 0;
+
+if (conn != &tx_conn) {
+	conn->mode = NO_ACK;// todo get from rule
+	if(conn->mode == NO_ACK) { // todo get from rule
+		conn->FCN_SIZE = 1;
+		conn->WINDOW_SIZE = 0;
+	}
+	conn->post_timer_task = &set_rx_timer;
+	conn->dc = 50000; // duty cycle
+	ret = schc_reassemble(conn);
+}
+
+if(ret == 1) { // reception finished
+	packet_to_ip6(conn);
+}
+```
+The above example is application code of the server, receiving a compressed, fragmented packet.
+By calling `schc_reassemble`, the fragmenter will take care of adding fragments to the `MBUF_POOL`.
+
+Once the reception is finished, `packet_to_ip6` is called, where the `mbuf` can be reassembled to a regular packet.
+First we want to get the length of the packet:
+```
+uint16_t get_mbuf_len(schc_mbuf_t *head); // call with conn->head as argument
+```
+Next, a buffer can be allocated with the appropriate length (the return value of `get_mbuf_len`). The reassmbled packet can then be copied to the pointer passed to the following function:
+```
+void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr); // call with conn->head and pointer to allocated buffer
+```
+The result will be a compressed packet, which can be decompressed by using the decompressor.
+
+Don't forget to reset the connection.
+```
+void schc_reset(schc_fragmentation_t* conn);
 ```
 
 ## LICENSE
