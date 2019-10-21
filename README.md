@@ -36,7 +36,7 @@ Currently, I only have been working with rules for a single device. However, as 
 The rules are implemented in a layered fashion and should be combined with a rule map to use different layers in a single ID. This map could then be reused for different devices.
 
 In `rules.h`, several rules can be defined
-```
+```C
 struct schc_rule {
 	uint16_t rule_id;
 	uint8_t up;
@@ -47,7 +47,7 @@ struct schc_rule {
 ```
 Where the number of fields with Field Direction UP and DOWN are set and the total number of fields in the rule
 The rule is therefore constructed of different `schc_field`:
-```
+```C
 struct schc_field {
 	char field[32];
 	uint8_t msb_length;
@@ -68,7 +68,7 @@ struct schc_field {
 - `CDA` contains the Compression/Decompression action (`enum` in `config.h`)
 
 Once all the rules are set up for a device, these can be saved and added to the device definition
-```
+```C
 struct schc_device {
 	uint32_t id;
 	uint8_t ipv6_count;
@@ -86,24 +86,24 @@ The `rules.h` file should contain enough information to try out different settin
 ### Compressor
 The compressor performs all actions to compress the given protocol headers.
 First, the compressesor should be initialized with the node it's source IP address (8 bit array):
-```
+```C
 uint8_t schc_compressor_init(uint8_t src[16]);
 ```
 
 In order to compress a CoAP/UDP/IP packet, the following function can be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet may be returned.
-```
+```C
 int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length);
 ```
 
 The reverse can be done by calling:
-```
+```C
 uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 	uint32_t device_id, uint16_t total_length, uint8_t *header_offset);
 ```
 This requires a buffer to which the decompressed headers can be returned (`unsigned char *header`), a pointer to the complete original data packet (`unsigned char *data`), the device id and total length and finally a pointer to an integer (`uint8_t *header_offset`), which will return the compressed header size (i.e. the position in the buffer where the actual data starts). The function will return the decompressed header length.
 
 Once the decompressed packet has been constructed, the UDP length and checksum may be calculated (this is still an open issue, as these functions should be called from the `construct_header` function itself).
-```
+```C
 uint16_t compute_length(unsigned char *data, uint16_t data_len);
 uint16_t compute_checksum(unsigned char *data);
 ```
@@ -112,7 +112,7 @@ The result should be a complete decompressed packet.
 
 ### Fragmenter
 The fragmenter and compressor are decoupled and require seperate initialization.
-```
+```C
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, 
 		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
@@ -129,15 +129,16 @@ The fragmenter is built around the `mbuf` principle, derived from the BSD OS, wh
 Every received packet is added to the `MBUF_POOL`, containing a linked list of fragments for a particular connection.
 Once a transmission has been ended, the fragmenter will then glue together the different fragments.
 
+#### Reassembly
 Upon reception of a fragment, the following function should be called:
-```
+```C
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn, uint32_t device_id)
 ```
 - the `tx_conn` structure is used to check if the received frame was an acknowledgment and will return the `tx_conn` if so
 - the `device_id` is used to find out if the current device is involved in an ongoing transmission and will return the `rx_conn` if so
 
 These return values can be used in the application to perform corresponding actions, e.g:
-```
+```C
 uint8_t ret = 0;
 
 if (conn != &tx_conn) {
@@ -160,18 +161,61 @@ By calling `schc_reassemble`, the fragmenter will take care of adding fragments 
 
 Once the reception is finished, `packet_to_ip6` is called, where the `mbuf` can be reassembled to a regular packet.
 First we want to get the length of the packet:
-```
+```C
 uint16_t get_mbuf_len(schc_mbuf_t *head); // call with conn->head as argument
 ```
 Next, a buffer can be allocated with the appropriate length (the return value of `get_mbuf_len`). The reassmbled packet can then be copied to the pointer passed to the following function:
-```
+```C
 void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr); // call with conn->head and pointer to allocated buffer
 ```
 The result will be a compressed packet, which can be decompressed by using the decompressor.
 
 Don't forget to reset the connection.
-```
+```C
 void schc_reset(schc_fragmentation_t* conn);
 ```
+
+#### Fragmentation
+After compressing a packet, the return value of `schc_compress` can be used to check whether a packet should be fragmented or not.
+In order to fragment a packet, the parameters of the connection should be set according to your preferences.
+
+```C
+tx_conn.mode = ACK_ON_ERROR;
+tx_conn.mtu = current_network_driver->mtu; // the maximum length of each fragment
+tx_conn.dc = 20000; // duty cycle
+
+tx_conn.data_ptr = &compressed_packet; // the pointer to the compressed packet
+tx_conn.packet_len = err; // the total length of the packet
+tx_conn.send = &network_driver_send; // callback function to call for transmission
+tx_conn.FCN_SIZE = 3; // todo get from rule
+tx_conn.MAX_WND_FCN = 6; // todo will be removed?
+tx_conn.WINDOW_SIZE = 1; // todo support multiple window sizes
+tx_conn.DTAG_SIZE = 0; // todo no support yet
+tx_conn.RULE_SIZE = 8; // todo get from rule
+
+tx_conn.post_timer_task = &set_tx_timer;
+
+schc_fragment((schc_fragmentation_t*) &tx_conn); // start the fragmentation
+```
+
+#### Timers
+As you can see in the above examples, the library has no native support for timers and requires callback functions from the main application to schedule transmissions and to time out.
+Therefore, 2 function callbacks are required.
+```C
+/*
+ * The timer used by the SCHC library to schedule the transmission of fragments
+ */
+static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+	timer_post_task_prio(callback, timer_get_counter_value() + delay, DEFAULT_PRIORITY, arg);
+}
+
+/*
+ * The timer used by the SCHC library to time out the reception of fragments
+ */
+static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+	timer_post_task_prio(callback, timer_get_counter_value() + delay, DEFAULT_PRIORITY, arg);
+}
+```
+
 
 ## LICENSE
