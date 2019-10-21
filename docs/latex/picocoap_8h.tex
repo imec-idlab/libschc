@@ -1,0 +1,1180 @@
+\hypertarget{picocoap_8h}{}\doxysection{picocoap.\+h File Reference}
+\label{picocoap_8h}\index{picocoap.h@{picocoap.h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structcoap__option__names}{coap\+\_\+option\+\_\+names}}
+\item 
+struct \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}}
+\begin{DoxyCompactList}\small\item\em Packet Data Unit. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}}
+\begin{DoxyCompactList}\small\item\em Co\+AP Option. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}}
+\begin{DoxyCompactList}\small\item\em Co\+AP Payload. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a42e24df1551401726ed936baddb2a2ec}{C\+O\+A\+P\+\_\+\+A\+C\+K\+\_\+\+T\+I\+M\+E\+O\+UT}}~2
+\begin{DoxyCompactList}\small\item\em Co\+AP Defined Parameters. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{picocoap_8h_a343c27d1c7ad3346aec70646caa341a0}{C\+O\+A\+P\+\_\+\+A\+C\+K\+\_\+\+R\+A\+N\+D\+O\+M\+\_\+\+F\+A\+C\+T\+OR}}~1.\+5
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_ab099eef660b4c5b038b4b87239a82c35}{C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+R\+E\+T\+R\+A\+N\+S\+M\+IT}}~4
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a5733f3616dbb5ae758b062296da6f843}{C\+O\+A\+P\+\_\+\+N\+S\+T\+A\+RT}}~1
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_ac74e78ce8eb169a24787638b4c2074d7}{C\+O\+A\+P\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+L\+E\+I\+S\+U\+RE}}~5
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a2ed23e020e732dda3a360191f231da7b}{C\+O\+A\+P\+\_\+\+P\+R\+O\+B\+I\+N\+G\+\_\+\+R\+A\+TE}}~1
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a9e0313ab0ba8fd48729bd8d77cc34ae3}{C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+T\+R\+A\+N\+S\+M\+I\+T\+\_\+\+S\+P\+AN}}~45
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_ad2acd5582df0fb73b3b823b2fa5b157b}{C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+T\+R\+A\+N\+S\+M\+I\+T\+\_\+\+W\+A\+IT}}~93
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_adc147063d422cfed3703e74cd222caef}{C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+L\+A\+T\+E\+N\+CY}}~100
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a44facf47657ac3f4d1075ca9f51ba24b}{C\+O\+A\+P\+\_\+\+P\+R\+O\+C\+E\+S\+S\+I\+N\+G\+\_\+\+D\+E\+L\+AY}}~2
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a0621265cdaf30c81a9ef53ecb9f51e56}{C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+R\+TT}}~202
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a25528ec74a52f6c3c1c90298e797cae4}{C\+O\+A\+P\+\_\+\+E\+X\+C\+H\+A\+N\+G\+E\+\_\+\+L\+I\+F\+E\+T\+I\+ME}}~247
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a87fd7d7dd618371cbc930e30bf1c27d9}{C\+O\+A\+P\+\_\+\+N\+O\+N\+\_\+\+L\+I\+F\+E\+T\+I\+ME}}~145
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a7919c9fedab5d3f0149a4b72f67b40fc}{coap\+\_\+error}}
+\begin{DoxyCompactList}\small\item\em Status Codes. \end{DoxyCompactList}\item 
+typedef enum \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} \mbox{\hyperlink{picocoap_8h_a49041e81af4e8a18cc2afccbff280dcd}{coap\+\_\+version}}
+\begin{DoxyCompactList}\small\item\em Protocol Versions. \end{DoxyCompactList}\item 
+typedef enum \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} \mbox{\hyperlink{picocoap_8h_a59a7a7332563829392bc48d8721b6b69}{coap\+\_\+type}}
+\begin{DoxyCompactList}\small\item\em Message Types. \end{DoxyCompactList}\item 
+typedef enum \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} \mbox{\hyperlink{picocoap_8h_a9482a2af98d680a8f2920bee0230f991}{coap\+\_\+code}}
+\begin{DoxyCompactList}\small\item\em Message Codes. \end{DoxyCompactList}\item 
+typedef enum \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}} \mbox{\hyperlink{picocoap_8h_a5005df78f5a69e76ad049474a301536c}{coap\+\_\+option\+\_\+number}}
+\begin{DoxyCompactList}\small\item\em Option Numbers. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} \mbox{\hyperlink{picocoap_8h_ab6db7f7f95eea3c727daa7527c64a40e}{coap\+\_\+pdu}}
+\begin{DoxyCompactList}\small\item\em Packet Data Unit. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{picocoap_8h_af2271ea62fa2491543f1a9ff5309dfb6}{coap\+\_\+option}}
+\begin{DoxyCompactList}\small\item\em Co\+AP Option. \end{DoxyCompactList}\item 
+typedef struct \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} \mbox{\hyperlink{picocoap_8h_a4bcf6c5ebeab5290c8a6a5150cf28836}{coap\+\_\+payload}}
+\begin{DoxyCompactList}\small\item\em Co\+AP Payload. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \{ \newline
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1ae11d26835a51a1cbe703cc64489abab4}{C\+E\+\_\+\+N\+O\+NE}} = 0, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af4cdd83b8dd5a3c7fcffb2a996e4cd0b}{C\+E\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+C\+K\+ET}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a1daf45d75909a7b9cfdb1efa172d6291}{C\+E\+\_\+\+B\+A\+D\+\_\+\+V\+E\+R\+S\+I\+ON}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adf21648dbb52ed121b4f00f090a770d7}{C\+E\+\_\+\+T\+O\+K\+E\+N\+\_\+\+L\+E\+N\+G\+T\+H\+\_\+\+O\+U\+T\+\_\+\+O\+F\+\_\+\+R\+A\+N\+GE}}, 
+\newline
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af1cd5b6c54ad2ed5d173ad4073db0ce7}{C\+E\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+C\+O\+DE}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a408d5d4b9b4f4fa0425e5daf363f33c6}{C\+E\+\_\+\+T\+O\+O\+\_\+\+M\+A\+N\+Y\+\_\+\+O\+P\+T\+I\+O\+NS}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a11eef067ac802f6435448d6bdb23a8c8}{C\+E\+\_\+\+O\+U\+T\+\_\+\+O\+F\+\_\+\+O\+R\+D\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+I\+ST}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adcd4f46e58a37c35d30bb2620d4db143}{C\+E\+\_\+\+I\+N\+S\+U\+F\+F\+I\+C\+I\+E\+N\+T\+\_\+\+B\+U\+F\+F\+ER}}, 
+\newline
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a85f0155625c6c78f3a57f6f0d63c69b9}{C\+E\+\_\+\+F\+O\+U\+N\+D\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+M\+A\+R\+K\+ER}}, 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a0aaf352fa21e5f386c11aaa3271c5814}{C\+E\+\_\+\+E\+N\+D\+\_\+\+O\+F\+\_\+\+P\+A\+C\+K\+ET}}
+ \}
+\begin{DoxyCompactList}\small\item\em Status Codes. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} \{ \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}{C\+O\+A\+P\+\_\+\+V1}} = 1
+ \}
+\begin{DoxyCompactList}\small\item\em Protocol Versions. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} \{ \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a5321c1999d967bdb0690c110ffd2d694}{C\+T\+\_\+\+C\+ON}} = 0, 
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}{C\+T\+\_\+\+N\+ON}} = 1, 
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429ac05b4755c123dbfcdea069c30e00fbf2}{C\+T\+\_\+\+A\+CK}} = 2, 
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a6b19a4f509598ba63b9298406f8c33a9}{C\+T\+\_\+\+R\+ST}} = 3
+ \}
+\begin{DoxyCompactList}\small\item\em Message Types. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} \{ \newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9258abcdb7967f26f72d5bf86f7d9f80}{C\+C\+\_\+\+E\+M\+P\+TY}} = 0, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1081e5a7863be0da7533b418088c372d}{C\+C\+\_\+\+G\+ET}} = 1, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a7e55c7951ace83c8ee1f8d14d481b80e}{C\+C\+\_\+\+P\+O\+ST}} = 2, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ad0642d36276b52a1b0a267b9e081cef4}{C\+C\+\_\+\+P\+UT}} = 3, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ae04c43a96dcbd7b786b77114bcb4d3f1}{C\+C\+\_\+\+D\+E\+L\+E\+TE}} = 4, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa6aab3f3056cf09e44bc7a8b353b989c}{C\+C\+\_\+\+C\+R\+E\+A\+T\+ED}} = 65, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5db69a5dae0a4df7e6d359bb711f4eb4}{C\+C\+\_\+\+D\+E\+L\+E\+T\+ED}} = 66, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aed4f016d99609daf64d6dbbe86462285}{C\+C\+\_\+\+V\+A\+L\+ID}} = 67, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab75ed2f4de3fd8082fae6d762ecb8047}{C\+C\+\_\+\+C\+H\+A\+N\+G\+ED}} = 68, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5a3d8dfe96ed58ee297980aa825e3c31}{C\+C\+\_\+\+C\+O\+N\+T\+E\+NT}} = 69, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a3a8a055a5144a03f36b975b2d538aeca}{C\+C\+\_\+\+C\+O\+N\+T\+I\+N\+UE}} = 95, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6990adba80ec99e44086bd7da700b3e0}{C\+C\+\_\+\+B\+A\+D\+\_\+\+R\+E\+Q\+U\+E\+ST}} = 128, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8c47fe296dd2a3b9b4d448f01cb0dac8}{C\+C\+\_\+\+U\+N\+A\+U\+T\+H\+O\+R\+I\+Z\+ED}} = 129, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a4222ebc49140f8fa4961b421c07e70e9}{C\+C\+\_\+\+B\+A\+D\+\_\+\+O\+P\+T\+I\+ON}} = 130, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab93c8cf2548e5a7e234f1239fc5abb21}{C\+C\+\_\+\+F\+O\+R\+B\+I\+D\+D\+EN}} = 131, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a45458afefee98fce1045ac286aa87281}{C\+C\+\_\+\+N\+O\+T\+\_\+\+F\+O\+U\+ND}} = 132, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aefdacb5576f290465d8db20ec254d181}{C\+C\+\_\+\+M\+E\+T\+H\+O\+D\+\_\+\+N\+O\+T\+\_\+\+A\+L\+L\+O\+W\+ED}} = 133, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa296b59cf098dad78d44a561bd32ae9e}{C\+C\+\_\+\+N\+O\+T\+\_\+\+A\+C\+C\+E\+P\+T\+A\+B\+LE}} = 134, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a76b72396b70f26b9fba3ec17ee55bb0f}{C\+C\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+E\+N\+T\+I\+T\+Y\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE}} = 136, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a0abed60bac4e93dfff04bd07df958107}{C\+C\+\_\+\+P\+R\+E\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+F\+A\+I\+L\+ED}} = 140, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9713f1516ec910b1e5023e7f743814d3}{C\+C\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+E\+N\+T\+I\+T\+Y\+\_\+\+T\+O\+O\+\_\+\+L\+A\+R\+GE}} = 141, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8844b1adff13138095852a8ebd24cd54}{C\+C\+\_\+\+U\+N\+S\+U\+P\+P\+O\+R\+T\+E\+D\+\_\+\+C\+O\+N\+T\+E\+NT}} = 143, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155abb3452820869a420cfa482d274b44aae}{C\+C\+\_\+\+I\+N\+T\+E\+R\+N\+A\+L\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+E\+R\+R\+OR}} = 160, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1bba826f081906a79b7b124d57ecaf10}{C\+C\+\_\+\+N\+O\+T\+\_\+\+I\+M\+P\+L\+E\+M\+E\+N\+T\+ED}} = 161, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a2c5c68ef4745976c17454bac87527f05}{C\+C\+\_\+\+B\+A\+D\+\_\+\+G\+A\+T\+E\+W\+AY}} = 162, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6c51d61c5233b543567ee7589136bec3}{C\+C\+\_\+\+S\+E\+R\+V\+I\+C\+E\+\_\+\+U\+N\+A\+V\+A\+I\+L\+A\+B\+LE}} = 163, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ac0b398812b69ce663e90c509957ca46f}{C\+C\+\_\+\+G\+A\+T\+E\+W\+A\+Y\+\_\+\+T\+I\+M\+E\+O\+UT}} = 164, 
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a37f2e44f9612d8068df96b49c4484524}{C\+C\+\_\+\+P\+R\+O\+X\+Y\+I\+N\+G\+\_\+\+N\+O\+T\+\_\+\+S\+U\+P\+P\+O\+R\+T\+ED}} = 165
+ \}
+\begin{DoxyCompactList}\small\item\em Message Codes. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}} \{ \newline
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a8ce05569f1014ebc8f1a284c3a9150ee}{C\+O\+N\+\_\+\+I\+F\+\_\+\+M\+A\+T\+CH}} = 1, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a3184a5abcc31c579052eafaabdf76869}{C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+H\+O\+ST}} = 3, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a0df0456e384384a6929f7a0d0fb3fc83}{C\+O\+N\+\_\+\+E\+T\+AG}} = 4, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a44192b4f85f6d387e41b4c8ddec332ed}{C\+O\+N\+\_\+\+I\+F\+\_\+\+N\+O\+N\+E\+\_\+\+M\+A\+T\+CH}} = 5, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379affbf7b8d14e175bde3238835a34b99a3}{C\+O\+N\+\_\+\+O\+B\+S\+E\+R\+VE}} = 6, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ae0ad1427ffa0bcc1fa3f710a2aebdf1d}{C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+P\+O\+RT}} = 7, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a9b38a519bd3f0a5a62d7f7ed1cf185d1}{C\+O\+N\+\_\+\+L\+O\+C\+A\+T\+I\+O\+N\+\_\+\+P\+A\+TH}} = 8, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aac633e5706688eac61a7038a35567cca}{C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+P\+A\+TH}} = 11, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ad5b163ee5b8c1d98774c1839ab8fcbcc}{C\+O\+N\+\_\+\+C\+O\+N\+T\+E\+N\+T\+\_\+\+F\+O\+R\+M\+AT}} = 12, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a90ffe25a2ae1f3a3e2a232819eac9614}{C\+O\+N\+\_\+\+M\+A\+X\+\_\+\+A\+GE}} = 14, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aa83c3c85504c7346d8ce5f7ea2bc9ca9}{C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+Q\+U\+E\+RY}} = 15, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6596c2a0bc92a19637f98ebfdcd10671}{C\+O\+N\+\_\+\+A\+C\+C\+E\+PT}} = 17, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6ce6458ac23fdf88a6690b12b883441e}{C\+O\+N\+\_\+\+L\+O\+C\+A\+T\+I\+O\+N\+\_\+\+Q\+U\+E\+RY}} = 20, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a695d6858e9e775b1eb6fb67cf855d61d}{C\+O\+N\+\_\+\+P\+R\+O\+X\+Y\+\_\+\+U\+RI}} = 35, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aba42403bb9756bfcde04ae572e12d6a2}{C\+O\+N\+\_\+\+P\+R\+O\+X\+Y\+\_\+\+S\+C\+H\+E\+ME}} = 39, 
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379adadc98d6fb84e39625cc6d75470b01fa}{C\+O\+N\+\_\+\+S\+I\+Z\+E1}} = 60, 
+\newline
+\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a34caccb80453b6ce0f5e3bd58d4bad6c}{C\+O\+N\+\_\+\+N\+O\+\_\+\+R\+E\+S\+P\+O\+N\+SE}} = 258
+ \}
+\begin{DoxyCompactList}\small\item\em Option Numbers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a8718a038b325db3b45194f8f5b325054}{coap\+\_\+validate\+\_\+pkt}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Validate Packet. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} \mbox{\hyperlink{picocoap_8h_a41c3497f871eb3888793123d6dace83b}{coap\+\_\+get\+\_\+version}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Version. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} \mbox{\hyperlink{picocoap_8h_a8f9a629cc03dae9b482f9c47341a67c1}{coap\+\_\+get\+\_\+type}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Message Type. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_a3ca63b473fbd4517b1e260f316127968}{coap\+\_\+get\+\_\+tkl}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Token Length. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} \mbox{\hyperlink{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}{coap\+\_\+get\+\_\+code}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Message Code. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_a6cdfb72a8bef8887d4bdb1354dcbf065}{coap\+\_\+get\+\_\+code\+\_\+class}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Message Code Class. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_ade0277d9e09ab1b7ba8888fa79359e2b}{coap\+\_\+get\+\_\+code\+\_\+detail}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Message Code Detail. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{picocoap_8h_a62a5ab6507521f6c19192de7c144a186}{coap\+\_\+get\+\_\+mid}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Message ID. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_a11b205fb44a41e0c2fd026835a32b6bd}{coap\+\_\+get\+\_\+token}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em Get Message Token. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{picocoap_8h_a7f87d72933fda79b4fb2063ef0f725a0}{coap\+\_\+get\+\_\+option}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} $\ast$last)
+\begin{DoxyCompactList}\small\item\em Get Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{picocoap_8h_aa980c81bee1bfec90bff5eb0a184df46}{coap\+\_\+get\+\_\+option\+\_\+by\+\_\+num}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}} num, uint8\+\_\+t occ)
+\begin{DoxyCompactList}\small\item\em Get Option by Option Number. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} \mbox{\hyperlink{picocoap_8h_af5367a7e0beabfd70c1fd1d030e883ff}{coap\+\_\+get\+\_\+payload}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_ae892eff0f54b003d01f22e51bd29b2dd}{coap\+\_\+decode\+\_\+option}} (uint8\+\_\+t $\ast$pkt\+\_\+ptr, size\+\_\+t pkt\+\_\+len, uint16\+\_\+t $\ast$option\+\_\+number, size\+\_\+t $\ast$option\+\_\+length, uint8\+\_\+t $\ast$$\ast$value)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a66fdf785cde7406d6c723e94187e3723}{coap\+\_\+init\+\_\+pdu}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Initialize Packet. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a118deed6da6e28ba613681a37b98d92b}{coap\+\_\+set\+\_\+version}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} ver)
+\begin{DoxyCompactList}\small\item\em Set Version. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a09af1f18f672090c284b21e8ffe37871}{coap\+\_\+set\+\_\+type}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} mtype)
+\begin{DoxyCompactList}\small\item\em Set Message Type. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_aa53445c378c6332c50f48f99ee599998}{coap\+\_\+set\+\_\+code}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} code)
+\begin{DoxyCompactList}\small\item\em Set Message Code. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a32aa07e022c43622a2f82a96fe898622}{coap\+\_\+set\+\_\+mid}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint16\+\_\+t mid)
+\begin{DoxyCompactList}\small\item\em Set Message ID. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a3409ece8a6d99092b6b8e1399789d1a4}{coap\+\_\+set\+\_\+token}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$token, uint8\+\_\+t tkl)
+\begin{DoxyCompactList}\small\item\em Set Message Token. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_ae217bfbbb6771b061b1030d784f67e87}{coap\+\_\+add\+\_\+option}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, int32\+\_\+t opt\+\_\+num, uint8\+\_\+t $\ast$value, uint16\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Add Message Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a8a040da4c9d2f1b56955e2806b80bb3f}{coap\+\_\+set\+\_\+payload}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$payload, size\+\_\+t payload\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Add Message Option. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_ad7dd6e420c63e49f786db64f4907f4f4}{coap\+\_\+build\+\_\+code}} (uint8\+\_\+t \+\_\+class, uint8\+\_\+t detail)
+\begin{DoxyCompactList}\small\item\em Build Message Code from Class and Detail. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a5479d7fe4a0ec8a749994d8079a65b46}{coap\+\_\+adjust\+\_\+option\+\_\+deltas}} (uint8\+\_\+t $\ast$opts, size\+\_\+t $\ast$opts\+\_\+len, size\+\_\+t max\+\_\+len, int32\+\_\+t offset)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{picocoap_8h_aac25455a46431f86ab73cc8ff434a05c}{coap\+\_\+build\+\_\+option\+\_\+header}} (uint8\+\_\+t $\ast$buf, size\+\_\+t max\+\_\+len, int32\+\_\+t opt\+\_\+delta, int32\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{picocoap_8h_a43f90e9a02d7ed5ea2075ec9379635ac}{coap\+\_\+compute\+\_\+option\+\_\+header\+\_\+len}} (int32\+\_\+t opt\+\_\+delta, int32\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static struct \mbox{\hyperlink{structcoap__option__names}{coap\+\_\+option\+\_\+names}} \mbox{\hyperlink{picocoap_8h_ab5974954badd8597ef9a175869dda476}{coap\+\_\+options}} \mbox{[}16\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{picocoap_8h_a343c27d1c7ad3346aec70646caa341a0}\label{picocoap_8h_a343c27d1c7ad3346aec70646caa341a0}} 
+\index{picocoap.h@{picocoap.h}!COAP\_ACK\_RANDOM\_FACTOR@{COAP\_ACK\_RANDOM\_FACTOR}}
+\index{COAP\_ACK\_RANDOM\_FACTOR@{COAP\_ACK\_RANDOM\_FACTOR}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_ACK\_RANDOM\_FACTOR}{COAP\_ACK\_RANDOM\_FACTOR}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+A\+C\+K\+\_\+\+R\+A\+N\+D\+O\+M\+\_\+\+F\+A\+C\+T\+OR~1.\+5}
+
+\mbox{\Hypertarget{picocoap_8h_a42e24df1551401726ed936baddb2a2ec}\label{picocoap_8h_a42e24df1551401726ed936baddb2a2ec}} 
+\index{picocoap.h@{picocoap.h}!COAP\_ACK\_TIMEOUT@{COAP\_ACK\_TIMEOUT}}
+\index{COAP\_ACK\_TIMEOUT@{COAP\_ACK\_TIMEOUT}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_ACK\_TIMEOUT}{COAP\_ACK\_TIMEOUT}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+A\+C\+K\+\_\+\+T\+I\+M\+E\+O\+UT~2}
+
+
+
+Co\+AP Defined Parameters. 
+
+\mbox{\Hypertarget{picocoap_8h_ac74e78ce8eb169a24787638b4c2074d7}\label{picocoap_8h_ac74e78ce8eb169a24787638b4c2074d7}} 
+\index{picocoap.h@{picocoap.h}!COAP\_DEFAULT\_LEISURE@{COAP\_DEFAULT\_LEISURE}}
+\index{COAP\_DEFAULT\_LEISURE@{COAP\_DEFAULT\_LEISURE}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_DEFAULT\_LEISURE}{COAP\_DEFAULT\_LEISURE}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+D\+E\+F\+A\+U\+L\+T\+\_\+\+L\+E\+I\+S\+U\+RE~5}
+
+\mbox{\Hypertarget{picocoap_8h_a25528ec74a52f6c3c1c90298e797cae4}\label{picocoap_8h_a25528ec74a52f6c3c1c90298e797cae4}} 
+\index{picocoap.h@{picocoap.h}!COAP\_EXCHANGE\_LIFETIME@{COAP\_EXCHANGE\_LIFETIME}}
+\index{COAP\_EXCHANGE\_LIFETIME@{COAP\_EXCHANGE\_LIFETIME}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_EXCHANGE\_LIFETIME}{COAP\_EXCHANGE\_LIFETIME}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+E\+X\+C\+H\+A\+N\+G\+E\+\_\+\+L\+I\+F\+E\+T\+I\+ME~247}
+
+\mbox{\Hypertarget{picocoap_8h_adc147063d422cfed3703e74cd222caef}\label{picocoap_8h_adc147063d422cfed3703e74cd222caef}} 
+\index{picocoap.h@{picocoap.h}!COAP\_MAX\_LATENCY@{COAP\_MAX\_LATENCY}}
+\index{COAP\_MAX\_LATENCY@{COAP\_MAX\_LATENCY}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_MAX\_LATENCY}{COAP\_MAX\_LATENCY}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+L\+A\+T\+E\+N\+CY~100}
+
+\mbox{\Hypertarget{picocoap_8h_ab099eef660b4c5b038b4b87239a82c35}\label{picocoap_8h_ab099eef660b4c5b038b4b87239a82c35}} 
+\index{picocoap.h@{picocoap.h}!COAP\_MAX\_RETRANSMIT@{COAP\_MAX\_RETRANSMIT}}
+\index{COAP\_MAX\_RETRANSMIT@{COAP\_MAX\_RETRANSMIT}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_MAX\_RETRANSMIT}{COAP\_MAX\_RETRANSMIT}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+R\+E\+T\+R\+A\+N\+S\+M\+IT~4}
+
+\mbox{\Hypertarget{picocoap_8h_a0621265cdaf30c81a9ef53ecb9f51e56}\label{picocoap_8h_a0621265cdaf30c81a9ef53ecb9f51e56}} 
+\index{picocoap.h@{picocoap.h}!COAP\_MAX\_RTT@{COAP\_MAX\_RTT}}
+\index{COAP\_MAX\_RTT@{COAP\_MAX\_RTT}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_MAX\_RTT}{COAP\_MAX\_RTT}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+R\+TT~202}
+
+\mbox{\Hypertarget{picocoap_8h_a9e0313ab0ba8fd48729bd8d77cc34ae3}\label{picocoap_8h_a9e0313ab0ba8fd48729bd8d77cc34ae3}} 
+\index{picocoap.h@{picocoap.h}!COAP\_MAX\_TRANSMIT\_SPAN@{COAP\_MAX\_TRANSMIT\_SPAN}}
+\index{COAP\_MAX\_TRANSMIT\_SPAN@{COAP\_MAX\_TRANSMIT\_SPAN}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_MAX\_TRANSMIT\_SPAN}{COAP\_MAX\_TRANSMIT\_SPAN}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+T\+R\+A\+N\+S\+M\+I\+T\+\_\+\+S\+P\+AN~45}
+
+\mbox{\Hypertarget{picocoap_8h_ad2acd5582df0fb73b3b823b2fa5b157b}\label{picocoap_8h_ad2acd5582df0fb73b3b823b2fa5b157b}} 
+\index{picocoap.h@{picocoap.h}!COAP\_MAX\_TRANSMIT\_WAIT@{COAP\_MAX\_TRANSMIT\_WAIT}}
+\index{COAP\_MAX\_TRANSMIT\_WAIT@{COAP\_MAX\_TRANSMIT\_WAIT}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_MAX\_TRANSMIT\_WAIT}{COAP\_MAX\_TRANSMIT\_WAIT}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+M\+A\+X\+\_\+\+T\+R\+A\+N\+S\+M\+I\+T\+\_\+\+W\+A\+IT~93}
+
+\mbox{\Hypertarget{picocoap_8h_a87fd7d7dd618371cbc930e30bf1c27d9}\label{picocoap_8h_a87fd7d7dd618371cbc930e30bf1c27d9}} 
+\index{picocoap.h@{picocoap.h}!COAP\_NON\_LIFETIME@{COAP\_NON\_LIFETIME}}
+\index{COAP\_NON\_LIFETIME@{COAP\_NON\_LIFETIME}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_NON\_LIFETIME}{COAP\_NON\_LIFETIME}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+N\+O\+N\+\_\+\+L\+I\+F\+E\+T\+I\+ME~145}
+
+\mbox{\Hypertarget{picocoap_8h_a5733f3616dbb5ae758b062296da6f843}\label{picocoap_8h_a5733f3616dbb5ae758b062296da6f843}} 
+\index{picocoap.h@{picocoap.h}!COAP\_NSTART@{COAP\_NSTART}}
+\index{COAP\_NSTART@{COAP\_NSTART}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_NSTART}{COAP\_NSTART}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+N\+S\+T\+A\+RT~1}
+
+\mbox{\Hypertarget{picocoap_8h_a2ed23e020e732dda3a360191f231da7b}\label{picocoap_8h_a2ed23e020e732dda3a360191f231da7b}} 
+\index{picocoap.h@{picocoap.h}!COAP\_PROBING\_RATE@{COAP\_PROBING\_RATE}}
+\index{COAP\_PROBING\_RATE@{COAP\_PROBING\_RATE}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_PROBING\_RATE}{COAP\_PROBING\_RATE}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+P\+R\+O\+B\+I\+N\+G\+\_\+\+R\+A\+TE~1}
+
+\mbox{\Hypertarget{picocoap_8h_a44facf47657ac3f4d1075ca9f51ba24b}\label{picocoap_8h_a44facf47657ac3f4d1075ca9f51ba24b}} 
+\index{picocoap.h@{picocoap.h}!COAP\_PROCESSING\_DELAY@{COAP\_PROCESSING\_DELAY}}
+\index{COAP\_PROCESSING\_DELAY@{COAP\_PROCESSING\_DELAY}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_PROCESSING\_DELAY}{COAP\_PROCESSING\_DELAY}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+P\+R\+O\+C\+E\+S\+S\+I\+N\+G\+\_\+\+D\+E\+L\+AY~2}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{picocoap_8h_a9482a2af98d680a8f2920bee0230f991}\label{picocoap_8h_a9482a2af98d680a8f2920bee0230f991}} 
+\index{picocoap.h@{picocoap.h}!coap\_code@{coap\_code}}
+\index{coap\_code@{coap\_code}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_code}{coap\_code}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}}}
+
+
+
+Message Codes. 
+
+All known message request/response codes. \mbox{\Hypertarget{picocoap_8h_a7919c9fedab5d3f0149a4b72f67b40fc}\label{picocoap_8h_a7919c9fedab5d3f0149a4b72f67b40fc}} 
+\index{picocoap.h@{picocoap.h}!coap\_error@{coap\_error}}
+\index{coap\_error@{coap\_error}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_error}{coap\_error}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}}}
+
+
+
+Status Codes. 
+
+These codes represent the possible errors that functions in this library can return. \mbox{\Hypertarget{picocoap_8h_af2271ea62fa2491543f1a9ff5309dfb6}\label{picocoap_8h_af2271ea62fa2491543f1a9ff5309dfb6}} 
+\index{picocoap.h@{picocoap.h}!coap\_option@{coap\_option}}
+\index{coap\_option@{coap\_option}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_option}{coap\_option}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}}}
+
+
+
+Co\+AP Option. 
+
+One option in a Co\+AP message. \mbox{\Hypertarget{picocoap_8h_a5005df78f5a69e76ad049474a301536c}\label{picocoap_8h_a5005df78f5a69e76ad049474a301536c}} 
+\index{picocoap.h@{picocoap.h}!coap\_option\_number@{coap\_option\_number}}
+\index{coap\_option\_number@{coap\_option\_number}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_option\_number}{coap\_option\_number}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}} \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}}}
+
+
+
+Option Numbers. 
+
+All known option numbers. \mbox{\Hypertarget{picocoap_8h_a4bcf6c5ebeab5290c8a6a5150cf28836}\label{picocoap_8h_a4bcf6c5ebeab5290c8a6a5150cf28836}} 
+\index{picocoap.h@{picocoap.h}!coap\_payload@{coap\_payload}}
+\index{coap\_payload@{coap\_payload}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_payload}{coap\_payload}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}}}
+
+
+
+Co\+AP Payload. 
+
+Payload container. \mbox{\Hypertarget{picocoap_8h_ab6db7f7f95eea3c727daa7527c64a40e}\label{picocoap_8h_ab6db7f7f95eea3c727daa7527c64a40e}} 
+\index{picocoap.h@{picocoap.h}!coap\_pdu@{coap\_pdu}}
+\index{coap\_pdu@{coap\_pdu}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_pdu}{coap\_pdu}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}}}
+
+
+
+Packet Data Unit. 
+
+This contains all information about the message buffer. \mbox{\Hypertarget{picocoap_8h_a59a7a7332563829392bc48d8721b6b69}\label{picocoap_8h_a59a7a7332563829392bc48d8721b6b69}} 
+\index{picocoap.h@{picocoap.h}!coap\_type@{coap\_type}}
+\index{coap\_type@{coap\_type}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_type}{coap\_type}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}}}
+
+
+
+Message Types. 
+
+The four types of messages possible. \mbox{\Hypertarget{picocoap_8h_a49041e81af4e8a18cc2afccbff280dcd}\label{picocoap_8h_a49041e81af4e8a18cc2afccbff280dcd}} 
+\index{picocoap.h@{picocoap.h}!coap\_version@{coap\_version}}
+\index{coap\_version@{coap\_version}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_version}{coap\_version}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}}}
+
+
+
+Protocol Versions. 
+
+All known version of the protocol. 
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}} 
+\index{picocoap.h@{picocoap.h}!coap\_code@{coap\_code}}
+\index{coap\_code@{coap\_code}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_code}{coap\_code}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}}}
+
+
+
+Message Codes. 
+
+All known message request/response codes. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_EMPTY@{CC\_EMPTY}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_EMPTY@{CC\_EMPTY}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9258abcdb7967f26f72d5bf86f7d9f80}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9258abcdb7967f26f72d5bf86f7d9f80}} 
+C\+C\+\_\+\+E\+M\+P\+TY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_GET@{CC\_GET}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_GET@{CC\_GET}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1081e5a7863be0da7533b418088c372d}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1081e5a7863be0da7533b418088c372d}} 
+C\+C\+\_\+\+G\+ET&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_POST@{CC\_POST}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_POST@{CC\_POST}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a7e55c7951ace83c8ee1f8d14d481b80e}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a7e55c7951ace83c8ee1f8d14d481b80e}} 
+C\+C\+\_\+\+P\+O\+ST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_PUT@{CC\_PUT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_PUT@{CC\_PUT}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ad0642d36276b52a1b0a267b9e081cef4}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ad0642d36276b52a1b0a267b9e081cef4}} 
+C\+C\+\_\+\+P\+UT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_DELETE@{CC\_DELETE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_DELETE@{CC\_DELETE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ae04c43a96dcbd7b786b77114bcb4d3f1}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ae04c43a96dcbd7b786b77114bcb4d3f1}} 
+C\+C\+\_\+\+D\+E\+L\+E\+TE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_CREATED@{CC\_CREATED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_CREATED@{CC\_CREATED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa6aab3f3056cf09e44bc7a8b353b989c}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa6aab3f3056cf09e44bc7a8b353b989c}} 
+C\+C\+\_\+\+C\+R\+E\+A\+T\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_DELETED@{CC\_DELETED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_DELETED@{CC\_DELETED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5db69a5dae0a4df7e6d359bb711f4eb4}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5db69a5dae0a4df7e6d359bb711f4eb4}} 
+C\+C\+\_\+\+D\+E\+L\+E\+T\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_VALID@{CC\_VALID}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_VALID@{CC\_VALID}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aed4f016d99609daf64d6dbbe86462285}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aed4f016d99609daf64d6dbbe86462285}} 
+C\+C\+\_\+\+V\+A\+L\+ID&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_CHANGED@{CC\_CHANGED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_CHANGED@{CC\_CHANGED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab75ed2f4de3fd8082fae6d762ecb8047}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab75ed2f4de3fd8082fae6d762ecb8047}} 
+C\+C\+\_\+\+C\+H\+A\+N\+G\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_CONTENT@{CC\_CONTENT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_CONTENT@{CC\_CONTENT}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5a3d8dfe96ed58ee297980aa825e3c31}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5a3d8dfe96ed58ee297980aa825e3c31}} 
+C\+C\+\_\+\+C\+O\+N\+T\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_CONTINUE@{CC\_CONTINUE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_CONTINUE@{CC\_CONTINUE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a3a8a055a5144a03f36b975b2d538aeca}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a3a8a055a5144a03f36b975b2d538aeca}} 
+C\+C\+\_\+\+C\+O\+N\+T\+I\+N\+UE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_BAD\_REQUEST@{CC\_BAD\_REQUEST}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_BAD\_REQUEST@{CC\_BAD\_REQUEST}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6990adba80ec99e44086bd7da700b3e0}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6990adba80ec99e44086bd7da700b3e0}} 
+C\+C\+\_\+\+B\+A\+D\+\_\+\+R\+E\+Q\+U\+E\+ST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_UNAUTHORIZED@{CC\_UNAUTHORIZED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_UNAUTHORIZED@{CC\_UNAUTHORIZED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8c47fe296dd2a3b9b4d448f01cb0dac8}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8c47fe296dd2a3b9b4d448f01cb0dac8}} 
+C\+C\+\_\+\+U\+N\+A\+U\+T\+H\+O\+R\+I\+Z\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_BAD\_OPTION@{CC\_BAD\_OPTION}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_BAD\_OPTION@{CC\_BAD\_OPTION}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a4222ebc49140f8fa4961b421c07e70e9}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a4222ebc49140f8fa4961b421c07e70e9}} 
+C\+C\+\_\+\+B\+A\+D\+\_\+\+O\+P\+T\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_FORBIDDEN@{CC\_FORBIDDEN}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_FORBIDDEN@{CC\_FORBIDDEN}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab93c8cf2548e5a7e234f1239fc5abb21}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ab93c8cf2548e5a7e234f1239fc5abb21}} 
+C\+C\+\_\+\+F\+O\+R\+B\+I\+D\+D\+EN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_NOT\_FOUND@{CC\_NOT\_FOUND}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_NOT\_FOUND@{CC\_NOT\_FOUND}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a45458afefee98fce1045ac286aa87281}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a45458afefee98fce1045ac286aa87281}} 
+C\+C\+\_\+\+N\+O\+T\+\_\+\+F\+O\+U\+ND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_METHOD\_NOT\_ALLOWED@{CC\_METHOD\_NOT\_ALLOWED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_METHOD\_NOT\_ALLOWED@{CC\_METHOD\_NOT\_ALLOWED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aefdacb5576f290465d8db20ec254d181}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aefdacb5576f290465d8db20ec254d181}} 
+C\+C\+\_\+\+M\+E\+T\+H\+O\+D\+\_\+\+N\+O\+T\+\_\+\+A\+L\+L\+O\+W\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_NOT\_ACCEPTABLE@{CC\_NOT\_ACCEPTABLE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_NOT\_ACCEPTABLE@{CC\_NOT\_ACCEPTABLE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa296b59cf098dad78d44a561bd32ae9e}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155aa296b59cf098dad78d44a561bd32ae9e}} 
+C\+C\+\_\+\+N\+O\+T\+\_\+\+A\+C\+C\+E\+P\+T\+A\+B\+LE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_REQUEST\_ENTITY\_INCOMPLETE@{CC\_REQUEST\_ENTITY\_INCOMPLETE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_REQUEST\_ENTITY\_INCOMPLETE@{CC\_REQUEST\_ENTITY\_INCOMPLETE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a76b72396b70f26b9fba3ec17ee55bb0f}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a76b72396b70f26b9fba3ec17ee55bb0f}} 
+C\+C\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+E\+N\+T\+I\+T\+Y\+\_\+\+I\+N\+C\+O\+M\+P\+L\+E\+TE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_PRECONDITION\_FAILED@{CC\_PRECONDITION\_FAILED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_PRECONDITION\_FAILED@{CC\_PRECONDITION\_FAILED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a0abed60bac4e93dfff04bd07df958107}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a0abed60bac4e93dfff04bd07df958107}} 
+C\+C\+\_\+\+P\+R\+E\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+F\+A\+I\+L\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_REQUEST\_ENTITY\_TOO\_LARGE@{CC\_REQUEST\_ENTITY\_TOO\_LARGE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_REQUEST\_ENTITY\_TOO\_LARGE@{CC\_REQUEST\_ENTITY\_TOO\_LARGE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9713f1516ec910b1e5023e7f743814d3}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a9713f1516ec910b1e5023e7f743814d3}} 
+C\+C\+\_\+\+R\+E\+Q\+U\+E\+S\+T\+\_\+\+E\+N\+T\+I\+T\+Y\+\_\+\+T\+O\+O\+\_\+\+L\+A\+R\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_UNSUPPORTED\_CONTENT@{CC\_UNSUPPORTED\_CONTENT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_UNSUPPORTED\_CONTENT@{CC\_UNSUPPORTED\_CONTENT}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8844b1adff13138095852a8ebd24cd54}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a8844b1adff13138095852a8ebd24cd54}} 
+C\+C\+\_\+\+U\+N\+S\+U\+P\+P\+O\+R\+T\+E\+D\+\_\+\+C\+O\+N\+T\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_INTERNAL\_SERVER\_ERROR@{CC\_INTERNAL\_SERVER\_ERROR}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_INTERNAL\_SERVER\_ERROR@{CC\_INTERNAL\_SERVER\_ERROR}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155abb3452820869a420cfa482d274b44aae}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155abb3452820869a420cfa482d274b44aae}} 
+C\+C\+\_\+\+I\+N\+T\+E\+R\+N\+A\+L\+\_\+\+S\+E\+R\+V\+E\+R\+\_\+\+E\+R\+R\+OR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_NOT\_IMPLEMENTED@{CC\_NOT\_IMPLEMENTED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_NOT\_IMPLEMENTED@{CC\_NOT\_IMPLEMENTED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1bba826f081906a79b7b124d57ecaf10}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1bba826f081906a79b7b124d57ecaf10}} 
+C\+C\+\_\+\+N\+O\+T\+\_\+\+I\+M\+P\+L\+E\+M\+E\+N\+T\+ED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_BAD\_GATEWAY@{CC\_BAD\_GATEWAY}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_BAD\_GATEWAY@{CC\_BAD\_GATEWAY}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a2c5c68ef4745976c17454bac87527f05}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a2c5c68ef4745976c17454bac87527f05}} 
+C\+C\+\_\+\+B\+A\+D\+\_\+\+G\+A\+T\+E\+W\+AY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_SERVICE\_UNAVAILABLE@{CC\_SERVICE\_UNAVAILABLE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_SERVICE\_UNAVAILABLE@{CC\_SERVICE\_UNAVAILABLE}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6c51d61c5233b543567ee7589136bec3}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a6c51d61c5233b543567ee7589136bec3}} 
+C\+C\+\_\+\+S\+E\+R\+V\+I\+C\+E\+\_\+\+U\+N\+A\+V\+A\+I\+L\+A\+B\+LE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_GATEWAY\_TIMEOUT@{CC\_GATEWAY\_TIMEOUT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_GATEWAY\_TIMEOUT@{CC\_GATEWAY\_TIMEOUT}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ac0b398812b69ce663e90c509957ca46f}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ac0b398812b69ce663e90c509957ca46f}} 
+C\+C\+\_\+\+G\+A\+T\+E\+W\+A\+Y\+\_\+\+T\+I\+M\+E\+O\+UT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CC\_PROXYING\_NOT\_SUPPORTED@{CC\_PROXYING\_NOT\_SUPPORTED}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CC\_PROXYING\_NOT\_SUPPORTED@{CC\_PROXYING\_NOT\_SUPPORTED}}}\mbox{\Hypertarget{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a37f2e44f9612d8068df96b49c4484524}\label{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a37f2e44f9612d8068df96b49c4484524}} 
+C\+C\+\_\+\+P\+R\+O\+X\+Y\+I\+N\+G\+\_\+\+N\+O\+T\+\_\+\+S\+U\+P\+P\+O\+R\+T\+ED&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}} 
+\index{picocoap.h@{picocoap.h}!coap\_error@{coap\_error}}
+\index{coap\_error@{coap\_error}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_error}{coap\_error}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}}}
+
+
+
+Status Codes. 
+
+These codes represent the possible errors that functions in this library can return. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_NONE@{CE\_NONE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_NONE@{CE\_NONE}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1ae11d26835a51a1cbe703cc64489abab4}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1ae11d26835a51a1cbe703cc64489abab4}} 
+C\+E\+\_\+\+N\+O\+NE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_INVALID\_PACKET@{CE\_INVALID\_PACKET}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_INVALID\_PACKET@{CE\_INVALID\_PACKET}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af4cdd83b8dd5a3c7fcffb2a996e4cd0b}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af4cdd83b8dd5a3c7fcffb2a996e4cd0b}} 
+C\+E\+\_\+\+I\+N\+V\+A\+L\+I\+D\+\_\+\+P\+A\+C\+K\+ET&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_BAD\_VERSION@{CE\_BAD\_VERSION}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_BAD\_VERSION@{CE\_BAD\_VERSION}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a1daf45d75909a7b9cfdb1efa172d6291}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a1daf45d75909a7b9cfdb1efa172d6291}} 
+C\+E\+\_\+\+B\+A\+D\+\_\+\+V\+E\+R\+S\+I\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_TOKEN\_LENGTH\_OUT\_OF\_RANGE@{CE\_TOKEN\_LENGTH\_OUT\_OF\_RANGE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_TOKEN\_LENGTH\_OUT\_OF\_RANGE@{CE\_TOKEN\_LENGTH\_OUT\_OF\_RANGE}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adf21648dbb52ed121b4f00f090a770d7}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adf21648dbb52ed121b4f00f090a770d7}} 
+C\+E\+\_\+\+T\+O\+K\+E\+N\+\_\+\+L\+E\+N\+G\+T\+H\+\_\+\+O\+U\+T\+\_\+\+O\+F\+\_\+\+R\+A\+N\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_UNKNOWN\_CODE@{CE\_UNKNOWN\_CODE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_UNKNOWN\_CODE@{CE\_UNKNOWN\_CODE}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af1cd5b6c54ad2ed5d173ad4073db0ce7}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1af1cd5b6c54ad2ed5d173ad4073db0ce7}} 
+C\+E\+\_\+\+U\+N\+K\+N\+O\+W\+N\+\_\+\+C\+O\+DE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_TOO\_MANY\_OPTIONS@{CE\_TOO\_MANY\_OPTIONS}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_TOO\_MANY\_OPTIONS@{CE\_TOO\_MANY\_OPTIONS}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a408d5d4b9b4f4fa0425e5daf363f33c6}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a408d5d4b9b4f4fa0425e5daf363f33c6}} 
+C\+E\+\_\+\+T\+O\+O\+\_\+\+M\+A\+N\+Y\+\_\+\+O\+P\+T\+I\+O\+NS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_OUT\_OF\_ORDER\_OPTIONS\_LIST@{CE\_OUT\_OF\_ORDER\_OPTIONS\_LIST}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_OUT\_OF\_ORDER\_OPTIONS\_LIST@{CE\_OUT\_OF\_ORDER\_OPTIONS\_LIST}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a11eef067ac802f6435448d6bdb23a8c8}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a11eef067ac802f6435448d6bdb23a8c8}} 
+C\+E\+\_\+\+O\+U\+T\+\_\+\+O\+F\+\_\+\+O\+R\+D\+E\+R\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+I\+ST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_INSUFFICIENT\_BUFFER@{CE\_INSUFFICIENT\_BUFFER}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_INSUFFICIENT\_BUFFER@{CE\_INSUFFICIENT\_BUFFER}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adcd4f46e58a37c35d30bb2620d4db143}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1adcd4f46e58a37c35d30bb2620d4db143}} 
+C\+E\+\_\+\+I\+N\+S\+U\+F\+F\+I\+C\+I\+E\+N\+T\+\_\+\+B\+U\+F\+F\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_FOUND\_PAYLOAD\_MARKER@{CE\_FOUND\_PAYLOAD\_MARKER}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_FOUND\_PAYLOAD\_MARKER@{CE\_FOUND\_PAYLOAD\_MARKER}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a85f0155625c6c78f3a57f6f0d63c69b9}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a85f0155625c6c78f3a57f6f0d63c69b9}} 
+C\+E\+\_\+\+F\+O\+U\+N\+D\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+M\+A\+R\+K\+ER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CE\_END\_OF\_PACKET@{CE\_END\_OF\_PACKET}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CE\_END\_OF\_PACKET@{CE\_END\_OF\_PACKET}}}\mbox{\Hypertarget{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a0aaf352fa21e5f386c11aaa3271c5814}\label{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1a0aaf352fa21e5f386c11aaa3271c5814}} 
+C\+E\+\_\+\+E\+N\+D\+\_\+\+O\+F\+\_\+\+P\+A\+C\+K\+ET&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}} 
+\index{picocoap.h@{picocoap.h}!coap\_option\_number@{coap\_option\_number}}
+\index{coap\_option\_number@{coap\_option\_number}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_option\_number}{coap\_option\_number}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}}}
+
+
+
+Option Numbers. 
+
+All known option numbers. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_IF\_MATCH@{CON\_IF\_MATCH}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_IF\_MATCH@{CON\_IF\_MATCH}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a8ce05569f1014ebc8f1a284c3a9150ee}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a8ce05569f1014ebc8f1a284c3a9150ee}} 
+C\+O\+N\+\_\+\+I\+F\+\_\+\+M\+A\+T\+CH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_URI\_HOST@{CON\_URI\_HOST}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_URI\_HOST@{CON\_URI\_HOST}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a3184a5abcc31c579052eafaabdf76869}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a3184a5abcc31c579052eafaabdf76869}} 
+C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+H\+O\+ST&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_ETAG@{CON\_ETAG}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_ETAG@{CON\_ETAG}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a0df0456e384384a6929f7a0d0fb3fc83}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a0df0456e384384a6929f7a0d0fb3fc83}} 
+C\+O\+N\+\_\+\+E\+T\+AG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_IF\_NONE\_MATCH@{CON\_IF\_NONE\_MATCH}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_IF\_NONE\_MATCH@{CON\_IF\_NONE\_MATCH}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a44192b4f85f6d387e41b4c8ddec332ed}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a44192b4f85f6d387e41b4c8ddec332ed}} 
+C\+O\+N\+\_\+\+I\+F\+\_\+\+N\+O\+N\+E\+\_\+\+M\+A\+T\+CH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_OBSERVE@{CON\_OBSERVE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_OBSERVE@{CON\_OBSERVE}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379affbf7b8d14e175bde3238835a34b99a3}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379affbf7b8d14e175bde3238835a34b99a3}} 
+C\+O\+N\+\_\+\+O\+B\+S\+E\+R\+VE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_URI\_PORT@{CON\_URI\_PORT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_URI\_PORT@{CON\_URI\_PORT}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ae0ad1427ffa0bcc1fa3f710a2aebdf1d}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ae0ad1427ffa0bcc1fa3f710a2aebdf1d}} 
+C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+P\+O\+RT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_LOCATION\_PATH@{CON\_LOCATION\_PATH}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_LOCATION\_PATH@{CON\_LOCATION\_PATH}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a9b38a519bd3f0a5a62d7f7ed1cf185d1}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a9b38a519bd3f0a5a62d7f7ed1cf185d1}} 
+C\+O\+N\+\_\+\+L\+O\+C\+A\+T\+I\+O\+N\+\_\+\+P\+A\+TH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_URI\_PATH@{CON\_URI\_PATH}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_URI\_PATH@{CON\_URI\_PATH}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aac633e5706688eac61a7038a35567cca}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aac633e5706688eac61a7038a35567cca}} 
+C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+P\+A\+TH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_CONTENT\_FORMAT@{CON\_CONTENT\_FORMAT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_CONTENT\_FORMAT@{CON\_CONTENT\_FORMAT}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ad5b163ee5b8c1d98774c1839ab8fcbcc}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379ad5b163ee5b8c1d98774c1839ab8fcbcc}} 
+C\+O\+N\+\_\+\+C\+O\+N\+T\+E\+N\+T\+\_\+\+F\+O\+R\+M\+AT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_MAX\_AGE@{CON\_MAX\_AGE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_MAX\_AGE@{CON\_MAX\_AGE}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a90ffe25a2ae1f3a3e2a232819eac9614}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a90ffe25a2ae1f3a3e2a232819eac9614}} 
+C\+O\+N\+\_\+\+M\+A\+X\+\_\+\+A\+GE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_URI\_QUERY@{CON\_URI\_QUERY}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_URI\_QUERY@{CON\_URI\_QUERY}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aa83c3c85504c7346d8ce5f7ea2bc9ca9}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aa83c3c85504c7346d8ce5f7ea2bc9ca9}} 
+C\+O\+N\+\_\+\+U\+R\+I\+\_\+\+Q\+U\+E\+RY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_ACCEPT@{CON\_ACCEPT}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_ACCEPT@{CON\_ACCEPT}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6596c2a0bc92a19637f98ebfdcd10671}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6596c2a0bc92a19637f98ebfdcd10671}} 
+C\+O\+N\+\_\+\+A\+C\+C\+E\+PT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_LOCATION\_QUERY@{CON\_LOCATION\_QUERY}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_LOCATION\_QUERY@{CON\_LOCATION\_QUERY}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6ce6458ac23fdf88a6690b12b883441e}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a6ce6458ac23fdf88a6690b12b883441e}} 
+C\+O\+N\+\_\+\+L\+O\+C\+A\+T\+I\+O\+N\+\_\+\+Q\+U\+E\+RY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_PROXY\_URI@{CON\_PROXY\_URI}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_PROXY\_URI@{CON\_PROXY\_URI}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a695d6858e9e775b1eb6fb67cf855d61d}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a695d6858e9e775b1eb6fb67cf855d61d}} 
+C\+O\+N\+\_\+\+P\+R\+O\+X\+Y\+\_\+\+U\+RI&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_PROXY\_SCHEME@{CON\_PROXY\_SCHEME}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_PROXY\_SCHEME@{CON\_PROXY\_SCHEME}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aba42403bb9756bfcde04ae572e12d6a2}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379aba42403bb9756bfcde04ae572e12d6a2}} 
+C\+O\+N\+\_\+\+P\+R\+O\+X\+Y\+\_\+\+S\+C\+H\+E\+ME&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_SIZE1@{CON\_SIZE1}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_SIZE1@{CON\_SIZE1}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379adadc98d6fb84e39625cc6d75470b01fa}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379adadc98d6fb84e39625cc6d75470b01fa}} 
+C\+O\+N\+\_\+\+S\+I\+Z\+E1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CON\_NO\_RESPONSE@{CON\_NO\_RESPONSE}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CON\_NO\_RESPONSE@{CON\_NO\_RESPONSE}}}\mbox{\Hypertarget{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a34caccb80453b6ce0f5e3bd58d4bad6c}\label{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379a34caccb80453b6ce0f5e3bd58d4bad6c}} 
+C\+O\+N\+\_\+\+N\+O\+\_\+\+R\+E\+S\+P\+O\+N\+SE&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}\label{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}} 
+\index{picocoap.h@{picocoap.h}!coap\_type@{coap\_type}}
+\index{coap\_type@{coap\_type}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_type}{coap\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}}}
+
+
+
+Message Types. 
+
+The four types of messages possible. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CT\_CON@{CT\_CON}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CT\_CON@{CT\_CON}}}\mbox{\Hypertarget{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a5321c1999d967bdb0690c110ffd2d694}\label{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a5321c1999d967bdb0690c110ffd2d694}} 
+C\+T\+\_\+\+C\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CT\_NON@{CT\_NON}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CT\_NON@{CT\_NON}}}\mbox{\Hypertarget{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}\label{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}} 
+C\+T\+\_\+\+N\+ON&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CT\_ACK@{CT\_ACK}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CT\_ACK@{CT\_ACK}}}\mbox{\Hypertarget{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429ac05b4755c123dbfcdea069c30e00fbf2}\label{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429ac05b4755c123dbfcdea069c30e00fbf2}} 
+C\+T\+\_\+\+A\+CK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CT\_RST@{CT\_RST}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!CT\_RST@{CT\_RST}}}\mbox{\Hypertarget{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a6b19a4f509598ba63b9298406f8c33a9}\label{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a6b19a4f509598ba63b9298406f8c33a9}} 
+C\+T\+\_\+\+R\+ST&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}\label{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}} 
+\index{picocoap.h@{picocoap.h}!coap\_version@{coap\_version}}
+\index{coap\_version@{coap\_version}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_version}{coap\_version}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}}}
+
+
+
+Protocol Versions. 
+
+All known version of the protocol. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COAP\_V1@{COAP\_V1}!picocoap.h@{picocoap.h}}\index{picocoap.h@{picocoap.h}!COAP\_V1@{COAP\_V1}}}\mbox{\Hypertarget{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}\label{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}} 
+C\+O\+A\+P\+\_\+\+V1&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{picocoap_8h_ae217bfbbb6771b061b1030d784f67e87}\label{picocoap_8h_ae217bfbbb6771b061b1030d784f67e87}} 
+\index{picocoap.h@{picocoap.h}!coap\_add\_option@{coap\_add\_option}}
+\index{coap\_add\_option@{coap\_add\_option}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_add\_option()}{coap\_add\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+add\+\_\+option (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{int32\+\_\+t}]{opt\+\_\+num,  }\item[{uint8\+\_\+t $\ast$}]{value,  }\item[{uint16\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Add Message Option. 
+
+Adds an option to the existing message. Options S\+H\+O\+U\+LD be added in order of option number. In the case of multiple options of the same type, they are sorted in the order that they are added. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em opt} & option container. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a5479d7fe4a0ec8a749994d8079a65b46}\label{picocoap_8h_a5479d7fe4a0ec8a749994d8079a65b46}} 
+\index{picocoap.h@{picocoap.h}!coap\_adjust\_option\_deltas@{coap\_adjust\_option\_deltas}}
+\index{coap\_adjust\_option\_deltas@{coap\_adjust\_option\_deltas}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_adjust\_option\_deltas()}{coap\_adjust\_option\_deltas()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+adjust\+\_\+option\+\_\+deltas (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{opts,  }\item[{size\+\_\+t $\ast$}]{opts\+\_\+len,  }\item[{size\+\_\+t}]{max\+\_\+len,  }\item[{int32\+\_\+t}]{offset }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8h_ad7dd6e420c63e49f786db64f4907f4f4}\label{picocoap_8h_ad7dd6e420c63e49f786db64f4907f4f4}} 
+\index{picocoap.h@{picocoap.h}!coap\_build\_code@{coap\_build\_code}}
+\index{coap\_build\_code@{coap\_build\_code}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_build\_code()}{coap\_build\_code()}}
+{\footnotesize\ttfamily static uint8\+\_\+t coap\+\_\+build\+\_\+code (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{\+\_\+class,  }\item[{uint8\+\_\+t}]{detail }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Build Message Code from Class and Detail. 
+
+Gets the class portion of the message code. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em class} & the code class. \\
+\hline
+\mbox{\texttt{ in}}  & {\em detail} & the code detail. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}{coap\+\_\+get\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_aac25455a46431f86ab73cc8ff434a05c}\label{picocoap_8h_aac25455a46431f86ab73cc8ff434a05c}} 
+\index{picocoap.h@{picocoap.h}!coap\_build\_option\_header@{coap\_build\_option\_header}}
+\index{coap\_build\_option\_header@{coap\_build\_option\_header}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_build\_option\_header()}{coap\_build\_option\_header()}}
+{\footnotesize\ttfamily int8\+\_\+t coap\+\_\+build\+\_\+option\+\_\+header (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{buf,  }\item[{size\+\_\+t}]{max\+\_\+len,  }\item[{int32\+\_\+t}]{opt\+\_\+delta,  }\item[{int32\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8h_a43f90e9a02d7ed5ea2075ec9379635ac}\label{picocoap_8h_a43f90e9a02d7ed5ea2075ec9379635ac}} 
+\index{picocoap.h@{picocoap.h}!coap\_compute\_option\_header\_len@{coap\_compute\_option\_header\_len}}
+\index{coap\_compute\_option\_header\_len@{coap\_compute\_option\_header\_len}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_compute\_option\_header\_len()}{coap\_compute\_option\_header\_len()}}
+{\footnotesize\ttfamily int8\+\_\+t coap\+\_\+compute\+\_\+option\+\_\+header\+\_\+len (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{opt\+\_\+delta,  }\item[{int32\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8h_ae892eff0f54b003d01f22e51bd29b2dd}\label{picocoap_8h_ae892eff0f54b003d01f22e51bd29b2dd}} 
+\index{picocoap.h@{picocoap.h}!coap\_decode\_option@{coap\_decode\_option}}
+\index{coap\_decode\_option@{coap\_decode\_option}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_decode\_option()}{coap\_decode\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+decode\+\_\+option (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{pkt\+\_\+ptr,  }\item[{size\+\_\+t}]{pkt\+\_\+len,  }\item[{uint16\+\_\+t $\ast$}]{option\+\_\+number,  }\item[{size\+\_\+t $\ast$}]{option\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}\label{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_code@{coap\_get\_code}}
+\index{coap\_get\_code@{coap\_get\_code}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_code()}{coap\_get\_code()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} coap\+\_\+get\+\_\+code (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Message Code. 
+
+Extracts the message code from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+code. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a6cdfb72a8bef8887d4bdb1354dcbf065}\label{picocoap_8h_a6cdfb72a8bef8887d4bdb1354dcbf065}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_code\_class@{coap\_get\_code\_class}}
+\index{coap\_get\_code\_class@{coap\_get\_code\_class}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_code\_class()}{coap\_get\_code\_class()}}
+{\footnotesize\ttfamily static uint8\+\_\+t coap\+\_\+get\+\_\+code\+\_\+class (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Message Code Class. 
+
+Gets the class portion of the message code. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}{coap\+\_\+get\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_ade0277d9e09ab1b7ba8888fa79359e2b}\label{picocoap_8h_ade0277d9e09ab1b7ba8888fa79359e2b}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_code\_detail@{coap\_get\_code\_detail}}
+\index{coap\_get\_code\_detail@{coap\_get\_code\_detail}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_code\_detail()}{coap\_get\_code\_detail()}}
+{\footnotesize\ttfamily static uint8\+\_\+t coap\+\_\+get\+\_\+code\+\_\+detail (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Message Code Detail. 
+
+Gets the detail portion of the message code. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}{coap\+\_\+get\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a62a5ab6507521f6c19192de7c144a186}\label{picocoap_8h_a62a5ab6507521f6c19192de7c144a186}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_mid@{coap\_get\_mid}}
+\index{coap\_get\_mid@{coap\_get\_mid}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_mid()}{coap\_get\_mid()}}
+{\footnotesize\ttfamily static uint16\+\_\+t coap\+\_\+get\+\_\+mid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Message ID. 
+
+Extracts the message ID from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+mid. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a7f87d72933fda79b4fb2063ef0f725a0}\label{picocoap_8h_a7f87d72933fda79b4fb2063ef0f725a0}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_option@{coap\_get\_option}}
+\index{coap\_get\_option@{coap\_get\_option}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_option()}{coap\_get\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} coap\+\_\+get\+\_\+option (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} $\ast$}]{last }\end{DoxyParamCaption})}
+
+
+
+Get Option. 
+
+Iterates over the options in the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em pointer} & to the last/next option, pass 0 for the first option. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_aa980c81bee1bfec90bff5eb0a184df46}\label{picocoap_8h_aa980c81bee1bfec90bff5eb0a184df46}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_option\_by\_num@{coap\_get\_option\_by\_num}}
+\index{coap\_get\_option\_by\_num@{coap\_get\_option\_by\_num}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_option\_by\_num()}{coap\_get\_option\_by\_num()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} coap\+\_\+get\+\_\+option\+\_\+by\+\_\+num (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}}}]{num,  }\item[{uint8\+\_\+t}]{occ }\end{DoxyParamCaption})}
+
+
+
+Get Option by Option Number. 
+
+Gets a single specified by the option number and index of which occurrence of that option number you\textquotesingle{}d like. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em num} & option number to get. \\
+\hline
+\mbox{\texttt{ in}}  & {\em occ} & occurrence of to get (0th, 1st, 2nd, etc) 0 for the first option. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_af5367a7e0beabfd70c1fd1d030e883ff}\label{picocoap_8h_af5367a7e0beabfd70c1fd1d030e883ff}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_payload@{coap\_get\_payload}}
+\index{coap\_get\_payload@{coap\_get\_payload}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_payload()}{coap\_get\_payload()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} coap\+\_\+get\+\_\+payload (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Get Option. 
+
+Extracts the option with the given index in the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a3ca63b473fbd4517b1e260f316127968}\label{picocoap_8h_a3ca63b473fbd4517b1e260f316127968}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_tkl@{coap\_get\_tkl}}
+\index{coap\_get\_tkl@{coap\_get\_tkl}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_tkl()}{coap\_get\_tkl()}}
+{\footnotesize\ttfamily static uint8\+\_\+t coap\+\_\+get\+\_\+tkl (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Token Length. 
+
+Extracts the token length from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+length. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a11b205fb44a41e0c2fd026835a32b6bd}\label{picocoap_8h_a11b205fb44a41e0c2fd026835a32b6bd}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_token@{coap\_get\_token}}
+\index{coap\_get\_token@{coap\_get\_token}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_token()}{coap\_get\_token()}}
+{\footnotesize\ttfamily uint8\+\_\+t coap\+\_\+get\+\_\+token (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Get Message Token. 
+
+Extracts the token from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+token. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a8f9a629cc03dae9b482f9c47341a67c1}\label{picocoap_8h_a8f9a629cc03dae9b482f9c47341a67c1}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_type@{coap\_get\_type}}
+\index{coap\_get\_type@{coap\_get\_type}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_type()}{coap\_get\_type()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} coap\+\_\+get\+\_\+type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Message Type. 
+
+Extracts the message type from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+type. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a41c3497f871eb3888793123d6dace83b}\label{picocoap_8h_a41c3497f871eb3888793123d6dace83b}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_version@{coap\_get\_version}}
+\index{coap\_get\_version@{coap\_get\_version}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_version()}{coap\_get\_version()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} coap\+\_\+get\+\_\+version (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Get Version. 
+
+Extracts the Co\+AP version from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+version. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a66fdf785cde7406d6c723e94187e3723}\label{picocoap_8h_a66fdf785cde7406d6c723e94187e3723}} 
+\index{picocoap.h@{picocoap.h}!coap\_init\_pdu@{coap\_init\_pdu}}
+\index{coap\_init\_pdu@{coap\_init\_pdu}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_init\_pdu()}{coap\_init\_pdu()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+init\+\_\+pdu (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Initialize Packet. 
+
+Initializes on an empty buffer for creating new Co\+AP packets. This function (or coap\+\_\+validate for parsing packets) must be called and must return C\+E\+\_\+\+N\+O\+NE before you can use any of the getters or setter. The packet is initialized to a Co\+AP Ping. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_aa53445c378c6332c50f48f99ee599998}\label{picocoap_8h_aa53445c378c6332c50f48f99ee599998}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_code@{coap\_set\_code}}
+\index{coap\_set\_code@{coap\_set\_code}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_code()}{coap\_set\_code()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+code (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}}}]{code }\end{DoxyParamCaption})}
+
+
+
+Set Message Code. 
+
+Sets the message type header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em code} & code to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a32aa07e022c43622a2f82a96fe898622}\label{picocoap_8h_a32aa07e022c43622a2f82a96fe898622}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_mid@{coap\_set\_mid}}
+\index{coap\_set\_mid@{coap\_set\_mid}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_mid()}{coap\_set\_mid()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+mid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint16\+\_\+t}]{mid }\end{DoxyParamCaption})}
+
+
+
+Set Message ID. 
+
+Sets the message ID header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em mid} & message ID to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a8a040da4c9d2f1b56955e2806b80bb3f}\label{picocoap_8h_a8a040da4c9d2f1b56955e2806b80bb3f}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_payload@{coap\_set\_payload}}
+\index{coap\_set\_payload@{coap\_set\_payload}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_payload()}{coap\_set\_payload()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+payload (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{payload,  }\item[{size\+\_\+t}]{payload\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Add Message Option. 
+
+Sets the payload of the given message to the value in {\ttfamily payload}. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em pl} & payload container. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a3409ece8a6d99092b6b8e1399789d1a4}\label{picocoap_8h_a3409ece8a6d99092b6b8e1399789d1a4}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_token@{coap\_set\_token}}
+\index{coap\_set\_token@{coap\_set\_token}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_token()}{coap\_set\_token()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+token (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{token,  }\item[{uint8\+\_\+t}]{tkl }\end{DoxyParamCaption})}
+
+
+
+Set Message Token. 
+
+Sets the message token header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em token} & pointer to the token array to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8h_a09af1f18f672090c284b21e8ffe37871}\label{picocoap_8h_a09af1f18f672090c284b21e8ffe37871}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_type@{coap\_set\_type}}
+\index{coap\_set\_type@{coap\_set\_type}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_type()}{coap\_set\_type()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}}}]{mtype }\end{DoxyParamCaption})}
+
+
+
+Set Message Type. 
+
+Sets the message type header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em mtype} & type to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a118deed6da6e28ba613681a37b98d92b}\label{picocoap_8h_a118deed6da6e28ba613681a37b98d92b}} 
+\index{picocoap.h@{picocoap.h}!coap\_set\_version@{coap\_set\_version}}
+\index{coap\_set\_version@{coap\_set\_version}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_version()}{coap\_set\_version()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+version (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}}}]{ver }\end{DoxyParamCaption})}
+
+
+
+Set Version. 
+
+Sets the version number header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em ver} & version to set. Must be C\+O\+A\+P\+\_\+\+V1. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8h_a8718a038b325db3b45194f8f5b325054}\label{picocoap_8h_a8718a038b325db3b45194f8f5b325054}} 
+\index{picocoap.h@{picocoap.h}!coap\_validate\_pkt@{coap\_validate\_pkt}}
+\index{coap\_validate\_pkt@{coap\_validate\_pkt}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_validate\_pkt()}{coap\_validate\_pkt()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+validate\+\_\+pkt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Validate Packet. 
+
+Parses the given packet to check if it is a valid Co\+AP message. This function (or coap\+\_\+init\+\_\+pdu for creating new packets) must be called and must return C\+E\+\_\+\+N\+O\+NE before you can use any of the getters or setter. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error code (C\+E\+\_\+\+N\+O\+NE == 0 == no error). 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} 
+
+\mbox{\hyperlink{picocoap_8h_a66fdf785cde7406d6c723e94187e3723}{coap\+\_\+init\+\_\+pdu}} 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{picocoap_8h_ab5974954badd8597ef9a175869dda476}\label{picocoap_8h_ab5974954badd8597ef9a175869dda476}} 
+\index{picocoap.h@{picocoap.h}!coap\_options@{coap\_options}}
+\index{coap\_options@{coap\_options}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_options}{coap\_options}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structcoap__option__names}{coap\+\_\+option\+\_\+names}} coap\+\_\+options\mbox{[}16\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        \{ 1, \textcolor{stringliteral}{"if-\/match"} \},}
+\DoxyCodeLine{        \{ 3, \textcolor{stringliteral}{"uri-\/host"} \},}
+\DoxyCodeLine{        \{ 4, \textcolor{stringliteral}{"etag"} \},}
+\DoxyCodeLine{        \{ 5, \textcolor{stringliteral}{"if-\/none-\/match"} \},}
+\DoxyCodeLine{        \{ 7, \textcolor{stringliteral}{"uri-\/port"} \},}
+\DoxyCodeLine{        \{ 8, \textcolor{stringliteral}{"location-\/path"} \},}
+\DoxyCodeLine{        \{ 11, \textcolor{stringliteral}{"uri-\/path"}\} ,}
+\DoxyCodeLine{        \{ 12, \textcolor{stringliteral}{"content-\/format"} \},}
+\DoxyCodeLine{        \{ 14, \textcolor{stringliteral}{"max-\/age"} \},}
+\DoxyCodeLine{        \{ 15, \textcolor{stringliteral}{"uri-\/query"} \},}
+\DoxyCodeLine{        \{ 17, \textcolor{stringliteral}{"accept"} \},}
+\DoxyCodeLine{        \{ 20, \textcolor{stringliteral}{"location-\/query"} \},}
+\DoxyCodeLine{        \{ 35, \textcolor{stringliteral}{"proxy-\/uri"} \},}
+\DoxyCodeLine{        \{ 39, \textcolor{stringliteral}{"proxy-\/scheme"} \},}
+\DoxyCodeLine{        \{ 60, \textcolor{stringliteral}{"size1"} \},}
+\DoxyCodeLine{        \{ 258, \textcolor{stringliteral}{"no-\/response"}\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}

@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['data_5fptr_152',['data_ptr',['../structschc__fragmentation__t.html#a54c6634755f3b9737e8c61d0fdea3a37',1,'schc_fragmentation_t']]],
+  ['dc_153',['dc',['../structschc__fragmentation__t.html#ac3fbcae2ee4198df9d04438d63d97361',1,'schc_fragmentation_t']]],
+  ['debug_5fprintf_154',['DEBUG_PRINTF',['../schc__config_8h.html#a5c8ef3c24dad2c469a42784a9a39403b',1,'DEBUG_PRINTF():&#160;schc_config.h'],['../schc__config__example_8h.html#a5c8ef3c24dad2c469a42784a9a39403b',1,'DEBUG_PRINTF():&#160;schc_config_example.h']]],
+  ['decode_5fbitmap_155',['decode_bitmap',['../fragmenter_8c.html#ad72ed26b4fe0b52eebf0278a4d03a3ba',1,'fragmenter.c']]],
+  ['decompress_156',['decompress',['../compressor_8c.html#aa04d4fedabeb09c90f2bc61e4dae25d2',1,'compressor.c']]],
+  ['decompress_5fcoap_5frule_157',['decompress_coap_rule',['../compressor_8c.html#ad45fb2f18a3909b9e25457f0e876ec9d',1,'compressor.c']]],
+  ['decompress_5fipv6_5frule_158',['decompress_ipv6_rule',['../compressor_8c.html#a5b96566e0fb7d5b0e60a046ce5b823b4',1,'compressor.c']]],
+  ['decompress_5fudp_5frule_159',['decompress_udp_rule',['../compressor_8c.html#a93d03a5060ccb2304a21f8da6917314e',1,'compressor.c']]],
+  ['destipaddr_160',['destipaddr',['../structuip__udpip__hdr.html#adf437d3f736cbc0dcb218f9f780a04ae',1,'uip_udpip_hdr']]],
+  ['destport_161',['destport',['../structuip__udpip__hdr.html#a10db330e1db816556454f1a84955ab0a',1,'uip_udpip_hdr']]],
+  ['device_5fcount_162',['DEVICE_COUNT',['../rules_8h.html#a268c0726d6884c56c5c4d0b96ac162cd',1,'rules.h']]],
+  ['device_5fid_163',['device_id',['../structschc__fragmentation__t.html#a87361e46e93bdf8d6f9cb60cb8f0b5de',1,'schc_fragmentation_t']]],
+  ['devices_164',['devices',['../rules_8h.html#ae51602c47e005d354c8d08bdf18f070b',1,'rules.h']]],
+  ['deviid_165',['DEVIID',['../config_8h.html#a3e43f38d5254d1e3bbf1d0955eb98ce4af2f71f1d6b980ffce7facf81da9d38b0',1,'config.h']]],
+  ['di_166',['DI',['../compressor_8c.html#a9002ee397432c569fdda24ab772716e5',1,'compressor.c']]],
+  ['dir_167',['dir',['../structschc__field.html#a23f0e54fa507136cff38e313b3f064cb',1,'schc_field']]],
+  ['direction_168',['direction',['../config_8h.html#a99f26e6ee9fcd62f75203b5402df8098',1,'config.h']]],
+  ['discard_5ffragment_169',['discard_fragment',['../fragmenter_8c.html#a07a5af086ece498fd748e941e0c78ddf',1,'fragmenter.c']]],
+  ['down_170',['down',['../structschc__rule.html#aead6af025477ce0b7c180b9df5091057',1,'schc_rule::down()'],['../config_8h.html#a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da',1,'DOWN():&#160;config.h']]],
+  ['dtag_171',['dtag',['../structschc__fragmentation__ack__t.html#a6a75f999fa56f3f64e0c8e555e3da58c',1,'schc_fragmentation_ack_t::dtag()'],['../structschc__fragmentation__t.html#a34281059a41f1b93a203dfff5e54f845',1,'schc_fragmentation_t::dtag()']]],
+  ['dtag_5fsize_172',['DTAG_SIZE',['../structschc__fragmentation__t.html#a815c8ccfa3da28a4140d60ff5e9e7b17',1,'schc_fragmentation_t']]],
+  ['dtag_5fsize_5fbits_173',['DTAG_SIZE_BITS',['../schc__config_8h.html#ac24f6aea575e391494ab29765ee389bf',1,'DTAG_SIZE_BITS():&#160;schc_config.h'],['../schc__config__example_8h.html#ac24f6aea575e391494ab29765ee389bf',1,'DTAG_SIZE_BITS():&#160;schc_config_example.h']]],
+  ['dtag_5fsize_5fbytes_174',['DTAG_SIZE_BYTES',['../schc__config_8h.html#a3cab569df576271706014d87c13a7845',1,'DTAG_SIZE_BYTES():&#160;schc_config.h'],['../schc__config__example_8h.html#a3cab569df576271706014d87c13a7845',1,'DTAG_SIZE_BYTES():&#160;schc_config_example.h']]],
+  ['dynamic_5fmemory_175',['DYNAMIC_MEMORY',['../schc__config_8h.html#a65a515400abb0daca1623e7cb09efd1c',1,'DYNAMIC_MEMORY():&#160;schc_config.h'],['../schc__config__example_8h.html#a65a515400abb0daca1623e7cb09efd1c',1,'DYNAMIC_MEMORY():&#160;schc_config_example.h']]]
+];

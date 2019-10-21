@@ -1,0 +1,122 @@
+\hypertarget{compressor_8h}{}\doxysection{compressor.\+h File Reference}
+\label{compressor_8h}\index{compressor.h@{compressor.h}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{compressor_8h_a4fd03f3acd56b4bf55fc4c8e48567ab7}{schc\+\_\+compressor\+\_\+init}} (uint8\+\_\+t src\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Initializes the S\+C\+HC compressor. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{compressor_8h_abd42f4bd7b7fdd8ea7b4c3504720a0ea}{schc\+\_\+compress}} (const uint8\+\_\+t $\ast$data, uint8\+\_\+t $\ast$buf, uint16\+\_\+t total\+\_\+length)
+\begin{DoxyCompactList}\small\item\em Compresses a Co\+A\+P/\+U\+D\+P/\+IP packet. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8h_a48ebb52c79106c2a7658a513c2a65463}{schc\+\_\+construct\+\_\+header}} (unsigned char $\ast$data, unsigned char $\ast$header, uint32\+\_\+t device\+\_\+id, uint16\+\_\+t total\+\_\+length, uint8\+\_\+t $\ast$header\+\_\+offset)
+\begin{DoxyCompactList}\small\item\em Construct the header from the layered set of rules. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8h_a650a861e13b9cb68043df5319d83b92d}{compute\+\_\+length}} (unsigned char $\ast$data, uint16\+\_\+t data\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Set the packet length for the U\+DP and IP headers. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8h_a89368d1a9e14855697684aa89b0f1aac}{compute\+\_\+checksum}} (unsigned char $\ast$data)
+\begin{DoxyCompactList}\small\item\em Calculates the U\+DP checksum and sets the appropriate header fields. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{compressor_8h_a89368d1a9e14855697684aa89b0f1aac}\label{compressor_8h_a89368d1a9e14855697684aa89b0f1aac}} 
+\index{compressor.h@{compressor.h}!compute\_checksum@{compute\_checksum}}
+\index{compute\_checksum@{compute\_checksum}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{compute\_checksum()}{compute\_checksum()}}
+{\footnotesize\ttfamily uint16\+\_\+t compute\+\_\+checksum (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Calculates the U\+DP checksum and sets the appropriate header fields. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the data packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+checksum the computed checksum 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8h_a650a861e13b9cb68043df5319d83b92d}\label{compressor_8h_a650a861e13b9cb68043df5319d83b92d}} 
+\index{compressor.h@{compressor.h}!compute\_length@{compute\_length}}
+\index{compute\_length@{compute\_length}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{compute\_length()}{compute\_length()}}
+{\footnotesize\ttfamily uint16\+\_\+t compute\+\_\+length (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data,  }\item[{uint16\+\_\+t}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Set the packet length for the U\+DP and IP headers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the data packet \\
+\hline
+{\em data\+\_\+len} & the length of the total packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8h_abd42f4bd7b7fdd8ea7b4c3504720a0ea}\label{compressor_8h_abd42f4bd7b7fdd8ea7b4c3504720a0ea}} 
+\index{compressor.h@{compressor.h}!schc\_compress@{schc\_compress}}
+\index{schc\_compress@{schc\_compress}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{schc\_compress()}{schc\_compress()}}
+{\footnotesize\ttfamily int16\+\_\+t schc\+\_\+compress (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{data,  }\item[{uint8\+\_\+t $\ast$}]{buf,  }\item[{uint16\+\_\+t}]{total\+\_\+length }\end{DoxyParamCaption})}
+
+
+
+Compresses a Co\+A\+P/\+U\+D\+P/\+IP packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the packet \\
+\hline
+{\em buf} & pointer to the compressed packet buffer \\
+\hline
+{\em total\+\_\+length} & the length of the packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed packet -\/1 on a memory overflow 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8h_a4fd03f3acd56b4bf55fc4c8e48567ab7}\label{compressor_8h_a4fd03f3acd56b4bf55fc4c8e48567ab7}} 
+\index{compressor.h@{compressor.h}!schc\_compressor\_init@{schc\_compressor\_init}}
+\index{schc\_compressor\_init@{schc\_compressor\_init}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{schc\_compressor\_init()}{schc\_compressor\_init()}}
+{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+compressor\+\_\+init (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{src\mbox{[}16\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Initializes the S\+C\+HC compressor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\+\_\+ip} & a pointer to the source it\textquotesingle{}s ip address\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error codes on error 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8h_a48ebb52c79106c2a7658a513c2a65463}\label{compressor_8h_a48ebb52c79106c2a7658a513c2a65463}} 
+\index{compressor.h@{compressor.h}!schc\_construct\_header@{schc\_construct\_header}}
+\index{schc\_construct\_header@{schc\_construct\_header}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{schc\_construct\_header()}{schc\_construct\_header()}}
+{\footnotesize\ttfamily uint16\+\_\+t schc\+\_\+construct\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data,  }\item[{unsigned char $\ast$}]{header,  }\item[{uint32\+\_\+t}]{device\+\_\+id,  }\item[{uint16\+\_\+t}]{total\+\_\+length,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset }\end{DoxyParamCaption})}
+
+
+
+Construct the header from the layered set of rules. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the received data \\
+\hline
+{\em header} & pointer where to save the decompressed header \\
+\hline
+{\em device\+\_\+id} & the device its id \\
+\hline
+{\em total\+\_\+length} & the total length of the received data \\
+\hline
+{\em header\+\_\+offset} & an integer pointing to the current offset in the compressed header\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the newly constructed header 0 one of the rules was not found 
+\end{DoxyReturn}

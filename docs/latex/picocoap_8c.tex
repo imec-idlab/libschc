@@ -1,0 +1,354 @@
+\hypertarget{picocoap_8c}{}\doxysection{picocoap.\+c File Reference}
+\label{picocoap_8c}\index{picocoap.c@{picocoap.c}}
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}picocoap.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}config.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a8718a038b325db3b45194f8f5b325054}{coap\+\_\+validate\+\_\+pkt}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Validate Packet. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{picocoap_8c_a11b205fb44a41e0c2fd026835a32b6bd}{coap\+\_\+get\+\_\+token}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em Get Message Token. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{picocoap_8c_a7f87d72933fda79b4fb2063ef0f725a0}{coap\+\_\+get\+\_\+option}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} $\ast$last)
+\begin{DoxyCompactList}\small\item\em Get Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} \mbox{\hyperlink{picocoap_8c_aa980c81bee1bfec90bff5eb0a184df46}{coap\+\_\+get\+\_\+option\+\_\+by\+\_\+num}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}} num, uint8\+\_\+t occ)
+\begin{DoxyCompactList}\small\item\em Get Option by Option Number. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_ae892eff0f54b003d01f22e51bd29b2dd}{coap\+\_\+decode\+\_\+option}} (uint8\+\_\+t $\ast$pkt\+\_\+ptr, size\+\_\+t pkt\+\_\+len, uint16\+\_\+t $\ast$option\+\_\+number, size\+\_\+t $\ast$option\+\_\+length, uint8\+\_\+t $\ast$$\ast$value)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} \mbox{\hyperlink{picocoap_8c_af5367a7e0beabfd70c1fd1d030e883ff}{coap\+\_\+get\+\_\+payload}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Get Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a66fdf785cde7406d6c723e94187e3723}{coap\+\_\+init\+\_\+pdu}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Initialize Packet. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a118deed6da6e28ba613681a37b98d92b}{coap\+\_\+set\+\_\+version}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} ver)
+\begin{DoxyCompactList}\small\item\em Set Version. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a09af1f18f672090c284b21e8ffe37871}{coap\+\_\+set\+\_\+type}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} mtype)
+\begin{DoxyCompactList}\small\item\em Set Message Type. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_aa53445c378c6332c50f48f99ee599998}{coap\+\_\+set\+\_\+code}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, \mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} code)
+\begin{DoxyCompactList}\small\item\em Set Message Code. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a32aa07e022c43622a2f82a96fe898622}{coap\+\_\+set\+\_\+mid}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint16\+\_\+t mid)
+\begin{DoxyCompactList}\small\item\em Set Message ID. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a3409ece8a6d99092b6b8e1399789d1a4}{coap\+\_\+set\+\_\+token}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$token, uint8\+\_\+t tkl)
+\begin{DoxyCompactList}\small\item\em Set Message Token. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_ae217bfbbb6771b061b1030d784f67e87}{coap\+\_\+add\+\_\+option}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, int32\+\_\+t opt\+\_\+num, uint8\+\_\+t $\ast$value, uint16\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Add Message Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a8a040da4c9d2f1b56955e2806b80bb3f}{coap\+\_\+set\+\_\+payload}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$payload, size\+\_\+t payload\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Add Message Option. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_abcd5bdeb742083cd15e51e432852b63a}{coap\+\_\+adjust\+\_\+option\+\_\+deltas}} (uint8\+\_\+t $\ast$opts\+\_\+start, size\+\_\+t $\ast$opts\+\_\+len, size\+\_\+t max\+\_\+len, int32\+\_\+t offset)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{picocoap_8c_aac25455a46431f86ab73cc8ff434a05c}{coap\+\_\+build\+\_\+option\+\_\+header}} (uint8\+\_\+t $\ast$buf, size\+\_\+t max\+\_\+len, int32\+\_\+t opt\+\_\+delta, int32\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{picocoap_8c_a43f90e9a02d7ed5ea2075ec9379635ac}{coap\+\_\+compute\+\_\+option\+\_\+header\+\_\+len}} (int32\+\_\+t opt\+\_\+delta, int32\+\_\+t opt\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Internal Method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{picocoap_8c_ae217bfbbb6771b061b1030d784f67e87}\label{picocoap_8c_ae217bfbbb6771b061b1030d784f67e87}} 
+\index{picocoap.c@{picocoap.c}!coap\_add\_option@{coap\_add\_option}}
+\index{coap\_add\_option@{coap\_add\_option}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_add\_option()}{coap\_add\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+add\+\_\+option (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{int32\+\_\+t}]{opt\+\_\+num,  }\item[{uint8\+\_\+t $\ast$}]{value,  }\item[{uint16\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Add Message Option. 
+
+Adds an option to the existing message. Options S\+H\+O\+U\+LD be added in order of option number. In the case of multiple options of the same type, they are sorted in the order that they are added. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em opt} & option container. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_abcd5bdeb742083cd15e51e432852b63a}\label{picocoap_8c_abcd5bdeb742083cd15e51e432852b63a}} 
+\index{picocoap.c@{picocoap.c}!coap\_adjust\_option\_deltas@{coap\_adjust\_option\_deltas}}
+\index{coap\_adjust\_option\_deltas@{coap\_adjust\_option\_deltas}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_adjust\_option\_deltas()}{coap\_adjust\_option\_deltas()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+adjust\+\_\+option\+\_\+deltas (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{opts\+\_\+start,  }\item[{size\+\_\+t $\ast$}]{opts\+\_\+len,  }\item[{size\+\_\+t}]{max\+\_\+len,  }\item[{int32\+\_\+t}]{offset }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8c_aac25455a46431f86ab73cc8ff434a05c}\label{picocoap_8c_aac25455a46431f86ab73cc8ff434a05c}} 
+\index{picocoap.c@{picocoap.c}!coap\_build\_option\_header@{coap\_build\_option\_header}}
+\index{coap\_build\_option\_header@{coap\_build\_option\_header}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_build\_option\_header()}{coap\_build\_option\_header()}}
+{\footnotesize\ttfamily int8\+\_\+t coap\+\_\+build\+\_\+option\+\_\+header (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{buf,  }\item[{size\+\_\+t}]{max\+\_\+len,  }\item[{int32\+\_\+t}]{opt\+\_\+delta,  }\item[{int32\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8c_a43f90e9a02d7ed5ea2075ec9379635ac}\label{picocoap_8c_a43f90e9a02d7ed5ea2075ec9379635ac}} 
+\index{picocoap.c@{picocoap.c}!coap\_compute\_option\_header\_len@{coap\_compute\_option\_header\_len}}
+\index{coap\_compute\_option\_header\_len@{coap\_compute\_option\_header\_len}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_compute\_option\_header\_len()}{coap\_compute\_option\_header\_len()}}
+{\footnotesize\ttfamily int8\+\_\+t coap\+\_\+compute\+\_\+option\+\_\+header\+\_\+len (\begin{DoxyParamCaption}\item[{int32\+\_\+t}]{opt\+\_\+delta,  }\item[{int32\+\_\+t}]{opt\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8c_ae892eff0f54b003d01f22e51bd29b2dd}\label{picocoap_8c_ae892eff0f54b003d01f22e51bd29b2dd}} 
+\index{picocoap.c@{picocoap.c}!coap\_decode\_option@{coap\_decode\_option}}
+\index{coap\_decode\_option@{coap\_decode\_option}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_decode\_option()}{coap\_decode\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+decode\+\_\+option (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{pkt\+\_\+ptr,  }\item[{size\+\_\+t}]{pkt\+\_\+len,  }\item[{uint16\+\_\+t $\ast$}]{option\+\_\+number,  }\item[{size\+\_\+t $\ast$}]{option\+\_\+length,  }\item[{uint8\+\_\+t $\ast$$\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+Internal Method. 
+
+\mbox{\Hypertarget{picocoap_8c_a7f87d72933fda79b4fb2063ef0f725a0}\label{picocoap_8c_a7f87d72933fda79b4fb2063ef0f725a0}} 
+\index{picocoap.c@{picocoap.c}!coap\_get\_option@{coap\_get\_option}}
+\index{coap\_get\_option@{coap\_get\_option}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_option()}{coap\_get\_option()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} coap\+\_\+get\+\_\+option (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} $\ast$}]{last }\end{DoxyParamCaption})}
+
+
+
+Get Option. 
+
+Iterates over the options in the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in,out}}  & {\em pointer} & to the last/next option, pass 0 for the first option. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_aa980c81bee1bfec90bff5eb0a184df46}\label{picocoap_8c_aa980c81bee1bfec90bff5eb0a184df46}} 
+\index{picocoap.c@{picocoap.c}!coap\_get\_option\_by\_num@{coap\_get\_option\_by\_num}}
+\index{coap\_get\_option\_by\_num@{coap\_get\_option\_by\_num}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_option\_by\_num()}{coap\_get\_option\_by\_num()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} coap\+\_\+get\+\_\+option\+\_\+by\+\_\+num (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+option\+\_\+number}}}]{num,  }\item[{uint8\+\_\+t}]{occ }\end{DoxyParamCaption})}
+
+
+
+Get Option by Option Number. 
+
+Gets a single specified by the option number and index of which occurrence of that option number you\textquotesingle{}d like. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em num} & option number to get. \\
+\hline
+\mbox{\texttt{ in}}  & {\em occ} & occurrence of to get (0th, 1st, 2nd, etc) 0 for the first option. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__option}{coap\+\_\+option}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_af5367a7e0beabfd70c1fd1d030e883ff}\label{picocoap_8c_af5367a7e0beabfd70c1fd1d030e883ff}} 
+\index{picocoap.c@{picocoap.c}!coap\_get\_payload@{coap\_get\_payload}}
+\index{coap\_get\_payload@{coap\_get\_payload}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_payload()}{coap\_get\_payload()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} coap\+\_\+get\+\_\+payload (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Get Option. 
+
+Extracts the option with the given index in the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{structcoap__payload}{coap\+\_\+payload}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_a11b205fb44a41e0c2fd026835a32b6bd}\label{picocoap_8c_a11b205fb44a41e0c2fd026835a32b6bd}} 
+\index{picocoap.c@{picocoap.c}!coap\_get\_token@{coap\_get\_token}}
+\index{coap\_get\_token@{coap\_get\_token}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_token()}{coap\_get\_token()}}
+{\footnotesize\ttfamily uint8\+\_\+t coap\+\_\+get\+\_\+token (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+Get Message Token. 
+
+Extracts the token from the given message. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+token. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_a66fdf785cde7406d6c723e94187e3723}\label{picocoap_8c_a66fdf785cde7406d6c723e94187e3723}} 
+\index{picocoap.c@{picocoap.c}!coap\_init\_pdu@{coap\_init\_pdu}}
+\index{coap\_init\_pdu@{coap\_init\_pdu}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_init\_pdu()}{coap\_init\_pdu()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+init\+\_\+pdu (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Initialize Packet. 
+
+Initializes on an empty buffer for creating new Co\+AP packets. This function (or coap\+\_\+validate for parsing packets) must be called and must return C\+E\+\_\+\+N\+O\+NE before you can use any of the getters or setter. The packet is initialized to a Co\+AP Ping. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_aa53445c378c6332c50f48f99ee599998}\label{picocoap_8c_aa53445c378c6332c50f48f99ee599998}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_code@{coap\_set\_code}}
+\index{coap\_set\_code@{coap\_set\_code}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_code()}{coap\_set\_code()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+code (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}}}]{code }\end{DoxyParamCaption})}
+
+
+
+Set Message Code. 
+
+Sets the message type header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em code} & code to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155}{coap\+\_\+code}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8c_a32aa07e022c43622a2f82a96fe898622}\label{picocoap_8c_a32aa07e022c43622a2f82a96fe898622}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_mid@{coap\_set\_mid}}
+\index{coap\_set\_mid@{coap\_set\_mid}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_mid()}{coap\_set\_mid()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+mid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint16\+\_\+t}]{mid }\end{DoxyParamCaption})}
+
+
+
+Set Message ID. 
+
+Sets the message ID header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em mid} & message ID to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_a8a040da4c9d2f1b56955e2806b80bb3f}\label{picocoap_8c_a8a040da4c9d2f1b56955e2806b80bb3f}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_payload@{coap\_set\_payload}}
+\index{coap\_set\_payload@{coap\_set\_payload}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_payload()}{coap\_set\_payload()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+payload (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{payload,  }\item[{size\+\_\+t}]{payload\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Add Message Option. 
+
+Sets the payload of the given message to the value in {\ttfamily payload}. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em pl} & payload container. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_a3409ece8a6d99092b6b8e1399789d1a4}\label{picocoap_8c_a3409ece8a6d99092b6b8e1399789d1a4}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_token@{coap\_set\_token}}
+\index{coap\_set\_token@{coap\_set\_token}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_token()}{coap\_set\_token()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+token (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{token,  }\item[{uint8\+\_\+t}]{tkl }\end{DoxyParamCaption})}
+
+
+
+Set Message Token. 
+
+Sets the message token header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em token} & pointer to the token array to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{picocoap_8c_a09af1f18f672090c284b21e8ffe37871}\label{picocoap_8c_a09af1f18f672090c284b21e8ffe37871}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_type@{coap\_set\_type}}
+\index{coap\_set\_type@{coap\_set\_type}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_type()}{coap\_set\_type()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}}}]{mtype }\end{DoxyParamCaption})}
+
+
+
+Set Message Type. 
+
+Sets the message type header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em mtype} & type to set. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429}{coap\+\_\+type}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8c_a118deed6da6e28ba613681a37b98d92b}\label{picocoap_8c_a118deed6da6e28ba613681a37b98d92b}} 
+\index{picocoap.c@{picocoap.c}!coap\_set\_version@{coap\_set\_version}}
+\index{coap\_set\_version@{coap\_set\_version}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_set\_version()}{coap\_set\_version()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+set\+\_\+version (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}}}]{ver }\end{DoxyParamCaption})}
+
+
+
+Set Version. 
+
+Sets the version number header field. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in,out}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\mbox{\texttt{ in}}  & {\em ver} & version to set. Must be C\+O\+A\+P\+\_\+\+V1. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+coap\+\_\+error (0 == no error) 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{picocoap_8c_a8718a038b325db3b45194f8f5b325054}\label{picocoap_8c_a8718a038b325db3b45194f8f5b325054}} 
+\index{picocoap.c@{picocoap.c}!coap\_validate\_pkt@{coap\_validate\_pkt}}
+\index{coap\_validate\_pkt@{coap\_validate\_pkt}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_validate\_pkt()}{coap\_validate\_pkt()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} coap\+\_\+validate\+\_\+pkt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Validate Packet. 
+
+Parses the given packet to check if it is a valid Co\+AP message. This function (or coap\+\_\+init\+\_\+pdu for creating new packets) must be called and must return C\+E\+\_\+\+N\+O\+NE before you can use any of the getters or setter. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em pdu} & pointer to the coap message struct. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error code (C\+E\+\_\+\+N\+O\+NE == 0 == no error). 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} 
+
+\mbox{\hyperlink{picocoap_8h_a66fdf785cde7406d6c723e94187e3723}{coap\+\_\+init\+\_\+pdu}} 
+\end{DoxySeeAlso}

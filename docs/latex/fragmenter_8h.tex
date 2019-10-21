@@ -1,0 +1,449 @@
+\hypertarget{fragmenter_8h}{}\doxysection{fragmenter.\+h File Reference}
+\label{fragmenter_8h}\index{fragmenter.h@{fragmenter.h}}
+{\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__fragmentation__ack__t}{schc\+\_\+fragmentation\+\_\+ack\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{fragmenter_8h_ab014037ee9ccea0cea6b2d5366dee902}{S\+C\+H\+C\+\_\+\+F\+R\+A\+G\+\_\+\+I\+N\+P\+UT}}~2
+\begin{DoxyCompactList}\small\item\em Return code\+: Indicator. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a4ae988f716a3d42117f0777a56f8f1c3}{S\+C\+H\+C\+\_\+\+A\+C\+K\+\_\+\+I\+N\+P\+UT}}~1
+\begin{DoxyCompactList}\small\item\em Return code\+: Indicator. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a609c4c5b7a6cdc56c3b1fc47c2cac402}{S\+C\+H\+C\+\_\+\+S\+U\+C\+C\+E\+SS}}~0
+\begin{DoxyCompactList}\small\item\em Return code\+: No error. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}{S\+C\+H\+C\+\_\+\+F\+A\+I\+L\+U\+RE}}~-\/1
+\begin{DoxyCompactList}\small\item\em Return code\+: Error. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a702d10e122e8809285882b69ae2e69a1}{S\+C\+H\+C\+\_\+\+N\+O\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+A\+T\+I\+ON}}~-\/2
+\begin{DoxyCompactList}\small\item\em Return code\+: Error. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a5e6121b65e73cd727a9af2331bf5d897}{B\+I\+T\+M\+A\+P\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~4
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} \mbox{\hyperlink{fragmenter_8h_a8e32bf67127c30c23e08e9974f02c5f0}{schc\+\_\+mbuf\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{structschc__fragmentation__ack__t}{schc\+\_\+fragmentation\+\_\+ack\+\_\+t}} \mbox{\hyperlink{fragmenter_8h_a71d11b7d40657f1abe84aeed57a22b43}{schc\+\_\+fragmentation\+\_\+ack\+\_\+t}}
+\item 
+typedef struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} \mbox{\hyperlink{fragmenter_8h_a250ace05899a868a846b1bdaaa30288b}{schc\+\_\+fragmentation\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34}{tx\+\_\+state}} \{ \newline
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8131166fb07d0aa1155e334e90b63d2d}{I\+N\+I\+T\+\_\+\+TX}} = 0, 
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a67be7a5f47004345047b32fff72a2230}{S\+E\+ND}} = 1, 
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34ad8c334cdd607abfeba91555c1b63cd5a}{R\+E\+S\+E\+ND}} = 2, 
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a6736812226bab580f621c5e1de53d861}{W\+A\+I\+T\+\_\+\+B\+I\+T\+M\+AP}} = 3, 
+\newline
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8dedf42db360ffa63832fa48fb9ddeee}{E\+N\+D\+\_\+\+TX}} = 4, 
+\mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a0f886785b600b91048fcdc434c6b4a8e}{E\+RR}} = 5
+ \}
+\item 
+enum \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}{rx\+\_\+state}} \{ \newline
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa6fea2421f5cc1e8bc1ecebd848139362}{R\+E\+C\+V\+\_\+\+W\+I\+N\+D\+OW}} = 0, 
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa9a3cdfd5436e5486043ccdd4e8549dcf}{W\+A\+I\+T\+\_\+\+N\+E\+X\+T\+\_\+\+W\+I\+N\+D\+OW}} = 1, 
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa84114eb766ef9186899ff21358c0b416}{W\+A\+I\+T\+\_\+\+M\+I\+S\+S\+I\+N\+G\+\_\+\+F\+R\+AG}} = 2, 
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fab39d14dff9148f467ef7a253b80b40bd}{W\+A\+I\+T\+\_\+\+E\+ND}} = 3, 
+\newline
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa204deb4800b60b28307aa8a00a85ee36}{E\+N\+D\+\_\+\+RX}} = 4, 
+\mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa781ad2788df9e25c59a70894c7832096}{A\+B\+O\+RT}} = 5
+ \}
+\item 
+enum \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} \{ \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}{A\+C\+K\+\_\+\+A\+L\+W\+A\+YS}} = 1, 
+\mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}{A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR}} = 2, 
+\mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}{N\+O\+\_\+\+A\+CK}} = 3
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}{schc\+\_\+fragmenter\+\_\+init}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, void($\ast$send)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id), void($\ast$end\+\_\+rx)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn), void($\ast$remove\+\_\+timer\+\_\+entry)(uint32\+\_\+t device\+\_\+id))
+\begin{DoxyCompactList}\small\item\em Initializes the S\+C\+HC fragmenter. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_a5c375e7b44652a0eccb9248083a6251d}{schc\+\_\+fragment}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn)
+\begin{DoxyCompactList}\small\item\em the sender state machine \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_a6a248f74b7a8b0ef5f7dbc3f418e05a8}{schc\+\_\+reassemble}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$rx\+\_\+conn)
+\begin{DoxyCompactList}\small\item\em the receiver state machine \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{fragmenter_8h_af04b125eaaa72e66f782bdb592133a27}{schc\+\_\+reset}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
+\begin{DoxyCompactList}\small\item\em reset a connection \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$ \mbox{\hyperlink{fragmenter_8h_a555170940dd8eb3a6b64405f28e4655f}{schc\+\_\+input}} (uint8\+\_\+t $\ast$data, uint16\+\_\+t len, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$rx\+\_\+conn, uint32\+\_\+t device\+\_\+id)
+\begin{DoxyCompactList}\small\item\em This function should be called whenever a packet is received. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{fragmenter_8h_abb5688d5a6d4d0f4f955951b6ee130b1}{schc\+\_\+ack\+\_\+input}} (uint8\+\_\+t $\ast$data, uint16\+\_\+t len, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, uint32\+\_\+t device\+\_\+id)
+\begin{DoxyCompactList}\small\item\em This function should be called whenever an ack is received. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$ \mbox{\hyperlink{fragmenter_8h_a4be088b297563aa42398b23d40868b37}{schc\+\_\+fragment\+\_\+input}} (uint8\+\_\+t $\ast$data, uint16\+\_\+t len, uint32\+\_\+t device\+\_\+id)
+\begin{DoxyCompactList}\small\item\em This function should be called whenever a fragment is received an open connection is picked for the device out of a pool of connections to keep track of the packet. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$ \mbox{\hyperlink{fragmenter_8h_ab1b728ad496229979c1eea633a13076d}{schc\+\_\+get\+\_\+connection}} (uint32\+\_\+t device\+\_\+id)
+\begin{DoxyCompactList}\small\item\em find a connection based on a device id or open a new connection if there was no connection for this device yet \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{fragmenter_8h_a974581b10381381bafe401fc2ddc54c7}{get\+\_\+mbuf\+\_\+len}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$head)
+\begin{DoxyCompactList}\small\item\em returns the total length of the mbuf \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{fragmenter_8h_a3b3e7a45b2ff0f407adfcc266f47c3dc}{mbuf\+\_\+copy}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$head, uint8\+\_\+t $\ast$ptr)
+\begin{DoxyCompactList}\small\item\em copy the byte alligned contents of the mbuf chain to the passed pointer \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{fragmenter_8h_a5e6121b65e73cd727a9af2331bf5d897}\label{fragmenter_8h_a5e6121b65e73cd727a9af2331bf5d897}} 
+\index{fragmenter.h@{fragmenter.h}!BITMAP\_SIZE\_BYTES@{BITMAP\_SIZE\_BYTES}}
+\index{BITMAP\_SIZE\_BYTES@{BITMAP\_SIZE\_BYTES}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{BITMAP\_SIZE\_BYTES}{BITMAP\_SIZE\_BYTES}}
+{\footnotesize\ttfamily \#define B\+I\+T\+M\+A\+P\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~4}
+
+\mbox{\Hypertarget{fragmenter_8h_a4ae988f716a3d42117f0777a56f8f1c3}\label{fragmenter_8h_a4ae988f716a3d42117f0777a56f8f1c3}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_ACK\_INPUT@{SCHC\_ACK\_INPUT}}
+\index{SCHC\_ACK\_INPUT@{SCHC\_ACK\_INPUT}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_ACK\_INPUT}{SCHC\_ACK\_INPUT}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+A\+C\+K\+\_\+\+I\+N\+P\+UT~1}
+
+
+
+Return code\+: Indicator. 
+
+Generic indication that an acknowledgment was received \mbox{\Hypertarget{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}\label{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_FAILURE@{SCHC\_FAILURE}}
+\index{SCHC\_FAILURE@{SCHC\_FAILURE}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_FAILURE}{SCHC\_FAILURE}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+F\+A\+I\+L\+U\+RE~-\/1}
+
+
+
+Return code\+: Error. 
+
+Generic indication that an S\+C\+HC operation went wrong \mbox{\Hypertarget{fragmenter_8h_ab014037ee9ccea0cea6b2d5366dee902}\label{fragmenter_8h_ab014037ee9ccea0cea6b2d5366dee902}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_FRAG\_INPUT@{SCHC\_FRAG\_INPUT}}
+\index{SCHC\_FRAG\_INPUT@{SCHC\_FRAG\_INPUT}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_FRAG\_INPUT}{SCHC\_FRAG\_INPUT}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+F\+R\+A\+G\+\_\+\+I\+N\+P\+UT~2}
+
+
+
+Return code\+: Indicator. 
+
+Generic indication that a fragment was received \mbox{\Hypertarget{fragmenter_8h_a702d10e122e8809285882b69ae2e69a1}\label{fragmenter_8h_a702d10e122e8809285882b69ae2e69a1}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_NO\_FRAGMENTATION@{SCHC\_NO\_FRAGMENTATION}}
+\index{SCHC\_NO\_FRAGMENTATION@{SCHC\_NO\_FRAGMENTATION}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_NO\_FRAGMENTATION}{SCHC\_NO\_FRAGMENTATION}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+N\+O\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+A\+T\+I\+ON~-\/2}
+
+
+
+Return code\+: Error. 
+
+Generic indication that no fragmentation was needed \mbox{\Hypertarget{fragmenter_8h_a609c4c5b7a6cdc56c3b1fc47c2cac402}\label{fragmenter_8h_a609c4c5b7a6cdc56c3b1fc47c2cac402}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_SUCCESS@{SCHC\_SUCCESS}}
+\index{SCHC\_SUCCESS@{SCHC\_SUCCESS}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_SUCCESS}{SCHC\_SUCCESS}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+S\+U\+C\+C\+E\+SS~0}
+
+
+
+Return code\+: No error. 
+
+Indicates successful completion of an S\+C\+HC operation. 
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{fragmenter_8h_a71d11b7d40657f1abe84aeed57a22b43}\label{fragmenter_8h_a71d11b7d40657f1abe84aeed57a22b43}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_fragmentation\_ack\_t@{schc\_fragmentation\_ack\_t}}
+\index{schc\_fragmentation\_ack\_t@{schc\_fragmentation\_ack\_t}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_fragmentation\_ack\_t}{schc\_fragmentation\_ack\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structschc__fragmentation__ack__t}{schc\+\_\+fragmentation\+\_\+ack\+\_\+t}} \mbox{\hyperlink{structschc__fragmentation__ack__t}{schc\+\_\+fragmentation\+\_\+ack\+\_\+t}}}
+
+\mbox{\Hypertarget{fragmenter_8h_a250ace05899a868a846b1bdaaa30288b}\label{fragmenter_8h_a250ace05899a868a846b1bdaaa30288b}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
+\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_fragmentation\_t}{schc\_fragmentation\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}}}
+
+\mbox{\Hypertarget{fragmenter_8h_a8e32bf67127c30c23e08e9974f02c5f0}\label{fragmenter_8h_a8e32bf67127c30c23e08e9974f02c5f0}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_mbuf\_t@{schc\_mbuf\_t}}
+\index{schc\_mbuf\_t@{schc\_mbuf\_t}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_mbuf\_t}{schc\_mbuf\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} \mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}} 
+\index{fragmenter.h@{fragmenter.h}!reliability\_mode@{reliability\_mode}}
+\index{reliability\_mode@{reliability\_mode}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{reliability\_mode}{reliability\_mode}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ALWAYS@{ACK\_ALWAYS}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ACK\_ALWAYS@{ACK\_ALWAYS}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}} 
+A\+C\+K\+\_\+\+A\+L\+W\+A\+YS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ON\_ERROR@{ACK\_ON\_ERROR}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ACK\_ON\_ERROR@{ACK\_ON\_ERROR}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}} 
+A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_ACK@{NO\_ACK}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!NO\_ACK@{NO\_ACK}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}} 
+N\+O\+\_\+\+A\+CK&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}} 
+\index{fragmenter.h@{fragmenter.h}!rx\_state@{rx\_state}}
+\index{rx\_state@{rx\_state}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{rx\_state}{rx\_state}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}{rx\+\_\+state}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RECV\_WINDOW@{RECV\_WINDOW}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!RECV\_WINDOW@{RECV\_WINDOW}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa6fea2421f5cc1e8bc1ecebd848139362}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa6fea2421f5cc1e8bc1ecebd848139362}} 
+R\+E\+C\+V\+\_\+\+W\+I\+N\+D\+OW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WAIT\_NEXT\_WINDOW@{WAIT\_NEXT\_WINDOW}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!WAIT\_NEXT\_WINDOW@{WAIT\_NEXT\_WINDOW}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa9a3cdfd5436e5486043ccdd4e8549dcf}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa9a3cdfd5436e5486043ccdd4e8549dcf}} 
+W\+A\+I\+T\+\_\+\+N\+E\+X\+T\+\_\+\+W\+I\+N\+D\+OW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WAIT\_MISSING\_FRAG@{WAIT\_MISSING\_FRAG}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!WAIT\_MISSING\_FRAG@{WAIT\_MISSING\_FRAG}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa84114eb766ef9186899ff21358c0b416}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa84114eb766ef9186899ff21358c0b416}} 
+W\+A\+I\+T\+\_\+\+M\+I\+S\+S\+I\+N\+G\+\_\+\+F\+R\+AG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WAIT\_END@{WAIT\_END}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!WAIT\_END@{WAIT\_END}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fab39d14dff9148f467ef7a253b80b40bd}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fab39d14dff9148f467ef7a253b80b40bd}} 
+W\+A\+I\+T\+\_\+\+E\+ND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{END\_RX@{END\_RX}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!END\_RX@{END\_RX}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa204deb4800b60b28307aa8a00a85ee36}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa204deb4800b60b28307aa8a00a85ee36}} 
+E\+N\+D\+\_\+\+RX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ABORT@{ABORT}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ABORT@{ABORT}}}\mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa781ad2788df9e25c59a70894c7832096}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa781ad2788df9e25c59a70894c7832096}} 
+A\+B\+O\+RT&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34}} 
+\index{fragmenter.h@{fragmenter.h}!tx\_state@{tx\_state}}
+\index{tx\_state@{tx\_state}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{tx\_state}{tx\_state}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34}{tx\+\_\+state}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INIT\_TX@{INIT\_TX}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!INIT\_TX@{INIT\_TX}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8131166fb07d0aa1155e334e90b63d2d}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8131166fb07d0aa1155e334e90b63d2d}} 
+I\+N\+I\+T\+\_\+\+TX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SEND@{SEND}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!SEND@{SEND}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a67be7a5f47004345047b32fff72a2230}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a67be7a5f47004345047b32fff72a2230}} 
+S\+E\+ND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESEND@{RESEND}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!RESEND@{RESEND}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34ad8c334cdd607abfeba91555c1b63cd5a}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34ad8c334cdd607abfeba91555c1b63cd5a}} 
+R\+E\+S\+E\+ND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WAIT\_BITMAP@{WAIT\_BITMAP}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!WAIT\_BITMAP@{WAIT\_BITMAP}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a6736812226bab580f621c5e1de53d861}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a6736812226bab580f621c5e1de53d861}} 
+W\+A\+I\+T\+\_\+\+B\+I\+T\+M\+AP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{END\_TX@{END\_TX}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!END\_TX@{END\_TX}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8dedf42db360ffa63832fa48fb9ddeee}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a8dedf42db360ffa63832fa48fb9ddeee}} 
+E\+N\+D\+\_\+\+TX&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ERR@{ERR}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ERR@{ERR}}}\mbox{\Hypertarget{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a0f886785b600b91048fcdc434c6b4a8e}\label{fragmenter_8h_a38ccd754938e6c276447dff49f5a3a34a0f886785b600b91048fcdc434c6b4a8e}} 
+E\+RR&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{fragmenter_8h_a974581b10381381bafe401fc2ddc54c7}\label{fragmenter_8h_a974581b10381381bafe401fc2ddc54c7}} 
+\index{fragmenter.h@{fragmenter.h}!get\_mbuf\_len@{get\_mbuf\_len}}
+\index{get\_mbuf\_len@{get\_mbuf\_len}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{get\_mbuf\_len()}{get\_mbuf\_len()}}
+{\footnotesize\ttfamily uint16\+\_\+t get\+\_\+mbuf\+\_\+len (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$}]{head }\end{DoxyParamCaption})}
+
+
+
+returns the total length of the mbuf 
+
+
+\begin{DoxyParams}{Parameters}
+{\em head} & the head of the list\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+len the total length of the fragment 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_a3b3e7a45b2ff0f407adfcc266f47c3dc}\label{fragmenter_8h_a3b3e7a45b2ff0f407adfcc266f47c3dc}} 
+\index{fragmenter.h@{fragmenter.h}!mbuf\_copy@{mbuf\_copy}}
+\index{mbuf\_copy@{mbuf\_copy}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{mbuf\_copy()}{mbuf\_copy()}}
+{\footnotesize\ttfamily void mbuf\+\_\+copy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$}]{head,  }\item[{uint8\+\_\+t $\ast$}]{ptr }\end{DoxyParamCaption})}
+
+
+
+copy the byte alligned contents of the mbuf chain to the passed pointer 
+
+
+\begin{DoxyParams}{Parameters}
+{\em head} & the head of the list \\
+\hline
+{\em ptr} & the pointer to copy the contents to \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{fragmenter_8h_abb5688d5a6d4d0f4f955951b6ee130b1}\label{fragmenter_8h_abb5688d5a6d4d0f4f955951b6ee130b1}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_ack\_input@{schc\_ack\_input}}
+\index{schc\_ack\_input@{schc\_ack\_input}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_ack\_input()}{schc\_ack\_input()}}
+{\footnotesize\ttfamily void schc\+\_\+ack\+\_\+input (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{uint16\+\_\+t}]{len,  }\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+This function should be called whenever an ack is received. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & a pointer to the received data \\
+\hline
+{\em len} & the length of the received packet \\
+\hline
+{\em tx\+\_\+conn} & a pointer to the tx initialization structure \\
+\hline
+{\em device\+\_\+id} & the device id from the rx source \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{fragmenter_8h_a5c375e7b44652a0eccb9248083a6251d}\label{fragmenter_8h_a5c375e7b44652a0eccb9248083a6251d}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_fragment@{schc\_fragment}}
+\index{schc\_fragment@{schc\_fragment}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_fragment()}{schc\_fragment()}}
+{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragment (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn }\end{DoxyParamCaption})}
+
+
+
+the sender state machine 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tx\+\_\+conn} & a pointer to the tx connection structure\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 T\+BD -\/1 failed to initialize the connection -\/2 no fragmentation was needed for this packet 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_a4be088b297563aa42398b23d40868b37}\label{fragmenter_8h_a4be088b297563aa42398b23d40868b37}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_fragment\_input@{schc\_fragment\_input}}
+\index{schc\_fragment\_input@{schc\_fragment\_input}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_fragment\_input()}{schc\_fragment\_input()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}}$\ast$ schc\+\_\+fragment\+\_\+input (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{uint16\+\_\+t}]{len,  }\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+This function should be called whenever a fragment is received an open connection is picked for the device out of a pool of connections to keep track of the packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & a pointer to the data packet \\
+\hline
+{\em len} & the length of the received packet \\
+\hline
+{\em device\+\_\+id} & the device id from the rx source\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+conn the connection 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}\label{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_fragmenter\_init@{schc\_fragmenter\_init}}
+\index{schc\_fragmenter\_init@{schc\_fragmenter\_init}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_fragmenter\_init()}{schc\_fragmenter\_init()}}
+{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragmenter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{void($\ast$)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id)}]{send,  }\item[{void($\ast$)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}]{end\+\_\+rx,  }\item[{void($\ast$)(uint32\+\_\+t device\+\_\+id)}]{remove\+\_\+timer\+\_\+entry }\end{DoxyParamCaption})}
+
+
+
+Initializes the S\+C\+HC fragmenter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tx\+\_\+conn} & a pointer to the tx initialization structure \\
+\hline
+{\em send} & a pointer to the send callback \\
+\hline
+{\em end\+\_\+rx} & this function is called to indicate that the last rx timer has expired \\
+\hline
+{\em remove\+\_\+timer\+\_\+entry} & some scheduler implementations need a callback to remove a timer entry for a certain device\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error codes on error 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_ab1b728ad496229979c1eea633a13076d}\label{fragmenter_8h_ab1b728ad496229979c1eea633a13076d}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_get\_connection@{schc\_get\_connection}}
+\index{schc\_get\_connection@{schc\_get\_connection}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_get\_connection()}{schc\_get\_connection()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}}$\ast$ schc\+\_\+get\+\_\+connection (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+find a connection based on a device id or open a new connection if there was no connection for this device yet 
+
+
+\begin{DoxyParams}{Parameters}
+{\em device\+\_\+id} & the id of the device to open a connection for\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+conn a pointer to the selected connection 0 if no free connections are available 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_a555170940dd8eb3a6b64405f28e4655f}\label{fragmenter_8h_a555170940dd8eb3a6b64405f28e4655f}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_input@{schc\_input}}
+\index{schc\_input@{schc\_input}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_input()}{schc\_input()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}}$\ast$ schc\+\_\+input (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{uint16\+\_\+t}]{len,  }\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
+
+
+
+This function should be called whenever a packet is received. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & a pointer to the received data \\
+\hline
+{\em len} & the length of the received packet \\
+\hline
+{\em tx\+\_\+conn} & a pointer to the tx initialization structure \\
+\hline
+{\em device\+\_\+id} & the device id from the rx source \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{fragmenter_8h_a6a248f74b7a8b0ef5f7dbc3f418e05a8}\label{fragmenter_8h_a6a248f74b7a8b0ef5f7dbc3f418e05a8}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_reassemble@{schc\_reassemble}}
+\index{schc\_reassemble@{schc\_reassemble}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_reassemble()}{schc\_reassemble()}}
+{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+reassemble (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{rx\+\_\+conn }\end{DoxyParamCaption})}
+
+
+
+the receiver state machine 
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & a pointer to the connection\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 T\+BD 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fragmenter_8h_af04b125eaaa72e66f782bdb592133a27}\label{fragmenter_8h_af04b125eaaa72e66f782bdb592133a27}} 
+\index{fragmenter.h@{fragmenter.h}!schc\_reset@{schc\_reset}}
+\index{schc\_reset@{schc\_reset}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{schc\_reset()}{schc\_reset()}}
+{\footnotesize\ttfamily void schc\+\_\+reset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{conn }\end{DoxyParamCaption})}
+
+
+
+reset a connection 
+
+
+\begin{DoxyParams}{Parameters}
+{\em conn} & a pointer to the connection to reset \\
+\hline
+\end{DoxyParams}

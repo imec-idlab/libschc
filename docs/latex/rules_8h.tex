@@ -1,0 +1,372 @@
+\hypertarget{rules_8h}{}\doxysection{rules.\+h File Reference}
+\label{rules_8h}\index{rules.h@{rules.h}}
+{\ttfamily \#include \char`\"{}pt/pt.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{rules_8h_ad0c6016547c04131972ed425ef7a8783}{I\+P\+V6\+\_\+\+R\+U\+L\+ES}}~3
+\item 
+\#define \mbox{\hyperlink{rules_8h_a2805aa053679b024cb5f2a66c7e9f4dc}{U\+D\+P\+\_\+\+R\+U\+L\+ES}}~3
+\item 
+\#define \mbox{\hyperlink{rules_8h_af1bfbcdf4990d97b6c18bc2a145f6b33}{C\+O\+A\+P\+\_\+\+R\+U\+L\+ES}}~4
+\item 
+\#define \mbox{\hyperlink{rules_8h_a268c0726d6884c56c5c4d0b96ac162cd}{D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+U\+NT}}~2
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_afbb9db9a0642e6e6d539ccba5655aef3}{ipv6\+\_\+rule1}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a30c0cec96c9837dad2dec1f17191fffc}{ipv6\+\_\+rule2}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a5e038ad021d6ac1bcdcb728c53d76b63}{ipv6\+\_\+rule3}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a65d6558597d669ad9c5308373fcaf7c8}{udp\+\_\+rule1}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a2a6ee994fb8c5a86174c8d2c08857b9b}{udp\+\_\+rule2}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_abcc92c0a37432152f3ad9024b0009c72}{udp\+\_\+rule3}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a77b8d66ea8afb4ea20e76c54da800346}{coap\+\_\+rule1}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a897050e4d8b483e1582377a2af39adf0}{coap\+\_\+rule2}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_afd6b7e95ab44564bbbb794ec3ef1e905}{coap\+\_\+rule3}}
+\item 
+const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} \mbox{\hyperlink{rules_8h_a4dcc4f47ad8e2f3d309c44808e582337}{coap\+\_\+rule4}}
+\item 
+const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{rules_8h_a2dc1a371690e88c3220dcb8440d9f9aa}{schc\+\_\+ipv6\+\_\+rules}} \mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_afbb9db9a0642e6e6d539ccba5655aef3}{ipv6\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a30c0cec96c9837dad2dec1f17191fffc}{ipv6\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_a5e038ad021d6ac1bcdcb728c53d76b63}{ipv6\+\_\+rule3}} \}
+\item 
+const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{rules_8h_a86343f44af856f2971c719b2607a5bd1}{schc\+\_\+udp\+\_\+rules}} \mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_a65d6558597d669ad9c5308373fcaf7c8}{udp\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a2a6ee994fb8c5a86174c8d2c08857b9b}{udp\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_abcc92c0a37432152f3ad9024b0009c72}{udp\+\_\+rule3}} \}
+\item 
+const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{rules_8h_a1a5e3d81956b4f132c574ba330efdd09}{schc\+\_\+coap\+\_\+rules}} \mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_a77b8d66ea8afb4ea20e76c54da800346}{coap\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a897050e4d8b483e1582377a2af39adf0}{coap\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_afd6b7e95ab44564bbbb794ec3ef1e905}{coap\+\_\+rule3}}, \&\mbox{\hyperlink{rules_8h_a4dcc4f47ad8e2f3d309c44808e582337}{coap\+\_\+rule4}} \}
+\item 
+struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} \mbox{\hyperlink{rules_8h_ab5dca2bef3bac20808b4c29c6c79131d}{node1}}
+\item 
+struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$ \mbox{\hyperlink{rules_8h_ae51602c47e005d354c8d08bdf18f070b}{devices}} \mbox{[}\mbox{\hyperlink{rules_8h_a268c0726d6884c56c5c4d0b96ac162cd}{D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+U\+NT}}\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_ab5dca2bef3bac20808b4c29c6c79131d}{node1}} \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{rules_8h_af1bfbcdf4990d97b6c18bc2a145f6b33}\label{rules_8h_af1bfbcdf4990d97b6c18bc2a145f6b33}} 
+\index{rules.h@{rules.h}!COAP\_RULES@{COAP\_RULES}}
+\index{COAP\_RULES@{COAP\_RULES}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_RULES}{COAP\_RULES}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+R\+U\+L\+ES~4}
+
+\mbox{\Hypertarget{rules_8h_a268c0726d6884c56c5c4d0b96ac162cd}\label{rules_8h_a268c0726d6884c56c5c4d0b96ac162cd}} 
+\index{rules.h@{rules.h}!DEVICE\_COUNT@{DEVICE\_COUNT}}
+\index{DEVICE\_COUNT@{DEVICE\_COUNT}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{DEVICE\_COUNT}{DEVICE\_COUNT}}
+{\footnotesize\ttfamily \#define D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+U\+NT~2}
+
+\mbox{\Hypertarget{rules_8h_ad0c6016547c04131972ed425ef7a8783}\label{rules_8h_ad0c6016547c04131972ed425ef7a8783}} 
+\index{rules.h@{rules.h}!IPV6\_RULES@{IPV6\_RULES}}
+\index{IPV6\_RULES@{IPV6\_RULES}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{IPV6\_RULES}{IPV6\_RULES}}
+{\footnotesize\ttfamily \#define I\+P\+V6\+\_\+\+R\+U\+L\+ES~3}
+
+\mbox{\Hypertarget{rules_8h_a2805aa053679b024cb5f2a66c7e9f4dc}\label{rules_8h_a2805aa053679b024cb5f2a66c7e9f4dc}} 
+\index{rules.h@{rules.h}!UDP\_RULES@{UDP\_RULES}}
+\index{UDP\_RULES@{UDP\_RULES}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{UDP\_RULES}{UDP\_RULES}}
+{\footnotesize\ttfamily \#define U\+D\+P\+\_\+\+R\+U\+L\+ES~3}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{rules_8h_a77b8d66ea8afb4ea20e76c54da800346}\label{rules_8h_a77b8d66ea8afb4ea20e76c54da800346}} 
+\index{rules.h@{rules.h}!coap\_rule1@{coap\_rule1}}
+\index{coap\_rule1@{coap\_rule1}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{coap\_rule1}{coap\_rule1}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} coap\+\_\+rule1\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        1, 9, 7, 9,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}{COAP\_V1}}\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"type"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}{CT\_NON}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}}  \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token length"},   0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{4\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"code"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ad0642d36276b52a1b0a267b9e081cef4}{CC\_PUT}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"message ID"},     0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{0x23, 0xBB\},   \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token"},          24, 4,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0x21, 0xFA, 0x01, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/path"},       0,  5,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \textcolor{stringliteral}{"usage"},        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"no-\/response"},    0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0x1A\},         \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"payload marker"}, 0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{255\},          \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a897050e4d8b483e1582377a2af39adf0}\label{rules_8h_a897050e4d8b483e1582377a2af39adf0}} 
+\index{rules.h@{rules.h}!coap\_rule2@{coap\_rule2}}
+\index{coap\_rule2@{coap\_rule2}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{coap\_rule2}{coap\_rule2}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} coap\+\_\+rule2\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        2, 8, 8, 10,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}{COAP\_V1}}\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"type"},           0,  3,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a5321c1999d967bdb0690c110ffd2d694}{CT\_CON}}, \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429ac05b4755c123dbfcdea069c30e00fbf2}{CT\_ACK}}, \mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}{CT\_NON}}\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_aaa6535816b00df52f9f7b05970feca0a}{matchmap}}, \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4afe73a1b760f465a54ad7244bfe3d719d}{MAPPINGSENT}}   \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token length"},   0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{4\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"code"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a5a3d8dfe96ed58ee297980aa825e3c31}{CC\_CONTENT}}\}, \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"code"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}{DOWN}},   \{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a1081e5a7863be0da7533b418088c372d}{CC\_GET}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"message ID"},     12, 2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{0x23, 0xBB\},   \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"message ID"},     12, 2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}{DOWN}},   \{0x7A, 0x10\},   \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token"},          0,  4,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0, 0, 0, 0\},   \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}{VALUESENT}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/path"},       0,  4,   2, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \textcolor{stringliteral}{"[\(\backslash\)"temp\(\backslash\)",\(\backslash\)"humi\(\backslash\)",\(\backslash\)"batt\(\backslash\)",\(\backslash\)"r\(\backslash\)"]\(\backslash\)0"},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_aaa6535816b00df52f9f7b05970feca0a}{matchmap}},      \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4afe73a1b760f465a54ad7244bfe3d719d}{MAPPINGSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"payload marker"}, 0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{255\},          \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \} }
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_afd6b7e95ab44564bbbb794ec3ef1e905}\label{rules_8h_afd6b7e95ab44564bbbb794ec3ef1e905}} 
+\index{rules.h@{rules.h}!coap\_rule3@{coap\_rule3}}
+\index{coap\_rule3@{coap\_rule3}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{coap\_rule3}{coap\_rule3}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} coap\+\_\+rule3\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        3, 8, 6, 8,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}{COAP\_V1}}\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"type"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a569079569cc030d7b3e8742fe4fb604c}{CT\_NON}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}}  \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token length"},   0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{4\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"code"},           0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155ad0642d36276b52a1b0a267b9e081cef4}{CC\_PUT}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"message ID"},     0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}},       \{0x23, 0xBB\},   \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token"},          24, 4,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0x21, 0xFA, 0x01, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/path"},       0,  5,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \textcolor{stringliteral}{"usage"},        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"no-\/response"},    0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0x1A\},         \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a4dcc4f47ad8e2f3d309c44808e582337}\label{rules_8h_a4dcc4f47ad8e2f3d309c44808e582337}} 
+\index{rules.h@{rules.h}!coap\_rule4@{coap\_rule4}}
+\index{coap\_rule4@{coap\_rule4}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{coap\_rule4}{coap\_rule4}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} coap\+\_\+rule4\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        4, 12, 12, 12,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},            0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{\mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74a8d1ccd2774522702376faa2212156ebb}{COAP\_V1}}\},     \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"type"},               0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{\mbox{\hyperlink{picocoap_8h_a5022bbbae08abe01dc1e3363d01c9429a5321c1999d967bdb0690c110ffd2d694}{CT\_CON}}\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token length"},       0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{8\},          \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"code"},               0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{\mbox{\hyperlink{picocoap_8h_ad3f66808fdcc6d2c0c9a4670a770b155a7e55c7951ace83c8ee1f8d14d481b80e}{CC\_POST}}\},      \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"message ID"},         0,      2,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x23, 0xBB\},   \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}{VALUESENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"token"},             24,      8,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x21, 0xFA, 0x01, 0x00\},}
+\DoxyCodeLine{                                                                                    \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}{VALUESENT}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/path"},           0,      2,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \textcolor{stringliteral}{"rd"},           \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"content-\/format"},     0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x28\},         \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/query"},          0,      9,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x30\},}
+\DoxyCodeLine{                                                                                    \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/query"},          0,      11,     1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x65, 0x70, 0x3D, 0x6D, 0x61, 0x67, 0x69, 0x63, 0x69, 0x61, 0x6E\},}
+\DoxyCodeLine{                                                                                    \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"uri-\/query"},          0,      6,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},      \{0x6C, 0x74, 0x3D, 0x31, 0x32, 0x31\},}
+\DoxyCodeLine{                                                                                    \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"payload marker"},     0,      1,      1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},        \{255\},          \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},         \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \} }
+\DoxyCodeLine{               \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_ae51602c47e005d354c8d08bdf18f070b}\label{rules_8h_ae51602c47e005d354c8d08bdf18f070b}} 
+\index{rules.h@{rules.h}!devices@{devices}}
+\index{devices@{devices}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{devices}{devices}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}}$\ast$ devices\mbox{[}\mbox{\hyperlink{rules_8h_a268c0726d6884c56c5c4d0b96ac162cd}{D\+E\+V\+I\+C\+E\+\_\+\+C\+O\+U\+NT}}\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_ab5dca2bef3bac20808b4c29c6c79131d}{node1}} \}}
+
+\mbox{\Hypertarget{rules_8h_afbb9db9a0642e6e6d539ccba5655aef3}\label{rules_8h_afbb9db9a0642e6e6d539ccba5655aef3}} 
+\index{rules.h@{rules.h}!ipv6\_rule1@{ipv6\_rule1}}
+\index{ipv6\_rule1@{ipv6\_rule1}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{ipv6\_rule1}{ipv6\_rule1}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} ipv6\+\_\+rule1\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{    }
+\DoxyCodeLine{        1, 10, 10, 10,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{            }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{6\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"traffic class"},  0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0\},            \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"flow label"},     0, 3,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0, 0\},      \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},         \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"next header"},    0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{17\},           \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"hop limit"},      0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{64\},           \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src prefix"},     0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src iid"},        0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest prefix"},    0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest iid"},       56, 8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a30c0cec96c9837dad2dec1f17191fffc}\label{rules_8h_a30c0cec96c9837dad2dec1f17191fffc}} 
+\index{rules.h@{rules.h}!ipv6\_rule2@{ipv6\_rule2}}
+\index{ipv6\_rule2@{ipv6\_rule2}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{ipv6\_rule2}{ipv6\_rule2}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} ipv6\+\_\+rule2\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        2, 10, 10, 10,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{6\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"traffic class"},  0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"flow label"},     0,  3,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0, 0x20\},   \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},         \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"next header"},    0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{17\},           \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"hop limit"},      0,  1,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{64\},           \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src prefix"},     0,  8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src iid"},        48, 8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest prefix"},    0,  8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest iid"},       48, 8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a5e038ad021d6ac1bcdcb728c53d76b63}\label{rules_8h_a5e038ad021d6ac1bcdcb728c53d76b63}} 
+\index{rules.h@{rules.h}!ipv6\_rule3@{ipv6\_rule3}}
+\index{ipv6\_rule3@{ipv6\_rule3}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{ipv6\_rule3}{ipv6\_rule3}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} ipv6\+\_\+rule3\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{    }
+\DoxyCodeLine{        3, 10, 10, 10,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{            }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"version"},        0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{6\},            \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"traffic class"},  0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0\},            \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"flow label"},     0, 3,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0, 0\},      \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},         \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"next header"},    0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{17\},           \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"hop limit"},      0, 1,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{64\},           \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src prefix"},     0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src iid"},        0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest prefix"},    0, 8,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},       \{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},    \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest iid"},       56, 8,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\},}
+\DoxyCodeLine{                        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_ab5dca2bef3bac20808b4c29c6c79131d}\label{rules_8h_ab5dca2bef3bac20808b4c29c6c79131d}} 
+\index{rules.h@{rules.h}!node1@{node1}}
+\index{node1@{node1}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{node1}{node1}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} node1}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{ 1, \mbox{\hyperlink{rules_8h_ad0c6016547c04131972ed425ef7a8783}{IPV6\_RULES}}, \&\mbox{\hyperlink{rules_8h_a2dc1a371690e88c3220dcb8440d9f9aa}{schc\_ipv6\_rules}}, \mbox{\hyperlink{rules_8h_a2805aa053679b024cb5f2a66c7e9f4dc}{UDP\_RULES}},}
+\DoxyCodeLine{        \&\mbox{\hyperlink{rules_8h_a86343f44af856f2971c719b2607a5bd1}{schc\_udp\_rules}}, \mbox{\hyperlink{rules_8h_af1bfbcdf4990d97b6c18bc2a145f6b33}{COAP\_RULES}}, \&\mbox{\hyperlink{rules_8h_a1a5e3d81956b4f132c574ba330efdd09}{schc\_coap\_rules}} \}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a1a5e3d81956b4f132c574ba330efdd09}\label{rules_8h_a1a5e3d81956b4f132c574ba330efdd09}} 
+\index{rules.h@{rules.h}!schc\_coap\_rules@{schc\_coap\_rules}}
+\index{schc\_coap\_rules@{schc\_coap\_rules}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{schc\_coap\_rules}{schc\_coap\_rules}}
+{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+coap\+\_\+rules\mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_a77b8d66ea8afb4ea20e76c54da800346}{coap\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a897050e4d8b483e1582377a2af39adf0}{coap\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_afd6b7e95ab44564bbbb794ec3ef1e905}{coap\+\_\+rule3}}, \&\mbox{\hyperlink{rules_8h_a4dcc4f47ad8e2f3d309c44808e582337}{coap\+\_\+rule4}} \}}
+
+\mbox{\Hypertarget{rules_8h_a2dc1a371690e88c3220dcb8440d9f9aa}\label{rules_8h_a2dc1a371690e88c3220dcb8440d9f9aa}} 
+\index{rules.h@{rules.h}!schc\_ipv6\_rules@{schc\_ipv6\_rules}}
+\index{schc\_ipv6\_rules@{schc\_ipv6\_rules}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{schc\_ipv6\_rules}{schc\_ipv6\_rules}}
+{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+ipv6\+\_\+rules\mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_afbb9db9a0642e6e6d539ccba5655aef3}{ipv6\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a30c0cec96c9837dad2dec1f17191fffc}{ipv6\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_a5e038ad021d6ac1bcdcb728c53d76b63}{ipv6\+\_\+rule3}} \}}
+
+\mbox{\Hypertarget{rules_8h_a86343f44af856f2971c719b2607a5bd1}\label{rules_8h_a86343f44af856f2971c719b2607a5bd1}} 
+\index{rules.h@{rules.h}!schc\_udp\_rules@{schc\_udp\_rules}}
+\index{schc\_udp\_rules@{schc\_udp\_rules}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{schc\_udp\_rules}{schc\_udp\_rules}}
+{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+udp\+\_\+rules\mbox{[}$\,$\mbox{]} = \{ \&\mbox{\hyperlink{rules_8h_a65d6558597d669ad9c5308373fcaf7c8}{udp\+\_\+rule1}}, \&\mbox{\hyperlink{rules_8h_a2a6ee994fb8c5a86174c8d2c08857b9b}{udp\+\_\+rule2}}, \&\mbox{\hyperlink{rules_8h_abcc92c0a37432152f3ad9024b0009c72}{udp\+\_\+rule3}} \}}
+
+\mbox{\Hypertarget{rules_8h_a65d6558597d669ad9c5308373fcaf7c8}\label{rules_8h_a65d6558597d669ad9c5308373fcaf7c8}} 
+\index{rules.h@{rules.h}!udp\_rule1@{udp\_rule1}}
+\index{udp\_rule1@{udp\_rule1}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{udp\_rule1}{udp\_rule1}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} udp\+\_\+rule1\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        1, 4, 4, 4,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src port"},       0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x16, 0x33\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest port"},      0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x16, 0x33\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},             \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"checksum"},       0, 2,    1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},             \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}{COMPCHK}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_a2a6ee994fb8c5a86174c8d2c08857b9b}\label{rules_8h_a2a6ee994fb8c5a86174c8d2c08857b9b}} 
+\index{rules.h@{rules.h}!udp\_rule2@{udp\_rule2}}
+\index{udp\_rule2@{udp\_rule2}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{udp\_rule2}{udp\_rule2}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} udp\+\_\+rule2\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        2, 4, 4, 4,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src port"},       12, 2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{4, 48\},        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest port"},      12, 2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{4, 48\},        \&\mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{MSB}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{LSB}} \}, }
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},         \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"checksum"},       0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},         \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}{COMPCHK}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\mbox{\Hypertarget{rules_8h_abcc92c0a37432152f3ad9024b0009c72}\label{rules_8h_abcc92c0a37432152f3ad9024b0009c72}} 
+\index{rules.h@{rules.h}!udp\_rule3@{udp\_rule3}}
+\index{udp\_rule3@{udp\_rule3}!rules.h@{rules.h}}
+\doxysubsubsection{\texorpdfstring{udp\_rule3}{udp\_rule3}}
+{\footnotesize\ttfamily const static struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} udp\+\_\+rule3\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        3, 4, 4, 4,}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"src port"},       0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x13, 0x89\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"dest port"},      0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0x13, 0x88\},       \&\mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}},        \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{NOTSENT}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"length"},         0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},             \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{COMPLENGTH}} \},}
+\DoxyCodeLine{                \{ \textcolor{stringliteral}{"checksum"},       0,  2,   1, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}},   \{0, 0\},             \&\mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}},  \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}{COMPCHK}} \},}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}

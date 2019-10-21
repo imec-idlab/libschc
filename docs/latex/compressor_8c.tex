@@ -1,0 +1,803 @@
+\hypertarget{compressor_8c}{}\doxysection{compressor.\+c File Reference}
+\label{compressor_8c}\index{compressor.c@{compressor.c}}
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}pt/pt.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}jsmn.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}picocoap.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}rules.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}compressor.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}config.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a4c7c563a6281e8ba91dcc9554a7e9246}{get\+\_\+coap\+\_\+offset}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Finds the length of the Co\+AP header. \end{DoxyCompactList}\item 
+static const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{compressor_8c_a5ae0a8837a1b832512c4dae8bb911e3f}{get\+\_\+rule\+\_\+by\+\_\+id}} (uint16\+\_\+t rule\+\_\+id, uint16\+\_\+t length, const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$rules\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Get a rule by it\textquotesingle{}s id. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{compressor_8c_a859b8920ad31af109ad31c3f37bf09a1}{get\+\_\+node\+\_\+ip}} (\mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} $\ast$node\+\_\+ip)
+\begin{DoxyCompactList}\small\item\em Get the node its IP address as set during initialization. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a46a1ee734808aaaaca1bc617bce0c575}{compress}} (unsigned char $\ast$schc\+\_\+header, unsigned char $\ast$header, uint16\+\_\+t cols, const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$rule)
+\begin{DoxyCompactList}\small\item\em The compression mechanism. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_aa04d4fedabeb09c90f2bc61e4dae25d2}{decompress}} (unsigned char $\ast$schc\+\_\+header, const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$rule, unsigned char $\ast$data, uint8\+\_\+t $\ast$header\+\_\+offset)
+\begin{DoxyCompactList}\small\item\em The decompression mechanism. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_ac03d04b4ca9d1b426e172d9554752b12}{get\+\_\+ip\+\_\+rule\+\_\+id}} (uint8\+\_\+t rule\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Extracts the IP rule from the layered rule. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_aa74a48e7e8ad991e30e8bd4ebef82c4c}{generate\+\_\+ip\+\_\+header\+\_\+fields}} (struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header)
+\begin{DoxyCompactList}\small\item\em Generates a unified unsigned char array, based on the IP header provided. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{compressor_8c_afc242e635258065edcd521c5b8c82489}{schc\+\_\+find\+\_\+ipv6\+\_\+rule\+\_\+from\+\_\+header}} (struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header)
+\begin{DoxyCompactList}\small\item\em Find a matching rule for the IP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_acdc8c04b38ccdd474236ee0708bf84d3}{schc\+\_\+build\+\_\+ipv6\+\_\+header}} (unsigned char $\ast$schc\+\_\+header, struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header, uint16\+\_\+t rule\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Builds the compressed IP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a5b96566e0fb7d5b0e60a046ce5b823b4}{decompress\+\_\+ipv6\+\_\+rule}} (struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$device\+\_\+rules, uint8\+\_\+t rule\+\_\+id, unsigned char $\ast$data, unsigned char $\ast$pckt\+\_\+out, uint8\+\_\+t $\ast$header\+\_\+offset)
+\begin{DoxyCompactList}\small\item\em Decompress an I\+Pv6 rule, based on an input packet. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_aad2439702e1c8b3aacd31276f621242a}{get\+\_\+udp\+\_\+rule\+\_\+id}} (uint8\+\_\+t rule\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Extracts the U\+DP rule from the layered rule. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a14d65da9232084cd266da7b0772ff35b}{generate\+\_\+udp\+\_\+header\+\_\+fields}} (struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header)
+\begin{DoxyCompactList}\small\item\em Generates a unified unsigned char array, based on the U\+DP header provided. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{compressor_8c_aa936ffa615262bd05395db8a8038cadb}{schc\+\_\+find\+\_\+udp\+\_\+rule\+\_\+from\+\_\+header}} (struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header)
+\begin{DoxyCompactList}\small\item\em Find a matching rule for the U\+DP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_ac091cfec83fabbd556155e88f2e05110}{schc\+\_\+build\+\_\+udp\+\_\+header}} (unsigned char $\ast$schc\+\_\+header, struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$ip\+\_\+udp\+\_\+header, uint16\+\_\+t rule\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Builds the compressed U\+DP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a93d03a5060ccb2304a21f8da6917314e}{decompress\+\_\+udp\+\_\+rule}} (struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$device\+\_\+rules, uint8\+\_\+t rule\+\_\+id, unsigned char $\ast$data, unsigned char $\ast$pckt\+\_\+out, uint8\+\_\+t $\ast$header\+\_\+offset)
+\begin{DoxyCompactList}\small\item\em Decompress a U\+DP rule, based on an input packet. \end{DoxyCompactList}\item 
+static int16\+\_\+t \mbox{\hyperlink{compressor_8c_ad3dfa633c56fb8277b34e38df5f37358}{compress\+\_\+udp\+\_\+ip\+\_\+header}} (unsigned char $\ast$schc\+\_\+header, uint8\+\_\+t $\ast$schc\+\_\+offset, const uint8\+\_\+t $\ast$data)
+\begin{DoxyCompactList}\small\item\em Compress a U\+D\+P/\+IP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a899338f1446c587124d3d18387f2cdee}{generate\+\_\+coap\+\_\+header\+\_\+fields}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Generates an unsigned char array, based on the Co\+AP header provided. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{compressor_8c_adcd0616ae1c41b6f08e125ce59d1cee4}{schc\+\_\+find\+\_\+coap\+\_\+rule\+\_\+from\+\_\+header}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$coap\+\_\+field\+\_\+length)
+\begin{DoxyCompactList}\small\item\em Find a matching rule for the Co\+AP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_acc3a491bf8b6160eb0d55396b76c4938}{schc\+\_\+build\+\_\+coap\+\_\+header}} (unsigned char $\ast$schc\+\_\+header, \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint16\+\_\+t rule\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Builds the compressed Co\+AP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_ad45fb2f18a3909b9e25457f0e876ec9d}{decompress\+\_\+coap\+\_\+rule}} (struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$device\+\_\+rules, uint8\+\_\+t rule\+\_\+id, unsigned char $\ast$data, uint8\+\_\+t $\ast$header\+\_\+offset, \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$msg)
+\begin{DoxyCompactList}\small\item\em Decompress a Co\+AP rule, based on an input packet. \end{DoxyCompactList}\item 
+static int16\+\_\+t \mbox{\hyperlink{compressor_8c_a6475d895940d5cf84cc0da1022ef0a76}{compress\+\_\+coap\+\_\+header}} (unsigned char $\ast$schc\+\_\+header, uint8\+\_\+t $\ast$schc\+\_\+offset, const \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$coap\+\_\+msg)
+\begin{DoxyCompactList}\small\item\em Compress a Co\+AP header. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a61950fdd581e34878efece4973ac1159}{equal}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value)
+\begin{DoxyCompactList}\small\item\em The equal matching operator. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a3700c9316a3fa2826dd77686c161638c}{ignore}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value)
+\begin{DoxyCompactList}\small\item\em The ignore matching operator. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}{M\+SB}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value)
+\begin{DoxyCompactList}\small\item\em The M\+SB matching operator. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{compressor_8c_aaa6535816b00df52f9f7b05970feca0a}{matchmap}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value)
+\begin{DoxyCompactList}\small\item\em The match-\/map matching operator. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{compressor_8c_a543c66fb4e738760003b0e06e39200a4}{set\+\_\+node\+\_\+ip}} (\mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} $\ast$node\+\_\+ip)
+\begin{DoxyCompactList}\small\item\em Notifies the compressor about the node its IP address. \end{DoxyCompactList}\item 
+static const struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$ \mbox{\hyperlink{compressor_8c_ae8a163f4bde8075f3dac733e71b64d31}{get\+\_\+device\+\_\+rules}} (uint32\+\_\+t device\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Get a set of rules based on a device id. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{compressor_8c_a4fd03f3acd56b4bf55fc4c8e48567ab7}{schc\+\_\+compressor\+\_\+init}} (uint8\+\_\+t src\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Initializes the S\+C\+HC compressor. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{compressor_8c_abd42f4bd7b7fdd8ea7b4c3504720a0ea}{schc\+\_\+compress}} (const uint8\+\_\+t $\ast$data, uint8\+\_\+t $\ast$buf, uint16\+\_\+t total\+\_\+length)
+\begin{DoxyCompactList}\small\item\em Compresses a Co\+A\+P/\+U\+D\+P/\+IP packet. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8c_a48ebb52c79106c2a7658a513c2a65463}{schc\+\_\+construct\+\_\+header}} (unsigned char $\ast$data, unsigned char $\ast$header, uint32\+\_\+t device\+\_\+id, uint16\+\_\+t total\+\_\+length, uint8\+\_\+t $\ast$header\+\_\+offset)
+\begin{DoxyCompactList}\small\item\em Construct the header from the layered set of rules. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8c_a650a861e13b9cb68043df5319d83b92d}{compute\+\_\+length}} (unsigned char $\ast$data, uint16\+\_\+t data\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Set the packet length for the U\+DP and IP headers. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{compressor_8c_aa4e0f02b97163cd6f8c09b6ac5736aa7}{chksum}} (uint16\+\_\+t sum, const uint8\+\_\+t $\ast$data, uint16\+\_\+t len)
+\item 
+uint16\+\_\+t \mbox{\hyperlink{compressor_8c_a89368d1a9e14855697684aa89b0f1aac}{compute\+\_\+checksum}} (unsigned char $\ast$data)
+\begin{DoxyCompactList}\small\item\em Calculates the U\+DP checksum and sets the appropriate header fields. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} \mbox{\hyperlink{compressor_8c_a9002ee397432c569fdda24ab772716e5}{DI}}
+\item 
+static \mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} \mbox{\hyperlink{compressor_8c_aa5cb1a009963cca8983ea2f3951a936f}{node\+\_\+ip\+\_\+6}}
+\item 
+\mbox{\hyperlink{structjsmn__parser}{jsmn\+\_\+parser}} \mbox{\hyperlink{compressor_8c_a832436cdee822ecccd06537f5e889955}{json\+\_\+parser}}
+\item 
+\mbox{\hyperlink{structjsmntok__t}{jsmntok\+\_\+t}} \mbox{\hyperlink{compressor_8c_a6d19fbe1409f7470283881e0b642c417}{json\+\_\+token}} \mbox{[}\mbox{\hyperlink{schc__config__example_8h_a4e7d67d7aea26c4f57d1098595f90662}{J\+S\+O\+N\+\_\+\+T\+O\+K\+E\+NS}}\mbox{]}
+\item 
+unsigned char \mbox{\hyperlink{compressor_8c_a092ee897de6debb778fc14e1f242dc18}{ipv6\+\_\+header\+\_\+fields}} \mbox{[}\mbox{\hyperlink{schc__config__example_8h_ae1b67de7a1c26318d23f1c34e89fb989}{I\+P\+V6\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{config_8h_a96b977962436620ec037645e3e2e0ee8}{M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}
+\item 
+unsigned char \mbox{\hyperlink{compressor_8c_a19692020241c44be02a07c6ac77b3d92}{udp\+\_\+header\+\_\+fields}} \mbox{[}\mbox{\hyperlink{schc__config__example_8h_aed36719a087639bf1875b85276f09e55}{U\+D\+P\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{config_8h_aac32e96e8faf7ff86aced84537107bca}{M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}
+\item 
+unsigned char \mbox{\hyperlink{compressor_8c_afb9db911b050d292c34053ab9e8cdf8c}{coap\+\_\+header\+\_\+fields}} \mbox{[}\mbox{\hyperlink{schc__config__example_8h_af1690024e8fe24a690d86ec4dd5d3bb6}{C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{schc__config__example_8h_aa6420ecddb30151dd25bc1a2da3aacd1}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{compressor_8c_aa4e0f02b97163cd6f8c09b6ac5736aa7}\label{compressor_8c_aa4e0f02b97163cd6f8c09b6ac5736aa7}} 
+\index{compressor.c@{compressor.c}!chksum@{chksum}}
+\index{chksum@{chksum}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{chksum()}{chksum()}}
+{\footnotesize\ttfamily static uint16\+\_\+t chksum (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{sum,  }\item[{const uint8\+\_\+t $\ast$}]{data,  }\item[{uint16\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{compressor_8c_a46a1ee734808aaaaca1bc617bce0c575}\label{compressor_8c_a46a1ee734808aaaaca1bc617bce0c575}} 
+\index{compressor.c@{compressor.c}!compress@{compress}}
+\index{compress@{compress}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{compress()}{compress()}}
+{\footnotesize\ttfamily static uint8\+\_\+t compress (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{unsigned char $\ast$}]{header,  }\item[{uint16\+\_\+t}]{cols,  }\item[{const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$}]{rule }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The compression mechanism. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & the header in which to operate \\
+\hline
+{\em header} & the header \\
+\hline
+{\em cols} & the number of columns the header contains \\
+\hline
+{\em rule} & the rule to match the compression with \\
+\hline
+{\em nr\+\_\+of\+\_\+fields} & the number of fields as found in the rule\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a6475d895940d5cf84cc0da1022ef0a76}\label{compressor_8c_a6475d895940d5cf84cc0da1022ef0a76}} 
+\index{compressor.c@{compressor.c}!compress\_coap\_header@{compress\_coap\_header}}
+\index{compress\_coap\_header@{compress\_coap\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{compress\_coap\_header()}{compress\_coap\_header()}}
+{\footnotesize\ttfamily static int16\+\_\+t compress\+\_\+coap\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{uint8\+\_\+t $\ast$}]{schc\+\_\+offset,  }\item[{const \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{coap\+\_\+msg }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Compress a Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & pointer to the header in which to save the compressed header \\
+\hline
+{\em schc\+\_\+offset} & pointer to the offset in the compressed header \\
+\hline
+{\em \mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}}} & the Co\+AP message\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the Co\+AP rule id error codes on error 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_ad3dfa633c56fb8277b34e38df5f37358}\label{compressor_8c_ad3dfa633c56fb8277b34e38df5f37358}} 
+\index{compressor.c@{compressor.c}!compress\_udp\_ip\_header@{compress\_udp\_ip\_header}}
+\index{compress\_udp\_ip\_header@{compress\_udp\_ip\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{compress\_udp\_ip\_header()}{compress\_udp\_ip\_header()}}
+{\footnotesize\ttfamily static int16\+\_\+t compress\+\_\+udp\+\_\+ip\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{uint8\+\_\+t $\ast$}]{schc\+\_\+offset,  }\item[{const uint8\+\_\+t $\ast$}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Compress a U\+D\+P/\+IP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & pointer to the header in which to save the compressed header \\
+\hline
+{\em schc\+\_\+offset} & pointer to the current offset in the compressed header \\
+\hline
+{\em data} & pointer to the application generated data\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the layered U\+D\+P/\+IP rule id 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a89368d1a9e14855697684aa89b0f1aac}\label{compressor_8c_a89368d1a9e14855697684aa89b0f1aac}} 
+\index{compressor.c@{compressor.c}!compute\_checksum@{compute\_checksum}}
+\index{compute\_checksum@{compute\_checksum}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{compute\_checksum()}{compute\_checksum()}}
+{\footnotesize\ttfamily uint16\+\_\+t compute\+\_\+checksum (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data }\end{DoxyParamCaption})}
+
+
+
+Calculates the U\+DP checksum and sets the appropriate header fields. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the data packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+checksum the computed checksum 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a650a861e13b9cb68043df5319d83b92d}\label{compressor_8c_a650a861e13b9cb68043df5319d83b92d}} 
+\index{compressor.c@{compressor.c}!compute\_length@{compute\_length}}
+\index{compute\_length@{compute\_length}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{compute\_length()}{compute\_length()}}
+{\footnotesize\ttfamily uint16\+\_\+t compute\+\_\+length (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data,  }\item[{uint16\+\_\+t}]{data\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Set the packet length for the U\+DP and IP headers. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the data packet \\
+\hline
+{\em data\+\_\+len} & the length of the total packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_aa04d4fedabeb09c90f2bc61e4dae25d2}\label{compressor_8c_aa04d4fedabeb09c90f2bc61e4dae25d2}} 
+\index{compressor.c@{compressor.c}!decompress@{decompress}}
+\index{decompress@{decompress}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{decompress()}{decompress()}}
+{\footnotesize\ttfamily static uint8\+\_\+t decompress (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$}]{rule,  }\item[{unsigned char $\ast$}]{data,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The decompression mechanism. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & pointer to the header in which to operate \\
+\hline
+{\em rule} & pointer to the rule to use during the decompression \\
+\hline
+{\em nr\+\_\+of\+\_\+fields} & the number of fields \\
+\hline
+{\em rule} & the rule to match the compression with \\
+\hline
+{\em nr\+\_\+of\+\_\+fields} & the number of fields as found in the rule\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the decompressed header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_ad45fb2f18a3909b9e25457f0e876ec9d}\label{compressor_8c_ad45fb2f18a3909b9e25457f0e876ec9d}} 
+\index{compressor.c@{compressor.c}!decompress\_coap\_rule@{decompress\_coap\_rule}}
+\index{decompress\_coap\_rule@{decompress\_coap\_rule}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{decompress\_coap\_rule()}{decompress\_coap\_rule()}}
+{\footnotesize\ttfamily static uint8\+\_\+t decompress\+\_\+coap\+\_\+rule (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$}]{device\+\_\+rules,  }\item[{uint8\+\_\+t}]{rule\+\_\+id,  }\item[{unsigned char $\ast$}]{data,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset,  }\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{msg }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Decompress a Co\+AP rule, based on an input packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the id of the Co\+AP rule to use during the decompression \\
+\hline
+{\em data} & pointer to the input data \\
+\hline
+{\em header\+\_\+offset} & pointer to the current offset in the decompressed header \\
+\hline
+{\em msg} & pointer to the Co\+AP message to use during the reconstruction \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{compressor_8c_a5b96566e0fb7d5b0e60a046ce5b823b4}\label{compressor_8c_a5b96566e0fb7d5b0e60a046ce5b823b4}} 
+\index{compressor.c@{compressor.c}!decompress\_ipv6\_rule@{decompress\_ipv6\_rule}}
+\index{decompress\_ipv6\_rule@{decompress\_ipv6\_rule}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{decompress\_ipv6\_rule()}{decompress\_ipv6\_rule()}}
+{\footnotesize\ttfamily static uint8\+\_\+t decompress\+\_\+ipv6\+\_\+rule (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$}]{device\+\_\+rules,  }\item[{uint8\+\_\+t}]{rule\+\_\+id,  }\item[{unsigned char $\ast$}]{data,  }\item[{unsigned char $\ast$}]{pckt\+\_\+out,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Decompress an I\+Pv6 rule, based on an input packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the id of the I\+Pv6 rule to use during the decompression \\
+\hline
+{\em data} & pointer to the input data \\
+\hline
+{\em pckt\+\_\+out} & buffer to the packet to store the decompressed data in \\
+\hline
+{\em header\+\_\+offset} & pointer to the current offset in the decompressed header \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{compressor_8c_a93d03a5060ccb2304a21f8da6917314e}\label{compressor_8c_a93d03a5060ccb2304a21f8da6917314e}} 
+\index{compressor.c@{compressor.c}!decompress\_udp\_rule@{decompress\_udp\_rule}}
+\index{decompress\_udp\_rule@{decompress\_udp\_rule}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{decompress\_udp\_rule()}{decompress\_udp\_rule()}}
+{\footnotesize\ttfamily static uint8\+\_\+t decompress\+\_\+udp\+\_\+rule (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}} $\ast$}]{device\+\_\+rules,  }\item[{uint8\+\_\+t}]{rule\+\_\+id,  }\item[{unsigned char $\ast$}]{data,  }\item[{unsigned char $\ast$}]{pckt\+\_\+out,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Decompress a U\+DP rule, based on an input packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the id of the U\+DP rule to use during the decompression \\
+\hline
+{\em data} & pointer to the input data \\
+\hline
+{\em pckt\+\_\+out} & buffer to the packet to store the decompressed data in \\
+\hline
+{\em header\+\_\+offset} & pointer to the current offset in the decompressed header \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{compressor_8c_a61950fdd581e34878efece4973ac1159}\label{compressor_8c_a61950fdd581e34878efece4973ac1159}} 
+\index{compressor.c@{compressor.c}!equal@{equal}}
+\index{equal@{equal}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{equal()}{equal()}}
+{\footnotesize\ttfamily static uint8\+\_\+t equal (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The equal matching operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em target\+\_\+field} & the field from the rule \\
+\hline
+{\em field\+\_\+value} & the value from the header to compare with the rule value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if the target field matches the field value 0 if the target field doesn\textquotesingle{}t match the field value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a899338f1446c587124d3d18387f2cdee}\label{compressor_8c_a899338f1446c587124d3d18387f2cdee}} 
+\index{compressor.c@{compressor.c}!generate\_coap\_header\_fields@{generate\_coap\_header\_fields}}
+\index{generate\_coap\_header\_fields@{generate\_coap\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{generate\_coap\_header\_fields()}{generate\_coap\_header\_fields()}}
+{\footnotesize\ttfamily static uint8\+\_\+t generate\+\_\+coap\+\_\+header\+\_\+fields (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Generates an unsigned char array, based on the Co\+AP header provided. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em header\+\_\+fields} & the array to transfer the header to \\
+\hline
+{\em cols} & the number of columns the header contains \\
+\hline
+{\em pdu} & the Co\+AP message to construct the header from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the array, which represents the number of Co\+AP fields 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_aa74a48e7e8ad991e30e8bd4ebef82c4c}\label{compressor_8c_aa74a48e7e8ad991e30e8bd4ebef82c4c}} 
+\index{compressor.c@{compressor.c}!generate\_ip\_header\_fields@{generate\_ip\_header\_fields}}
+\index{generate\_ip\_header\_fields@{generate\_ip\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{generate\_ip\_header\_fields()}{generate\_ip\_header\_fields()}}
+{\footnotesize\ttfamily static uint8\+\_\+t generate\+\_\+ip\+\_\+header\+\_\+fields (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Generates a unified unsigned char array, based on the IP header provided. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em header\+\_\+fields} & the array to transfer the header to \\
+\hline
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header to construct the unified array from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the array, which represents the number of U\+DP fields 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a14d65da9232084cd266da7b0772ff35b}\label{compressor_8c_a14d65da9232084cd266da7b0772ff35b}} 
+\index{compressor.c@{compressor.c}!generate\_udp\_header\_fields@{generate\_udp\_header\_fields}}
+\index{generate\_udp\_header\_fields@{generate\_udp\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{generate\_udp\_header\_fields()}{generate\_udp\_header\_fields()}}
+{\footnotesize\ttfamily static uint8\+\_\+t generate\+\_\+udp\+\_\+header\+\_\+fields (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Generates a unified unsigned char array, based on the U\+DP header provided. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em header\+\_\+fields} & the array to transfer the header to \\
+\hline
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header to construct the unified array from\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the array, which represents the number of U\+DP fields 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a4c7c563a6281e8ba91dcc9554a7e9246}\label{compressor_8c_a4c7c563a6281e8ba91dcc9554a7e9246}} 
+\index{compressor.c@{compressor.c}!get\_coap\_offset@{get\_coap\_offset}}
+\index{get\_coap\_offset@{get\_coap\_offset}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_coap\_offset()}{get\_coap\_offset()}}
+{\footnotesize\ttfamily static uint8\+\_\+t get\+\_\+coap\+\_\+offset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Finds the length of the Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pdu} & the Co\+AP pdu, containing the header and payload\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the Co\+AP header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_ae8a163f4bde8075f3dac733e71b64d31}\label{compressor_8c_ae8a163f4bde8075f3dac733e71b64d31}} 
+\index{compressor.c@{compressor.c}!get\_device\_rules@{get\_device\_rules}}
+\index{get\_device\_rules@{get\_device\_rules}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_device\_rules()}{get\_device\_rules()}}
+{\footnotesize\ttfamily static const struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}}$\ast$ get\+\_\+device\+\_\+rules (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get a set of rules based on a device id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & id the device it\textquotesingle{}s id\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+device the set of rules found N\+U\+LL if no device is found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_ac03d04b4ca9d1b426e172d9554752b12}\label{compressor_8c_ac03d04b4ca9d1b426e172d9554752b12}} 
+\index{compressor.c@{compressor.c}!get\_ip\_rule\_id@{get\_ip\_rule\_id}}
+\index{get\_ip\_rule\_id@{get\_ip\_rule\_id}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_ip\_rule\_id()}{get\_ip\_rule\_id()}}
+{\footnotesize\ttfamily static uint8\+\_\+t get\+\_\+ip\+\_\+rule\+\_\+id (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{rule\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Extracts the IP rule from the layered rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the layered rule\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the IP rule id 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a859b8920ad31af109ad31c3f37bf09a1}\label{compressor_8c_a859b8920ad31af109ad31c3f37bf09a1}} 
+\index{compressor.c@{compressor.c}!get\_node\_ip@{get\_node\_ip}}
+\index{get\_node\_ip@{get\_node\_ip}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_node\_ip()}{get\_node\_ip()}}
+{\footnotesize\ttfamily static void get\+\_\+node\+\_\+ip (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} $\ast$}]{node\+\_\+ip }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the node its IP address as set during initialization. 
+
+\begin{DoxyReturn}{Returns}
+node\+\_\+ip\+\_\+6 the node its IP address 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a5ae0a8837a1b832512c4dae8bb911e3f}\label{compressor_8c_a5ae0a8837a1b832512c4dae8bb911e3f}} 
+\index{compressor.c@{compressor.c}!get\_rule\_by\_id@{get\_rule\_by\_id}}
+\index{get\_rule\_by\_id@{get\_rule\_by\_id}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_rule\_by\_id()}{get\_rule\_by\_id()}}
+{\footnotesize\ttfamily static const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ get\+\_\+rule\+\_\+by\+\_\+id (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{rule\+\_\+id,  }\item[{uint16\+\_\+t}]{length,  }\item[{const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$}]{rules\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get a rule by it\textquotesingle{}s id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the id \\
+\hline
+{\em length} & the length of the array containing the rules \\
+\hline
+{\em rules} & the array containing the rules\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+rule the rule which is found 0 if no rule is found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_aad2439702e1c8b3aacd31276f621242a}\label{compressor_8c_aad2439702e1c8b3aacd31276f621242a}} 
+\index{compressor.c@{compressor.c}!get\_udp\_rule\_id@{get\_udp\_rule\_id}}
+\index{get\_udp\_rule\_id@{get\_udp\_rule\_id}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{get\_udp\_rule\_id()}{get\_udp\_rule\_id()}}
+{\footnotesize\ttfamily static uint8\+\_\+t get\+\_\+udp\+\_\+rule\+\_\+id (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{rule\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Extracts the U\+DP rule from the layered rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+\_\+id} & the layered rule\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the U\+DP rule id 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a3700c9316a3fa2826dd77686c161638c}\label{compressor_8c_a3700c9316a3fa2826dd77686c161638c}} 
+\index{compressor.c@{compressor.c}!ignore@{ignore}}
+\index{ignore@{ignore}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{ignore()}{ignore()}}
+{\footnotesize\ttfamily static uint8\+\_\+t ignore (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The ignore matching operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em target\+\_\+field} & the field from the rule \\
+\hline
+{\em field\+\_\+value} & the value from the header to compare with the rule value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_aaa6535816b00df52f9f7b05970feca0a}\label{compressor_8c_aaa6535816b00df52f9f7b05970feca0a}} 
+\index{compressor.c@{compressor.c}!matchmap@{matchmap}}
+\index{matchmap@{matchmap}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{matchmap()}{matchmap()}}
+{\footnotesize\ttfamily static uint8\+\_\+t matchmap (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The match-\/map matching operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em target\+\_\+field} & the field from the rule \\
+\hline
+{\em field\+\_\+value} & the value from the header to compare with the rule value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if the the field value is equal to one of the values found in the mapping array 0 if no matching value is found in the mapping array 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}\label{compressor_8c_a6e20dc749624654a5c2a59a7ab0a45b8}} 
+\index{compressor.c@{compressor.c}!MSB@{MSB}}
+\index{MSB@{MSB}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{MSB()}{MSB()}}
+{\footnotesize\ttfamily static uint8\+\_\+t M\+SB (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The M\+SB matching operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em target\+\_\+field} & the field from the rule \\
+\hline
+{\em field\+\_\+value} & the value from the header to compare with the rule value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if the M\+SB of the target field matches the M\+SB of the field value 0 if the M\+SB of the target field doesn\textquotesingle{}t match the M\+SB of the field value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_acc3a491bf8b6160eb0d55396b76c4938}\label{compressor_8c_acc3a491bf8b6160eb0d55396b76c4938}} 
+\index{compressor.c@{compressor.c}!schc\_build\_coap\_header@{schc\_build\_coap\_header}}
+\index{schc\_build\_coap\_header@{schc\_build\_coap\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_build\_coap\_header()}{schc\_build\_coap\_header()}}
+{\footnotesize\ttfamily static uint8\+\_\+t schc\+\_\+build\+\_\+coap\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint16\+\_\+t}]{rule\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Builds the compressed Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & the buffer to keep the compressed data in \\
+\hline
+{\em pdu} & the Co\+AP message to compress \\
+\hline
+{\em rule\+\_\+id} & the rule to use while compressing\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_acdc8c04b38ccdd474236ee0708bf84d3}\label{compressor_8c_acdc8c04b38ccdd474236ee0708bf84d3}} 
+\index{compressor.c@{compressor.c}!schc\_build\_ipv6\_header@{schc\_build\_ipv6\_header}}
+\index{schc\_build\_ipv6\_header@{schc\_build\_ipv6\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_build\_ipv6\_header()}{schc\_build\_ipv6\_header()}}
+{\footnotesize\ttfamily static uint8\+\_\+t schc\+\_\+build\+\_\+ipv6\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header,  }\item[{uint16\+\_\+t}]{rule\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Builds the compressed IP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & the buffer to keep the compressed data in \\
+\hline
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header to compress \\
+\hline
+{\em rule\+\_\+id} & the rule to use while compressing\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_ac091cfec83fabbd556155e88f2e05110}\label{compressor_8c_ac091cfec83fabbd556155e88f2e05110}} 
+\index{compressor.c@{compressor.c}!schc\_build\_udp\_header@{schc\_build\_udp\_header}}
+\index{schc\_build\_udp\_header@{schc\_build\_udp\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_build\_udp\_header()}{schc\_build\_udp\_header()}}
+{\footnotesize\ttfamily static uint8\+\_\+t schc\+\_\+build\+\_\+udp\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{schc\+\_\+header,  }\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header,  }\item[{uint16\+\_\+t}]{rule\+\_\+id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Builds the compressed U\+DP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em schc\+\_\+header} & the buffer to keep the compressed data in \\
+\hline
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header to compress \\
+\hline
+{\em rule\+\_\+id} & the rule to use while compressing\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed header 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_abd42f4bd7b7fdd8ea7b4c3504720a0ea}\label{compressor_8c_abd42f4bd7b7fdd8ea7b4c3504720a0ea}} 
+\index{compressor.c@{compressor.c}!schc\_compress@{schc\_compress}}
+\index{schc\_compress@{schc\_compress}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_compress()}{schc\_compress()}}
+{\footnotesize\ttfamily int16\+\_\+t schc\+\_\+compress (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t $\ast$}]{data,  }\item[{uint8\+\_\+t $\ast$}]{buf,  }\item[{uint16\+\_\+t}]{total\+\_\+length }\end{DoxyParamCaption})}
+
+
+
+Compresses a Co\+A\+P/\+U\+D\+P/\+IP packet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the packet \\
+\hline
+{\em buf} & pointer to the compressed packet buffer \\
+\hline
+{\em total\+\_\+length} & the length of the packet\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the compressed packet -\/1 on a memory overflow 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a4fd03f3acd56b4bf55fc4c8e48567ab7}\label{compressor_8c_a4fd03f3acd56b4bf55fc4c8e48567ab7}} 
+\index{compressor.c@{compressor.c}!schc\_compressor\_init@{schc\_compressor\_init}}
+\index{schc\_compressor\_init@{schc\_compressor\_init}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_compressor\_init()}{schc\_compressor\_init()}}
+{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+compressor\+\_\+init (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{src\mbox{[}16\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Initializes the S\+C\+HC compressor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\+\_\+ip} & a pointer to the source it\textquotesingle{}s ip address\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+error codes on error 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a48ebb52c79106c2a7658a513c2a65463}\label{compressor_8c_a48ebb52c79106c2a7658a513c2a65463}} 
+\index{compressor.c@{compressor.c}!schc\_construct\_header@{schc\_construct\_header}}
+\index{schc\_construct\_header@{schc\_construct\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_construct\_header()}{schc\_construct\_header()}}
+{\footnotesize\ttfamily uint16\+\_\+t schc\+\_\+construct\+\_\+header (\begin{DoxyParamCaption}\item[{unsigned char $\ast$}]{data,  }\item[{unsigned char $\ast$}]{header,  }\item[{uint32\+\_\+t}]{device\+\_\+id,  }\item[{uint16\+\_\+t}]{total\+\_\+length,  }\item[{uint8\+\_\+t $\ast$}]{header\+\_\+offset }\end{DoxyParamCaption})}
+
+
+
+Construct the header from the layered set of rules. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & pointer to the received data \\
+\hline
+{\em header} & pointer where to save the decompressed header \\
+\hline
+{\em device\+\_\+id} & the device its id \\
+\hline
+{\em total\+\_\+length} & the total length of the received data \\
+\hline
+{\em header\+\_\+offset} & an integer pointing to the current offset in the compressed header\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the newly constructed header 0 one of the rules was not found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_adcd0616ae1c41b6f08e125ce59d1cee4}\label{compressor_8c_adcd0616ae1c41b6f08e125ce59d1cee4}} 
+\index{compressor.c@{compressor.c}!schc\_find\_coap\_rule\_from\_header@{schc\_find\_coap\_rule\_from\_header}}
+\index{schc\_find\_coap\_rule\_from\_header@{schc\_find\_coap\_rule\_from\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_find\_coap\_rule\_from\_header()}{schc\_find\_coap\_rule\_from\_header()}}
+{\footnotesize\ttfamily static uint16\+\_\+t schc\+\_\+find\+\_\+coap\+\_\+rule\+\_\+from\+\_\+header (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu,  }\item[{uint8\+\_\+t $\ast$}]{coap\+\_\+field\+\_\+length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Find a matching rule for the Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pdu} & the Co\+AP buffer \\
+\hline
+{\em coap\+\_\+field\+\_\+length} & the number of fields the header exists of (!= number of bytes)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the rule id 0 if no rule is found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_afc242e635258065edcd521c5b8c82489}\label{compressor_8c_afc242e635258065edcd521c5b8c82489}} 
+\index{compressor.c@{compressor.c}!schc\_find\_ipv6\_rule\_from\_header@{schc\_find\_ipv6\_rule\_from\_header}}
+\index{schc\_find\_ipv6\_rule\_from\_header@{schc\_find\_ipv6\_rule\_from\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_find\_ipv6\_rule\_from\_header()}{schc\_find\_ipv6\_rule\_from\_header()}}
+{\footnotesize\ttfamily static uint16\+\_\+t schc\+\_\+find\+\_\+ipv6\+\_\+rule\+\_\+from\+\_\+header (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Find a matching rule for the IP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the rule id 0 if no rule is found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_aa936ffa615262bd05395db8a8038cadb}\label{compressor_8c_aa936ffa615262bd05395db8a8038cadb}} 
+\index{compressor.c@{compressor.c}!schc\_find\_udp\_rule\_from\_header@{schc\_find\_udp\_rule\_from\_header}}
+\index{schc\_find\_udp\_rule\_from\_header@{schc\_find\_udp\_rule\_from\_header}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{schc\_find\_udp\_rule\_from\_header()}{schc\_find\_udp\_rule\_from\_header()}}
+{\footnotesize\ttfamily static uint16\+\_\+t schc\+\_\+find\+\_\+udp\+\_\+rule\+\_\+from\+\_\+header (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}} $\ast$}]{ip\+\_\+udp\+\_\+header }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Find a matching rule for the U\+DP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ip\+\_\+udp\+\_\+header} & the I\+P/\+U\+DP header struct\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the rule id 0 if no rule is found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{compressor_8c_a543c66fb4e738760003b0e06e39200a4}\label{compressor_8c_a543c66fb4e738760003b0e06e39200a4}} 
+\index{compressor.c@{compressor.c}!set\_node\_ip@{set\_node\_ip}}
+\index{set\_node\_ip@{set\_node\_ip}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{set\_node\_ip()}{set\_node\_ip()}}
+{\footnotesize\ttfamily static void set\+\_\+node\+\_\+ip (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} $\ast$}]{node\+\_\+ip }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Notifies the compressor about the node its IP address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node\+\_\+ip} & pointer to the ip address array\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 
+\end{DoxyReturn}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{compressor_8c_afb9db911b050d292c34053ab9e8cdf8c}\label{compressor_8c_afb9db911b050d292c34053ab9e8cdf8c}} 
+\index{compressor.c@{compressor.c}!coap\_header\_fields@{coap\_header\_fields}}
+\index{coap\_header\_fields@{coap\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{coap\_header\_fields}{coap\_header\_fields}}
+{\footnotesize\ttfamily unsigned char coap\+\_\+header\+\_\+fields\mbox{[}\mbox{\hyperlink{schc__config__example_8h_af1690024e8fe24a690d86ec4dd5d3bb6}{C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{schc__config__example_8h_aa6420ecddb30151dd25bc1a2da3aacd1}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}}
+
+\mbox{\Hypertarget{compressor_8c_a9002ee397432c569fdda24ab772716e5}\label{compressor_8c_a9002ee397432c569fdda24ab772716e5}} 
+\index{compressor.c@{compressor.c}!DI@{DI}}
+\index{DI@{DI}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{DI}{DI}}
+{\footnotesize\ttfamily \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} DI\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{compressor_8c_a092ee897de6debb778fc14e1f242dc18}\label{compressor_8c_a092ee897de6debb778fc14e1f242dc18}} 
+\index{compressor.c@{compressor.c}!ipv6\_header\_fields@{ipv6\_header\_fields}}
+\index{ipv6\_header\_fields@{ipv6\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{ipv6\_header\_fields}{ipv6\_header\_fields}}
+{\footnotesize\ttfamily unsigned char ipv6\+\_\+header\+\_\+fields\mbox{[}\mbox{\hyperlink{schc__config__example_8h_ae1b67de7a1c26318d23f1c34e89fb989}{I\+P\+V6\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{config_8h_a96b977962436620ec037645e3e2e0ee8}{M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}}
+
+\mbox{\Hypertarget{compressor_8c_a832436cdee822ecccd06537f5e889955}\label{compressor_8c_a832436cdee822ecccd06537f5e889955}} 
+\index{compressor.c@{compressor.c}!json\_parser@{json\_parser}}
+\index{json\_parser@{json\_parser}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{json\_parser}{json\_parser}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjsmn__parser}{jsmn\+\_\+parser}} json\+\_\+parser}
+
+\mbox{\Hypertarget{compressor_8c_a6d19fbe1409f7470283881e0b642c417}\label{compressor_8c_a6d19fbe1409f7470283881e0b642c417}} 
+\index{compressor.c@{compressor.c}!json\_token@{json\_token}}
+\index{json\_token@{json\_token}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{json\_token}{json\_token}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structjsmntok__t}{jsmntok\+\_\+t}} json\+\_\+token\mbox{[}\mbox{\hyperlink{schc__config__example_8h_a4e7d67d7aea26c4f57d1098595f90662}{J\+S\+O\+N\+\_\+\+T\+O\+K\+E\+NS}}\mbox{]}}
+
+\mbox{\Hypertarget{compressor_8c_aa5cb1a009963cca8983ea2f3951a936f}\label{compressor_8c_aa5cb1a009963cca8983ea2f3951a936f}} 
+\index{compressor.c@{compressor.c}!node\_ip\_6@{node\_ip\_6}}
+\index{node\_ip\_6@{node\_ip\_6}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{node\_ip\_6}{node\_ip\_6}}
+{\footnotesize\ttfamily \mbox{\hyperlink{config_8h_a9e94c937b062152f7ac9f8ec5f9ca176}{uip\+\_\+ipaddr\+\_\+t}} node\+\_\+ip\+\_\+6\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{compressor_8c_a19692020241c44be02a07c6ac77b3d92}\label{compressor_8c_a19692020241c44be02a07c6ac77b3d92}} 
+\index{compressor.c@{compressor.c}!udp\_header\_fields@{udp\_header\_fields}}
+\index{udp\_header\_fields@{udp\_header\_fields}!compressor.c@{compressor.c}}
+\doxysubsubsection{\texorpdfstring{udp\_header\_fields}{udp\_header\_fields}}
+{\footnotesize\ttfamily unsigned char udp\+\_\+header\+\_\+fields\mbox{[}\mbox{\hyperlink{schc__config__example_8h_aed36719a087639bf1875b85276f09e55}{U\+D\+P\+\_\+\+F\+I\+E\+L\+DS}}\mbox{]}\mbox{[}\mbox{\hyperlink{config_8h_aac32e96e8faf7ff86aced84537107bca}{M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}}
+
