@@ -1484,7 +1484,8 @@ uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 
 	printf("\n\n");
 */
-
+	
+	*header_offset += RULE_SIZE_BYTES;
 	return (IP6_HLEN + UDP_HLEN + coap_offset);
 }
 
