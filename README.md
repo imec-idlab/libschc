@@ -200,7 +200,7 @@ schc_fragment((schc_fragmentation_t*) &tx_conn); // start the fragmentation
 
 #### Timers
 As you can see in the above examples, the library has no native support for timers and requires callback functions from the main application to schedule transmissions and to time out.
-Therefore, 2 function callbacks are required.
+Therefore, 2 function callbacks are required. The following is based on the OSS-7 platform.
 ```C
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
@@ -208,14 +208,17 @@ Therefore, 2 function callbacks are required.
 static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
 	timer_post_task_prio(callback, timer_get_counter_value() + delay, DEFAULT_PRIORITY, arg);
 }
+```
 
+As the server has to keep track of multiple devices and connections, a vector is used to keep track of multiple devices.
+The following is part of a C++ implementation, which makes use of the C library.
+```C
 /*
  * The timer used by the SCHC library to time out the reception of fragments
  */
 static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
-	timer_post_task_prio(callback, timer_get_counter_value() + delay, DEFAULT_PRIORITY, arg);
+	add_device(device_id, delay, callback);
 }
 ```
-
 
 ## LICENSE
