@@ -1,7 +1,4 @@
 # libschc: A C implementation of the Static Context Header Compression
-
-Copyright (C) 2018-2019 by Bart Moons <bamoons.moons@ugent.be>
-
 ## ABOUT LIBSCHC
 
 libschc is a C implementation of the Static Context Header Compression, drafted by the IETF.
@@ -222,3 +219,8 @@ static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 ```
 
 ## LICENSE
+Licensed under the GNU General Public License, Version 3 (the "License"): You may not use these files except in compliance with the License. You may obtain a copy of the License at <https://www.gnu.org/licenses/gpl-3.0.nl.html>
+
+See the License for the specific language governing permissions and limitations under the License.
+
+© Copyright 2018-2019, Bart Moons <bamoons.moons@ugent.be> and Ghent University
