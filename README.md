@@ -24,13 +24,13 @@ First copy the configuration file
 ```
 mv schc_config_example.h schc_config.h
 ```
-and edit the definitions according to your platform.
+and edit the definitions according to your platform and preferences.
 
 ### Rules
-As the rules tend to consume a large part of memory, and
-
 Currently, I only have been working with rules for a single device. However, as the server application will have to keep track of multiple devices, this should be implemented in a decoupled way.
 The rules are implemented in a layered fashion and should be combined with a rule map to use different layers in a single ID. This map could then be reused for different devices.
+
+The rules are implemented in a human readable fashion, which does add a lot of overhead. Additional research/implementation is required there.
 
 In `rules.h`, several rules can be defined
 ```C
