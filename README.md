@@ -18,6 +18,8 @@ The `schc-config.h` file contains a definition for dynamic memory allocation, us
 
 The current implementation is based on draft-ietf-lpwan-ipv6-static-context-hc-18 (<https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/18/>), some naming conventions are therefore not in line with the current specification.
 
+Please keep in mind that the library works, but is still very experimental!
+
 ## DOCUMENTATION
 ### Configuration
 First copy the configuration file 
