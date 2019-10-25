@@ -9,9 +9,10 @@ For further information related to SCHC, see <https://datatracker.ietf.org/doc/d
 
 ## LIMITATIONS
 As this implementation is work in progress, there are some limitations you should keep in mind.
-The library has been designed in such a way, that it can be used on top of a constrained device,
-as well as on a more powerful server side device. 
-As a consequence, memory allocation and memory intensive calculations are avoided.
+
+First of all, libschc is based on the work of Abdelfadeel et al., where a layered bitmap has been proposed (Layered SCHC) instead of a single ID for all layers. It has been proven to be less efficient and should therefore be removed.
+
+The library has been designed in such a way, that it can be used on top of a constrained device, as well as on a more powerful server side device. As a consequence, memory allocation and memory intensive calculations are avoided.
 I tended to use fixed point arithmetic for 8-bit mircoprocessors, however some optimizations are possible.
 
 The `schc-config.h` file contains a definition for dynamic memory allocation, used by fragmenter.
