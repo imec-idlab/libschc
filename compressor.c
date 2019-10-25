@@ -1470,7 +1470,7 @@ uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 		memcpy((unsigned char*) (header), (uint8_t *) (payload + *header_offset), IP6_HLEN);
 		*header_offset += IP6_HLEN;
 	}
-/*
+
 	printf("\n");
 	printf("+-----------------------------------------+\n");
 	printf("|          Decompressed Header            |\n");
@@ -1482,7 +1482,7 @@ uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
 	}
 
 	printf("\n\n");
-*/
+
 	
 	*header_offset += RULE_SIZE_BYTES;
 	return (IP6_HLEN + UDP_HLEN + coap_offset);

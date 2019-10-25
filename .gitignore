@@ -1,2 +1,4 @@
 schc_config.h
 click_config.h
+
+examples/*.out

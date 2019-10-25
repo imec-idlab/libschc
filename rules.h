@@ -79,8 +79,8 @@ const static struct schc_rule ipv6_rule3 = {
 const static struct schc_rule udp_rule1 = {
 		1, 4, 4, 4,
 		{
-				{ "src port", 		0, 2, 	 1, BI, 	{0x16, 0x33}, 		&equal,		NOTSENT }, // 5683
-				{ "dest port", 		0, 2, 	 1, BI, 	{0x16, 0x33}, 		&equal,		NOTSENT },
+				{ "src port", 		0, 2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT }, // 5683
+				{ "dest port", 		0, 2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
 				{ "length", 		0, 2, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
 				{ "checksum", 		0, 2, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
