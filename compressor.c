@@ -10,7 +10,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "pt/pt.h"
 #include "jsmn.h"
 #include "picocoap.h"
 #include "rules.h"

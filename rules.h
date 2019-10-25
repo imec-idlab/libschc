@@ -10,7 +10,6 @@
 
 #define DEVICE_COUNT			2
 
-#include "pt/pt.h"
 #include "schc_config.h"
 
 const static struct schc_rule ipv6_rule1 = {
