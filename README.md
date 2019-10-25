@@ -32,6 +32,31 @@ and edit the definitions according to your platform and preferences.
 ### Rules
 Currently, I only have been working with rules for a single device. However, as the server application will have to keep track of multiple devices, this should be implemented in a decoupled way.
 The rules are implemented in a layered fashion and should be combined with a rule map to use different layers in a single ID. This map could then be reused for different devices.
+This would look something like
+```
++--------------+                                    +---------------------+
+|   IP RULES 1 |                                    |           RULE ID 1 |
+|            2 |                                    +---------------------+
+|            3 |                                    |           IP RULE 1 |
+|            4 |                                    |          UDP RULE 2 |
+|            5 |                                    |         CoAP RULE 4 |
++--------------+                                    |  RELIABILITY NO_ACK |
+                                                    |          FCN SIZE 3 |
+                                                    |       WINDOW SIZE 1 |
+                                                    |         DTAG SIZE 0 |
+                                                    +---------------------+
++--------------+
+|  UDP RULES 1 |
+|            2 |
++--------------+
+
++--------------+
+| CoAP RULES 1 |
+|            2 |
+|            3 |
+|            4 |
++--------------+
+```
 
 The rules are implemented in a human readable fashion, which does add a lot of overhead. Additional research/implementation is required there.
 
