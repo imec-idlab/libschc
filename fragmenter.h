@@ -50,10 +50,6 @@ typedef enum {
 	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_MISSING_FRAG = 2, WAIT_END = 3, END_RX = 4, ABORT = 5
 } rx_state;
 
-typedef enum {
-	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3
-} reliability_mode;
-
 // the maximum bitmap length
 #define BITMAP_SIZE_BYTES		4
 

@@ -203,6 +203,9 @@ typedef struct coap_payload {
 	uint8_t *val;	/// pointer to buffer
 } coap_payload;
 
+// Finds the length of the CoAP header
+// And consequently the length of the payload
+uint8_t coap_get_coap_offset(coap_pdu *pdu);
 
 ///
 /// Validate Packet

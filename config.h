@@ -14,6 +14,7 @@
 // (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
 #define MAX_IPV6_FIELD_LENGTH	8
 #define MAX_UDP_FIELD_LENGTH	2
+#define MAX_COAP_FIELD_LENGTH	32
 
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
@@ -45,26 +46,81 @@ struct schc_field {
 	CDA action;
 };
 
-// ToDo
-// make struct for each layer to save space
-// only CoAP is of variable length
-// now we need maximum CoAP fields for UDP rule (factor 8)
-struct schc_rule {
+
+#if USE_IPv6
+struct schc_ipv6_rule_t {
+	uint16_t rule_id;
+	uint8_t up;
+	uint8_t down;
+	uint8_t length;
+	struct schc_field content[IPV6_FIELDS];
+};
+#endif
+
+#if USE_UDP
+struct schc_udp_rule_t {
+	uint16_t rule_id;
+	uint8_t up;
+	uint8_t down;
+	uint8_t length;
+	struct schc_field content[UDP_FIELDS];
+};
+#endif
+
+#if USE_COAP
+struct schc_coap_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
 	struct schc_field content[COAP_FIELDS];
 };
+#endif
+
+struct schc_layer_rule_t {
+	uint16_t rule_id;
+	uint8_t up;
+	uint8_t down;
+	uint8_t length;
+	struct schc_field content[];
+};
+
+struct schc_rule_t {
+	/* the rule id */
+	uint8_t id;
+#if USE_IPv6
+	/* a pointer to the IPv6 rule */
+	const struct schc_ipv6_rule_t* ipv6_rule;
+#endif
+#if USE_UDP
+	/* a pointer to the UDP rule */
+	const struct schc_udp_rule_t* udp_rule;
+#endif
+#if USE_COAP
+	/* a pointer to the CoAP rule */
+	const struct schc_coap_rule_t* coap_rule;
+#endif
+	/* the reliability mode */
+	reliability_mode mode;
+	/* the rule size in bits */
+	uint8_t RULE_SIZE;
+	/* the fcn size in bits */
+	uint8_t FCN_SIZE;
+	/* the maximum number of fragments per window */
+	uint8_t MAX_WND_FCN;
+	/* the window size in bits */
+	uint8_t WINDOW_SIZE;
+	/* the dtag size in bits */
+	uint8_t DTAG_SIZE;
+};
 
 struct schc_device {
-	uint32_t id;
-	uint8_t ipv6_count;
-	const struct schc_rule* ipv6_rules;
-	uint8_t udp_count;
-	const struct schc_rule* udp_rules;
-	uint8_t coap_count;
-	const struct schc_rule* coap_rules;
+	/* the device id (e.g. EUI) */
+	uint32_t device_id;
+	/* the total number of rules for a device */
+	uint8_t rule_count;
+	/* a pointer to the collection of rules for a device */
+	const struct schc_rule_t* device_rules[];
 };
 
 typedef uint16_t uip_ip6addr_t[8];

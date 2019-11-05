@@ -1,18 +1,16 @@
 #ifndef _RULES_H_
 #define _RULES_H_
 
-// ToDo
-// output functions should be adapted
-// tie the output rules to the device which is sending
 #define IPV6_RULES				3
 #define UDP_RULES				3
 #define COAP_RULES				4
 
-#define DEVICE_COUNT			2
+#define DEVICE_COUNT			1
 
 #include "schc_config.h"
 
-const static struct schc_rule ipv6_rule1 = {
+#if USE_IPv6
+const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
 		1, 10, 10, 10,
 		{
@@ -34,7 +32,7 @@ const static struct schc_rule ipv6_rule1 = {
 		}
 };
 
-const static struct schc_rule ipv6_rule2 = {
+const static struct schc_ipv6_rule_t ipv6_rule2 = {
 		2, 10, 10, 10,
 		{
 				{ "version", 		0,  1,	 1, BI, 	{6},			&equal, 	NOTSENT },
@@ -54,7 +52,7 @@ const static struct schc_rule ipv6_rule2 = {
 		}
 };
 
-const static struct schc_rule ipv6_rule3 = {
+const static struct schc_ipv6_rule_t ipv6_rule3 = {
 	//	id, up, down, length
 		3, 10, 10, 10,
 		{
@@ -75,8 +73,10 @@ const static struct schc_rule ipv6_rule3 = {
 						&MSB, 		LSB },
 		}
 };
+#endif
 
-const static struct schc_rule udp_rule1 = {
+#if USE_UDP
+const static struct schc_udp_rule_t udp_rule1 = {
 		1, 4, 4, 4,
 		{
 				{ "src port", 		0, 2, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT }, // 5683
@@ -86,17 +86,17 @@ const static struct schc_rule udp_rule1 = {
 		}
 };
 
-const static struct schc_rule udp_rule2 = {
+const static struct schc_udp_rule_t udp_rule2 = {
 		2, 4, 4, 4,
 		{
-				{ "src port", 		12, 2, 	 1, BI, 	{4, 48},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
-				{ "dest port", 		12, 2, 	 1, BI, 	{4, 48},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
-				{ "length", 		0,  2, 	 1, BI, 	{0, 0},			&ignore,	COMPLENGTH },
-				{ "checksum", 		0,  2, 	 1, BI, 	{0, 0},			&ignore,	COMPCHK },
+				{ "src port", 		12, 2, 	 1, BI, 	{0x33, 0x16},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
+				{ "dest port", 		12, 2, 	 1, BI, 	{0x33, 0x16},		&MSB,		LSB }, // 1072 - 1087 | {4, 48}
+				{ "length", 		0,  2, 	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
+				{ "checksum", 		0,  2, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
 };
 
-const static struct schc_rule udp_rule3 = {
+const static struct schc_udp_rule_t udp_rule3 = {
 		3, 4, 4, 4,
 		{
 				{ "src port", 		0,	2, 	 1, BI, 	{0x13, 0x89}, 		&equal,		NOTSENT },
@@ -105,12 +105,14 @@ const static struct schc_rule udp_rule3 = {
 				{ "checksum", 		0, 	2,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
 };
+#endif
 
+#if USE_COAP
 // it is important to use strings, identical to the ones
 // defined in coap.h for the options
 
 // GET usage
-const static struct schc_rule coap_rule1 = {
+const static struct schc_coap_rule_t coap_rule1 = {
 		1, 9, 7, 9,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
@@ -128,7 +130,7 @@ const static struct schc_rule coap_rule1 = {
 };
 
 // POST temperature value
-const static struct schc_rule coap_rule2 = {
+const static struct schc_coap_rule_t coap_rule2 = {
 		2, 8, 8, 10,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
@@ -146,8 +148,8 @@ const static struct schc_rule coap_rule2 = {
 		}
 };
 
-// GET usage without payload (for test)
-const static struct schc_rule coap_rule3 = {
+// GET usage
+const static struct schc_coap_rule_t coap_rule3 = {
 		3, 8, 6, 8,
 		{
 				{ "version",		0,	1,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
@@ -163,7 +165,7 @@ const static struct schc_rule coap_rule3 = {
 		}
 };
 
-const static struct schc_rule coap_rule4 = {
+const static struct schc_coap_rule_t coap_rule4 = {
 		4, 12, 12, 12,
 		{
 				{ "version",            0,      1,      1, BI,      {COAP_V1},		&equal,         NOTSENT },
@@ -185,19 +187,119 @@ const static struct schc_rule coap_rule4 = {
                }
 
 };
+#endif
 
-// save rules in flash
-const struct schc_rule* schc_ipv6_rules[] = { &ipv6_rule1, &ipv6_rule2, &ipv6_rule3 };
-const struct schc_rule* schc_udp_rules[] = { &udp_rule1, &udp_rule2, &udp_rule3 };
-const struct schc_rule* schc_coap_rules[] = { &coap_rule1, &coap_rule2, &coap_rule3, &coap_rule4 };
+const struct schc_rule_t schc_rule_1 = {
+		/* the rule id */
+		1,
+#if USE_IPv6
+		&ipv6_rule1,
+#endif
+#if USE_UDP
+		&udp_rule1,
+#endif
+#if USE_COAP
+		&coap_rule1,
+#endif
+		/* the reliability mode */
+		NO_ACK,
+		/* the rule size in bits */
+		RULE_SIZE_BITS,
+		/* the fcn size in bits */
+		FCN_SIZE_BITS,
+		/* the maximum number of fragments per window */
+		MAX_WIND_FCN,
+		/* the window size in bits */
+		WINDOW_SIZE_BITS,
+		/* the dtag size in bits */
+		DTAG_SIZE_BITS
+};
 
-// ToDo
-// back-end vs front-end
-// add to .gitignore
-// add rules-example.h
-struct schc_device node1 = { 1, IPV6_RULES, &schc_ipv6_rules, UDP_RULES,
-		&schc_udp_rules, COAP_RULES, &schc_coap_rules };
+const struct schc_rule_t schc_rule_2 = {
+		/* the rule id */
+		2,
+#if USE_IPv6
+		&ipv6_rule1,
+#endif
+#if USE_UDP
+		&udp_rule1,
+#endif
+#if USE_COAP
+		&coap_rule2,
+#endif
+		/* the reliability mode */
+		NO_ACK,
+		/* the rule size in bits */
+		RULE_SIZE_BITS,
+		/* the fcn size in bits */
+		FCN_SIZE_BITS,
+		/* the maximum number of fragments per window */
+		MAX_WIND_FCN,
+		/* the window size in bits */
+		WINDOW_SIZE_BITS,
+		/* the dtag size in bits */
+		DTAG_SIZE_BITS
+};
 
+const struct schc_rule_t schc_rule_3 = {
+		/* the rule id */
+		3,
+#if USE_IPv6
+		&ipv6_rule1,
+#endif
+#if USE_UDP
+		&udp_rule1,
+#endif
+#if USE_COAP
+		&coap_rule3,
+#endif
+		/* the reliability mode */
+		NO_ACK,
+		/* the rule size in bits */
+		RULE_SIZE_BITS,
+		/* the fcn size in bits */
+		FCN_SIZE_BITS,
+		/* the maximum number of fragments per window */
+		MAX_WIND_FCN,
+		/* the window size in bits */
+		WINDOW_SIZE_BITS,
+		/* the dtag size in bits */
+		DTAG_SIZE_BITS
+};
+
+const struct schc_rule_t schc_rule_4 = {
+		/* the rule id */
+		4,
+#if USE_IPv6
+		&ipv6_rule1,
+#endif
+#if USE_UDP
+		&udp_rule1,
+#endif
+#if USE_COAP
+		&coap_rule4,
+#endif
+		/* the reliability mode */
+		NO_ACK,
+		/* the rule size in bits */
+		RULE_SIZE_BITS,
+		/* the fcn size in bits */
+		FCN_SIZE_BITS,
+		/* the maximum number of fragments per window */
+		MAX_WIND_FCN,
+		/* the window size in bits */
+		WINDOW_SIZE_BITS,
+		/* the dtag size in bits */
+		DTAG_SIZE_BITS
+};
+
+/* save rules in flash */
+const struct schc_rule_t* schc_rules[] = { &schc_rule_1, &schc_rule_2, &schc_rule_3, &schc_rule_4 };
+
+/* rules for a particular device */
+struct schc_device node1 = { 1, 4, &schc_rules };
+
+/* server keeps track of multiple devices: add devices to device list */
 struct schc_device* devices[DEVICE_COUNT] = { &node1 };
 
 #endif

@@ -10,10 +10,9 @@ For further information related to SCHC, see <https://datatracker.ietf.org/doc/d
 ## LIMITATIONS
 As this implementation is work in progress, there are some limitations you should keep in mind.
 
-First of all, libschc is based on the work of Abdelfadeel et al., where a layered bitmap has been proposed (Layered SCHC) instead of a single ID for all layers. It has been proven to be less efficient and should therefore be removed, however this is a good starting point for structuring the rules in memory (see [rules](https://github.com/bartmoons/libschc#rules)).
-
-The library has been designed in such a way, that it can be used on top of a constrained device, as well as on a more powerful server side device. As a consequence, memory allocation and memory intensive calculations are avoided.
+The library has been designed in such a way that it can be used on top of a constrained device, as well as on a more powerful server side device. As a consequence, memory allocation and memory intensive calculations are avoided.
 I tended to use fixed point arithmetic for 8-bit mircoprocessors, however some optimizations are possible.
+As such, the rules are constructed of 8-bit arrays, availble on all devices.
 
 The `schc-config.h` file contains a definition for dynamic memory allocation, used by fragmenter.
 
@@ -30,24 +29,19 @@ mv schc_config_example.h schc_config.h
 and edit the definitions according to your platform and preferences.
 
 ### Rules
-Currently, I only have been working with rules for a single device. However, as the server application will have to keep track of multiple devices, this should be implemented in a decoupled way.
-The rules are implemented in a layered fashion and should be combined with a rule map to use different layers in a single ID. This map could then be reused for different devices.
-This would look something like
+The rules are implemented in a layered fashion and are be combined with a rule map to use different layers in a single ID. This map may be reused by different devices.
 ```
-+--------------+                                    +---------------------+
-|   IP RULES 1 |                                    |           RULE ID 1 |
-|            2 |                                    +---------------------+
-|            3 |                                    |           IP RULE 1 |
-|            4 |                                    |          UDP RULE 2 |
-|            5 |                                    |         CoAP RULE 4 |
-+--------------+                                    |  RELIABILITY NO_ACK |
-                                                    |          FCN SIZE 3 |
-                                                    |       WINDOW SIZE 1 |
-                                                    |         DTAG SIZE 0 |
-                                                    +---------------------+
-+--------------+
-|  UDP RULES 1 |
-|            2 |
++--------------+       +---------------------+
+|   IP RULES 1 |       |           RULE ID 1 |
+|            2 |       +---------------------+
+|            3 |       |           IP RULE 1 |
+|            4 |       |          UDP RULE 2 |
+|            5 |       |         CoAP RULE 4 |
++--------------+       |  RELIABILITY NO_ACK |
+                       |          FCN SIZE 3 |
++--------------+       |       WINDOW SIZE 1 |
+|  UDP RULES 1 |       |         DTAG SIZE 0 |
+|            2 |       +---------------------+
 +--------------+
 
 +--------------+
@@ -122,7 +116,7 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length);
 
 The reverse can be done by calling:
 ```C
-uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
+uint16_t schc_decompress(unsigned char* data, unsigned char *header,
 	uint32_t device_id, uint16_t total_length, uint8_t *header_offset);
 ```
 This requires a buffer to which the decompressed headers can be returned (`unsigned char *header`), a pointer to the complete original data packet (`unsigned char *data`), the device id and total length and finally a pointer to an integer (`uint8_t *header_offset`), which will return the compressed header size (i.e. the position in the buffer where the actual data starts). The function will return the decompressed header length.
@@ -245,6 +239,13 @@ static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 	add_device(device_id, delay, callback);
 }
 ```
+
+## LIMITATIONS
+Here the main concerns are listed which leave room for optimization
+* there is no consistency in the data type for rule id's. Currently a device can have a maximum of 256 rules. However, as of the specification, this should be configurable at bit level. As a consequence, the compressor and decompressor do not make use of bitshifts
+* under issues, mainly optimization issues are listed
+* the library offers `#ifdef` definitions for use with layers, but is not implemented properly
+
 
 ## LICENSE
 Licensed under the GNU General Public License, Version 3 (the "License"): You may not use these files except in compliance with the License. You may obtain a copy of the License at <https://www.gnu.org/licenses/gpl-3.0.nl.html>

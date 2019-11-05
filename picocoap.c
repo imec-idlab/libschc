@@ -12,6 +12,61 @@
 // Getters
 //
 
+
+/**
+ * Finds the length of the CoAP header
+ *
+ * @param pdu the CoAP pdu, containing the header and payload
+ *
+ * @return the length of the CoAP header
+ *
+ */
+uint8_t coap_get_coap_offset(coap_pdu *pdu) {
+	if(coap_validate_pkt(pdu) == CE_INVALID_PACKET) {
+		// coap length is 0
+		return 0;
+	}
+
+	size_t offset = 4 + coap_get_tkl(pdu);
+
+	uint8_t last_offset = 0;
+	coap_option option;
+	coap_payload payload;
+	coap_error err;
+
+	// Defaults
+	payload.len = 0;
+	payload.val = NULL;
+
+	// Find Last Option
+	do {
+		err = coap_decode_option(pdu->buf + offset, pdu->len - offset, NULL,
+				&option.len, &option.val);
+		if (err == CE_FOUND_PAYLOAD_MARKER) {
+			offset += 1;
+			break;
+		}
+		if (err == CE_END_OF_PACKET) {
+			break;
+		}
+
+		if (err != CE_NONE) {
+			return offset;
+		}
+
+		// Add this option header and value length to offset.
+		offset += (option.val - (pdu->buf + offset)) + option.len;
+
+		if (offset > pdu->max) {
+			return last_offset;
+		}
+
+		last_offset = offset;
+	} while (1);
+
+	return offset;
+}
+
 coap_error coap_validate_pkt(coap_pdu *pdu) //uint8_t *pkt, size_t pkt_len)
 {
 	coap_error err;

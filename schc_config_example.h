@@ -16,6 +16,8 @@
 #define USE_UDP					1
 #define USE_IPv6				1
 
+#define NUMBER_OF_LAYERS		USE_COAP + USE_UDP + USE_IPv6
+
 #define MAX_HEADER_LENGTH		256
 
 #define MAX_COAP_HEADER_LENGTH	64
@@ -28,7 +30,7 @@
 // maximum number of header fields present in a rule (vertical, top to bottom)
 #define UDP_FIELDS				4
 #define IPV6_FIELDS				10
-#define COAP_FIELDS				10
+#define COAP_FIELDS				12
 
 // the number of bytes a field can contain
 // (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
@@ -70,7 +72,7 @@
 
 #define FRAG_POS				0 // todo remove
 
-#define DEBUG_PRINTF(...) 		//log_print_string(__VA_ARGS__)
+#define DEBUG_PRINTF(...) 		printf(__VA_ARGS__) //log_print_string(__VA_ARGS__)
 #define SERVER 					0
 
 // the number of ack attempts
@@ -109,5 +111,8 @@
 #define WINDOW_SIZE_BYTES		((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) + 1
 #endif
 
+typedef enum {
+	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3
+} reliability_mode;
 
 #endif

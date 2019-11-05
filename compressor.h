@@ -9,18 +9,16 @@
 #ifndef __SCHCCOMPRESSOR_H__
 #define __SCHCCOMPRESSOR_H__
 
+#include "config.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 uint8_t schc_compressor_init(uint8_t src[16]);
-int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length);
+int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id);
 
-uint16_t schc_construct_header(unsigned char* data, unsigned char *header,
-		uint32_t device_id, uint16_t total_length, uint8_t* header_offset);
-
-uint16_t compute_length(unsigned char *data, uint16_t data_len);
-uint16_t compute_checksum(unsigned char *data);
+uint16_t schc_decompress(unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length);
 
 #ifdef __cplusplus
 }
