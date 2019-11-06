@@ -18,6 +18,17 @@
 
 #define NUMBER_OF_LAYERS		USE_COAP + USE_UDP + USE_IPv6
 
+// maximum number of header fields present in a rule (vertical, top to bottom)
+#define IPV6_FIELDS				10
+#define UDP_FIELDS				4
+#define COAP_FIELDS				12
+
+// the number of bytes a field can contain
+// (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
+#define MAX_IPV6_FIELD_LENGTH	8
+#define MAX_UDP_FIELD_LENGTH	2
+#define MAX_COAP_FIELD_LENGTH	32
+
 #define MAX_HEADER_LENGTH		256
 
 #define MAX_COAP_HEADER_LENGTH	64
@@ -26,15 +37,6 @@
 
 // the maximum transfer unit of the underlying technology
 #define MAX_MTU_LENGTH			160
-
-// maximum number of header fields present in a rule (vertical, top to bottom)
-#define UDP_FIELDS				4
-#define IPV6_FIELDS				10
-#define COAP_FIELDS				12
-
-// the number of bytes a field can contain
-// (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
-#define MAX_COAP_FIELD_LENGTH	32
 
 // the maximum number of tokens inside a JSON structure
 #define JSON_TOKENS				16
@@ -51,29 +53,9 @@
 
 #define RULE_SIZE_BITS			8
 
-// ToDo
-// can be calculated
-
-// NETWORK LAYER
-#define NWL_SHIFT				0
-#define NWL_MASK				3
-
-// TRANSPORT LAYER
-#define TPL_SHIFT				2
-#define TPL_MASK				12
-
-// APPLICATION LAYER
-#define APL_SHIFT				4
-#define APL_MASK				112
-
-// FRAGMENTATION BIT
-#define FRAG_SHIFT				7 // ToDo: refactor
-#define FRAG_MASK				128 // ToDo: refactor
-
-#define FRAG_POS				0 // todo remove
+#define UNCOMPRESSED_RULE_ID	0
 
 #define DEBUG_PRINTF(...) 		printf(__VA_ARGS__) //log_print_string(__VA_ARGS__)
-#define SERVER 					0
 
 // the number of ack attempts
 #define MAX_ACK_REQUESTS		3

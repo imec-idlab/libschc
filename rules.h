@@ -5,7 +5,7 @@
 #define UDP_RULES				3
 #define COAP_RULES				4
 
-#define DEVICE_COUNT			1
+#define DEVICE_COUNT			2
 
 #include "schc_config.h"
 
@@ -294,12 +294,14 @@ const struct schc_rule_t schc_rule_4 = {
 };
 
 /* save rules in flash */
-const struct schc_rule_t* schc_rules[] = { &schc_rule_1, &schc_rule_2, &schc_rule_3, &schc_rule_4 };
+const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2, &schc_rule_3, &schc_rule_4 };
+const struct schc_rule_t* node2_schc_rules[] = { &schc_rule_1 };
 
 /* rules for a particular device */
-struct schc_device node1 = { 1, 4, &schc_rules };
+struct schc_device node1 = { 1, 4, &node1_schc_rules };
+struct schc_device node2 = { 2, 1, &node2_schc_rules};
 
 /* server keeps track of multiple devices: add devices to device list */
-struct schc_device* devices[DEVICE_COUNT] = { &node1 };
+const struct schc_device* devices[DEVICE_COUNT] = { &node1, &node2 };
 
 #endif

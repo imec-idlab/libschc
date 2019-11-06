@@ -28,6 +28,11 @@ mv schc_config_example.h schc_config.h
 ```
 and edit the definitions according to your platform and preferences.
 
+In order to use a single, generic `compress()` function, each protocol layer is copied to an `unsigned char` array before compression, which can be compared to the rule fields' `usigned char` array, containing the target value. This adds memory overhead, as a buffer is required for each protocol layer, however, requires less computational memory and saves code space.
+Therefore, it is important to change the following definitions according to the largest rules:
+* `#define layer_FIELDS` should be set to the maximum number of header fields in a protocol rule
+* `#define MAX_layer_FIELD_LENGTH` should be set to the maximum number of bytes a field contains (i.e. target value)
+
 ### Rules
 The rules are implemented in a layered fashion and are be combined with a rule map to use different layers in a single ID. This map may be reused by different devices.
 ```
@@ -52,11 +57,11 @@ The rules are implemented in a layered fashion and are be combined with a rule m
 +--------------+
 ```
 
-The rules are implemented in a human readable fashion, which does add a lot of overhead. Additional research/implementation is required there.
+The rules are implemented in a human readable fashion, which does add some overhead. Additional research/implementation around proper encoding is required here.
 
-In `rules.h`, several rules can be defined
+In `rules.h`, several rules can be defined (`schc_coap_rule_t`, `schc_udp_rule_t` or `schc_ipv6_rule_t`)
 ```C
-struct schc_rule {
+struct schc_coap_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
 	uint8_t down;
@@ -64,7 +69,7 @@ struct schc_rule {
 	struct schc_field content[COAP_FIELDS];
 };
 ```
-Where the number of fields with Field Direction UP and DOWN are set and the total number of fields in the rule
+Where the number of fields with Field Direction UP and DOWN are set and the total number of fields in the rule.
 The rule is therefore constructed of different `schc_field`:
 ```C
 struct schc_field {
@@ -86,19 +91,43 @@ struct schc_field {
 - the `MO` is a pointer to the Matching Operator functions (defined in `config.h`) 
 - `CDA` contains the Compression/Decompression action (`enum` in `config.h`)
 
+Next, the seperate protocol rules must be combinened in a `schc_rule_t`:
+```C
+struct schc_rule_t {
+	/* the rule id */
+	uint8_t id;
+	/* a pointer to the IPv6 rule */
+	const struct schc_ipv6_rule_t* ipv6_rule;
+	/* a pointer to the UDP rule */
+	const struct schc_udp_rule_t* udp_rule;
+	/* a pointer to the CoAP rule */
+	const struct schc_coap_rule_t* coap_rule;
+	/* the reliability mode */
+	reliability_mode mode;
+	/* the rule size in bits */
+	uint8_t RULE_SIZE;
+	/* the fcn size in bits */
+	uint8_t FCN_SIZE;
+	/* the maximum number of fragments per window */
+	uint8_t MAX_WND_FCN;
+	/* the window size in bits */
+	uint8_t WINDOW_SIZE;
+	/* the dtag size in bits */
+	uint8_t DTAG_SIZE;
+};
+```
+
 Once all the rules are set up for a device, these can be saved and added to the device definition
 ```C
 struct schc_device {
-	uint32_t id;
-	uint8_t ipv6_count;
-	const struct schc_rule* ipv6_rules;
-	uint8_t udp_count;
-	const struct schc_rule* udp_rules;
-	uint8_t coap_count;
-	const struct schc_rule* coap_rules;
+	/* the device id (e.g. EUI) */
+	uint32_t device_id;
+	/* the total number of rules for a device */
+	uint8_t rule_count;
+	/* a pointer to the collection of rules for a device */
+	const struct schc_rule_t* device_rules[];
 };
 ```
-This is all done very statically and needs further enhancements.
 
 The `rules.h` file should contain enough information to try out different settings.
 
@@ -109,25 +138,16 @@ First, the compressesor should be initialized with the node it's source IP addre
 uint8_t schc_compressor_init(uint8_t src[16]);
 ```
 
-In order to compress a CoAP/UDP/IP packet, the following function can be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet may be returned.
+In order to compress a CoAP/UDP/IP packet, the following function can be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet may be returned. The direction can either be `UP` (from LPWA network to IPv6 network) or `DOWN` (from IPv6 network to LPWA network). Also the device type (`NETWORK_GATEWAY` or `DEVICE`) should be set, in order to determine whether the packet is being forwarded from the network gateway, or compressed at an end-point.
 ```C
-int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length);
+int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id, direction dir, device_type device_type);
 ```
 
 The reverse can be done by calling:
 ```C
-uint16_t schc_decompress(unsigned char* data, unsigned char *header,
-	uint32_t device_id, uint16_t total_length, uint8_t *header_offset);
+uint16_t schc_decompress(const unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length, direction dir, device_type device_type);
 ```
-This requires a buffer to which the decompressed headers can be returned (`unsigned char *header`), a pointer to the complete original data packet (`unsigned char *data`), the device id and total length and finally a pointer to an integer (`uint8_t *header_offset`), which will return the compressed header size (i.e. the position in the buffer where the actual data starts). The function will return the decompressed header length.
-
-Once the decompressed packet has been constructed, the UDP length and checksum may be calculated (this is still an open issue, as these functions should be called from the `construct_header` function itself).
-```C
-uint16_t compute_length(unsigned char *data, uint16_t data_len);
-uint16_t compute_checksum(unsigned char *data);
-```
-
-The result should be a complete decompressed packet.
+This requires a buffer to which the decompressed packet can be returned (`unsigned char *buf`), a pointer to the complete original data packet (`unsigned char *data`), the device id, the total length, the direction and device type. The function will return the decompressed header length.
 
 ### Fragmenter
 The fragmenter and compressor are decoupled and require seperate initialization.

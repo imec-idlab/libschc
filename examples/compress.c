@@ -36,28 +36,23 @@ uint8_t msg[PACKET_LENGTH] = {
  int main() {
 	// COMPRESSION
 	// initialize the client compressor
-	uint8_t src_client[16] = { 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	uint8_t src[16] = { 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-	schc_compressor_init(src_client);
+	schc_compressor_init(src);
 	
 	uint8_t compressed_buf[MAX_PACKET_LENGTH];
-	uint32_t device_id = 0x01;
+	uint32_t device_id = 0x02;
 
 	// compress packet
 	int compressed_len = schc_compress(msg, compressed_buf, PACKET_LENGTH, device_id, UP, DEVICE);
 	
 	// DECOMPRESSION
-	// initialize the server decompressor
-	uint8_t src_server[16] = { 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02};
-	schc_compressor_init(src_server);
-
 	uint8_t schc_offset = 0; // schc offset is the compressed header size
 	uint8_t new_headerlen = 0;
 
 	// NOTE: DIRECTION remains UP as this packet is forwarded to the IPv6 network
 	unsigned char decomp_packet[MAX_PACKET_LENGTH] = { 0 };
-	new_headerlen = schc_decompress((unsigned char*) compressed_buf, decomp_packet, device_id, compressed_len, UP, SERVER);
+	new_headerlen = schc_decompress((unsigned char*) compressed_buf, decomp_packet, device_id, compressed_len, UP, NETWORK_GATEWAY);
 	if(new_headerlen == 0) { // some error occured
 		return 1;
 	}

@@ -10,12 +10,6 @@
 // total number of CoAP options available
 #define COAP_OPTIONS_LENGTH		16 // .. actually a picocoap variable
 
-// the number of bytes a field can contain
-// (e.g. UDP is max 2 bytes) (horizontal, contents of a rule field)
-#define MAX_IPV6_FIELD_LENGTH	8
-#define MAX_UDP_FIELD_LENGTH	2
-#define MAX_COAP_FIELD_LENGTH	32
-
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
@@ -23,6 +17,10 @@
 typedef enum {
 	UP = 0, DOWN = 1, BI = 2
 } direction;
+
+typedef enum {
+	NETWORK_GATEWAY = 0, DEVICE = 1
+} device_type;
 
 typedef enum {
 	NOTSENT = 0,
@@ -46,7 +44,7 @@ struct schc_field {
 	CDA action;
 };
 
-
+// specific protocol layer structure
 #if USE_IPv6
 struct schc_ipv6_rule_t {
 	uint16_t rule_id;
@@ -77,6 +75,7 @@ struct schc_coap_rule_t {
 };
 #endif
 
+// structure to allow generic compression of each layer
 struct schc_layer_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
@@ -120,7 +119,7 @@ struct schc_device {
 	/* the total number of rules for a device */
 	uint8_t rule_count;
 	/* a pointer to the collection of rules for a device */
-	const struct schc_rule_t* device_rules[];
+	const struct schc_rule_t *(*device_rules)[];
 };
 
 typedef uint16_t uip_ip6addr_t[8];

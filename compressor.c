@@ -22,6 +22,7 @@
 
 // changes on server/client
 static direction DI;
+static device_type DEVICE_TYPE;
 static uip_ipaddr_t node_ip_6;
 
 jsmn_parser json_parser;
@@ -91,9 +92,7 @@ struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		// ToDo
-		// pointer to device rule table
-		const struct schc_rule_t* curr_rule = schc_rules[i];
+		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
 
 #if USE_IPv6
 		if(curr_rule->ipv6_rule->rule_id != ip_rule_id) {
@@ -136,9 +135,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		// ToDo
-		// pointer to device rule table
-		const struct schc_rule_t* curr_rule = schc_rules[i];
+		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
 		if(curr_rule->id == rule_id) {
 			return curr_rule;
 		}
@@ -153,7 +150,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id
  *
  * @param schc_header 			the header in which to operate
  * @param header 				the original header
- * @param cols 					the number of columns the header contains
+ * @param cols 					the number of fields the header contains
  * @param rule 					the rule to match the compression with
  *
  * @return the length 			length of the compressed header
@@ -558,7 +555,7 @@ static uint8_t generate_ip_header_fields(struct uip_udpip_hdr *ip_udp_header) {
 	// the values are identified by their role and not by their position in the frame
 	// therefore, we switch positions depending on the direction indicator
 
-	if( (!SERVER) && DI == UP) {
+	if( (DEVICE_TYPE != NETWORK_GATEWAY) && DI == UP) {
 		// swap fields
 		memcpy(ipv6_header_fields[6], dest_prefix, 8);
 		memcpy(ipv6_header_fields[7], dest_iid, 8);
@@ -598,9 +595,7 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct uip_udpip
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		// ToDo
-		// pointer to device rule table
-		const struct schc_ipv6_rule_t* curr_rule = schc_rules[i]->ipv6_rule;
+		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->ipv6_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -656,7 +651,7 @@ static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char
 		pckt_out[4] = ip_header[5];
 		pckt_out[5] = ip_header[6];
 
-		if( (DI == UP) && SERVER) {
+		if( (DI == UP) && (DEVICE_TYPE == NETWORK_GATEWAY)) {
 			// next header, hop limit
 			memcpy(&pckt_out[6], &ip_header[7], 2);
 			// swap source and destination
@@ -726,9 +721,7 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct uip_u
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		// ToDo
-		// pointer to device rule table
-		const struct schc_udp_rule_t* curr_rule = schc_rules[i]->udp_rule;
+		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->udp_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -883,9 +876,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, u
 	int j; int k;
 
 	for (i = 0; i < device->rule_count; i++) {
-		// ToDo
-		// pointer to device rule table
-		const struct schc_coap_rule_t* curr_rule = schc_rules[i]->coap_rule;
+		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->coap_rule;
 
 		(DI == DOWN) ? (direction_field_length = curr_rule->down) : (direction_field_length = curr_rule->up);
 
@@ -1184,18 +1175,17 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
  * @param buf			pointer to the compressed packet buffer
  * @param total_length 	the length of the packet
  * @param device_id		the device id to find a rule for
- * @param direction		the direction of the flow (UP: device to server, DOWN: server to device)
+ * @param direction		the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
+ * @param device_type	the device type: NETWORK_GATEWAY or DEVICE
  *
  * @return the length of the compressed packet
  *         -1 on a memory overflow
  */
 
-int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id) {
-	if (SERVER) {
-		DI = DOWN;
-	} else {
-		DI = UP;
-	}
+int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
+		uint32_t device_id, direction dir, device_type device_type) {
+	DI = dir;
+	DEVICE_TYPE = device_type;
 
 	uint16_t schc_offset = RULE_SIZE_BYTES;
 	uint16_t coap_length = 0;
@@ -1404,7 +1394,7 @@ static uint16_t chksum(uint16_t sum, const uint8_t *data, uint16_t len) {
  * @return checksum the computed checksum
  *
  */
-static uint16_t compute_checksum(unsigned char *data) {
+uint16_t compute_checksum(unsigned char *data) {
 	// if the checksum fields are set to 0
 	// the checksum must be calculated
 	if(data[46] == 0 && data[47] == 0) {
@@ -1440,12 +1430,18 @@ static uint16_t compute_checksum(unsigned char *data) {
  * @param 	buf	 				pointer where to save the decompressed packet
  * @param 	device_id 			the device its id
  * @param 	total_length 		the total length of the received data
- * @param 	direction			the direction of the flow (UP: device to server, DOWN: server to device)
+ * @param 	direction			the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
+ * @param	device_type			the type of device: NETWORK_GATEWAY or DEVICE
  *
  * @return 	length 				length of the newly constructed packet
  * 			0 					the rule was not found
  */
-uint16_t schc_decompress(unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length) {
+uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
+		uint32_t device_id, uint16_t total_length, direction dir,
+		device_type device_type) {
+	DI = dir;
+	DEVICE_TYPE = device_type;
+
 	uint8_t rule_id; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 	uint8_t header_offset = 0;
 
