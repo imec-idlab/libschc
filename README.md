@@ -19,6 +19,13 @@ The `schc-config.h` file contains a definition for dynamic memory allocation, us
 The current implementation is based on draft-ietf-lpwan-ipv6-static-context-hc-18 (<https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/18/>), some naming conventions are therefore not in line with the current specification.
 
 Please keep in mind that the library works, but is still very experimental!
+## EXAMPLES
+### Running the examples
+In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of POSIX timer API's and should be addapted for your platform (see [Fragmentation](#fragmentation))
+```
+cd examples
+make all
+```
 
 ## DOCUMENTATION
 ### Configuration
@@ -131,7 +138,7 @@ struct schc_device {
 
 The `rules.h` file should contain enough information to try out different settings.
 
-### Compressor
+### Compression
 The compressor performs all actions to compress the given protocol headers.
 First, the compressesor should be initialized with the node it's source IP address (8 bit array):
 ```C
@@ -149,7 +156,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf, uint32_t
 ```
 This requires a buffer to which the decompressed packet can be returned (`unsigned char *buf`), a pointer to the complete original data packet (`unsigned char *data`), the device id, the total length, the direction and device type. The function will return the decompressed header length.
 
-### Fragmenter
+### Fragmentation
 The fragmenter and compressor are decoupled and require seperate initialization.
 ```C
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn, 
@@ -167,6 +174,31 @@ The initilization function takes the following arguments:
 The fragmenter is built around the `mbuf` principle, derived from the BSD OS, where every fragment is part of a linked list. The fragmenter holds a preallocated number of slots, defined in `schc_config.h` with `#define SCHC_CONF_RX_CONNS`.
 Every received packet is added to the `MBUF_POOL`, containing a linked list of fragments for a particular connection.
 Once a transmission has been ended, the fragmenter will then glue together the different fragments.
+
+#### Fragmentation
+After compressing a packet, the return value of `schc_compress` can be used to check whether a packet should be fragmented or not.
+In order to fragment a packet, the parameters of the connection should be set according to your preferences.
+
+```C
+schc_fragmentation_t tx_conn; // keep track of the tx state
+
+tx_conn.mode = ACK_ON_ERROR;
+tx_conn.mtu = current_network_driver->mtu; // the maximum length of each fragment
+tx_conn.dc = 20000; // duty cycle
+
+tx_conn.data_ptr = &compressed_packet; // the pointer to the compressed packet
+tx_conn.packet_len = err; // the total length of the packet
+tx_conn.send = &network_driver_send; // callback function to call for transmission
+tx_conn.FCN_SIZE = 3;
+tx_conn.MAX_WND_FCN = 6;
+tx_conn.WINDOW_SIZE = 1;
+tx_conn.DTAG_SIZE = 0;
+tx_conn.RULE_SIZE = 8;
+
+tx_conn.post_timer_task = &set_tx_timer;
+
+schc_fragment(&tx_conn); // start the fragmentation
+```
 
 #### Reassembly
 Upon reception of a fragment, the following function should be called:
@@ -212,29 +244,6 @@ The result will be a compressed packet, which can be decompressed by using the d
 Don't forget to reset the connection.
 ```C
 void schc_reset(schc_fragmentation_t* conn);
-```
-
-#### Fragmentation
-After compressing a packet, the return value of `schc_compress` can be used to check whether a packet should be fragmented or not.
-In order to fragment a packet, the parameters of the connection should be set according to your preferences.
-
-```C
-tx_conn.mode = ACK_ON_ERROR;
-tx_conn.mtu = current_network_driver->mtu; // the maximum length of each fragment
-tx_conn.dc = 20000; // duty cycle
-
-tx_conn.data_ptr = &compressed_packet; // the pointer to the compressed packet
-tx_conn.packet_len = err; // the total length of the packet
-tx_conn.send = &network_driver_send; // callback function to call for transmission
-tx_conn.FCN_SIZE = 3; // todo get from rule
-tx_conn.MAX_WND_FCN = 6; // todo will be removed?
-tx_conn.WINDOW_SIZE = 1; // todo support multiple window sizes
-tx_conn.DTAG_SIZE = 0; // todo no support yet
-tx_conn.RULE_SIZE = 8; // todo get from rule
-
-tx_conn.post_timer_task = &set_tx_timer;
-
-schc_fragment((schc_fragmentation_t*) &tx_conn); // start the fragmentation
 ```
 
 #### Timers

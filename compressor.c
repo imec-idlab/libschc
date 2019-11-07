@@ -1319,11 +1319,11 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 	DEBUG_PRINTF("schc_compress(): payload length: %d (total length: %d) \n", payload_len, new_pkt_length);
 	for(i = schc_offset; i < new_pkt_length; i++) {
 		DEBUG_PRINTF("%02X ", buf[i]);
-		if(!((i + 1) % 12)) {
+		if(!(((i - schc_offset) + 1) % 12)) {
 			DEBUG_PRINTF("\n");
 		}
 	}
-	DEBUG_PRINTF("\n");
+	DEBUG_PRINTF("\n\n");
 
 	// return the new length of the packet
 	return new_pkt_length;

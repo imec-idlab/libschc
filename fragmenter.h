@@ -32,6 +32,12 @@ extern "C" {
 #define SCHC_SUCCESS 			0
 
 /**
+ * Return code: End of fragmentation cycle. Indicates successful completion of an SCHC
+ * fragmentation cycle.
+ */
+#define SCHC_END				3
+
+/**
  * Return code: Error. Generic indication that an SCHC operation went wrong
  */
 #define SCHC_FAILURE			-1
@@ -129,6 +135,8 @@ typedef struct schc_fragmentation_t {
 			uint32_t time_ms, void *arg);
 	/* this function is called when the last rx timer expires */
 	void (*end_rx)(struct schc_fragmentation_t *conn);
+	/* this function is called once the device reaches the END_TX state */
+	void (*end_tx)();
 	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(uint32_t device_id);
 	/* indicates whether a timer has expired */
