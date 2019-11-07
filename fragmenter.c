@@ -234,9 +234,9 @@ static void print_bitmap(uint8_t bitmap[], uint32_t length) {
 	uint32_t i;
 	for (i = 0; i < length; i++) {
 		uint8_t bit = bitmap[i / 8] & 128 >> (i % 8);
-		printf("%d ", bit ? 1 : 0);
+		DEBUG_PRINTF("%d ", bit ? 1 : 0);
 	}
-	printf("\n"); // flush buffer
+	DEBUG_PRINTF("\n"); // flush buffer
 }
 
 /**
@@ -320,12 +320,12 @@ static void mbuf_print(schc_mbuf_t *head) {
 	uint8_t i = 0; uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: 0x%X", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("%d: 0x%X\n", curr->frag_cnt, curr->ptr);
 		// DEBUG_PRINTF("0x%X", curr);
 		for (j = 0; j < curr->len; j++) {
-			printf("0x%02X ", curr->ptr[j]);
+			DEBUG_PRINTF("0x%02X ", curr->ptr[j]);
 		}
-		printf("\n");
+		DEBUG_PRINTF("\n");
 		curr = curr->next;
 		i++;
 	}

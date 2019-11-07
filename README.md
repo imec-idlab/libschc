@@ -21,11 +21,7 @@ The current implementation is based on draft-ietf-lpwan-ipv6-static-context-hc-1
 Please keep in mind that the library works, but is still very experimental!
 ## EXAMPLES
 ### Running the examples
-In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of POSIX timer API's and should be addapted for your platform (see [Fragmentation](#fragmentation))
-```
-cd examples
-make all
-```
+In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of POSIX timer API's and should be adapted to your platform (see [Fragmentation](#fragmentation) and the examples folder).
 
 ## DOCUMENTATION
 ### Configuration
@@ -268,6 +264,8 @@ static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 	add_device(device_id, delay, callback);
 }
 ```
+
+An example is provided in the examples folder, where a timer library is used and the callbacks are adapted to this library.
 
 ## LIMITATIONS
 Here the main concerns are listed which leave room for optimization
