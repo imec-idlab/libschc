@@ -1,43 +1,44 @@
-## DOCUMENTATION
-### Configuration
-First copy the configuration file 
-```
-mv schc_config_example.h schc_config.h
-```
-and edit the definitions according to your platform and preferences.
-
-In order to use a single, generic `compress()` function, each protocol layer is copied to an `unsigned char` array before compression, which can be compared to the rule fields' `usigned char` array, containing the target value. This adds memory overhead, as a buffer is required for each protocol layer, however, requires less computational memory and saves code space.
-Therefore, it is important to change the following definitions according to the largest rules:
-* `#define layer_FIELDS` should be set to the maximum number of header fields in a protocol rule
-* `#define MAX_layer_FIELD_LENGTH` should be set to the maximum number of bytes a field contains (i.e. target value)
+# DOCUMENTATION
+## Static Context Header Compression
+Static Context Header Compression or SCHC defines a mechanism to compress protocol headers by using contexts, which are both known to the sender and the translating gateway.
+The contexts represent possible header configurations, stored in a rule and identifed by an id. This id and possible 'residue' (header leftovers added by a rule configuration to add more flexibility) are exchanged between 2 SCHC-devices.
+The receiver will be able to reconstruct the original header by using the exact same rule.
+As this technique is aimed at technologies with limited bandwidth capbilities which are possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers.
 
 ### Rules
-The rules are implemented in a layered fashion and are be combined with a rule map to use different layers in a single ID. This map may be reused by different devices.
+As proposed in draft-22, every technology should define a profile to set the parameters according to the properties of that technology.
+The profile includes the rules with their corresponding parameters, a pointer to the protocol layer definitions and the rule id.
+Protocol layers are defined and use static definitions for the size of every protocol layer defintion as `malloc()` functions are omitted. The structure of these definitions however, are generic and ensure scalability.
+A representation of the implementation is shown in the following figure:
+
 ```
-+----------------+       +----------------------+       +-------------------------+
-|    IP_RULE_T 1 |--+    |  COMPRESSION_RULE_T  |---+   |       SCHC_RULE_T       |
-|    IP_RULE_T 2 |  |    +----------------------+   |   +-------------------------+
-|    IP_RULE_T 3 |  +--->|         &(IP_RULE_T) |   |   |                 RULE_ID |
-|    IP RULE_T 4 |  +--->|        &(UDP_RULE_T) |   +-->|   &(COMPRESSION_RULE_T) |
-|    IP RULE_T 5 |  | +->|       &(COAP_RULE_T) |       |        RELIABILITY_MODE |
-+----------------+  | |  +----------------------+       |                FCN_SIZE |
-                    | |                                 |             WINDOW_SIZE |
-+----------------+  | |                                 |               DTAG_SIZE |
-|   UDP_RULE_T 1 |  | |                                 |    RETRANSMISSION_TIMER |
-|   UDP_RULE_T 2 |--+ |                                 |        INACTIVITY_TIMER |
++----------------+       +----------------------+       +-------------------------+       +-------------------+ 
+|    IP_RULE_t 1 |----+  |  COMPRESSION_RULE_t  |----+  |       SCHC_RULE_t       |<-+    |   SCHC_DEVICE_t   |
+|    IP_RULE_t 2 |    |  +----------------------+    |  +-------------------------+  |    +-------------------+
+|    IP_RULE_t 3 |    +->|         &(IP_RULE_T) |    |  |                 RULE_ID |  |    |         DEVICE_ID |
+|    IP RULE_t 4 | +---->|        &(UDP_RULE_T) |    +->|   &(COMPRESSION_RULE_t) |  +----|     *(*CONTEXT)[] |
+|    IP RULE_t 5 | |  +->|       &(COAP_RULE_T) |       |        RELIABILITY_MODE |       +-------------------+
++----------------+ |  |  +----------------------+       |                FCN_SIZE |
+                   |  |                                 |             WINDOW_SIZE |
++----------------+ |  |                                 |               DTAG_SIZE |
+|   UDP_RULE_t 1 | |  |                                 |    RETRANSMISSION_TIMER |
+|   UDP_RULE_t 2 |-+  |                                 |        INACTIVITY_TIMER |
 +----------------+    |                                 |         MAX_ACK_REQUEST |
                       |                                 +-------------------------|
 +----------------+    |
-|  COAP_RULE_T 1 |    |
-|  COAP_RULE_T 2 |    |
-|  COAP_RULE_T 3 |    |
-|  COAP_RULE_T 4 |----+
+|  COAP_RULE_t 1 |    |
+|  COAP_RULE_t 2 |    |
+|  COAP_RULE_t 3 |    |
+|  COAP_RULE_t 4 |----+
 +----------------+
 ```
 
-The rules are implemented in a human readable fashion, which does add some overhead. Additional research/implementation around proper encoding is required here.
+The rules are layer specific and are combined in a `compression_rule_t` structure to ensure reusage over different rule ID's. The resulting `schc_rule_t` can be combined with similar definitions to form a context. This context may be reused by different devices. 
 
-In `rules.h`, several rules can be defined (`schc_coap_rule_t`, `schc_udp_rule_t` or `schc_ipv6_rule_t`)
+#### Implementation
+*Note: the human readability of the implementation adds overhead and requires additional research to perform proper encoding.*
+
+In `rules.h`, rules are defined by means of protocol layers (i.e. `schc_coap_rule_t`, `schc_udp_rule_t` or `schc_ipv6_rule_t`). As a `char` array seems the most generic option to support human readability over the different protocol layers, this requires a static definition of the Target Value length (i.e. the `XXXX_FIELDS` definition).
 ```C
 struct schc_coap_rule_t {
 	uint16_t rule_id;
@@ -222,7 +223,19 @@ Don't forget to reset the connection.
 void schc_reset(schc_fragmentation_t* conn);
 ```
 
-#### Timers
+## Configuration
+First copy the configuration file 
+```
+mv schc_config_example.h schc_config.h
+```
+and edit the definitions according to your platform and preferences.
+
+In order to use a single, generic `compress()` function, each protocol layer is copied to an `unsigned char` array before compression, which can be compared to the rule fields' `usigned char` array, containing the target value. This adds memory overhead, as a buffer is required for each protocol layer, however, requires less computational memory and saves code space.
+Therefore, it is important to change the following definitions according to the largest rules:
+* `#define layer_FIELDS` should be set to the maximum number of header fields in a protocol rule
+* `#define MAX_layer_FIELD_LENGTH` should be set to the maximum number of bytes a field contains (i.e. target value)
+
+### Timers
 As you can see in the above examples, the library has no native support for timers and requires callback functions from the main application to schedule transmissions and to time out.
 Therefore, 2 function callbacks are required. The following is based on the OSS-7 platform.
 ```C

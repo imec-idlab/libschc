@@ -122,7 +122,7 @@ struct schc_device {
 	/* the total number of rules for a device */
 	uint8_t rule_count;
 	/* a pointer to the collection of rules for a device */
-	const struct schc_rule_t *(*device_rules)[];
+	const struct schc_rule_t *(*context)[];
 };
 
 typedef uint16_t uip_ip6addr_t[8];

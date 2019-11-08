@@ -111,7 +111,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 
 	int i;
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
+		const struct schc_rule_t* curr_rule = (*device->context)[i];
 		if ((schc_rule->compression_rule == curr_rule->compression_rule)
 				&& (curr_rule->mode == mode)) {
 			return curr_rule;
@@ -147,7 +147,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
+		const struct schc_rule_t* curr_rule = (*device->context)[i];
 
 #if USE_IPv6
 		if(curr_rule->compression_rule->ipv6_rule->rule_id != ip_rule_id) {
@@ -192,7 +192,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
+		const struct schc_rule_t* curr_rule = (*device->context)[i];
 		if(curr_rule->id == rule_id) {
 			return curr_rule;
 		}
@@ -652,7 +652,7 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct uip_udpip
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->ipv6_rule;
+		const struct schc_ipv6_rule_t* curr_rule = (*device->context)[i]->compression_rule->ipv6_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -778,7 +778,7 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct uip_u
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->udp_rule;
+		const struct schc_udp_rule_t* curr_rule = (*device->context)[i]->compression_rule->udp_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -933,7 +933,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, u
 	int j; int k;
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->coap_rule;
+		const struct schc_coap_rule_t* curr_rule = (*device->context)[i]->compression_rule->coap_rule;
 
 		(DI == DOWN) ? (direction_field_length = curr_rule->down) : (direction_field_length = curr_rule->up);
 
