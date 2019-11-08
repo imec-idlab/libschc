@@ -94,21 +94,26 @@ struct schc_field {
 - the `MO` is a pointer to the Matching Operator functions (defined in `config.h`) 
 - `CDA` contains the Compression/Decompression action (`enum` in `config.h`)
 
-Next, the seperate protocol rules must be combinened in a `schc_rule_t`:
+Next, the seperate protocol rules must be combinened in a `schc_compression_rule_t`:
 ```C
-struct schc_rule_t {
-	/* the rule id */
-	uint8_t id;
+struct schc_compression_rule_t {
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
 	/* a pointer to the UDP rule */
 	const struct schc_udp_rule_t* udp_rule;
 	/* a pointer to the CoAP rule */
 	const struct schc_coap_rule_t* coap_rule;
+};
+```
+A set of layered rules in combination with fragmentation parameters constructs an `schc_rule_t`. The `reliability_mode` can also define whether a packet was fragmented or not.
+```C
+struct schc_rule_t {
+	/* the rule id */
+	uint8_t id;
+	/* a pointer to the SCHC rule */
+	const struct schc_compression_rule_t *schc_rule;
 	/* the reliability mode */
 	reliability_mode mode;
-	/* the rule size in bits */
-	uint8_t RULE_SIZE;
 	/* the fcn size in bits */
 	uint8_t FCN_SIZE;
 	/* the maximum number of fragments per window */
