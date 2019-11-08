@@ -103,7 +103,7 @@ struct schc_rule_t {
 	/* the rule id */
 	uint8_t id;
 	/* a pointer to the SCHC rule */
-	const struct schc_compression_rule_t *schc_rule;
+	const struct schc_compression_rule_t *compression_rule;
 	/* the reliability mode */
 	reliability_mode mode;
 	/* the fcn size in bits */

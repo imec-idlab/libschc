@@ -69,19 +69,74 @@ static struct schc_device* get_device_by_id(uint32_t device_id) {
 }
 
 /*
- * Combine the different layers to find the SCHC rule entry
+ * Set the rule id of the compressed packet
  *
- * @param 	ip_rule_id 		the rule id for the IP layer
- * @param 	udp_rule_id		the rule id for the UDP layer
- * @param 	coap_rule_id	the rule id for the CoAP layer
+ * @param 	schc_rule 		the schc rule to use
+ * @param 	data			the compressed packet buffer
+ *
+ * @return 	err				error codes
+ * 			1				SUCCESS
+ *
+ */
+int8_t set_rule_id(struct schc_rule_t* schc_rule, uint8_t* data) {
+	// copy uncompressed rule id in front of the buffer
+	memcpy((uint8_t*) data, &schc_rule->id, RULE_SIZE_BYTES);
+
+	DEBUG_PRINTF("set_rule_id(): rule id set to %d \n", schc_rule->id);
+
+	return 1;
+}
+
+/*
+ * Find a replacement rule with the correct reliability mode
+ *
+ * @param 	schc_rule 		the schc rule to find a replacement rule for
+ * @param 	mode			the mode for which a rule should be found
  * @param 	device_id		the device to find a rule for
  *
  * @return 	schc_rule		the rule that was found
  * 			NULL			if no rule was found
  *
  */
-struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
-		uint8_t udp_rule_id, uint8_t coap_rule_id, uint32_t device_id) {
+struct schc_rule_t* get_schc_rule_by_reliability_mode(
+		struct schc_rule_t* schc_rule, reliability_mode mode,
+		uint32_t device_id) {
+	struct schc_device *device = get_device_by_id(device_id);
+
+	if (device == NULL) {
+		DEBUG_PRINTF(
+				"get_schc_rule(): no device was found for this id");
+		return NULL;
+	}
+
+	int i;
+	for (i = 0; i < device->rule_count; i++) {
+		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
+		if ((schc_rule->compression_rule == curr_rule->compression_rule)
+				&& (curr_rule->mode == mode)) {
+			return curr_rule;
+		}
+	}
+
+	return NULL;
+}
+
+/*
+ * Combine the different layers to find the SCHC rule entry
+ *
+ * @param 	ip_rule_id 		the rule id for the IP layer
+ * @param 	udp_rule_id		the rule id for the UDP layer
+ * @param 	coap_rule_id	the rule id for the CoAP layer
+ * @param 	device_id		the device to find a rule for
+ * @param 	mode			the mode for which a rule should be found
+ *
+ * @return 	schc_rule		the rule that was found
+ * 			NULL			if no rule was found
+ *
+ */
+static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
+		uint8_t udp_rule_id, uint8_t coap_rule_id, uint32_t device_id,
+		reliability_mode mode) {
 	int i;
 	struct schc_device *device = get_device_by_id(device_id);
 
@@ -95,21 +150,23 @@ struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
 
 #if USE_IPv6
-		if(curr_rule->schc_rule->ipv6_rule->rule_id != ip_rule_id) {
+		if(curr_rule->compression_rule->ipv6_rule->rule_id != ip_rule_id) {
 			break;
 		}
 #endif
 #if USE_UDP
-		if(curr_rule->schc_rule->udp_rule->rule_id != udp_rule_id ) {
+		if(curr_rule->compression_rule->udp_rule->rule_id != udp_rule_id ) {
 			break;
 		}
 #endif
 #if USE_COAP
-		if(curr_rule->schc_rule->coap_rule->rule_id != coap_rule_id) {
+		if(curr_rule->compression_rule->coap_rule->rule_id != coap_rule_id) {
 			break;
 		}
 #endif
-		return curr_rule;
+		if(curr_rule->mode == mode) {
+				return curr_rule;
+		}
 	}
 
 	return NULL;
@@ -595,7 +652,7 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct uip_udpip
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->ipv6_rule;
+		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->ipv6_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -721,7 +778,7 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct uip_u
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->udp_rule;
+		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->udp_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -876,7 +933,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, u
 	int j; int k;
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->coap_rule;
+		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->compression_rule->coap_rule;
 
 		(DI == DOWN) ? (direction_field_length = curr_rule->down) : (direction_field_length = curr_rule->up);
 
@@ -1171,19 +1228,24 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
 /**
  * Compresses a CoAP/UDP/IP packet
  *
- * @param data 			pointer to the packet
- * @param buf			pointer to the compressed packet buffer
- * @param total_length 	the length of the packet
- * @param device_id		the device id to find a rule for
- * @param direction		the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
- * @param device_type	the device type: NETWORK_GATEWAY or DEVICE
+ * @param 	data 			pointer to the packet
+ * @param 	buf				pointer to the compressed packet buffer
+ * @param 	total_length 	the length of the packet
+ * @param 	device_id		the device id to find a rule for
+ * @param 	direction		the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
+ * @param	device_type		the device type: NETWORK_GATEWAY or DEVICE
+ * @param	schc_rule		a pointer to a schc rule struct to return the rule that was found
  *
- * @return the length of the compressed packet
- *         -1 on a memory overflow
+ * @return 	length			the length of the compressed packet
+ *         	-1 				on a memory overflow
+ *
+ * @note 	the compressor will only look for rules configured with the
+ * 			NOT_FRAGMENTED reliability mode
  */
 
 int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
-		uint32_t device_id, direction dir, device_type device_type) {
+		uint32_t device_id, direction dir, device_type device_type,
+		struct schc_rule_t **schc_rule) {
 	DI = dir;
 	DEVICE_TYPE = device_type;
 
@@ -1247,10 +1309,13 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 #endif
 
 	// find the rule for this device by combining the available id's
-	uint16_t rule_id = 0; uint8_t buf_offset = RULE_SIZE_BYTES; uint8_t data_offset = 0;
-	struct schc_rule_t *device_rule = get_schc_rule_by_layer_ids(ipv6_rule_id, udp_rule_id, coap_rule_id, device_id);
+	uint16_t rule_id = 0;
+	uint8_t buf_offset = RULE_SIZE_BYTES;
+	uint8_t data_offset = 0;
+	(*schc_rule) = get_schc_rule_by_layer_ids(ipv6_rule_id,
+			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
-	if(device_rule == NULL) { // NO RULE WAS FOUND: COPY UNCOMPRESSED
+	if((*schc_rule) == NULL) { // NO RULE WAS FOUND: COPY UNCOMPRESSED
 		rule_id = UNCOMPRESSED_RULE_ID;
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 
@@ -1272,9 +1337,9 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 #endif
 		schc_offset = buf_offset;
 	} else { // A RULE WAS FOUND: COMPRESS
-		rule_id = device_rule->id;
+		rule_id = (*schc_rule)->id;
 		DEBUG_PRINTF("schc_compress(): SCHC rule id %d \n", rule_id);
-		// copy uncompressed rule id in front of the buffer
+		// copy rule id in front of the buffer
 		memcpy((uint8_t*) buf, &rule_id, RULE_SIZE_BYTES);
 
 		// ... now compress the headers according to the rule
@@ -1449,13 +1514,13 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 	struct schc_rule_t *rule = get_schc_rule_by_rule_id(rule_id, device_id);
 	if(rule != NULL) {
 #if USE_COAP
-		coap_rule_id = rule->schc_rule->coap_rule->rule_id;
+		coap_rule_id = rule->compression_rule->coap_rule->rule_id;
 #endif
 #if USE_UDP
-		udp_rule_id = rule->schc_rule->udp_rule->rule_id;
+		udp_rule_id = rule->compression_rule->udp_rule->rule_id;
 #endif
 #if USE_IPv6
-		ipv6_rule_id = rule->schc_rule->ipv6_rule->rule_id;
+		ipv6_rule_id = rule->compression_rule->ipv6_rule->rule_id;
 #endif
 	}
 
@@ -1498,7 +1563,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 	} else { // compressed packet
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
-			ret = decompress_ipv6_rule(rule->schc_rule->ipv6_rule, data, buf, &header_offset);
+			ret = decompress_ipv6_rule(rule->compression_rule->ipv6_rule, data, buf, &header_offset);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1507,7 +1572,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 #if USE_UDP
 		// search udp rule
 		if (udp_rule_id != 0) {
-			ret = decompress_udp_rule(rule->schc_rule->udp_rule, data, buf, &header_offset);
+			ret = decompress_udp_rule(rule->compression_rule->udp_rule, data, buf, &header_offset);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1516,7 +1581,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(rule->schc_rule->coap_rule, data, &header_offset, &coap_msg);
+			ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &coap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}

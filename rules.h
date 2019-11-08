@@ -237,15 +237,15 @@ const struct schc_compression_rule_t compression_rule_4 = {
 #endif
 };
 
-const struct schc_rule_t schc_rule_1 = { 1, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_2 = { 2, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_3 = { 3, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_4 = { 4, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_1 = { 0x01, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_2 = { 0x02, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_3 = { 0x03, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_4 = { 0x04, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
 
-const struct schc_rule_t schc_rule_5 = { 5, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_6 = { 6, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_7 = { 7, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_8 = { 8, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_5 = { 0x05, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_6 = { 0x06, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_7 = { 0x07, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
 
 
 /* save rules in flash */

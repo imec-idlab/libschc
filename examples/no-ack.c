@@ -189,10 +189,10 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 	// based on rule id?
 
 	if (conn != &tx_conn_receiver) { // if returned value is tx_conn: acknowledgement is received
-		conn->mode = NO_ACK; // todo get from rule
-		if (conn->mode == NO_ACK) { // todo get from rule
-			conn->FCN_SIZE = 1;
-			conn->WINDOW_SIZE = 0;
+		conn->schc_rule->mode = NO_ACK; // todo get from rule
+		if (conn->schc_rule->mode == NO_ACK) { // todo get from rule
+			conn->schc_rule->FCN_SIZE = 1;
+			conn->schc_rule->WINDOW_SIZE = 0;
 		}
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
@@ -233,23 +233,27 @@ int main() {
 	uint32_t device_id = 0x01;
 
 	// compress packet
-	uint16_t compressed_len = schc_compress(msg, compressed_packet, PACKET_LENGTH, device_id, UP, DEVICE);
+	struct schc_rule_t* schc_rule;
+	uint16_t compressed_len = schc_compress(msg, compressed_packet,
+			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
 	tx_conn_sender.mtu = 51; // network driver MTU
 	tx_conn_sender.dc = 5000; // 5 seconds duty cycle
 	tx_conn_sender.device_id = device_id; // the device id of the connection
+
+	if(compressed_len < tx_conn_sender.mtu) { // should fragment, change rule
+		// select a rule based on a reliability mode
+		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
+		set_rule_id(schc_rule, compressed_packet);
+	}
 
 	tx_conn_sender.data_ptr = &compressed_packet;
 	tx_conn_sender.packet_len = compressed_len;
 	tx_conn_sender.send = &send_callback;
 	tx_conn_sender.end_tx = &end_tx;
 
-	tx_conn_sender.mode = NO_ACK; // todo get from rule
-	tx_conn_sender.FCN_SIZE = 3; // todo get from rule
-	tx_conn_sender.MAX_WND_FCN = 6; // todo will be removed?
-	tx_conn_sender.WINDOW_SIZE = 1; // todo support multiple window sizes
-	tx_conn_sender.DTAG_SIZE = 0; // todo no support yet
-	tx_conn_sender.RULE_SIZE = 8; // todo get from rule
+	tx_conn_sender.schc_rule = schc_rule;
+	tx_conn_sender.RULE_SIZE = 8; // todo get from profile
 
 	tx_conn_sender.post_timer_task = &set_tx_timer;
 

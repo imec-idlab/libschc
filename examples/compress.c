@@ -44,7 +44,9 @@ uint8_t msg[PACKET_LENGTH] = {
 	uint32_t device_id = 0x02;
 
 	// compress packet
-	int compressed_len = schc_compress(msg, compressed_buf, PACKET_LENGTH, device_id, UP, DEVICE);
+	struct schc_rule_t* schc_rule;
+	int compressed_len = schc_compress(msg, compressed_buf, PACKET_LENGTH,
+			device_id, UP, DEVICE, &schc_rule);
 	
 	// DECOMPRESSION
 	uint8_t schc_offset = 0; // schc offset is the compressed header size

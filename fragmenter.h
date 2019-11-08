@@ -147,18 +147,10 @@ typedef struct schc_fragmentation_t {
 	schc_fragmentation_ack_t ack;
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
-	/* the reliability mode */
-	reliability_mode mode;
+	/* the rule in use */
+	struct schc_rule_t *schc_rule;
 	/* the rule size in bits */
 	uint8_t RULE_SIZE;
-	/* the fcn size in bits */
-	uint8_t FCN_SIZE;
-	/* the maximum number of fragments per window */
-	uint8_t MAX_WND_FCN;
-	/* the window size in bits */
-	uint8_t WINDOW_SIZE;
-	/* the dtag size in bits */
-	uint8_t DTAG_SIZE;
 } schc_fragmentation_t;
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
