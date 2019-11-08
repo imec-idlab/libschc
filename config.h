@@ -84,9 +84,7 @@ struct schc_layer_rule_t {
 	struct schc_field content[];
 };
 
-struct schc_rule_t {
-	/* the rule id */
-	uint8_t id;
+struct schc_compression_rule_t {
 #if USE_IPv6
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
@@ -99,10 +97,15 @@ struct schc_rule_t {
 	/* a pointer to the CoAP rule */
 	const struct schc_coap_rule_t* coap_rule;
 #endif
+};
+
+struct schc_rule_t {
+	/* the rule id */
+	uint8_t id;
+	/* a pointer to the SCHC rule */
+	const struct schc_compression_rule_t *schc_rule;
 	/* the reliability mode */
 	reliability_mode mode;
-	/* the rule size in bits */
-	uint8_t RULE_SIZE;
 	/* the fcn size in bits */
 	uint8_t FCN_SIZE;
 	/* the maximum number of fragments per window */

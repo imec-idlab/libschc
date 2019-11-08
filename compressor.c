@@ -95,17 +95,17 @@ struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 		const struct schc_rule_t* curr_rule = (*device->device_rules)[i];
 
 #if USE_IPv6
-		if(curr_rule->ipv6_rule->rule_id != ip_rule_id) {
+		if(curr_rule->schc_rule->ipv6_rule->rule_id != ip_rule_id) {
 			break;
 		}
 #endif
 #if USE_UDP
-		if(curr_rule->udp_rule->rule_id != udp_rule_id ) {
+		if(curr_rule->schc_rule->udp_rule->rule_id != udp_rule_id ) {
 			break;
 		}
 #endif
 #if USE_COAP
-		if(curr_rule->coap_rule->rule_id != coap_rule_id) {
+		if(curr_rule->schc_rule->coap_rule->rule_id != coap_rule_id) {
 			break;
 		}
 #endif
@@ -595,7 +595,7 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct uip_udpip
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->ipv6_rule;
+		const struct schc_ipv6_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->ipv6_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -721,7 +721,7 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct uip_u
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->udp_rule;
+		const struct schc_udp_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->udp_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
@@ -876,7 +876,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, u
 	int j; int k;
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->coap_rule;
+		const struct schc_coap_rule_t* curr_rule = (*device->device_rules)[i]->schc_rule->coap_rule;
 
 		(DI == DOWN) ? (direction_field_length = curr_rule->down) : (direction_field_length = curr_rule->up);
 
@@ -1449,13 +1449,13 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 	struct schc_rule_t *rule = get_schc_rule_by_rule_id(rule_id, device_id);
 	if(rule != NULL) {
 #if USE_COAP
-		coap_rule_id = rule->coap_rule->rule_id;
+		coap_rule_id = rule->schc_rule->coap_rule->rule_id;
 #endif
 #if USE_UDP
-		udp_rule_id = rule->udp_rule->rule_id;
+		udp_rule_id = rule->schc_rule->udp_rule->rule_id;
 #endif
 #if USE_IPv6
-		ipv6_rule_id = rule->ipv6_rule->rule_id;
+		ipv6_rule_id = rule->schc_rule->ipv6_rule->rule_id;
 #endif
 	}
 
@@ -1498,7 +1498,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 	} else { // compressed packet
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
-			ret = decompress_ipv6_rule(rule->ipv6_rule, data, buf, &header_offset);
+			ret = decompress_ipv6_rule(rule->schc_rule->ipv6_rule, data, buf, &header_offset);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1507,7 +1507,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 #if USE_UDP
 		// search udp rule
 		if (udp_rule_id != 0) {
-			ret = decompress_udp_rule(rule->udp_rule, data, buf, &header_offset);
+			ret = decompress_udp_rule(rule->schc_rule->udp_rule, data, buf, &header_offset);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1516,7 +1516,7 @@ uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(rule->coap_rule, data, &header_offset, &coap_msg);
+			ret = decompress_coap_rule(rule->schc_rule->coap_rule, data, &header_offset, &coap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}

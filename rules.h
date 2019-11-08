@@ -189,9 +189,7 @@ const static struct schc_coap_rule_t coap_rule4 = {
 };
 #endif
 
-const struct schc_rule_t schc_rule_1 = {
-		/* the rule id */
-		1,
+const struct schc_compression_rule_t compression_rule_1 = {
 #if USE_IPv6
 		&ipv6_rule1,
 #endif
@@ -201,23 +199,9 @@ const struct schc_rule_t schc_rule_1 = {
 #if USE_COAP
 		&coap_rule1,
 #endif
-		/* the reliability mode */
-		NO_ACK,
-		/* the rule size in bits */
-		RULE_SIZE_BITS,
-		/* the fcn size in bits */
-		FCN_SIZE_BITS,
-		/* the maximum number of fragments per window */
-		MAX_WIND_FCN,
-		/* the window size in bits */
-		WINDOW_SIZE_BITS,
-		/* the dtag size in bits */
-		DTAG_SIZE_BITS
 };
 
-const struct schc_rule_t schc_rule_2 = {
-		/* the rule id */
-		2,
+const struct schc_compression_rule_t compression_rule_2 = {
 #if USE_IPv6
 		&ipv6_rule1,
 #endif
@@ -227,23 +211,9 @@ const struct schc_rule_t schc_rule_2 = {
 #if USE_COAP
 		&coap_rule2,
 #endif
-		/* the reliability mode */
-		NO_ACK,
-		/* the rule size in bits */
-		RULE_SIZE_BITS,
-		/* the fcn size in bits */
-		FCN_SIZE_BITS,
-		/* the maximum number of fragments per window */
-		MAX_WIND_FCN,
-		/* the window size in bits */
-		WINDOW_SIZE_BITS,
-		/* the dtag size in bits */
-		DTAG_SIZE_BITS
 };
 
-const struct schc_rule_t schc_rule_3 = {
-		/* the rule id */
-		3,
+const struct schc_compression_rule_t compression_rule_3 = {
 #if USE_IPv6
 		&ipv6_rule1,
 #endif
@@ -253,23 +223,9 @@ const struct schc_rule_t schc_rule_3 = {
 #if USE_COAP
 		&coap_rule3,
 #endif
-		/* the reliability mode */
-		NO_ACK,
-		/* the rule size in bits */
-		RULE_SIZE_BITS,
-		/* the fcn size in bits */
-		FCN_SIZE_BITS,
-		/* the maximum number of fragments per window */
-		MAX_WIND_FCN,
-		/* the window size in bits */
-		WINDOW_SIZE_BITS,
-		/* the dtag size in bits */
-		DTAG_SIZE_BITS
 };
 
-const struct schc_rule_t schc_rule_4 = {
-		/* the rule id */
-		4,
+const struct schc_compression_rule_t compression_rule_4 = {
 #if USE_IPv6
 		&ipv6_rule1,
 #endif
@@ -279,26 +235,27 @@ const struct schc_rule_t schc_rule_4 = {
 #if USE_COAP
 		&coap_rule4,
 #endif
-		/* the reliability mode */
-		NO_ACK,
-		/* the rule size in bits */
-		RULE_SIZE_BITS,
-		/* the fcn size in bits */
-		FCN_SIZE_BITS,
-		/* the maximum number of fragments per window */
-		MAX_WIND_FCN,
-		/* the window size in bits */
-		WINDOW_SIZE_BITS,
-		/* the dtag size in bits */
-		DTAG_SIZE_BITS
 };
 
+const struct schc_rule_t schc_rule_1 = { 1, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_2 = { 2, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_3 = { 3, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_4 = { 4, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_5 = { 5, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_6 = { 6, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_7 = { 7, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_8 = { 8, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+
+
 /* save rules in flash */
-const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2, &schc_rule_3, &schc_rule_4 };
+const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
+		&schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
+		&schc_rule_8 };
 const struct schc_rule_t* node2_schc_rules[] = { &schc_rule_1 };
 
 /* rules for a particular device */
-struct schc_device node1 = { 1, 4, &node1_schc_rules };
+struct schc_device node1 = { 1, 8, &node1_schc_rules };
 struct schc_device node2 = { 2, 1, &node2_schc_rules};
 
 /* server keeps track of multiple devices: add devices to device list */

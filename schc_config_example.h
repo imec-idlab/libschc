@@ -94,7 +94,7 @@
 #endif
 
 typedef enum {
-	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3
+	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3, NOT_FRAGMENTED = 4
 } reliability_mode;
 
 #endif

@@ -36,7 +36,7 @@ struct cb_t {
 struct cb_t *head = NULL;
 
 // structure to keep track of the transmission
-schc_fragmentation_t tx_conn;
+schc_fragmentation_t tx_conn_sender;
 // structure to keep track of the network gateway transmissions
 schc_fragmentation_t tx_conn_receiver;
 
@@ -73,7 +73,6 @@ void cleanup() {
  */
 void end_tx() {
 	DEBUG_PRINTF("end_tx() callback \n");
-	RUN = 0;
 }
 
 /*
@@ -81,17 +80,22 @@ void end_tx() {
  * may be used to forward packet to IP network
  */
 void end_rx(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
+	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
 
 	uint16_t packetlen = get_mbuf_len(conn->head); // calculate the length of the original packet
 	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen);
 	uint8_t decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 
 	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
-	uint16_t new_headerlen = schc_decompress(compressed_packet, decomp_packet, conn->device_id, packetlen, UP, NETWORK_GATEWAY);
+
+	DEBUG_PRINTF("end_rx(): decompress packet \n");
+	uint16_t new_headerlen = schc_decompress(compressed_packet, decomp_packet,
+			conn->device_id, packetlen, UP, NETWORK_GATEWAY);
 	if (new_headerlen == 0) { // some error occured
 		exit(0);
 	}
+
+	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
 
 	free(compressed_packet);
 }
@@ -131,7 +135,7 @@ static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 		exit(0);
 	} else {
 		DEBUG_PRINTF(
-				"set_tx_timer(): schedule next transmission in %d s \n\n", delay_sec);
+				"set_tx_timer(): schedule next tx state check in %d s \n\n", delay_sec);
 	}
 }
 
@@ -180,7 +184,11 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
 			&tx_conn_receiver, device_id); // get active connection
 
-	if (conn != &tx_conn_receiver) {
+	// PROBLEM
+	// check draft where it is defined how a fragmented packet is indicated
+	// based on rule id?
+
+	if (conn != &tx_conn_receiver) { // if returned value is tx_conn: acknowledgement is received
 		conn->mode = NO_ACK; // todo get from rule
 		if (conn->mode == NO_ACK) { // todo get from rule
 			conn->FCN_SIZE = 1;
@@ -189,10 +197,6 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 		ret = schc_reassemble(conn);
-	}
-
-	if (ret == 1) { // reception finished
-		end_rx(conn);
 	}
 }
 
@@ -218,7 +222,8 @@ void init() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 	schc_compressor_init(src);
 
-	schc_fragmenter_init(&tx_conn, &send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn_sender, &send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn_receiver, &send_callback, &end_rx, &remove_timer_entry);
 }
 
 int main() {
@@ -230,25 +235,25 @@ int main() {
 	// compress packet
 	uint16_t compressed_len = schc_compress(msg, compressed_packet, PACKET_LENGTH, device_id, UP, DEVICE);
 
-	tx_conn.mtu = 17; // network driver MTU
-	tx_conn.dc = 5000; // 5 seconds duty cycle
-	tx_conn.device_id = device_id; // the device id of the connection
+	tx_conn_sender.mtu = 51; // network driver MTU
+	tx_conn_sender.dc = 5000; // 5 seconds duty cycle
+	tx_conn_sender.device_id = device_id; // the device id of the connection
 
-	tx_conn.data_ptr = &compressed_packet;
-	tx_conn.packet_len = compressed_len;
-	tx_conn.send = &send_callback;
-	tx_conn.end_tx = &end_tx;
+	tx_conn_sender.data_ptr = &compressed_packet;
+	tx_conn_sender.packet_len = compressed_len;
+	tx_conn_sender.send = &send_callback;
+	tx_conn_sender.end_tx = &end_tx;
 
-	tx_conn.mode = NO_ACK; // todo get from rule
-	tx_conn.FCN_SIZE = 3; // todo get from rule
-	tx_conn.MAX_WND_FCN = 6; // todo will be removed?
-	tx_conn.WINDOW_SIZE = 1; // todo support multiple window sizes
-	tx_conn.DTAG_SIZE = 0; // todo no support yet
-	tx_conn.RULE_SIZE = 8; // todo get from rule
+	tx_conn_sender.mode = NO_ACK; // todo get from rule
+	tx_conn_sender.FCN_SIZE = 3; // todo get from rule
+	tx_conn_sender.MAX_WND_FCN = 6; // todo will be removed?
+	tx_conn_sender.WINDOW_SIZE = 1; // todo support multiple window sizes
+	tx_conn_sender.DTAG_SIZE = 0; // todo no support yet
+	tx_conn_sender.RULE_SIZE = 8; // todo get from rule
 
-	tx_conn.post_timer_task = &set_tx_timer;
+	tx_conn_sender.post_timer_task = &set_tx_timer;
 
-	int ret = schc_fragment(&tx_conn);
+	int ret = schc_fragment(&tx_conn_sender);
 
 	while(RUN) {
 	}

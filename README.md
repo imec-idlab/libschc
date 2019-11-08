@@ -39,25 +39,25 @@ Therefore, it is important to change the following definitions according to the 
 ### Rules
 The rules are implemented in a layered fashion and are be combined with a rule map to use different layers in a single ID. This map may be reused by different devices.
 ```
-+--------------+       +---------------------+
-|   IP RULES 1 |       |           RULE ID 1 |
-|            2 |       +---------------------+
-|            3 |       |           IP RULE 1 |
-|            4 |       |          UDP RULE 2 |
-|            5 |       |         CoAP RULE 4 |
-+--------------+       |  RELIABILITY NO_ACK |
-                       |          FCN SIZE 3 |
-+--------------+       |       WINDOW SIZE 1 |
-|  UDP RULES 1 |       |         DTAG SIZE 0 |
-|            2 |       +---------------------+
-+--------------+
-
-+--------------+
-| CoAP RULES 1 |
-|            2 |
-|            3 |
-|            4 |
-+--------------+
++----------------+       +----------------------+       +-------------------------+
+|    IP_RULE_T 1 |--+    |  COMPRESSION_RULE_T  |---+   |       SCHC_RULE_T       |
+|    IP_RULE_T 2 |  |    +----------------------+   |   +-------------------------+
+|    IP_RULE_T 3 |  +--->|         &(IP_RULE_T) |   |   |                 RULE_ID |
+|    IP RULE_T 4 |  +--->|        &(UDP_RULE_T) |   +-->|   &(COMPRESSION_RULE_T) |
+|    IP RULE_T 5 |  | +->|       &(COAP_RULE_T) |       |        RELIABILITY_MODE |
++----------------+  | |  +----------------------+       |                FCN_SIZE |
+                    | |                                 |             WINDOW_SIZE |
++----------------+  | |                                 |               DTAG_SIZE |
+|   UDP_RULE_T 1 |  | |                                 |    RETRANSMISSION_TIMER |
+|   UDP_RULE_T 2 |--+ |                                 |        INACTIVITY_TIMER |
++----------------+    |                                 |         MAX_ACK_REQUEST |
+                      |                                 +-------------------------|
++----------------+    |
+|  COAP_RULE_T 1 |    |
+|  COAP_RULE_T 2 |    |
+|  COAP_RULE_T 3 |    |
+|  COAP_RULE_T 4 |----+
++----------------+
 ```
 
 The rules are implemented in a human readable fashion, which does add some overhead. Additional research/implementation around proper encoding is required here.
