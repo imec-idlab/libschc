@@ -26,7 +26,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 		struct schc_rule_t* schc_rule, reliability_mode mode,
 		uint32_t device_id);
 
-uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
+uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir,
 		device_type device);
 

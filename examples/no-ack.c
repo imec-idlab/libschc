@@ -36,9 +36,8 @@ struct cb_t {
 struct cb_t *head = NULL;
 
 // structure to keep track of the transmission
-schc_fragmentation_t tx_conn_sender;
-// structure to keep track of the network gateway transmissions
-schc_fragmentation_t tx_conn_receiver;
+schc_fragmentation_t tx_conn;
+schc_fragmentation_t tx_conn_ngw;
 
 // the ipv6/udp/coap packet
 uint8_t msg[PACKET_LENGTH] = {
@@ -182,15 +181,19 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 	int8_t ret = 0;
 
 	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			&tx_conn_receiver, device_id); // get active connection
+			&tx_conn_ngw, device_id); // get active connection
 
 	// PROBLEM
 	// check draft where it is defined how a fragmented packet is indicated
 	// based on rule id?
 
-	if (conn != &tx_conn_receiver) { // if returned value is tx_conn: acknowledgement is received
-		conn->schc_rule->mode = NO_ACK; // todo get from rule
-		if (conn->schc_rule->mode == NO_ACK) { // todo get from rule
+	// this is done by checking the rule id
+	// if the packet should not be fragmented
+	// ...
+
+	if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is received
+		conn->schc_rule->mode = NO_ACK;
+		if (conn->schc_rule->mode == NO_ACK) {
 			conn->schc_rule->FCN_SIZE = 1;
 			conn->schc_rule->WINDOW_SIZE = 0;
 		}
@@ -198,6 +201,8 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 		conn->dc = 20000; // retransmission timer: used for timeouts
 		ret = schc_reassemble(conn);
 	}
+
+	// schc_reset(conn);
 }
 
 /*
@@ -222,8 +227,7 @@ void init() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 	schc_compressor_init(src);
 
-	schc_fragmenter_init(&tx_conn_sender, &send_callback, &end_rx, &remove_timer_entry);
-	schc_fragmenter_init(&tx_conn_receiver, &send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn, &send_callback, &end_rx, &remove_timer_entry);
 }
 
 int main() {
@@ -237,27 +241,27 @@ int main() {
 	uint16_t compressed_len = schc_compress(msg, compressed_packet,
 			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
-	tx_conn_sender.mtu = 51; // network driver MTU
-	tx_conn_sender.dc = 5000; // 5 seconds duty cycle
-	tx_conn_sender.device_id = device_id; // the device id of the connection
+	tx_conn.mtu = 51; // network driver MTU
+	tx_conn.dc = 5000; // 5 seconds duty cycle
+	tx_conn.device_id = device_id; // the device id of the connection
 
-	if(compressed_len < tx_conn_sender.mtu) { // should fragment, change rule
-		// select a rule based on a reliability mode
+	if(compressed_len < tx_conn.mtu) { // should fragment, change rule
+		// select a similar rule based on a reliability mode
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
 		set_rule_id(schc_rule, compressed_packet);
 	}
 
-	tx_conn_sender.data_ptr = &compressed_packet;
-	tx_conn_sender.packet_len = compressed_len;
-	tx_conn_sender.send = &send_callback;
-	tx_conn_sender.end_tx = &end_tx;
+	tx_conn.data_ptr = &compressed_packet;
+	tx_conn.packet_len = compressed_len;
+	tx_conn.send = &send_callback;
+	tx_conn.end_tx = &end_tx;
 
-	tx_conn_sender.schc_rule = schc_rule;
-	tx_conn_sender.RULE_SIZE = 8; // todo get from profile
+	tx_conn.schc_rule = schc_rule;
+	tx_conn.RULE_SIZE = 8; // todo get from profile
 
-	tx_conn_sender.post_timer_task = &set_tx_timer;
+	tx_conn.post_timer_task = &set_tx_timer;
 
-	int ret = schc_fragment(&tx_conn_sender);
+	int ret = schc_fragment(&tx_conn);
 
 	while(RUN) {
 	}

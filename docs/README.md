@@ -3,7 +3,7 @@
 Static Context Header Compression or SCHC defines a mechanism to compress protocol headers by using contexts, which are both known to the sender and the translating gateway.
 The contexts represent possible header configurations, stored in a rule and identifed by an id. This id and possible 'residue' (header leftovers added by a rule configuration to add more flexibility) are exchanged between 2 SCHC-devices.
 The receiver will be able to reconstruct the original header by using the exact same rule.
-As this technique is aimed at technologies with limited bandwidth capbilities which are possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers.
+As this technique is aimed at technologies with limited bandwidth capbilities possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers and to support the IPv6 1500 bytes MTU requirement.
 
 ### Rules
 As proposed in draft-22, every technology should define a profile to set the parameters according to the properties of that technology.
@@ -12,44 +12,33 @@ Protocol layers are defined and use static definitions for the size of every pro
 A representation of the implementation is shown in the following figure:
 
 ```
-+----------------+       +----------------------+       +-------------------------+       +-------------------+ 
-|    IP_RULE_t 1 |----+  |  COMPRESSION_RULE_t  |----+  |       SCHC_RULE_t       |<-+    |   SCHC_DEVICE_t   |
-|    IP_RULE_t 2 |    |  +----------------------+    |  +-------------------------+  |    +-------------------+
-|    IP_RULE_t 3 |    +->|         &(IP_RULE_T) |    |  |                 RULE_ID |  |    |         DEVICE_ID |
-|    IP RULE_t 4 | +---->|        &(UDP_RULE_T) |    +->|   &(COMPRESSION_RULE_t) |  +----|     *(*CONTEXT)[] |
-|    IP RULE_t 5 | |  +->|       &(COAP_RULE_T) |       |        RELIABILITY_MODE |       +-------------------+
-+----------------+ |  |  +----------------------+       |                FCN_SIZE |
-                   |  |                                 |             WINDOW_SIZE |
-+----------------+ |  |                                 |               DTAG_SIZE |
-|   UDP_RULE_t 1 | |  |                                 |    RETRANSMISSION_TIMER |
-|   UDP_RULE_t 2 |-+  |                                 |        INACTIVITY_TIMER |
-+----------------+    |                                 |         MAX_ACK_REQUEST |
-                      |                                 +-------------------------|
-+----------------+    |
-|  COAP_RULE_t 1 |    |
-|  COAP_RULE_t 2 |    |
-|  COAP_RULE_t 3 |    |
-|  COAP_RULE_t 4 |----+
-+----------------+
++---------------+      +----------------------+      +-------------------------+      +-------------------+ 
+|   ip_rule_t 1 |---+  |  compression_rule_t  |---+  |       schc_rule_t       |<-+   |   schc_device_t   |
+|   ip_rule_t 2 |   |  +----------------------+   |  +-------------------------+  |   +-------------------+
+|   ip_rule_t 3 |   +->|         &(ip_rule_t) |   |  |                 RULE_ID |  |   |         DEVICE_ID |
+|   ip_rule_t 4 | +--->|        &(udp_rule_t) |   +->|   &(compression_rule_t) |  +---|     *(*context)[] |
+|   ip_rule_t 5 | | +->|       &(coap_rule_t) |      |        RELIABILITY_MODE |      +-------------------+
++---------------+ | |  +----------------------+      |                FCN_SIZE |
+                  | |                                |             WINDOW_SIZE |
++---------------+ | |                                |               DTAG_SIZE |
+|  udp_rule_t 1 | | |                                |    RETRANSMISSION_TIMER |
+|  udp_rule_t 2 |-+ |                                |        INACTIVITY_TIMER |
++---------------+   |                                |         MAX_ACK_REQUEST |
+                    |                                +-------------------------|
++---------------+   |
+| coap_rule_t 1 |   |
+| coap_rule_t 2 |   |
+| coap_rule_t 3 |   |
+| coap_rule_t 4 |---+
++---------------+
 ```
 
-The rules are layer specific and are combined in a `compression_rule_t` structure to ensure reusage over different rule ID's. The resulting `schc_rule_t` can be combined with similar definitions to form a context. This context may be reused by different devices. 
+The rules are layer specific and are combined in a `compression_rule_t` structure to ensure reusage over different rule ID's. The resulting `schc_rule_t` can be combined with similar definitions to form a context. This context may be reused over different devices. 
 
 #### Implementation
 *Note: the human readability of the implementation adds overhead and requires additional research to perform proper encoding.*
 
-In `rules.h`, rules are defined by means of protocol layers (i.e. `schc_coap_rule_t`, `schc_udp_rule_t` or `schc_ipv6_rule_t`). As a `char` array seems the most generic option to support human readability over the different protocol layers, this requires a static definition of the Target Value length (i.e. the `XXXX_FIELDS` definition).
-```C
-struct schc_coap_rule_t {
-	uint16_t rule_id;
-	uint8_t up;
-	uint8_t down;
-	uint8_t length;
-	struct schc_field content[COAP_FIELDS];
-};
-```
-Where the number of fields with Field Direction UP and DOWN are set and the total number of fields in the rule.
-The rule is therefore constructed of different `schc_field`:
+Each rule is constructed of different `schc_field`:
 ```C
 struct schc_field {
 	char field[32];
@@ -64,11 +53,23 @@ struct schc_field {
 ```
 - `field` holds a string of the field name (i.e. the human-readability of the rules). 
 - the `msb_length` is used in combination with the Matching Operator `MSB`, but should be removed in coming releases.
-- the `field_length` indicates the length of **bytes**, but should be bits in coming releases. Field Position is only used for headers where multiple fields can exist for the same entry (e.g. CoAP uri-path).
-- `dir` indicates the direction (`UP`, `DOWN` or `BI`) and will have an impact on how the rules behave while compressing/decompressing. Depending on the `#define SERVER` in `schc_config.h`, the source and destination in the `decompress_ipv6_rule` and `generate_ip_header_fields` will be swapped, to ensure a single rule for server and end device.
+- the `field_length` indicates the length of **bytes**, (should be bits in coming releases). 
+- `field_pos` is only used for headers where multiple fields can exist for the same entry (e.g. CoAP uri-path).
+- `dir` indicates the direction (`UP`, `DOWN` or `BI`) and will have an impact on how the rules behave while compressing/decompressing. Depending on the direction of the flow and which device is performing the (de)compression, the source and destination in the `decompress_ipv6_rule` and `generate_ip_header_fields` will be swapped, to ensure a single rule for server and end device.
 - `target_value` holds a `char` array in order to support larger values. The downside of this approach is the `MAX_COAP_FIELD_LENGTH` definition, which should be set to the largest defined Target Value in order to save as much memory as possible.
 - the `MO` is a pointer to the Matching Operator functions (defined in `config.h`) 
 - `CDA` contains the Compression/Decompression action (`enum` in `config.h`)
+
+Next, every rule is defined by means of protocol layers (i.e. `schc_coap_rule_t`, `schc_udp_rule_t` or `schc_ipv6_rule_t`). An id is only used for debugging purposes. As the total length of the rules over the different protocol layers can be variable, a static definition of the vertical length of the largest rule possible is required (e.g. the `COAP_FIELDS` definition). Every rule should set the total number of fields (`length`). `up`  and `down` define the number of rule entries for the respective order of the flow to save compare cycles.
+```C
+struct schc_coap_rule_t {
+	uint16_t rule_id;
+	uint8_t up;
+	uint8_t down;
+	uint8_t length;
+	struct schc_field content[COAP_FIELDS];
+};
+```
 
 Next, the seperate protocol rules must be combinened in a `schc_compression_rule_t`:
 ```C
@@ -109,7 +110,7 @@ struct schc_device {
 	/* the total number of rules for a device */
 	uint8_t rule_count;
 	/* a pointer to the collection of rules for a device */
-	const struct schc_rule_t *(*device_rules)[];
+	const struct schc_rule_t *(*context)[];
 };
 ```
 
@@ -122,7 +123,7 @@ First, the compressesor should be initialized with the node it's source IP addre
 uint8_t schc_compressor_init(uint8_t src[16]);
 ```
 
-In order to compress a CoAP/UDP/IP packet, the following function can be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet may be returned. The direction can either be `UP` (from LPWA network to IPv6 network) or `DOWN` (from IPv6 network to LPWA network). Also the device type (`NETWORK_GATEWAY` or `DEVICE`) should be set, in order to determine whether the packet is being forwarded from the network gateway, or compressed at an end-point.
+In order to compress a CoAP/UDP/IP packet, `schc_compress()` should be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet can be returned. The direction can either be `UP` (from LPWA network to IPv6 network) or `DOWN` (from IPv6 network to LPWA network). Also the device type (`NETWORK_GATEWAY` or `DEVICE`) should be set, in order to determine whether the packet is being forwarded from the network gateway, or compressed at an end-point. The new length of the packet is returned.
 ```C
 int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id, direction dir, device_type device_type);
 ```
@@ -131,7 +132,7 @@ The reverse can be done by calling:
 ```C
 uint16_t schc_decompress(const unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length, direction dir, device_type device_type);
 ```
-This requires a buffer to which the decompressed packet can be returned (`unsigned char *buf`), a pointer to the complete original data packet (`unsigned char *data`), the device id, the total length, the direction and device type. The function will return the decompressed header length.
+Again, a buffer is required to which the decompressed packet can be returned (`uint8_t *buf`), a pointer to the complete original data packet (`uint8_t *data`), the device id, the total length, the direction and device type. The function will return the original, decompressed packet length.
 
 ### Fragmentation
 The fragmenter and compressor are decoupled and require seperate initialization.
@@ -143,42 +144,50 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 ```
 The initilization function takes the following arguments:
 - `tx_conn`, which can be an empty `schc_fragmentation_t` struct, to hold the information of the sending device.
-- `send` requires a pointer to a callback function, which will transmit the fragment over any interface and requires a platform specific implementation
+- `send` requires a pointer to a callback to transmit the fragment over an interface and requires a platform specific implementation
 - `end_rx` is called once the complete packet has been received (more information bellow)
 - `remove_timer_entry` had to be added for some platforms to remove timers once the complete transmission has been completed
 
 #### mbuf
-The fragmenter is built around the `mbuf` principle, derived from the BSD OS, where every fragment is part of a linked list. The fragmenter holds a preallocated number of slots, defined in `schc_config.h` with `#define SCHC_CONF_RX_CONNS`.
+The fragmenter is built around the `mbuf` principle, derived from the BSD OS, where every fragment is part of a linked list. The fragmenter holds a preallocated number of slots, defined in `schc_config.h` by `#define SCHC_CONF_RX_CONNS`.
 Every received packet is added to the `MBUF_POOL`, containing a linked list of fragments for a particular connection.
-Once a transmission has been ended, the fragmenter will then glue together the different fragments.
+Once a transmission has been ended, the fragmenter will glue together the different fragments.
 
 #### Fragmentation
 After compressing a packet, the return value of `schc_compress` can be used to check whether a packet should be fragmented or not.
 In order to fragment a packet, the parameters of the connection should be set according to your preferences.
 
 ```C
-schc_fragmentation_t tx_conn; // keep track of the tx state
+// compress packet
+struct schc_rule_t* schc_rule;
+uint16_t compressed_len = schc_compress(msg, compressed_packet,
+		PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
-tx_conn.mode = ACK_ON_ERROR;
-tx_conn.mtu = current_network_driver->mtu; // the maximum length of each fragment
-tx_conn.dc = 20000; // duty cycle
+tx_conn_sender.mtu = 51; // network driver MTU
+tx_conn_sender.dc = 5000; // 5 seconds duty cycle
+tx_conn_sender.device_id = device_id; // the device id of the connection
 
-tx_conn.data_ptr = &compressed_packet; // the pointer to the compressed packet
-tx_conn.packet_len = err; // the total length of the packet
-tx_conn.send = &network_driver_send; // callback function to call for transmission
-tx_conn.FCN_SIZE = 3;
-tx_conn.MAX_WND_FCN = 6;
-tx_conn.WINDOW_SIZE = 1;
-tx_conn.DTAG_SIZE = 0;
-tx_conn.RULE_SIZE = 8;
+if(compressed_len < tx_conn_sender.mtu) { // should fragment, change rule
+	// select a similar rule based on a reliability mode
+	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
+	set_rule_id(schc_rule, compressed_packet);
+}
 
-tx_conn.post_timer_task = &set_tx_timer;
+tx_conn_sender.data_ptr = &compressed_packet;
+tx_conn_sender.packet_len = compressed_len;
+tx_conn_sender.send = &send_callback;
+tx_conn_sender.end_tx = &end_tx;
 
-schc_fragment(&tx_conn); // start the fragmentation
+tx_conn_sender.schc_rule = schc_rule;
+tx_conn_sender.RULE_SIZE = 8; // todo get from profile
+
+tx_conn_sender.post_timer_task = &set_tx_timer;
+
+int ret = schc_fragment(&tx_conn_sender);
 ```
 
 #### Reassembly
-Upon reception of a fragment, the following function should be called:
+Upon reception of a fragment or an acknowledgement, the following function should be called:
 ```C
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn, uint32_t device_id)
 ```
@@ -218,7 +227,7 @@ void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr); // call with conn->head and poi
 ```
 The result will be a compressed packet, which can be decompressed by using the decompressor.
 
-Don't forget to reset the connection.
+Don't forget to reset the rx connection.
 ```C
 void schc_reset(schc_fragmentation_t* conn);
 ```
@@ -237,31 +246,25 @@ Therefore, it is important to change the following definitions according to the 
 
 ### Timers
 As you can see in the above examples, the library has no native support for timers and requires callback functions from the main application to schedule transmissions and to time out.
-Therefore, 2 function callbacks are required. The following is based on the OSS-7 platform.
+Therefore, 2 function callbacks are required.
 ```C
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
 static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
-	timer_post_task_prio(callback, timer_get_counter_value() + delay, DEFAULT_PRIORITY, arg);
 }
 ```
 
 As the server has to keep track of multiple devices and connections, a vector is used to keep track of multiple devices.
-The following is part of a C++ implementation, which makes use of the C library.
 ```C
 /*
  * The timer used by the SCHC library to time out the reception of fragments
  */
 static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
-	add_device(device_id, delay, callback);
 }
 ```
 
 An example is provided in the examples folder, where a timer library is used and the callbacks are adapted to this library.
 
 ## LIMITATIONS
-Here the main concerns are listed which leave room for optimization
-* there is no consistency in the data type for rule id's. Currently a device can have a maximum of 256 rules. However, as of the specification, this should be configurable at bit level. As a consequence, the compressor and decompressor do not make use of bitshifts
-* under issues, mainly optimization issues are listed
-* the library offers `#ifdef` definitions for use with layers, but is not implemented properly
+Most of the limitations are listed under issues and may be fixed in coming releases.

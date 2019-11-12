@@ -1501,7 +1501,7 @@ uint16_t compute_checksum(unsigned char *data) {
  * @return 	length 				length of the newly constructed packet
  * 			0 					the rule was not found
  */
-uint16_t schc_decompress(const unsigned char* data, unsigned char *buf,
+uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir,
 		device_type device_type) {
 	DI = dir;

@@ -941,7 +941,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		return 0;
 	}
 	if(conn->schc_rule == NULL) {
-		DEBUG_PRINTF("init_connection(): the SCHC rule should be set for this connection \n");
+		DEBUG_PRINTF("init_connection(): SCHC rule not specified \n");
 		return 0;
 	}
 	if(conn->schc_rule->MAX_WND_FCN >= get_max_fcn_value(conn)) {
