@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['schc_5fack_5finput_859',['SCHC_ACK_INPUT',['../fragmenter_8h.html#a4ae988f716a3d42117f0777a56f8f1c3',1,'fragmenter.h']]],
-  ['schc_5fbufsize_860',['SCHC_BUFSIZE',['../schc__config_8h.html#a0709fb8e6036919937aef443f7e94c77',1,'SCHC_BUFSIZE():&#160;schc_config.h'],['../schc__config__example_8h.html#a0709fb8e6036919937aef443f7e94c77',1,'SCHC_BUFSIZE():&#160;schc_config_example.h']]],
-  ['schc_5fconf_5fmbuf_5fpool_5flen_861',['SCHC_CONF_MBUF_POOL_LEN',['../schc__config_8h.html#abd7889c187270346009f19c2d0453190',1,'SCHC_CONF_MBUF_POOL_LEN():&#160;schc_config.h'],['../schc__config__example_8h.html#abd7889c187270346009f19c2d0453190',1,'SCHC_CONF_MBUF_POOL_LEN():&#160;schc_config_example.h']]],
-  ['schc_5fconf_5frx_5fconns_862',['SCHC_CONF_RX_CONNS',['../schc__config_8h.html#ad0b9bf0cc9b61f111c5c12e6d1f931e2',1,'SCHC_CONF_RX_CONNS():&#160;schc_config.h'],['../schc__config__example_8h.html#ad0b9bf0cc9b61f111c5c12e6d1f931e2',1,'SCHC_CONF_RX_CONNS():&#160;schc_config_example.h']]],
-  ['schc_5ffailure_863',['SCHC_FAILURE',['../fragmenter_8h.html#a72455d89c3af7b0868fbaf7095e5af11',1,'fragmenter.h']]],
-  ['schc_5ffrag_5finput_864',['SCHC_FRAG_INPUT',['../fragmenter_8h.html#ab014037ee9ccea0cea6b2d5366dee902',1,'fragmenter.h']]],
-  ['schc_5fno_5ffragmentation_865',['SCHC_NO_FRAGMENTATION',['../fragmenter_8h.html#a702d10e122e8809285882b69ae2e69a1',1,'fragmenter.h']]],
-  ['schc_5fsuccess_866',['SCHC_SUCCESS',['../fragmenter_8h.html#a609c4c5b7a6cdc56c3b1fc47c2cac402',1,'fragmenter.h']]],
-  ['server_867',['SERVER',['../schc__config_8h.html#a24cd3c37a165a8c4626d9e78df4574ff',1,'SERVER():&#160;schc_config.h'],['../schc__config__example_8h.html#a24cd3c37a165a8c4626d9e78df4574ff',1,'SERVER():&#160;schc_config_example.h']]]
+  ['udp_5ffields_902',['UDP_FIELDS',['../schc__config_8h.html#aed36719a087639bf1875b85276f09e55',1,'UDP_FIELDS():&#160;schc_config.h'],['../schc__config__example_8h.html#aed36719a087639bf1875b85276f09e55',1,'UDP_FIELDS():&#160;schc_config_example.h']]],
+  ['udp_5fhlen_903',['UDP_HLEN',['../config_8h.html#a5e211e5d295f6e70dee42f3083f89e71',1,'config.h']]],
+  ['udp_5frules_904',['UDP_RULES',['../rules_8h.html#a2805aa053679b024cb5f2a66c7e9f4dc',1,'rules.h']]],
+  ['uncompressed_5frule_5fid_905',['UNCOMPRESSED_RULE_ID',['../schc__config_8h.html#ad591339a01eda0d5ba955b40236a4b0c',1,'UNCOMPRESSED_RULE_ID():&#160;schc_config.h'],['../schc__config__example_8h.html#ad591339a01eda0d5ba955b40236a4b0c',1,'UNCOMPRESSED_RULE_ID():&#160;schc_config_example.h']]],
+  ['use_5fcoap_906',['USE_COAP',['../schc__config_8h.html#af792d439ea0fb7e7d97eb0584e6e6d2d',1,'USE_COAP():&#160;schc_config.h'],['../schc__config__example_8h.html#af792d439ea0fb7e7d97eb0584e6e6d2d',1,'USE_COAP():&#160;schc_config_example.h']]],
+  ['use_5fipv6_907',['USE_IPv6',['../schc__config_8h.html#a7353ec784d9c3d7aa4b938660e00575e',1,'USE_IPv6():&#160;schc_config.h'],['../schc__config__example_8h.html#a7353ec784d9c3d7aa4b938660e00575e',1,'USE_IPv6():&#160;schc_config_example.h']]],
+  ['use_5fudp_908',['USE_UDP',['../schc__config_8h.html#a55dabc2b8b295e55081b39b6382caaa8',1,'USE_UDP():&#160;schc_config.h'],['../schc__config__example_8h.html#a55dabc2b8b295e55081b39b6382caaa8',1,'USE_UDP():&#160;schc_config_example.h']]]
 ];

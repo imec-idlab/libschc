@@ -1,20 +1,8 @@
 var searchData=
 [
-  ['click_813',['CLICK',['../schc__config_8h.html#aef0780bedfc824f704b8a169d4a9bd2e',1,'CLICK():&#160;schc_config.h'],['../schc__config__example_8h.html#aef0780bedfc824f704b8a169d4a9bd2e',1,'CLICK():&#160;schc_config_example.h']]],
-  ['coap_5fack_5frandom_5ffactor_814',['COAP_ACK_RANDOM_FACTOR',['../picocoap_8h.html#a343c27d1c7ad3346aec70646caa341a0',1,'picocoap.h']]],
-  ['coap_5fack_5ftimeout_815',['COAP_ACK_TIMEOUT',['../picocoap_8h.html#a42e24df1551401726ed936baddb2a2ec',1,'picocoap.h']]],
-  ['coap_5fdefault_5fleisure_816',['COAP_DEFAULT_LEISURE',['../picocoap_8h.html#ac74e78ce8eb169a24787638b4c2074d7',1,'picocoap.h']]],
-  ['coap_5fexchange_5flifetime_817',['COAP_EXCHANGE_LIFETIME',['../picocoap_8h.html#a25528ec74a52f6c3c1c90298e797cae4',1,'picocoap.h']]],
-  ['coap_5ffields_818',['COAP_FIELDS',['../schc__config_8h.html#af1690024e8fe24a690d86ec4dd5d3bb6',1,'COAP_FIELDS():&#160;schc_config.h'],['../schc__config__example_8h.html#af1690024e8fe24a690d86ec4dd5d3bb6',1,'COAP_FIELDS():&#160;schc_config_example.h']]],
-  ['coap_5fmax_5flatency_819',['COAP_MAX_LATENCY',['../picocoap_8h.html#adc147063d422cfed3703e74cd222caef',1,'picocoap.h']]],
-  ['coap_5fmax_5fretransmit_820',['COAP_MAX_RETRANSMIT',['../picocoap_8h.html#ab099eef660b4c5b038b4b87239a82c35',1,'picocoap.h']]],
-  ['coap_5fmax_5frtt_821',['COAP_MAX_RTT',['../picocoap_8h.html#a0621265cdaf30c81a9ef53ecb9f51e56',1,'picocoap.h']]],
-  ['coap_5fmax_5ftransmit_5fspan_822',['COAP_MAX_TRANSMIT_SPAN',['../picocoap_8h.html#a9e0313ab0ba8fd48729bd8d77cc34ae3',1,'picocoap.h']]],
-  ['coap_5fmax_5ftransmit_5fwait_823',['COAP_MAX_TRANSMIT_WAIT',['../picocoap_8h.html#ad2acd5582df0fb73b3b823b2fa5b157b',1,'picocoap.h']]],
-  ['coap_5fnon_5flifetime_824',['COAP_NON_LIFETIME',['../picocoap_8h.html#a87fd7d7dd618371cbc930e30bf1c27d9',1,'picocoap.h']]],
-  ['coap_5fnstart_825',['COAP_NSTART',['../picocoap_8h.html#a5733f3616dbb5ae758b062296da6f843',1,'picocoap.h']]],
-  ['coap_5foptions_5flength_826',['COAP_OPTIONS_LENGTH',['../config_8h.html#a32c693bd3dc87d85f8256028e9f0e0bf',1,'config.h']]],
-  ['coap_5fprobing_5frate_827',['COAP_PROBING_RATE',['../picocoap_8h.html#a2ed23e020e732dda3a360191f231da7b',1,'picocoap.h']]],
-  ['coap_5fprocessing_5fdelay_828',['COAP_PROCESSING_DELAY',['../picocoap_8h.html#a44facf47657ac3f4d1075ca9f51ba24b',1,'picocoap.h']]],
-  ['coap_5frules_829',['COAP_RULES',['../rules_8h.html#af1bfbcdf4990d97b6c18bc2a145f6b33',1,'rules.h']]]
+  ['debug_5fprintf_868',['DEBUG_PRINTF',['../schc__config_8h.html#a5c8ef3c24dad2c469a42784a9a39403b',1,'DEBUG_PRINTF():&#160;schc_config.h'],['../schc__config__example_8h.html#a5c8ef3c24dad2c469a42784a9a39403b',1,'DEBUG_PRINTF():&#160;schc_config_example.h']]],
+  ['device_5fcount_869',['DEVICE_COUNT',['../rules_8h.html#a268c0726d6884c56c5c4d0b96ac162cd',1,'rules.h']]],
+  ['dtag_5fsize_5fbits_870',['DTAG_SIZE_BITS',['../schc__config_8h.html#ac24f6aea575e391494ab29765ee389bf',1,'DTAG_SIZE_BITS():&#160;schc_config.h'],['../schc__config__example_8h.html#ac24f6aea575e391494ab29765ee389bf',1,'DTAG_SIZE_BITS():&#160;schc_config_example.h']]],
+  ['dtag_5fsize_5fbytes_871',['DTAG_SIZE_BYTES',['../schc__config_8h.html#a3cab569df576271706014d87c13a7845',1,'DTAG_SIZE_BYTES():&#160;schc_config.h'],['../schc__config__example_8h.html#a3cab569df576271706014d87c13a7845',1,'DTAG_SIZE_BYTES():&#160;schc_config_example.h']]],
+  ['dynamic_5fmemory_872',['DYNAMIC_MEMORY',['../schc__config_8h.html#a65a515400abb0daca1623e7cb09efd1c',1,'DYNAMIC_MEMORY():&#160;schc_config.h'],['../schc__config__example_8h.html#a65a515400abb0daca1623e7cb09efd1c',1,'DYNAMIC_MEMORY():&#160;schc_config_example.h']]]
 ];

@@ -7,64 +7,32 @@
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-uint32\+\_\+t \mbox{\hyperlink{structschc__device_a5f22593142303b2722a0b9fb4167949e}{id}}
+uint32\+\_\+t \mbox{\hyperlink{structschc__device_abd2a28cc06704e0d4cd144bd15d82132}{device\+\_\+id}}
 \item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__device_a5083555c2c2ccf7596ff712a5f553164}{ipv6\+\_\+count}}
+uint8\+\_\+t \mbox{\hyperlink{structschc__device_a299b8e74102f70b5a06f35599623b177}{rule\+\_\+count}}
 \item 
-const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{structschc__device_a48b4d7fc260918b615608790b7913fcc}{ipv6\+\_\+rules}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__device_a15834e0951fb90004fc75760cc43109a}{udp\+\_\+count}}
-\item 
-const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{structschc__device_a29183298f7685ea9e6e88e0f72902b9c}{udp\+\_\+rules}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__device_ad2762cbab006c80cc2ffebe131e327ea}{coap\+\_\+count}}
-\item 
-const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}} $\ast$ \mbox{\hyperlink{structschc__device_a2a3b02f0e0c66aea96fb08a64fa8b77f}{coap\+\_\+rules}}
+const struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$($\ast$ \mbox{\hyperlink{structschc__device_a01a34f1a1c3b7c3a7c2468d08b9d811c}{context}} )\mbox{[}$\,$\mbox{]}
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Member Data Documentation}
-\mbox{\Hypertarget{structschc__device_ad2762cbab006c80cc2ffebe131e327ea}\label{structschc__device_ad2762cbab006c80cc2ffebe131e327ea}} 
-\index{schc\_device@{schc\_device}!coap\_count@{coap\_count}}
-\index{coap\_count@{coap\_count}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{coap\_count}{coap\_count}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+device\+::coap\+\_\+count}
+\mbox{\Hypertarget{structschc__device_a01a34f1a1c3b7c3a7c2468d08b9d811c}\label{structschc__device_a01a34f1a1c3b7c3a7c2468d08b9d811c}} 
+\index{schc\_device@{schc\_device}!context@{context}}
+\index{context@{context}!schc\_device@{schc\_device}}
+\doxysubsubsection{\texorpdfstring{context}{context}}
+{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}$\ast$($\ast$ schc\+\_\+device\+::context)\mbox{[}$\,$\mbox{]}}
 
-\mbox{\Hypertarget{structschc__device_a2a3b02f0e0c66aea96fb08a64fa8b77f}\label{structschc__device_a2a3b02f0e0c66aea96fb08a64fa8b77f}} 
-\index{schc\_device@{schc\_device}!coap\_rules@{coap\_rules}}
-\index{coap\_rules@{coap\_rules}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{coap\_rules}{coap\_rules}}
-{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+device\+::coap\+\_\+rules}
+\mbox{\Hypertarget{structschc__device_abd2a28cc06704e0d4cd144bd15d82132}\label{structschc__device_abd2a28cc06704e0d4cd144bd15d82132}} 
+\index{schc\_device@{schc\_device}!device\_id@{device\_id}}
+\index{device\_id@{device\_id}!schc\_device@{schc\_device}}
+\doxysubsubsection{\texorpdfstring{device\_id}{device\_id}}
+{\footnotesize\ttfamily uint32\+\_\+t schc\+\_\+device\+::device\+\_\+id}
 
-\mbox{\Hypertarget{structschc__device_a5f22593142303b2722a0b9fb4167949e}\label{structschc__device_a5f22593142303b2722a0b9fb4167949e}} 
-\index{schc\_device@{schc\_device}!id@{id}}
-\index{id@{id}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{id}{id}}
-{\footnotesize\ttfamily uint32\+\_\+t schc\+\_\+device\+::id}
-
-\mbox{\Hypertarget{structschc__device_a5083555c2c2ccf7596ff712a5f553164}\label{structschc__device_a5083555c2c2ccf7596ff712a5f553164}} 
-\index{schc\_device@{schc\_device}!ipv6\_count@{ipv6\_count}}
-\index{ipv6\_count@{ipv6\_count}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{ipv6\_count}{ipv6\_count}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+device\+::ipv6\+\_\+count}
-
-\mbox{\Hypertarget{structschc__device_a48b4d7fc260918b615608790b7913fcc}\label{structschc__device_a48b4d7fc260918b615608790b7913fcc}} 
-\index{schc\_device@{schc\_device}!ipv6\_rules@{ipv6\_rules}}
-\index{ipv6\_rules@{ipv6\_rules}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{ipv6\_rules}{ipv6\_rules}}
-{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+device\+::ipv6\+\_\+rules}
-
-\mbox{\Hypertarget{structschc__device_a15834e0951fb90004fc75760cc43109a}\label{structschc__device_a15834e0951fb90004fc75760cc43109a}} 
-\index{schc\_device@{schc\_device}!udp\_count@{udp\_count}}
-\index{udp\_count@{udp\_count}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{udp\_count}{udp\_count}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+device\+::udp\+\_\+count}
-
-\mbox{\Hypertarget{structschc__device_a29183298f7685ea9e6e88e0f72902b9c}\label{structschc__device_a29183298f7685ea9e6e88e0f72902b9c}} 
-\index{schc\_device@{schc\_device}!udp\_rules@{udp\_rules}}
-\index{udp\_rules@{udp\_rules}!schc\_device@{schc\_device}}
-\doxysubsubsection{\texorpdfstring{udp\_rules}{udp\_rules}}
-{\footnotesize\ttfamily const struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}$\ast$ schc\+\_\+device\+::udp\+\_\+rules}
+\mbox{\Hypertarget{structschc__device_a299b8e74102f70b5a06f35599623b177}\label{structschc__device_a299b8e74102f70b5a06f35599623b177}} 
+\index{schc\_device@{schc\_device}!rule\_count@{rule\_count}}
+\index{rule\_count@{rule\_count}!schc\_device@{schc\_device}}
+\doxysubsubsection{\texorpdfstring{rule\_count}{rule\_count}}
+{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+device\+::rule\+\_\+count}
 
 
 

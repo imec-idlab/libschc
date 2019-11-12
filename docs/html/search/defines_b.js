@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['tpl_5fmask_868',['TPL_MASK',['../schc__config_8h.html#aaa7542c8d49c9fd3e40fe97e13be019a',1,'TPL_MASK():&#160;schc_config.h'],['../schc__config__example_8h.html#aaa7542c8d49c9fd3e40fe97e13be019a',1,'TPL_MASK():&#160;schc_config_example.h']]],
-  ['tpl_5fshift_869',['TPL_SHIFT',['../schc__config_8h.html#a92130a97a4aa4dccea8d6166e4adb328',1,'TPL_SHIFT():&#160;schc_config.h'],['../schc__config__example_8h.html#a92130a97a4aa4dccea8d6166e4adb328',1,'TPL_SHIFT():&#160;schc_config_example.h']]]
+  ['window_5fsize_5fbits_909',['WINDOW_SIZE_BITS',['../config_8h.html#aee02bb425cd8b2d526378e84db80752f',1,'config.h']]],
+  ['window_5fsize_5fbytes_910',['WINDOW_SIZE_BYTES',['../schc__config_8h.html#afb4b2bf43d4261b6afafc22d4d095092',1,'WINDOW_SIZE_BYTES():&#160;schc_config.h'],['../schc__config__example_8h.html#afb4b2bf43d4261b6afafc22d4d095092',1,'WINDOW_SIZE_BYTES():&#160;schc_config_example.h']]]
 ];

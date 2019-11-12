@@ -19,6 +19,8 @@ struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\
 \begin{DoxyCompactList}\small\item\em Return code\+: Indicator. \end{DoxyCompactList}\item 
 \#define \mbox{\hyperlink{fragmenter_8h_a609c4c5b7a6cdc56c3b1fc47c2cac402}{S\+C\+H\+C\+\_\+\+S\+U\+C\+C\+E\+SS}}~0
 \begin{DoxyCompactList}\small\item\em Return code\+: No error. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{fragmenter_8h_a8f937d9fe4a9fb1d4fa406cde779fffd}{S\+C\+H\+C\+\_\+\+E\+ND}}~3
+\begin{DoxyCompactList}\small\item\em Return code\+: End of fragmentation cycle. \end{DoxyCompactList}\item 
 \#define \mbox{\hyperlink{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}{S\+C\+H\+C\+\_\+\+F\+A\+I\+L\+U\+RE}}~-\/1
 \begin{DoxyCompactList}\small\item\em Return code\+: Error. \end{DoxyCompactList}\item 
 \#define \mbox{\hyperlink{fragmenter_8h_a702d10e122e8809285882b69ae2e69a1}{S\+C\+H\+C\+\_\+\+N\+O\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+A\+T\+I\+ON}}~-\/2
@@ -55,11 +57,6 @@ enum \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}{rx\+\_\+s
 \newline
 \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa204deb4800b60b28307aa8a00a85ee36}{E\+N\+D\+\_\+\+RX}} = 4, 
 \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6fa781ad2788df9e25c59a70894c7832096}{A\+B\+O\+RT}} = 5
- \}
-\item 
-enum \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} \{ \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}{A\+C\+K\+\_\+\+A\+L\+W\+A\+YS}} = 1, 
-\mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}{A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR}} = 2, 
-\mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}{N\+O\+\_\+\+A\+CK}} = 3
  \}
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
@@ -104,7 +101,17 @@ void \mbox{\hyperlink{fragmenter_8h_a3b3e7a45b2ff0f407adfcc266f47c3dc}{mbuf\+\_\
 
 Return code\+: Indicator. 
 
-Generic indication that an acknowledgment was received \mbox{\Hypertarget{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}\label{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}} 
+Generic indication that an acknowledgment was received \mbox{\Hypertarget{fragmenter_8h_a8f937d9fe4a9fb1d4fa406cde779fffd}\label{fragmenter_8h_a8f937d9fe4a9fb1d4fa406cde779fffd}} 
+\index{fragmenter.h@{fragmenter.h}!SCHC\_END@{SCHC\_END}}
+\index{SCHC\_END@{SCHC\_END}!fragmenter.h@{fragmenter.h}}
+\doxysubsubsection{\texorpdfstring{SCHC\_END}{SCHC\_END}}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+E\+ND~3}
+
+
+
+Return code\+: End of fragmentation cycle. 
+
+Indicates successful completion of an S\+C\+HC fragmentation cycle. \mbox{\Hypertarget{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}\label{fragmenter_8h_a72455d89c3af7b0868fbaf7095e5af11}} 
 \index{fragmenter.h@{fragmenter.h}!SCHC\_FAILURE@{SCHC\_FAILURE}}
 \index{SCHC\_FAILURE@{SCHC\_FAILURE}!fragmenter.h@{fragmenter.h}}
 \doxysubsubsection{\texorpdfstring{SCHC\_FAILURE}{SCHC\_FAILURE}}
@@ -168,26 +175,6 @@ Indicates successful completion of an S\+C\+HC operation.
 
 
 \doxysubsection{Enumeration Type Documentation}
-\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}} 
-\index{fragmenter.h@{fragmenter.h}!reliability\_mode@{reliability\_mode}}
-\index{reliability\_mode@{reliability\_mode}!fragmenter.h@{fragmenter.h}}
-\doxysubsubsection{\texorpdfstring{reliability\_mode}{reliability\_mode}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}}}
-
-\begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ALWAYS@{ACK\_ALWAYS}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ACK\_ALWAYS@{ACK\_ALWAYS}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}} 
-A\+C\+K\+\_\+\+A\+L\+W\+A\+YS&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ON\_ERROR@{ACK\_ON\_ERROR}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!ACK\_ON\_ERROR@{ACK\_ON\_ERROR}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}} 
-A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_ACK@{NO\_ACK}!fragmenter.h@{fragmenter.h}}\index{fragmenter.h@{fragmenter.h}!NO\_ACK@{NO\_ACK}}}\mbox{\Hypertarget{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}\label{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}} 
-N\+O\+\_\+\+A\+CK&\\
-\hline
-
-\end{DoxyEnumFields}
 \mbox{\Hypertarget{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}\label{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}} 
 \index{fragmenter.h@{fragmenter.h}!rx\_state@{rx\_state}}
 \index{rx\_state@{rx\_state}!fragmenter.h@{fragmenter.h}}

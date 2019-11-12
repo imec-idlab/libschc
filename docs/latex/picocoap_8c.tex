@@ -7,6 +7,8 @@
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+uint8\+\_\+t \mbox{\hyperlink{picocoap_8c_a1e06041a635ac4d7241f66f61784c1c1}{coap\+\_\+get\+\_\+coap\+\_\+offset}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Finds the length of the Co\+AP header. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8c_a8718a038b325db3b45194f8f5b325054}{coap\+\_\+validate\+\_\+pkt}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
 \begin{DoxyCompactList}\small\item\em Validate Packet. \end{DoxyCompactList}\item 
 uint8\+\_\+t \mbox{\hyperlink{picocoap_8c_a11b205fb44a41e0c2fd026835a32b6bd}{coap\+\_\+get\+\_\+token}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu, uint8\+\_\+t $\ast$ptr)
@@ -104,6 +106,24 @@ Internal Method.
 
 Internal Method. 
 
+\mbox{\Hypertarget{picocoap_8c_a1e06041a635ac4d7241f66f61784c1c1}\label{picocoap_8c_a1e06041a635ac4d7241f66f61784c1c1}} 
+\index{picocoap.c@{picocoap.c}!coap\_get\_coap\_offset@{coap\_get\_coap\_offset}}
+\index{coap\_get\_coap\_offset@{coap\_get\_coap\_offset}!picocoap.c@{picocoap.c}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_coap\_offset()}{coap\_get\_coap\_offset()}}
+{\footnotesize\ttfamily uint8\+\_\+t coap\+\_\+get\+\_\+coap\+\_\+offset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Finds the length of the Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pdu} & the Co\+AP pdu, containing the header and payload\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the Co\+AP header 
+\end{DoxyReturn}
 \mbox{\Hypertarget{picocoap_8c_a7f87d72933fda79b4fb2063ef0f725a0}\label{picocoap_8c_a7f87d72933fda79b4fb2063ef0f725a0}} 
 \index{picocoap.c@{picocoap.c}!coap\_get\_option@{coap\_get\_option}}
 \index{coap\_get\_option@{coap\_get\_option}!picocoap.c@{picocoap.c}}

@@ -88,14 +88,20 @@ $(function() {
 
 
 <h3><a id="index_c"></a>- c -</h3><ul>
-<li>coap_count
-: <a class="el" href="structschc__device.html#ad2762cbab006c80cc2ffebe131e327ea">schc_device</a>
+<li>coap_rule
+: <a class="el" href="structschc__compression__rule__t.html#affe04aec097c2fcb1551d83da3b7f6a3">schc_compression_rule_t</a>
 </li>
-<li>coap_rules
-: <a class="el" href="structschc__device.html#a2a3b02f0e0c66aea96fb08a64fa8b77f">schc_device</a>
+<li>compression_rule
+: <a class="el" href="structschc__rule__t.html#a4f80dde7772774f010cb62b8ba85ded1">schc_rule_t</a>
 </li>
 <li>content
-: <a class="el" href="structschc__rule.html#a8f5dabb53d4bd4cfa409a2b56faef7d0">schc_rule</a>
+: <a class="el" href="structschc__coap__rule__t.html#ae56291563f55d59e04c85997eb6d4544">schc_coap_rule_t</a>
+, <a class="el" href="structschc__ipv6__rule__t.html#ad20c18f0fa413fdf7905beff248378ee">schc_ipv6_rule_t</a>
+, <a class="el" href="structschc__layer__rule__t.html#a27ab26ce86ebe0cefb34fa5d78e90879">schc_layer_rule_t</a>
+, <a class="el" href="structschc__udp__rule__t.html#a6af0977f3a2d47c7e3d90877a1b45998">schc_udp_rule_t</a>
+</li>
+<li>context
+: <a class="el" href="structschc__device.html#a01a34f1a1c3b7c3a7c2468d08b9d811c">schc_device</a>
 </li>
 </ul>
 
@@ -114,20 +120,24 @@ $(function() {
 : <a class="el" href="structuip__udpip__hdr.html#a10db330e1db816556454f1a84955ab0a">uip_udpip_hdr</a>
 </li>
 <li>device_id
-: <a class="el" href="structschc__fragmentation__t.html#a87361e46e93bdf8d6f9cb60cb8f0b5de">schc_fragmentation_t</a>
+: <a class="el" href="structschc__device.html#abd2a28cc06704e0d4cd144bd15d82132">schc_device</a>
+, <a class="el" href="structschc__fragmentation__t.html#a87361e46e93bdf8d6f9cb60cb8f0b5de">schc_fragmentation_t</a>
 </li>
 <li>dir
 : <a class="el" href="structschc__field.html#a23f0e54fa507136cff38e313b3f064cb">schc_field</a>
 </li>
 <li>down
-: <a class="el" href="structschc__rule.html#aead6af025477ce0b7c180b9df5091057">schc_rule</a>
+: <a class="el" href="structschc__coap__rule__t.html#aaa3ea28f6f8485c58485e09892097010">schc_coap_rule_t</a>
+, <a class="el" href="structschc__ipv6__rule__t.html#a5f5f494abde233a5bef29ba458434fab">schc_ipv6_rule_t</a>
+, <a class="el" href="structschc__layer__rule__t.html#afbaef5f87a4a30c4cc057dd482ff3bf3">schc_layer_rule_t</a>
+, <a class="el" href="structschc__udp__rule__t.html#a0a6931ea294bc833d34cd4bfd7123bca">schc_udp_rule_t</a>
 </li>
 <li>dtag
 : <a class="el" href="structschc__fragmentation__ack__t.html#a6a75f999fa56f3f64e0c8e555e3da58c">schc_fragmentation_ack_t</a>
 , <a class="el" href="structschc__fragmentation__t.html#a34281059a41f1b93a203dfff5e54f845">schc_fragmentation_t</a>
 </li>
 <li>DTAG_SIZE
-: <a class="el" href="structschc__fragmentation__t.html#a815c8ccfa3da28a4140d60ff5e9e7b17">schc_fragmentation_t</a>
+: <a class="el" href="structschc__rule__t.html#adf3a5eedde77cd265436a59fd1fa6403">schc_rule_t</a>
 </li>
 </ul>
 
@@ -139,6 +149,9 @@ $(function() {
 <li>end_rx
 : <a class="el" href="structschc__fragmentation__t.html#a0db2f7a250e964ee0bad8c0b8cc0b97c">schc_fragmentation_t</a>
 </li>
+<li>end_tx
+: <a class="el" href="structschc__fragmentation__t.html#a3ae53dfe7edd71d58200c6fb6823f6be">schc_fragmentation_t</a>
+</li>
 </ul>
 
 
@@ -148,7 +161,7 @@ $(function() {
 , <a class="el" href="structschc__fragmentation__t.html#a9507d09aa22017fdee75233eb10ce4eb">schc_fragmentation_t</a>
 </li>
 <li>FCN_SIZE
-: <a class="el" href="structschc__fragmentation__t.html#af72b38948d4bb6fbc0a261cd092ddd10">schc_fragmentation_t</a>
+: <a class="el" href="structschc__rule__t.html#a18a7c4d1dfd1b5fe6ba26b8a200b1be7">schc_rule_t</a>
 </li>
 <li>field
 : <a class="el" href="structschc__field.html#a95686cf98fe8ea0e3e613fc7b3543a9c">schc_field</a>
@@ -179,16 +192,13 @@ $(function() {
 <h3><a id="index_i"></a>- i -</h3><ul>
 <li>id
 : <a class="el" href="structcoap__option__names.html#a7914abc1e3725224bc27bf59f0ca8349">coap_option_names</a>
-, <a class="el" href="structschc__device.html#a5f22593142303b2722a0b9fb4167949e">schc_device</a>
+, <a class="el" href="structschc__rule__t.html#a63b353b4e36f7320df2199814d767d2f">schc_rule_t</a>
 </li>
 <li>input
 : <a class="el" href="structschc__fragmentation__t.html#a9331778f9d6b6149c749329bc65f3bcb">schc_fragmentation_t</a>
 </li>
-<li>ipv6_count
-: <a class="el" href="structschc__device.html#a5083555c2c2ccf7596ff712a5f553164">schc_device</a>
-</li>
-<li>ipv6_rules
-: <a class="el" href="structschc__device.html#a48b4d7fc260918b615608790b7913fcc">schc_device</a>
+<li>ipv6_rule
+: <a class="el" href="structschc__compression__rule__t.html#a2a6d40fb3a91228cc8bef7f4cb1eeac8">schc_compression_rule_t</a>
 </li>
 </ul>
 
@@ -202,7 +212,10 @@ $(function() {
 , <a class="el" href="structuip__udpip__hdr.html#af13fd0018bacd0871d322be8adf96579">uip_udpip_hdr</a>
 </li>
 <li>length
-: <a class="el" href="structschc__rule.html#af5f20076e164f0bbeaf3f2fbbab1ee78">schc_rule</a>
+: <a class="el" href="structschc__coap__rule__t.html#abbd8be1d4d4f623b1de0be097d9ad805">schc_coap_rule_t</a>
+, <a class="el" href="structschc__ipv6__rule__t.html#a84669915815c6ef3a8f877440978a0bb">schc_ipv6_rule_t</a>
+, <a class="el" href="structschc__layer__rule__t.html#afe2b4bdd16fcdf7176ce69806867af85">schc_layer_rule_t</a>
+, <a class="el" href="structschc__udp__rule__t.html#a8ae436c0c8fe5c6c3abc4a9b36525f95">schc_udp_rule_t</a>
 </li>
 </ul>
 
@@ -212,7 +225,7 @@ $(function() {
 : <a class="el" href="structcoap__pdu.html#a5f85b9ac24636e3404086cd6492f4621">coap_pdu</a>
 </li>
 <li>MAX_WND_FCN
-: <a class="el" href="structschc__fragmentation__t.html#af8670ae896636ff443e1079940ba018c">schc_fragmentation_t</a>
+: <a class="el" href="structschc__rule__t.html#a97cd6531907ce6add0e15be15ccaaf49">schc_rule_t</a>
 </li>
 <li>mic
 : <a class="el" href="structschc__fragmentation__ack__t.html#a9fbf76c0b89c25838cf8f4100f8facea">schc_fragmentation_ack_t</a>
@@ -222,7 +235,7 @@ $(function() {
 : <a class="el" href="structschc__field.html#ae2dd6faff6388e1b0b4ecd973ebbd4af">schc_field</a>
 </li>
 <li>mode
-: <a class="el" href="structschc__fragmentation__t.html#ab0679bb4a377f6ce9da82769cf88c52c">schc_fragmentation_t</a>
+: <a class="el" href="structschc__rule__t.html#ac7514a12feafa1bdff35354fa8df76a8">schc_rule_t</a>
 </li>
 <li>msb_length
 : <a class="el" href="structschc__field.html#a29edf1bbed3c31adec3a364ab55389ed">schc_field</a>
@@ -276,10 +289,16 @@ $(function() {
 <li>remove_timer_entry
 : <a class="el" href="structschc__fragmentation__t.html#a3b14a9023ad626cf661a46453fc6919d">schc_fragmentation_t</a>
 </li>
+<li>rule_count
+: <a class="el" href="structschc__device.html#a299b8e74102f70b5a06f35599623b177">schc_device</a>
+</li>
 <li>rule_id
-: <a class="el" href="structschc__fragmentation__ack__t.html#a94b9c37ec44b2f4c8158f3196ec7902a">schc_fragmentation_ack_t</a>
+: <a class="el" href="structschc__coap__rule__t.html#a4079bb77cf816a0aa8647df0ac617985">schc_coap_rule_t</a>
+, <a class="el" href="structschc__fragmentation__ack__t.html#a94b9c37ec44b2f4c8158f3196ec7902a">schc_fragmentation_ack_t</a>
 , <a class="el" href="structschc__fragmentation__t.html#a3d0044911dc3e6c6c5161f85133771ca">schc_fragmentation_t</a>
-, <a class="el" href="structschc__rule.html#afd8204c9d5c8d9262ce77ff417322b3c">schc_rule</a>
+, <a class="el" href="structschc__ipv6__rule__t.html#a36112a2a31ff892534508a717606c3ed">schc_ipv6_rule_t</a>
+, <a class="el" href="structschc__layer__rule__t.html#aa31f5a932f5bad8779bd715ca0e4fd4d">schc_layer_rule_t</a>
+, <a class="el" href="structschc__udp__rule__t.html#a8c465f3a420f5e47f49cb529cbedf26d">schc_udp_rule_t</a>
 </li>
 <li>RULE_SIZE
 : <a class="el" href="structschc__fragmentation__t.html#a8a6c636f8d863fc3db680da64ee889c1">schc_fragmentation_t</a>
@@ -291,6 +310,9 @@ $(function() {
 
 
 <h3><a id="index_s"></a>- s -</h3><ul>
+<li>schc_rule
+: <a class="el" href="structschc__fragmentation__t.html#a5403c6a449781191d2d5e129baf50843">schc_fragmentation_t</a>
+</li>
 <li>send
 : <a class="el" href="structschc__fragmentation__t.html#a0d771b7ddff550f4e30b238f1a332572">schc_fragmentation_t</a>
 </li>
@@ -344,11 +366,8 @@ $(function() {
 
 
 <h3><a id="index_u"></a>- u -</h3><ul>
-<li>udp_count
-: <a class="el" href="structschc__device.html#a15834e0951fb90004fc75760cc43109a">schc_device</a>
-</li>
-<li>udp_rules
-: <a class="el" href="structschc__device.html#a29183298f7685ea9e6e88e0f72902b9c">schc_device</a>
+<li>udp_rule
+: <a class="el" href="structschc__compression__rule__t.html#ae807ef674bbd8baf8c3a14f1c8d84428">schc_compression_rule_t</a>
 </li>
 <li>udpchksum
 : <a class="el" href="structuip__udpip__hdr.html#a45a382304cde8824851f823d7c97d682">uip_udpip_hdr</a>
@@ -357,7 +376,10 @@ $(function() {
 : <a class="el" href="structuip__udpip__hdr.html#aa5c468d5ccb2c131bf93af69d0ded26c">uip_udpip_hdr</a>
 </li>
 <li>up
-: <a class="el" href="structschc__rule.html#a514775672b0343784cda603a5ec4e61c">schc_rule</a>
+: <a class="el" href="structschc__coap__rule__t.html#aa09bbacb1975b997de67d4462770e787">schc_coap_rule_t</a>
+, <a class="el" href="structschc__ipv6__rule__t.html#a2bb75eef55183e6c9ed1134ecd327da5">schc_ipv6_rule_t</a>
+, <a class="el" href="structschc__layer__rule__t.html#a740f839ab81dbb63667d01a57fd7859f">schc_layer_rule_t</a>
+, <a class="el" href="structschc__udp__rule__t.html#af5d158c7430785c54fdc671c4f213bab">schc_udp_rule_t</a>
 </li>
 </ul>
 
@@ -382,7 +404,7 @@ $(function() {
 : <a class="el" href="structschc__fragmentation__t.html#aadd2eea980b920a4c4e20abf77fff73a">schc_fragmentation_t</a>
 </li>
 <li>WINDOW_SIZE
-: <a class="el" href="structschc__fragmentation__t.html#a5233caff42cce7f50dd5279b9d838400">schc_fragmentation_t</a>
+: <a class="el" href="structschc__rule__t.html#a9a281fe0e60629b1cb7659e1c50c93d2">schc_rule_t</a>
 </li>
 </ul>
 </div><!-- contents -->

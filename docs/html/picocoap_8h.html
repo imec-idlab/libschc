@@ -246,6 +246,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a1e06041a635ac4d7241f66f61784c1c1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a1e06041a635ac4d7241f66f61784c1c1">coap_get_coap_offset</a> (<a class="el" href="structcoap__pdu.html">coap_pdu</a> *pdu)</td></tr>
+<tr class="memdesc:a1e06041a635ac4d7241f66f61784c1c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the length of the CoAP header.  <a href="picocoap_8h.html#a1e06041a635ac4d7241f66f61784c1c1">More...</a><br /></td></tr>
+<tr class="separator:a1e06041a635ac4d7241f66f61784c1c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8718a038b325db3b45194f8f5b325054"><td class="memItemLeft" align="right" valign="top"><a class="el" href="picocoap_8h.html#aa9dd43046c8daad008c9195a6f84d4f1">coap_error</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a8718a038b325db3b45194f8f5b325054">coap_validate_pkt</a> (<a class="el" href="structcoap__pdu.html">coap_pdu</a> *pdu)</td></tr>
 <tr class="memdesc:a8718a038b325db3b45194f8f5b325054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate Packet.  <a href="picocoap_8h.html#a8718a038b325db3b45194f8f5b325054">More...</a><br /></td></tr>
 <tr class="separator:a8718a038b325db3b45194f8f5b325054"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1061,6 +1064,33 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Internal Method. </p>
+
+</div>
+</div>
+<a id="a1e06041a635ac4d7241f66f61784c1c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e06041a635ac4d7241f66f61784c1c1">&#9670;&nbsp;</a></span>coap_get_coap_offset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t coap_get_coap_offset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcoap__pdu.html">coap_pdu</a> *&#160;</td>
+          <td class="paramname"><em>pdu</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Finds the length of the CoAP header. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pdu</td><td>the CoAP pdu, containing the header and payload</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the length of the CoAP header </dd></dl>
 
 </div>
 </div>

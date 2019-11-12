@@ -47,6 +47,8 @@ void($\ast$ \mbox{\hyperlink{structschc__fragmentation__t_af54664c2e4cfb10cc2508
 \item 
 void($\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a0db2f7a250e964ee0bad8c0b8cc0b97c}{end\+\_\+rx}} )(struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
 \item 
+void($\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a3ae53dfe7edd71d58200c6fb6823f6be}{end\+\_\+tx}} )()
+\item 
 void($\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a3b14a9023ad626cf661a46453fc6919d}{remove\+\_\+timer\+\_\+entry}} )(uint32\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a87361e46e93bdf8d6f9cb60cb8f0b5de}{device\+\_\+id}})
 \item 
 uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a2e2e9e70fcb228003fbe7f4306a07be4}{timer\+\_\+flag}}
@@ -57,17 +59,9 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a9331778f9d6b6149c749
 \item 
 \mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$ \mbox{\hyperlink{structschc__fragmentation__t_afd9900b8ae4055a3d3014d20ee28ea2d}{head}}
 \item 
-\mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} \mbox{\hyperlink{structschc__fragmentation__t_ab0679bb4a377f6ce9da82769cf88c52c}{mode}}
+struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a5403c6a449781191d2d5e129baf50843}{schc\+\_\+rule}}
 \item 
 uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a8a6c636f8d863fc3db680da64ee889c1}{R\+U\+L\+E\+\_\+\+S\+I\+ZE}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_af72b38948d4bb6fbc0a261cd092ddd10}{F\+C\+N\+\_\+\+S\+I\+ZE}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_af8670ae896636ff443e1079940ba018c}{M\+A\+X\+\_\+\+W\+N\+D\+\_\+\+F\+CN}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a5233caff42cce7f50dd5279b9d838400}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+ZE}}
-\item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a815c8ccfa3da28a4140d60ff5e9e7b17}{D\+T\+A\+G\+\_\+\+S\+I\+ZE}}
 \end{DoxyCompactItemize}
 
 
@@ -114,29 +108,23 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a815c8ccfa3da28a4140d
 \doxysubsubsection{\texorpdfstring{dtag}{dtag}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::dtag}
 
-\mbox{\Hypertarget{structschc__fragmentation__t_a815c8ccfa3da28a4140d60ff5e9e7b17}\label{structschc__fragmentation__t_a815c8ccfa3da28a4140d60ff5e9e7b17}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!DTAG\_SIZE@{DTAG\_SIZE}}
-\index{DTAG\_SIZE@{DTAG\_SIZE}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{DTAG\_SIZE}{DTAG\_SIZE}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::\+D\+T\+A\+G\+\_\+\+S\+I\+ZE}
-
 \mbox{\Hypertarget{structschc__fragmentation__t_a0db2f7a250e964ee0bad8c0b8cc0b97c}\label{structschc__fragmentation__t_a0db2f7a250e964ee0bad8c0b8cc0b97c}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!end\_rx@{end\_rx}}
 \index{end\_rx@{end\_rx}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{end\_rx}{end\_rx}}
 {\footnotesize\ttfamily void($\ast$ schc\+\_\+fragmentation\+\_\+t\+::end\+\_\+rx) (struct \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}
 
+\mbox{\Hypertarget{structschc__fragmentation__t_a3ae53dfe7edd71d58200c6fb6823f6be}\label{structschc__fragmentation__t_a3ae53dfe7edd71d58200c6fb6823f6be}} 
+\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!end\_tx@{end\_tx}}
+\index{end\_tx@{end\_tx}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
+\doxysubsubsection{\texorpdfstring{end\_tx}{end\_tx}}
+{\footnotesize\ttfamily void($\ast$ schc\+\_\+fragmentation\+\_\+t\+::end\+\_\+tx) ()}
+
 \mbox{\Hypertarget{structschc__fragmentation__t_a9507d09aa22017fdee75233eb10ce4eb}\label{structschc__fragmentation__t_a9507d09aa22017fdee75233eb10ce4eb}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!fcn@{fcn}}
 \index{fcn@{fcn}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{fcn}{fcn}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::fcn}
-
-\mbox{\Hypertarget{structschc__fragmentation__t_af72b38948d4bb6fbc0a261cd092ddd10}\label{structschc__fragmentation__t_af72b38948d4bb6fbc0a261cd092ddd10}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!FCN\_SIZE@{FCN\_SIZE}}
-\index{FCN\_SIZE@{FCN\_SIZE}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{FCN\_SIZE}{FCN\_SIZE}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::\+F\+C\+N\+\_\+\+S\+I\+ZE}
 
 \mbox{\Hypertarget{structschc__fragmentation__t_ad81c9ba5e6a581e013e4b3bafce08474}\label{structschc__fragmentation__t_ad81c9ba5e6a581e013e4b3bafce08474}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!frag\_cnt@{frag\_cnt}}
@@ -156,23 +144,11 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a815c8ccfa3da28a4140d
 \doxysubsubsection{\texorpdfstring{input}{input}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::input}
 
-\mbox{\Hypertarget{structschc__fragmentation__t_af8670ae896636ff443e1079940ba018c}\label{structschc__fragmentation__t_af8670ae896636ff443e1079940ba018c}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!MAX\_WND\_FCN@{MAX\_WND\_FCN}}
-\index{MAX\_WND\_FCN@{MAX\_WND\_FCN}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{MAX\_WND\_FCN}{MAX\_WND\_FCN}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::\+M\+A\+X\+\_\+\+W\+N\+D\+\_\+\+F\+CN}
-
 \mbox{\Hypertarget{structschc__fragmentation__t_a2f83092fddf60c20b720b909c4b632a4}\label{structschc__fragmentation__t_a2f83092fddf60c20b720b909c4b632a4}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!mic@{mic}}
 \index{mic@{mic}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{mic}{mic}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::mic\mbox{[}\mbox{\hyperlink{schc__config__example_8h_adfbf14de3d8d2907750758406ced72db}{M\+I\+C\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}}
-
-\mbox{\Hypertarget{structschc__fragmentation__t_ab0679bb4a377f6ce9da82769cf88c52c}\label{structschc__fragmentation__t_ab0679bb4a377f6ce9da82769cf88c52c}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!mode@{mode}}
-\index{mode@{mode}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{mode}{mode}}
-{\footnotesize\ttfamily \mbox{\hyperlink{fragmenter_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} schc\+\_\+fragmentation\+\_\+t\+::mode}
 
 \mbox{\Hypertarget{structschc__fragmentation__t_aacb88301231fdf7ebf596250d3b75201}\label{structschc__fragmentation__t_aacb88301231fdf7ebf596250d3b75201}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!mtu@{mtu}}
@@ -216,6 +192,12 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a815c8ccfa3da28a4140d
 \doxysubsubsection{\texorpdfstring{RX\_STATE}{RX\_STATE}}
 {\footnotesize\ttfamily \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}{rx\+\_\+state}} schc\+\_\+fragmentation\+\_\+t\+::\+R\+X\+\_\+\+S\+T\+A\+TE}
 
+\mbox{\Hypertarget{structschc__fragmentation__t_a5403c6a449781191d2d5e129baf50843}\label{structschc__fragmentation__t_a5403c6a449781191d2d5e129baf50843}} 
+\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!schc\_rule@{schc\_rule}}
+\index{schc\_rule@{schc\_rule}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
+\doxysubsubsection{\texorpdfstring{schc\_rule}{schc\_rule}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}$\ast$ schc\+\_\+fragmentation\+\_\+t\+::schc\+\_\+rule}
+
 \mbox{\Hypertarget{structschc__fragmentation__t_a0d771b7ddff550f4e30b238f1a332572}\label{structschc__fragmentation__t_a0d771b7ddff550f4e30b238f1a332572}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!send@{send}}
 \index{send@{send}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
@@ -251,12 +233,6 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a815c8ccfa3da28a4140d
 \index{window\_cnt@{window\_cnt}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{window\_cnt}{window\_cnt}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::window\+\_\+cnt}
-
-\mbox{\Hypertarget{structschc__fragmentation__t_a5233caff42cce7f50dd5279b9d838400}\label{structschc__fragmentation__t_a5233caff42cce7f50dd5279b9d838400}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!WINDOW\_SIZE@{WINDOW\_SIZE}}
-\index{WINDOW\_SIZE@{WINDOW\_SIZE}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{WINDOW\_SIZE}{WINDOW\_SIZE}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::\+W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+ZE}
 
 
 

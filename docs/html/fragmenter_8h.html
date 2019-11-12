@@ -95,6 +95,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a609c4c5b7a6cdc56c3b1fc47c2cac402"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a609c4c5b7a6cdc56c3b1fc47c2cac402">SCHC_SUCCESS</a>&#160;&#160;&#160;0</td></tr>
 <tr class="memdesc:a609c4c5b7a6cdc56c3b1fc47c2cac402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return code: No error.  <a href="fragmenter_8h.html#a609c4c5b7a6cdc56c3b1fc47c2cac402">More...</a><br /></td></tr>
 <tr class="separator:a609c4c5b7a6cdc56c3b1fc47c2cac402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f937d9fe4a9fb1d4fa406cde779fffd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a8f937d9fe4a9fb1d4fa406cde779fffd">SCHC_END</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:a8f937d9fe4a9fb1d4fa406cde779fffd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return code: End of fragmentation cycle.  <a href="fragmenter_8h.html#a8f937d9fe4a9fb1d4fa406cde779fffd">More...</a><br /></td></tr>
+<tr class="separator:a8f937d9fe4a9fb1d4fa406cde779fffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72455d89c3af7b0868fbaf7095e5af11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a72455d89c3af7b0868fbaf7095e5af11">SCHC_FAILURE</a>&#160;&#160;&#160;-1</td></tr>
 <tr class="memdesc:a72455d89c3af7b0868fbaf7095e5af11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return code: Error.  <a href="fragmenter_8h.html#a72455d89c3af7b0868fbaf7095e5af11">More...</a><br /></td></tr>
 <tr class="separator:a72455d89c3af7b0868fbaf7095e5af11"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,11 +140,6 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a20874253e23bc4c1d20f69479175ce6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00b61f9b90ab7065eb6a978141d7fd34"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> { <a class="el" href="fragmenter_8h.html#a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7">ACK_ALWAYS</a> = 1, 
-<a class="el" href="fragmenter_8h.html#a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f">ACK_ON_ERROR</a> = 2, 
-<a class="el" href="fragmenter_8h.html#a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17">NO_ACK</a> = 3
- }</td></tr>
-<tr class="separator:a00b61f9b90ab7065eb6a978141d7fd34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -205,6 +203,23 @@ Functions</h2></td></tr>
 
 <p>Return code: Indicator. </p>
 <p>Generic indication that an acknowledgment was received </p>
+
+</div>
+</div>
+<a id="a8f937d9fe4a9fb1d4fa406cde779fffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f937d9fe4a9fb1d4fa406cde779fffd">&#9670;&nbsp;</a></span>SCHC_END</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SCHC_END&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return code: End of fragmentation cycle. </p>
+<p>Indicates successful completion of an SCHC fragmentation cycle. </p>
 
 </div>
 </div>
@@ -320,25 +335,6 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a00b61f9b90ab7065eb6a978141d7fd34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00b61f9b90ab7065eb6a978141d7fd34">&#9670;&nbsp;</a></span>reliability_mode</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="fragmenter_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7"></a>ACK_ALWAYS&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f"></a>ACK_ON_ERROR&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17"></a>NO_ACK&#160;</td><td class="fielddoc"></td></tr>
-</table>
-
-</div>
-</div>
 <a id="a20874253e23bc4c1d20f69479175ce6f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a20874253e23bc4c1d20f69479175ce6f">&#9670;&nbsp;</a></span>rx_state</h2>
 

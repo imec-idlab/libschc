@@ -6,7 +6,17 @@
 \item 
 struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}}
 \item 
-struct \mbox{\hyperlink{structschc__rule}{schc\+\_\+rule}}
+struct \mbox{\hyperlink{structschc__ipv6__rule__t}{schc\+\_\+ipv6\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__udp__rule__t}{schc\+\_\+udp\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__coap__rule__t}{schc\+\_\+coap\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__layer__rule__t}{schc\+\_\+layer\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__compression__rule__t}{schc\+\_\+compression\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}
 \item 
 struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}}
 \item 
@@ -20,10 +30,6 @@ struct \mbox{\hyperlink{structuip__udpip__hdr}{uip\+\_\+udpip\+\_\+hdr}}
 \#define \mbox{\hyperlink{config_8h_afb4c1dc527be76d8f27591dfb726c023}{I\+P6\+\_\+\+H\+L\+EN}}~40
 \item 
 \#define \mbox{\hyperlink{config_8h_a32c693bd3dc87d85f8256028e9f0e0bf}{C\+O\+A\+P\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+E\+N\+G\+TH}}~16
-\item 
-\#define \mbox{\hyperlink{config_8h_a96b977962436620ec037645e3e2e0ee8}{M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~8
-\item 
-\#define \mbox{\hyperlink{config_8h_aac32e96e8faf7ff86aced84537107bca}{M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~2
 \item 
 \#define \mbox{\hyperlink{config_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~1
 \item 
@@ -42,6 +48,10 @@ typedef \mbox{\hyperlink{config_8h_a3f88feb38d3526a102acdf574c8d3eaa}{uip\+\_\+i
 enum \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} \{ \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}} = 0, 
 \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}{D\+O\+WN}} = 1, 
 \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}} = 2
+ \}
+\item 
+enum \mbox{\hyperlink{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49e}{device\+\_\+type}} \{ \mbox{\hyperlink{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea136faa2f3ea03cc888d90c77bc705d67}{N\+E\+T\+W\+O\+R\+K\+\_\+\+G\+A\+T\+E\+W\+AY}} = 0, 
+\mbox{\hyperlink{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea28b8a7b4b6c2a98af7cf438255207174}{D\+E\+V\+I\+CE}} = 1
  \}
 \item 
 enum \mbox{\hyperlink{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4}{C\+DA}} \{ \newline
@@ -81,18 +91,6 @@ static uint8\+\_\+t \mbox{\hyperlink{config_8h_aaa6535816b00df52f9f7b05970feca0a
 \index{IP6\_HLEN@{IP6\_HLEN}!config.h@{config.h}}
 \doxysubsubsection{\texorpdfstring{IP6\_HLEN}{IP6\_HLEN}}
 {\footnotesize\ttfamily \#define I\+P6\+\_\+\+H\+L\+EN~40}
-
-\mbox{\Hypertarget{config_8h_a96b977962436620ec037645e3e2e0ee8}\label{config_8h_a96b977962436620ec037645e3e2e0ee8}} 
-\index{config.h@{config.h}!MAX\_IPV6\_FIELD\_LENGTH@{MAX\_IPV6\_FIELD\_LENGTH}}
-\index{MAX\_IPV6\_FIELD\_LENGTH@{MAX\_IPV6\_FIELD\_LENGTH}!config.h@{config.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_IPV6\_FIELD\_LENGTH}{MAX\_IPV6\_FIELD\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~8}
-
-\mbox{\Hypertarget{config_8h_aac32e96e8faf7ff86aced84537107bca}\label{config_8h_aac32e96e8faf7ff86aced84537107bca}} 
-\index{config.h@{config.h}!MAX\_UDP\_FIELD\_LENGTH@{MAX\_UDP\_FIELD\_LENGTH}}
-\index{MAX\_UDP\_FIELD\_LENGTH@{MAX\_UDP\_FIELD\_LENGTH}!config.h@{config.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_UDP\_FIELD\_LENGTH}{MAX\_UDP\_FIELD\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~2}
 
 \mbox{\Hypertarget{config_8h_a63504215b1f5f5190353b62949d05635}\label{config_8h_a63504215b1f5f5190353b62949d05635}} 
 \index{config.h@{config.h}!MIC\_C\_SIZE\_BITS@{MIC\_C\_SIZE\_BITS}}
@@ -167,6 +165,22 @@ D\+E\+V\+I\+ID&\\
 
 \raisebox{\heightof{T}}[0pt][0pt]{\index{APPIID@{APPIID}!config.h@{config.h}}\index{config.h@{config.h}!APPIID@{APPIID}}}\mbox{\Hypertarget{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab}\label{config_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab}} 
 A\+P\+P\+I\+ID&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49e}\label{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49e}} 
+\index{config.h@{config.h}!device\_type@{device\_type}}
+\index{device\_type@{device\_type}!config.h@{config.h}}
+\doxysubsubsection{\texorpdfstring{device\_type}{device\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49e}{device\+\_\+type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NETWORK\_GATEWAY@{NETWORK\_GATEWAY}!config.h@{config.h}}\index{config.h@{config.h}!NETWORK\_GATEWAY@{NETWORK\_GATEWAY}}}\mbox{\Hypertarget{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea136faa2f3ea03cc888d90c77bc705d67}\label{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea136faa2f3ea03cc888d90c77bc705d67}} 
+N\+E\+T\+W\+O\+R\+K\+\_\+\+G\+A\+T\+E\+W\+AY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DEVICE@{DEVICE}!config.h@{config.h}}\index{config.h@{config.h}!DEVICE@{DEVICE}}}\mbox{\Hypertarget{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea28b8a7b4b6c2a98af7cf438255207174}\label{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49ea28b8a7b4b6c2a98af7cf438255207174}} 
+D\+E\+V\+I\+CE&\\
 \hline
 
 \end{DoxyEnumFields}

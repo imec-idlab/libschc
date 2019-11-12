@@ -152,6 +152,8 @@ enum \mbox{\hyperlink{picocoap_8h_ad22cdfc27ae54b1806f6de1e44f1e379}{coap\+\_\+o
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
+uint8\+\_\+t \mbox{\hyperlink{picocoap_8h_a1e06041a635ac4d7241f66f61784c1c1}{coap\+\_\+get\+\_\+coap\+\_\+offset}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
+\begin{DoxyCompactList}\small\item\em Finds the length of the Co\+AP header. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{picocoap_8h_aa9dd43046c8daad008c9195a6f84d4f1}{coap\+\_\+error}} \mbox{\hyperlink{picocoap_8h_a8718a038b325db3b45194f8f5b325054}{coap\+\_\+validate\+\_\+pkt}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
 \begin{DoxyCompactList}\small\item\em Validate Packet. \end{DoxyCompactList}\item 
 static \mbox{\hyperlink{picocoap_8h_a68aad811c8ab03701a2c3f1b84debe74}{coap\+\_\+version}} \mbox{\hyperlink{picocoap_8h_a41c3497f871eb3888793123d6dace83b}{coap\+\_\+get\+\_\+version}} (\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$pdu)
@@ -761,6 +763,24 @@ Internal Method.
 
 Internal Method. 
 
+\mbox{\Hypertarget{picocoap_8h_a1e06041a635ac4d7241f66f61784c1c1}\label{picocoap_8h_a1e06041a635ac4d7241f66f61784c1c1}} 
+\index{picocoap.h@{picocoap.h}!coap\_get\_coap\_offset@{coap\_get\_coap\_offset}}
+\index{coap\_get\_coap\_offset@{coap\_get\_coap\_offset}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{coap\_get\_coap\_offset()}{coap\_get\_coap\_offset()}}
+{\footnotesize\ttfamily uint8\+\_\+t coap\+\_\+get\+\_\+coap\+\_\+offset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcoap__pdu}{coap\+\_\+pdu}} $\ast$}]{pdu }\end{DoxyParamCaption})}
+
+
+
+Finds the length of the Co\+AP header. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pdu} & the Co\+AP pdu, containing the header and payload\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the length of the Co\+AP header 
+\end{DoxyReturn}
 \mbox{\Hypertarget{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}\label{picocoap_8h_a439d35974c9b5c7be2070a973eab3a08}} 
 \index{picocoap.h@{picocoap.h}!coap\_get\_code@{coap\_get\_code}}
 \index{coap\_get\_code@{coap\_get\_code}!picocoap.h@{picocoap.h}}

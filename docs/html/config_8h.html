@@ -79,7 +79,17 @@ $(function() {
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__field.html">schc_field</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__rule.html">schc_rule</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__ipv6__rule__t.html">schc_ipv6_rule_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__udp__rule__t.html">schc_udp_rule_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__coap__rule__t.html">schc_coap_rule_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__compression__rule__t.html">schc_compression_rule_t</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__rule__t.html">schc_rule_t</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__device.html">schc_device</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -94,10 +104,6 @@ Macros</h2></td></tr>
 <tr class="separator:afb4c1dc527be76d8f27591dfb726c023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32c693bd3dc87d85f8256028e9f0e0bf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a32c693bd3dc87d85f8256028e9f0e0bf">COAP_OPTIONS_LENGTH</a>&#160;&#160;&#160;16</td></tr>
 <tr class="separator:a32c693bd3dc87d85f8256028e9f0e0bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96b977962436620ec037645e3e2e0ee8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a96b977962436620ec037645e3e2e0ee8">MAX_IPV6_FIELD_LENGTH</a>&#160;&#160;&#160;8</td></tr>
-<tr class="separator:a96b977962436620ec037645e3e2e0ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac32e96e8faf7ff86aced84537107bca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#aac32e96e8faf7ff86aced84537107bca">MAX_UDP_FIELD_LENGTH</a>&#160;&#160;&#160;2</td></tr>
-<tr class="separator:aac32e96e8faf7ff86aced84537107bca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee02bb425cd8b2d526378e84db80752f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#aee02bb425cd8b2d526378e84db80752f">WINDOW_SIZE_BITS</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:aee02bb425cd8b2d526378e84db80752f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63504215b1f5f5190353b62949d05635"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a63504215b1f5f5190353b62949d05635">MIC_C_SIZE_BITS</a>&#160;&#160;&#160;1</td></tr>
@@ -117,6 +123,10 @@ Enumerations</h2></td></tr>
 <a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b">BI</a> = 2
  }</td></tr>
 <tr class="separator:a99f26e6ee9fcd62f75203b5402df8098"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b559cc2ee2eaee47fe1f15cc99f49e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a> { <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49ea136faa2f3ea03cc888d90c77bc705d67">NETWORK_GATEWAY</a> = 0, 
+<a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49ea28b8a7b4b6c2a98af7cf438255207174">DEVICE</a> = 1
+ }</td></tr>
+<tr class="separator:af2b559cc2ee2eaee47fe1f15cc99f49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e43f38d5254d1e3bbf1d0955eb98ce4"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="config_8h.html#a3e43f38d5254d1e3bbf1d0955eb98ce4">CDA</a> { <br />
 &#160;&#160;<a class="el" href="config_8h.html#a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83">NOTSENT</a> = 0, 
 <a class="el" href="config_8h.html#a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc">VALUESENT</a> = 1, 
@@ -165,34 +175,6 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define IP6_HLEN&#160;&#160;&#160;40</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a96b977962436620ec037645e3e2e0ee8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96b977962436620ec037645e3e2e0ee8">&#9670;&nbsp;</a></span>MAX_IPV6_FIELD_LENGTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX_IPV6_FIELD_LENGTH&#160;&#160;&#160;8</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aac32e96e8faf7ff86aced84537107bca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac32e96e8faf7ff86aced84537107bca">&#9670;&nbsp;</a></span>MAX_UDP_FIELD_LENGTH</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX_UDP_FIELD_LENGTH&#160;&#160;&#160;2</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -291,6 +273,24 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f"></a>COMPCHK&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3e43f38d5254d1e3bbf1d0955eb98ce4af2f71f1d6b980ffce7facf81da9d38b0"></a>DEVIID&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab"></a>APPIID&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="af2b559cc2ee2eaee47fe1f15cc99f49e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b559cc2ee2eaee47fe1f15cc99f49e">&#9670;&nbsp;</a></span>device_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="af2b559cc2ee2eaee47fe1f15cc99f49ea136faa2f3ea03cc888d90c77bc705d67"></a>NETWORK_GATEWAY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="af2b559cc2ee2eaee47fe1f15cc99f49ea28b8a7b4b6c2a98af7cf438255207174"></a>DEVICE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
