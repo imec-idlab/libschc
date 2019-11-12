@@ -7,7 +7,7 @@ tiny low-power microcontrollers to have an end-to-end IPv6 connection.
 This repository contains both the compression aswell as the fragmentation mechanism.
 For further information related to SCHC, see <https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/>.
 
-See the [docs](.../docs) for more information on the implemenation and configuration.
+See the [docs](/docs) for more information on the implemenation and configuration.
 
 ## LIMITATIONS
 As this implementation is work in progress, there are some limitations you should keep in mind.
@@ -20,7 +20,7 @@ The current implementation is based on draft-ietf-lpwan-ipv6-static-context-hc-1
 Please keep in mind that the library works, but is still very experimental!
 
 ## EXAMPLES
-In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of a timer library and should be adapted to your platform (see [Fragmentation](.../docs/fragmentation) and the examples folder).
+In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of a timer library and should be adapted to your platform (see [Fragmentation](/docs/fragmentation) and the examples folder).
 
 ## LICENSE
 Licensed under the GNU General Public License, Version 3 (the "License"): You may not use these files except in compliance with the License. You may obtain a copy of the License at <https://www.gnu.org/licenses/gpl-3.0.nl.html>
