@@ -97,7 +97,6 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
 
 	free(compressed_packet);
-	schc_reset(conn);
 }
 
 void timer_handler(size_t timer_id, void* user_data) {
@@ -189,8 +188,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 		if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
 			end_rx(conn);
 		} else {
-			int ret = 0;
-			ret = schc_reassemble(conn);
+			int ret = schc_reassemble(conn);
 			if(ret && conn->schc_rule->mode == NO_ACK){ // use the connection to reassemble
 				end_rx(conn); // final packet arrived
 			}

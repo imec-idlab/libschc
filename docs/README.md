@@ -209,7 +209,8 @@ if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is 
 	if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
 		end_rx(conn);
 	} else {
-		if(schc_reassemble(conn)) { // use the connection to reassemble
+		int ret = schc_reassemble(conn);
+		if(ret && conn->schc_rule->mode == NO_ACK){ // use the connection to reassemble
 			end_rx(conn); // final packet arrived
 		}
 	}

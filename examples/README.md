@@ -1,4 +1,5 @@
 # EXAMPLES
+*Note: as the examples are executable in a single terminal, some issues arise as the same fragmenter instance is used for two different devices. As I did not have much more time to work on the examples, I did not try to look for a better solution. If you get a segmentation fault at the end of a fragmentation loop, it is as expected. However, the output and the code should be relatively easy to follow in order to deploy the library on 2 devices.*
 ```
 cd examples
 make all
