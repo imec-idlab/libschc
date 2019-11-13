@@ -13,7 +13,8 @@ See the [docs](/docs) for more information on the implemenation and configuratio
 As this implementation is work in progress, there are some limitations you should keep in mind.
 
 The library has been designed in such a way that it can be used on top of a constrained device, as well as on a more powerful server side device. As a consequence, memory allocation and memory intensive calculations are avoided.
-Fixed point arithmetic is used for 8-bit mircoprocessors, however some optimizations are possible. Consequently, the rules are constructed of 8-bit arrays, availble on all devices.
+Fixed point arithmetic is used for 8-bit mircoprocessors, however some optimizations are possible. Consequently, the rules are constructed of 8-bit arrays, availble on all devices. Dynamic memory allocation is omitted as memory fragmentation would occur and performance would suffer, since many MCUs are not equipped with Memory Management Units (MMU).
+For the network gateway however, dynamic memory allocation should be implemented for several functions to avoid large memory pre-allocation.
 
 The current implementation is based on draft-ietf-lpwan-ipv6-static-context-hc-18 (<https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/18/>), some naming conventions are therefore not in line with the current specification.
 

@@ -14,6 +14,7 @@
 #include "config.h"
 #include "schc_config.h"
 
+#include "compressor.h"
 #include "fragmenter.h"
 
 uint8_t ATTEMPTS = 0; // for debugging
@@ -2434,13 +2435,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	}
 	if(conn->schc_rule == NULL) {
 		uint8_t rule_id = data[0]; // todo adapt to profile and bitwise operation
-		DEBUG_PRINTF("schc_fragment_input(): rule id %d \n", rule_id);
-
 		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(rule_id, device_id);
-		// DOUBLE POINTER???
-		conn->schc_rule = &ptr;
-
-		DEBUG_PRINTF("schc_fragment_input(): rule id %d \n", conn->schc_rule->id);
+		conn->schc_rule = ptr;
 	}
 
 	uint8_t* fragment;

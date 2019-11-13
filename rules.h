@@ -255,8 +255,8 @@ const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
 const struct schc_rule_t* node2_schc_rules[] = { &schc_rule_1 };
 
 /* rules for a particular device */
-struct schc_device node1 = { 1, 8, &node1_schc_rules };
-struct schc_device node2 = { 2, 1, &node2_schc_rules};
+const struct schc_device node1 = { 1, 8, &node1_schc_rules };
+const struct schc_device node2 = { 2, 1, &node2_schc_rules};
 
 /* server keeps track of multiple devices: add devices to device list */
 const struct schc_device* devices[DEVICE_COUNT] = { &node1, &node2 };

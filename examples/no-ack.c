@@ -181,25 +181,17 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
 	int8_t ret = 0;
 
 	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			&tx_conn_ngw, device_id); // get active connection
-
-	// PROBLEM
-	// check draft where it is defined how a fragmented packet is indicated
-	// based on rule id?
-
-	// this is done by checking the rule id
-	// if the packet should not be fragmented
-	// ...
+			&tx_conn_ngw, device_id); // get active connection and set the correct rule for this connection
 
 	if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is received
-		conn->schc_rule->mode = NO_ACK;
-		if (conn->schc_rule->mode == NO_ACK) {
-			conn->schc_rule->FCN_SIZE = 1;
-			conn->schc_rule->WINDOW_SIZE = 0;
-		}
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
-		ret = schc_reassemble(conn);
+
+		if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
+			end_rx(conn);
+		} else {
+			ret = schc_reassemble(conn); // use the connection to reassemble
+		}
 	}
 
 	// schc_reset(conn);
@@ -227,6 +219,7 @@ void init() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 	schc_compressor_init(src);
 
+	// initialize fragmenter for constrained device
 	schc_fragmenter_init(&tx_conn, &send_callback, &end_rx, &remove_timer_entry);
 }
 
@@ -241,15 +234,18 @@ int main() {
 	uint16_t compressed_len = schc_compress(msg, compressed_packet,
 			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
-	tx_conn.mtu = 51; // network driver MTU
+	tx_conn.mtu = 25; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
-	if(compressed_len < tx_conn.mtu) { // should fragment, change rule
+	if(compressed_len > tx_conn.mtu) { // should fragment, change rule
 		// select a similar rule based on a reliability mode
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
-		set_rule_id(schc_rule, compressed_packet);
+	} else { // do not fragment
+		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
 	}
+
+	set_rule_id(schc_rule, compressed_packet);
 
 	tx_conn.data_ptr = &compressed_packet;
 	tx_conn.packet_len = compressed_len;

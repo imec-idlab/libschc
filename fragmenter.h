@@ -56,9 +56,6 @@ typedef enum {
 	RECV_WINDOW = 0, WAIT_NEXT_WINDOW = 1, WAIT_MISSING_FRAG = 2, WAIT_END = 3, END_RX = 4, ABORT = 5
 } rx_state;
 
-// the maximum bitmap length
-#define BITMAP_SIZE_BYTES		4
-
 typedef struct schc_mbuf_t {
 	/* the selected slot */
 	uint32_t slot;
@@ -148,7 +145,7 @@ typedef struct schc_fragmentation_t {
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
 	/* the rule in use */
-	struct schc_rule_t *schc_rule;
+	struct schc_rule_t* schc_rule;
 	/* the rule size in bits */
 	uint8_t RULE_SIZE;
 } schc_fragmentation_t;

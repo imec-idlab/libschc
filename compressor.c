@@ -82,8 +82,6 @@ int8_t set_rule_id(struct schc_rule_t* schc_rule, uint8_t* data) {
 	// copy uncompressed rule id in front of the buffer
 	memcpy((uint8_t*) data, &schc_rule->id, RULE_SIZE_BYTES);
 
-	DEBUG_PRINTF("set_rule_id(): rule id set to %d \n", schc_rule->id);
-
 	return 1;
 }
 
@@ -192,7 +190,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->context)[i];
+		struct schc_rule_t* curr_rule = (*device->context)[i];
 		if(curr_rule->id == rule_id) {
 			return curr_rule;
 		}
