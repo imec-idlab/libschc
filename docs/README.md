@@ -219,7 +219,7 @@ if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is 
 The above example is application code of the server, receiving a compressed, fragmented packet.
 By calling `schc_reassemble`, the fragmenter will take care of adding fragments to the `MBUF_POOL`.
 
-Once the reception is finished, `packet_to_ip6` is called, where the `mbuf` can be reassembled to a regular packet.
+Once the reception is finished, `end_rx` is called, where the `mbuf` can be reassembled to a regular packet.
 First we want to get the length of the packet:
 ```C
 uint16_t get_mbuf_len(schc_mbuf_t *head); // call with conn->head as argument
