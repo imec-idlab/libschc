@@ -163,27 +163,30 @@ struct schc_rule_t* schc_rule;
 uint16_t compressed_len = schc_compress(msg, compressed_packet,
 		PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
-tx_conn_sender.mtu = 51; // network driver MTU
-tx_conn_sender.dc = 5000; // 5 seconds duty cycle
-tx_conn_sender.device_id = device_id; // the device id of the connection
+tx_conn.mtu = 25; // network driver MTU
+tx_conn.dc = 5000; // 5 seconds duty cycle
+tx_conn.device_id = device_id; // the device id of the connection
 
-if(compressed_len < tx_conn_sender.mtu) { // should fragment, change rule
+if(compressed_len > tx_conn.mtu) { // should fragment, change rule
 	// select a similar rule based on a reliability mode
 	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
-	set_rule_id(schc_rule, compressed_packet);
+} else { // do not fragment
+	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
 }
 
-tx_conn_sender.data_ptr = &compressed_packet;
-tx_conn_sender.packet_len = compressed_len;
-tx_conn_sender.send = &send_callback;
-tx_conn_sender.end_tx = &end_tx;
+set_rule_id(schc_rule, compressed_packet);
 
-tx_conn_sender.schc_rule = schc_rule;
-tx_conn_sender.RULE_SIZE = 8; // todo get from profile
+tx_conn.data_ptr = &compressed_packet;
+tx_conn.packet_len = compressed_len;
+tx_conn.send = &send_callback;
+tx_conn.end_tx = &end_tx;
 
-tx_conn_sender.post_timer_task = &set_tx_timer;
+tx_conn.schc_rule = schc_rule;
+tx_conn.RULE_SIZE = 8; // todo get from profile
 
-int ret = schc_fragment(&tx_conn_sender);
+tx_conn.post_timer_task = &set_tx_timer;
+
+int ret = schc_fragment(&tx_conn);
 ```
 
 #### Reassembly
@@ -196,21 +199,20 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 
 These return values can be used in the application to perform corresponding actions, e.g:
 ```C
-uint8_t ret = 0;
+schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
+			&tx_conn_ngw, device_id); // get active connection and set the correct rule for this connection
 
-if (conn != &tx_conn) {
-	conn->mode = NO_ACK;// todo get from rule
-	if(conn->mode == NO_ACK) { // todo get from rule
-		conn->FCN_SIZE = 1;
-		conn->WINDOW_SIZE = 0;
-	}
+if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is received
 	conn->post_timer_task = &set_rx_timer;
-	conn->dc = 50000; // duty cycle
-	ret = schc_reassemble(conn);
-}
+	conn->dc = 20000; // retransmission timer: used for timeouts
 
-if(ret == 1) { // reception finished
-	packet_to_ip6(conn);
+	if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
+		end_rx(conn);
+	} else {
+		if(schc_reassemble(conn)) { // use the connection to reassemble
+			end_rx(conn); // final packet arrived
+		}
+	}
 }
 ```
 The above example is application code of the server, receiving a compressed, fragmented packet.
