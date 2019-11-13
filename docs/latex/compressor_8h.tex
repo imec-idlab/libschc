@@ -12,6 +12,8 @@ int16\+\_\+t \mbox{\hyperlink{compressor_8h_a82519e0fb10812319fee0c8bddd5e1a4}{s
 \begin{DoxyCompactList}\small\item\em Compresses a Co\+A\+P/\+U\+D\+P/\+IP packet. \end{DoxyCompactList}\item 
 struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$ \mbox{\hyperlink{compressor_8h_aaf76c0525a94eecb1f694ba09b435c49}{get\+\_\+schc\+\_\+rule\+\_\+by\+\_\+reliability\+\_\+mode}} (struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$schc\+\_\+rule, \mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} mode, uint32\+\_\+t device\+\_\+id)
 \item 
+struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$ \mbox{\hyperlink{compressor_8h_a5bafc11a567bc093210ab7cb3afe650f}{get\+\_\+schc\+\_\+rule\+\_\+by\+\_\+rule\+\_\+id}} (uint8\+\_\+t rule\+\_\+id, uint32\+\_\+t device\+\_\+id)
+\item 
 uint16\+\_\+t \mbox{\hyperlink{compressor_8h_aed0accec488254c7576a97c4b2b805ba}{schc\+\_\+decompress}} (const uint8\+\_\+t $\ast$data, uint8\+\_\+t $\ast$buf, uint32\+\_\+t device\+\_\+id, uint16\+\_\+t total\+\_\+length, \mbox{\hyperlink{config_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} dir, \mbox{\hyperlink{config_8h_af2b559cc2ee2eaee47fe1f15cc99f49e}{device\+\_\+type}} device)
 \begin{DoxyCompactList}\small\item\em Construct the header from the layered set of rules. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
@@ -22,6 +24,12 @@ uint16\+\_\+t \mbox{\hyperlink{compressor_8h_aed0accec488254c7576a97c4b2b805ba}{
 \index{get\_schc\_rule\_by\_reliability\_mode@{get\_schc\_rule\_by\_reliability\_mode}!compressor.h@{compressor.h}}
 \doxysubsubsection{\texorpdfstring{get\_schc\_rule\_by\_reliability\_mode()}{get\_schc\_rule\_by\_reliability\_mode()}}
 {\footnotesize\ttfamily struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}$\ast$ get\+\_\+schc\+\_\+rule\+\_\+by\+\_\+reliability\+\_\+mode (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}} $\ast$}]{schc\+\_\+rule,  }\item[{\mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}}}]{mode,  }\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{compressor_8h_a5bafc11a567bc093210ab7cb3afe650f}\label{compressor_8h_a5bafc11a567bc093210ab7cb3afe650f}} 
+\index{compressor.h@{compressor.h}!get\_schc\_rule\_by\_rule\_id@{get\_schc\_rule\_by\_rule\_id}}
+\index{get\_schc\_rule\_by\_rule\_id@{get\_schc\_rule\_by\_rule\_id}!compressor.h@{compressor.h}}
+\doxysubsubsection{\texorpdfstring{get\_schc\_rule\_by\_rule\_id()}{get\_schc\_rule\_by\_rule\_id()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}$\ast$ get\+\_\+schc\+\_\+rule\+\_\+by\+\_\+rule\+\_\+id (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{rule\+\_\+id,  }\item[{uint32\+\_\+t}]{device\+\_\+id }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{compressor_8h_a82519e0fb10812319fee0c8bddd5e1a4}\label{compressor_8h_a82519e0fb10812319fee0c8bddd5e1a4}} 
 \index{compressor.h@{compressor.h}!schc\_compress@{schc\_compress}}

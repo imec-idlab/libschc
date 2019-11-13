@@ -83,6 +83,8 @@ Functions</h2></td></tr>
 <tr class="separator:a82519e0fb10812319fee0c8bddd5e1a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf76c0525a94eecb1f694ba09b435c49"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8h.html#aaf76c0525a94eecb1f694ba09b435c49">get_schc_rule_by_reliability_mode</a> (struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *schc_rule, <a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> mode, uint32_t device_id)</td></tr>
 <tr class="separator:aaf76c0525a94eecb1f694ba09b435c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bafc11a567bc093210ab7cb3afe650f"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8h.html#a5bafc11a567bc093210ab7cb3afe650f">get_schc_rule_by_rule_id</a> (uint8_t rule_id, uint32_t device_id)</td></tr>
+<tr class="separator:a5bafc11a567bc093210ab7cb3afe650f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed0accec488254c7576a97c4b2b805ba"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8h.html#aed0accec488254c7576a97c4b2b805ba">schc_decompress</a> (const uint8_t *data, uint8_t *buf, uint32_t device_id, uint16_t total_length, <a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> dir, <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a> device)</td></tr>
 <tr class="memdesc:aed0accec488254c7576a97c4b2b805ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the header from the layered set of rules.  <a href="compressor_8h.html#aed0accec488254c7576a97c4b2b805ba">More...</a><br /></td></tr>
 <tr class="separator:aed0accec488254c7576a97c4b2b805ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -105,6 +107,34 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype"><a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a>&#160;</td>
           <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>device_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5bafc11a567bc093210ab7cb3afe650f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bafc11a567bc093210ab7cb3afe650f">&#9670;&nbsp;</a></span>get_schc_rule_by_rule_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a>* get_schc_rule_by_rule_id </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>rule_id</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

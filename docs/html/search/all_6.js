@@ -19,6 +19,6 @@ var searchData=
   ['get_5freceived_5fmic_218',['get_received_mic',['../fragmenter_8c.html#a9125475fce328464d99327eaa258dc51',1,'fragmenter.c']]],
   ['get_5fschc_5frule_5fby_5flayer_5fids_219',['get_schc_rule_by_layer_ids',['../compressor_8c.html#ab1cdc4ecc8218636dd177a43cf85bb63',1,'compressor.c']]],
   ['get_5fschc_5frule_5fby_5freliability_5fmode_220',['get_schc_rule_by_reliability_mode',['../compressor_8c.html#aaf76c0525a94eecb1f694ba09b435c49',1,'get_schc_rule_by_reliability_mode(struct schc_rule_t *schc_rule, reliability_mode mode, uint32_t device_id):&#160;compressor.c'],['../compressor_8h.html#aaf76c0525a94eecb1f694ba09b435c49',1,'get_schc_rule_by_reliability_mode(struct schc_rule_t *schc_rule, reliability_mode mode, uint32_t device_id):&#160;compressor.c']]],
-  ['get_5fschc_5frule_5fby_5frule_5fid_221',['get_schc_rule_by_rule_id',['../compressor_8c.html#a5bafc11a567bc093210ab7cb3afe650f',1,'compressor.c']]],
+  ['get_5fschc_5frule_5fby_5frule_5fid_221',['get_schc_rule_by_rule_id',['../compressor_8c.html#a5bafc11a567bc093210ab7cb3afe650f',1,'get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id):&#160;compressor.c'],['../compressor_8h.html#a5bafc11a567bc093210ab7cb3afe650f',1,'get_schc_rule_by_rule_id(uint8_t rule_id, uint32_t device_id):&#160;compressor.c']]],
   ['get_5fwindow_5fbit_222',['get_window_bit',['../fragmenter_8c.html#aaab33166d11e3648fe19a05e95e83808',1,'fragmenter.c']]]
 ];

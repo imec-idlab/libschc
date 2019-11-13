@@ -199,8 +199,8 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 
 These return values can be used in the application to perform corresponding actions, e.g:
 ```C
-schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			&tx_conn_ngw, device_id); // get active connection and set the correct rule for this connection
+// get active connection and set the correct rule for this connection
+schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, &tx_conn_ngw, device_id); 
 
 if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is received
 	conn->post_timer_task = &set_rx_timer;
@@ -228,11 +228,6 @@ Next, a buffer can be allocated with the appropriate length (the return value of
 void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr); // call with conn->head and pointer to allocated buffer
 ```
 The result will be a compressed packet, which can be decompressed by using the decompressor.
-
-Don't forget to reset the rx connection.
-```C
-void schc_reset(schc_fragmentation_t* conn);
-```
 
 ## Configuration
 First copy the configuration file 
