@@ -1765,7 +1765,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			break;
 		}
 		case END_RX: {
-			DEBUG_PRINTF("END RX");
+			DEBUG_PRINTF("END RX\n");
 			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
 				// end the transmission
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
