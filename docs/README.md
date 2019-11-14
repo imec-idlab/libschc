@@ -6,10 +6,10 @@ The receiver will be able to reconstruct the original header by using the exact 
 As this technique is aimed at technologies with limited bandwidth capbilities possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers and to support the IPv6 1500 bytes MTU requirement.
 
 #### Table of Contents  
-[Rules](#rules)
-[Compression](#compression) 
-[Fragmentation](#fragmentation)
-[Configuration](#configuration)
+* [Rules](#rules)
+* [Compression](#compression) 
+* [Fragmentation](#fragmentation)
+* [Configuration](#configuration)
 
 ### Rules
 As proposed in draft-22, every technology should define a profile to set the parameters according to the properties of that technology.
