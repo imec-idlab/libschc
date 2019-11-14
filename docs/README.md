@@ -5,6 +5,12 @@ The contexts represent possible header configurations, stored in a rule and iden
 The receiver will be able to reconstruct the original header by using the exact same rule.
 As this technique is aimed at technologies with limited bandwidth capbilities possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers and to support the IPv6 1500 bytes MTU requirement.
 
+#### Table of Contents  
+[Rules](#rules)
+[Compression](#compression) 
+[Fragmentation](#fragmentation)
+[Configuration](#configuration)
+
 ### Rules
 As proposed in draft-22, every technology should define a profile to set the parameters according to the properties of that technology.
 The profile includes the rules with their corresponding parameters, a pointer to the protocol layer definitions and the rule id.
@@ -243,7 +249,7 @@ Therefore, it is important to change the following definitions according to the 
 * `#define MAX_layer_FIELD_LENGTH` should be set to the maximum number of bytes a field contains (i.e. target value)
 
 ### Timers
-As you can see in the above examples, the library has no native support for timers and requires callback functions from the main application to schedule transmissions and to time out.
+As you can see in the examples, the library has no on-board support for timers to avoid complex integration and requires callback functions from the main application to schedule transmissions and to time out.
 Therefore, 2 function callbacks are required.
 ```C
 /*
