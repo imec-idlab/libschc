@@ -135,7 +135,7 @@ struct schc_udpip_hdr {
   uint16_t flow;
   uint8_t len[2];
   uint8_t proto, ttl;
-  uip_ip6addr_t srcipaddr, destipaddr;
+  schc_ip6addr_t srcipaddr, destipaddr;
 
   /* UDP header. */
   uint16_t srcport,

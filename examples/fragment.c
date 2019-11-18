@@ -88,9 +88,9 @@ void end_rx(schc_fragmentation_t *conn) {
 	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
 
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
-	uint16_t new_headerlen = schc_decompress(compressed_packet, decomp_packet,
+	uint16_t new_packet_len = schc_decompress(compressed_packet, decomp_packet,
 			conn->device_id, packetlen, UP, NETWORK_GATEWAY);
-	if (new_headerlen == 0) { // some error occured
+	if (new_packet_len == 0) { // some error occured
 		exit(0);
 	}
 
