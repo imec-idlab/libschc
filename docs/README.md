@@ -239,7 +239,7 @@ The result will be a compressed packet, which can be decompressed by using the d
 ## Configuration
 First copy the configuration file 
 ```
-mv schc_config_example.h schc_config.h
+cp schc_config_example.h schc_config.h
 ```
 and edit the definitions according to your platform and preferences.
 
@@ -270,5 +270,5 @@ static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 
 An example is provided in the examples folder, where a timer library is used and the callbacks are adapted to this library.
 
-## LIMITATIONS
+## Limitations
 Most of the limitations are listed under issues and may be fixed in coming releases.
