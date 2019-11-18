@@ -28,7 +28,7 @@ MODULE_BUILD_SETTINGS_FILE()
 EXPORT_GLOBAL_INCLUDE_DIRECTORIES(.)
 
 #By convention, each module should generate a single 'static' library that can be included by the application
-ADD_LIBRARY(schc STATIC
+ADD_LIBRARY(libschc STATIC
     picocoap.c
     compressor.c
     fragmenter.c
@@ -38,10 +38,8 @@ ADD_LIBRARY(schc STATIC
 #ADD_DEFINITIONS()
 
 GET_PROPERTY(__global_include_dirs GLOBAL PROPERTY GLOBAL_INCLUDE_DIRECTORIES)
-target_include_directories(schc PUBLIC
+target_include_directories(libschc PUBLIC
     .
-    uip
-    schc
 
     ${__global_include_dirs}
     ${CMAKE_BINARY_DIR}/framework/ #framework_defs.h

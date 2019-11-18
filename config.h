@@ -125,10 +125,10 @@ struct schc_device {
 	const struct schc_rule_t *(*context)[];
 };
 
-typedef uint16_t uip_ip6addr_t[8];
-typedef uip_ip6addr_t uip_ipaddr_t;
+typedef uint16_t schc_ip6addr_t[8];
+typedef schc_ip6addr_t schc_ipaddr_t;
 
-struct uip_udpip_hdr {
+struct schc_udpip_hdr {
   /* IPv6 header. */
   uint8_t vtc,
     tcf;

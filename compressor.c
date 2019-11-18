@@ -23,7 +23,7 @@
 // changes on server/client
 static direction DI;
 static device_type DEVICE_TYPE;
-static uip_ipaddr_t node_ip_6;
+static schc_ipaddr_t node_ip_6;
 
 jsmn_parser json_parser;
 jsmntok_t json_token[JSON_TOKENS];
@@ -43,8 +43,8 @@ unsigned char coap_header_fields[COAP_FIELDS][MAX_COAP_FIELD_LENGTH];
  * @return node_ip_6 the node its IP address
  *
  */
-static void get_node_ip(uip_ipaddr_t *node_ip) {
-	memcpy(node_ip, node_ip_6, sizeof(uip_ipaddr_t));
+static void get_node_ip(schc_ipaddr_t *node_ip) {
+	memcpy(node_ip, node_ip_6, sizeof(schc_ipaddr_t));
 }
 
 /**
@@ -451,7 +451,7 @@ static uint8_t decompress(unsigned char *schc_header,
 			case DEVIID: {
 				if (!strcmp(rule->content[i].field, "src iid")) {
 
-					uip_ipaddr_t node_ip;
+					schc_ipaddr_t node_ip;
 					get_node_ip(node_ip);
 
 					unsigned char ip_addr[8] = {
@@ -497,7 +497,7 @@ static uint8_t decompress(unsigned char *schc_header,
  * @param ip_udp_header 	the IP/UDP header to construct the unified array from
  *
  */
-static void generate_ip_udp_header_struct(const uint8_t* data, struct uip_udpip_hdr *ip_udp_header) {
+static void generate_ip_udp_header_struct(const uint8_t* data, struct schc_udpip_hdr *ip_udp_header) {
 #if USE_IPv6
 	// construct the IP header
 	ip_udp_header->vtc = data[0];
@@ -508,20 +508,20 @@ static void generate_ip_udp_header_struct(const uint8_t* data, struct uip_udpip_
 	ip_udp_header->proto = data[6];
 	ip_udp_header->ttl = data[7];
 
-	uip_ipaddr_t src = { ((data[9] << 8) | data[8]),
+	schc_ipaddr_t src = { ((data[9] << 8) | data[8]),
 			((data[11] << 8) | data[10]), ((data[13] << 8) | data[12]),
 			((data[15] << 8) | data[14]), ((data[17] << 8) | data[16]),
 			((data[19] << 8) | data[18]), ((data[21] << 8) | data[20]),
 			((data[23] << 8) | data[22]) };
 
-	uip_ipaddr_t dest = { ((data[25] << 8) | data[24]), ((data[27] << 8)
+	schc_ipaddr_t dest = { ((data[25] << 8) | data[24]), ((data[27] << 8)
 			| data[26]), ((data[29] << 8) | data[28]), ((data[31] << 8)
 			| data[30]), ((data[33] << 8) | data[32]), ((data[35] << 8)
 			| data[34]), ((data[37] << 8) | data[36]), ((data[39] << 8)
 			| data[38]) };
 
-	memcpy(ip_udp_header->srcipaddr, src, sizeof(uip_ipaddr_t));
-	memcpy(ip_udp_header->destipaddr, dest, sizeof(uip_ipaddr_t));
+	memcpy(ip_udp_header->srcipaddr, src, sizeof(schc_ipaddr_t));
+	memcpy(ip_udp_header->destipaddr, dest, sizeof(schc_ipaddr_t));
 #endif
 
 #if USE_UDP
@@ -543,7 +543,7 @@ static void generate_ip_udp_header_struct(const uint8_t* data, struct uip_udpip_
  * @return the length of the array, which represents the number of UDP fields
  *
  */
-static uint8_t generate_ip_header_fields(struct uip_udpip_hdr *ip_udp_header) {
+static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
 
 	unsigned char version[1] = { (ip_udp_header->vtc & 0xF0) >> 4};
 	unsigned char traffic_class[1] = { (((ip_udp_header->vtc & 0xF) << 4) | (ip_udp_header->tcf & 0xF0) >> 4)  };
@@ -635,7 +635,7 @@ static uint8_t generate_ip_header_fields(struct uip_udpip_hdr *ip_udp_header) {
  * @return the rule
  *         NULL if no rule is found
  */
-static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct uip_udpip_hdr *ip_udp_header, uint32_t device_id) {
+static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct schc_udpip_hdr *ip_udp_header, uint32_t device_id) {
 	uint8_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
@@ -734,7 +734,7 @@ static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char
  * @return the length of the array, which represents the number of UDP fields
  *
  */
-static uint8_t generate_udp_header_fields(struct uip_udpip_hdr *ip_udp_header) {
+static uint8_t generate_udp_header_fields(struct schc_udpip_hdr *ip_udp_header) {
 
 	uint8_t cols = MAX_UDP_FIELD_LENGTH;
 
@@ -761,7 +761,7 @@ static uint8_t generate_udp_header_fields(struct uip_udpip_hdr *ip_udp_header) {
  * @return rule id 			the rule id
  *         0 				if no rule is found
  */
-static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct uip_udpip_hdr *ip_udp_header, uint32_t device_id) {
+static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct schc_udpip_hdr *ip_udp_header, uint32_t device_id) {
 	uint8_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
@@ -1199,8 +1199,8 @@ static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_va
  * @return 0
  *
  */
-static void set_node_ip(uip_ipaddr_t *node_ip) {
-	memcpy(node_ip_6, node_ip, sizeof(uip_ipaddr_t));
+static void set_node_ip(schc_ipaddr_t *node_ip) {
+	memcpy(node_ip_6, node_ip, sizeof(schc_ipaddr_t));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1284,7 +1284,7 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 	}
 #endif
 
-	struct uip_udpip_hdr ip_udp_header;
+	struct schc_udpip_hdr ip_udp_header;
 	generate_ip_udp_header_struct(data, &ip_udp_header);
 
 #if USE_UDP
@@ -1470,7 +1470,7 @@ uint16_t compute_checksum(unsigned char *data) {
 		sum = upper_layer_len + proto;
 
 		// sum IP source and destination
-		sum = chksum(sum, (uint8_t *)&data[8], 2 * sizeof(uip_ipaddr_t));
+		sum = chksum(sum, (uint8_t *)&data[8], 2 * sizeof(schc_ipaddr_t));
 
 		// sum upper layer headers and data
 		sum = chksum(sum, &data[IP6_HLEN], upper_layer_len);
