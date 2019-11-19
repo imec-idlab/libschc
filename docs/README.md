@@ -41,6 +41,8 @@ A representation of the implementation is shown in the following figure:
 
 The rules are layer specific and are combined in a `compression_rule_t` structure to ensure reusage over different rule ID's. The resulting `schc_rule_t` can be combined with similar definitions to form a context. This context may be reused over different devices. 
 
+An example implementation of the rules can be found in `rules_example.h` and should be copied to `rules.h`.
+
 #### Implementation
 *Note: the human readability of the implementation adds overhead and requires additional research to perform proper encoding.*
 
@@ -237,7 +239,7 @@ void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr); // call with conn->head and poi
 The result will be a compressed packet, which can be decompressed by using the decompressor.
 
 ## Configuration
-First copy the configuration file 
+First copy the configuration and rules file 
 ```
 cp schc_config_example.h schc_config.h && cp rules_example.h rules.h
 ```
