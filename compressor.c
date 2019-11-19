@@ -1248,17 +1248,14 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 	DEVICE_TYPE = device_type;
 
 	uint16_t schc_offset = RULE_SIZE_BYTES;
-	uint16_t coap_length = 0;
+	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 #if USE_COAP
-	uint8_t coap_rule_id = 0;
 	struct schc_coap_rule_t *coap_rule;
 #endif
 #if USE_UDP
-	uint8_t udp_rule_id = 0;
 	struct schc_udp_rule_t *udp_rule;
 #endif
 #if USE_IPv6
-	uint8_t ipv6_rule_id = 0;
 	struct schc_ipv6_rule_t *ipv6_rule;
 #endif
 
