@@ -46,4 +46,4 @@ target_include_directories(schc PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR} # MODULE_SCHC_defs.h
 )
 
-#TARGET_LINK_LIBRARIES(lorawan d7ap)
+#TARGET_LINK_LIBRARIES()

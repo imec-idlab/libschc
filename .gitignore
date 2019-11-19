@@ -1,4 +1,5 @@
 schc_config.h
 click_config.h
+rules.h
 
 examples/compress

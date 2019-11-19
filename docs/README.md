@@ -239,7 +239,7 @@ The result will be a compressed packet, which can be decompressed by using the d
 ## Configuration
 First copy the configuration file 
 ```
-cp schc_config_example.h schc_config.h
+cp schc_config_example.h schc_config.h && cp rules_example.h rules.h
 ```
 and edit the definitions according to your platform and preferences.
 
