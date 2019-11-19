@@ -44,12 +44,12 @@ extern "C" {
  * this struct and the corresponding names are added
  * so we can check the fields in the SCHC header
  */
-struct coap_option_names {
+struct pcoap_option_names {
 	uint16_t id;
 	char name[16];
 };
 
-static struct coap_option_names coap_options[16] = {
+static struct pcoap_option_names coap_options[16] = {
 		{ 1, "if-match" },
 		{ 3, "uri-host" },
 		{ 4, "etag" },
@@ -85,7 +85,7 @@ typedef enum coap_error {
 	CE_INSUFFICIENT_BUFFER,
 	CE_FOUND_PAYLOAD_MARKER,
 	CE_END_OF_PACKET
-} coap_error;
+} pcoap_error;
 
 ///
 /// Protocol Versions
@@ -94,7 +94,7 @@ typedef enum coap_error {
 ///
 typedef enum coap_version {
 	COAP_V1 = 1
-} coap_version;
+} pcoap_version;
 
 ///
 /// Message Types
@@ -106,14 +106,14 @@ typedef enum coap_type {
 	CT_NON = 1,
 	CT_ACK = 2,
 	CT_RST = 3
-} coap_type;
+} pcoap_type;
 
 ///
 /// Message Codes
 ///
 /// All known message request/response codes.
 ///
-typedef enum coap_code {
+typedef enum pcoap_code {
 	/* CoAP method codes */
 	CC_EMPTY = 0,
 	CC_GET = 1,
@@ -144,14 +144,14 @@ typedef enum coap_code {
 	CC_SERVICE_UNAVAILABLE = 163,
 	CC_GATEWAY_TIMEOUT = 164,
 	CC_PROXYING_NOT_SUPPORTED = 165
-} coap_code;
+} pcoap_code;
 
 ///
 /// Option Numbers
 ///
 /// All known option numbers.
 ///
-typedef enum coap_option_number {
+typedef enum pcoap_option_number {
 	CON_IF_MATCH = 1,
 	CON_URI_HOST = 3,
 	CON_ETAG = 4,
@@ -169,43 +169,43 @@ typedef enum coap_option_number {
 	CON_PROXY_SCHEME = 39,
 	CON_SIZE1 = 60,
 	CON_NO_RESPONSE = 258
-} coap_option_number;
+} pcoap_option_number;
 
 ///
 /// Packet Data Unit
 ///
 /// This contains all information about the message buffer.
 ///
-typedef struct coap_pdu {
+typedef struct pcoap_pdu {
 	uint8_t *buf;  /// pointer to buffer
 	size_t len;	   /// length of current message
 	size_t max;	   /// size of buffer
-} coap_pdu;
+} pcoap_pdu;
 
 ///
 /// CoAP Option
 ///
 /// One option in a CoAP message.
 ///
-typedef struct coap_option {
+typedef struct pcoap_option {
 	uint16_t num;	/// size of buffer
 	size_t len;	/// length of the value
 	uint8_t *val;	/// pointer value
-} coap_option;
+} pcoap_option;
 
 ///
 /// CoAP Payload
 ///
 /// Payload container.
 ///
-typedef struct coap_payload {
+typedef struct pcoap_payload {
 	size_t len;	/// length of current message
 	uint8_t *val;	/// pointer to buffer
-} coap_payload;
+} pcoap_payload;
 
 // Finds the length of the CoAP header
 // And consequently the length of the payload
-uint8_t coap_get_coap_offset(coap_pdu *pdu);
+uint8_t pcoap_get_coap_offset(pcoap_pdu *pdu);
 
 ///
 /// Validate Packet
@@ -219,7 +219,7 @@ uint8_t coap_get_coap_offset(coap_pdu *pdu);
 /// @see    coap_error
 /// @see    coap_init_pdu
 ///
-coap_error coap_validate_pkt(coap_pdu *pdu);
+pcoap_error pcoap_validate_pkt(pcoap_pdu *pdu);
 
 //
 // Getters
@@ -233,7 +233,7 @@ coap_error coap_validate_pkt(coap_pdu *pdu);
 /// @return version.
 /// @see coap_version
 ///
-static inline coap_version coap_get_version(coap_pdu *pdu) { return (coap_version) (pdu->buf[0] >> 6); }
+static inline pcoap_version pcoap_get_version(pcoap_pdu *pdu) { return (pcoap_version) (pdu->buf[0] >> 6); }
 
 ///
 /// Get Message Type
@@ -243,7 +243,7 @@ static inline coap_version coap_get_version(coap_pdu *pdu) { return (coap_versio
 /// @return type.
 /// @see coap_type
 ///
-static inline coap_type coap_get_type(coap_pdu *pdu) { return (coap_type) ((pdu->buf[0] >> 4) & 0x03); }
+static inline pcoap_type pcoap_get_type(pcoap_pdu *pdu) { return (pcoap_type) ((pdu->buf[0] >> 4) & 0x03); }
 
 ///
 /// Get Token Length
@@ -253,7 +253,7 @@ static inline coap_type coap_get_type(coap_pdu *pdu) { return (coap_type) ((pdu-
 /// @return length.
 /// @see coap_type
 ///
-static inline uint8_t coap_get_tkl(coap_pdu *pdu) { return pdu->buf[0] & 0x0F; }
+static inline uint8_t pcoap_get_tkl(pcoap_pdu *pdu) { return pdu->buf[0] & 0x0F; }
 
 ///
 /// Get Message Code
@@ -263,7 +263,7 @@ static inline uint8_t coap_get_tkl(coap_pdu *pdu) { return pdu->buf[0] & 0x0F; }
 /// @return code.
 /// @see coap_code
 ///
-static inline coap_code coap_get_code(coap_pdu *pdu) { return (coap_code) (pdu->buf[1]); }
+static inline pcoap_code pcoap_get_code(pcoap_pdu *pdu) { return (pcoap_code) (pdu->buf[1]); }
 
 ///
 /// Get Message Code Class
@@ -272,7 +272,7 @@ static inline coap_code coap_get_code(coap_pdu *pdu) { return (coap_code) (pdu->
 /// @param  [in] pdu pointer to the coap message struct.
 /// @see    coap_get_code
 ///
-static inline uint8_t coap_get_code_class(coap_pdu *pdu) { return coap_get_code(pdu) >> 5; }
+static inline uint8_t pcoap_get_code_class(pcoap_pdu *pdu) { return pcoap_get_code(pdu) >> 5; }
 
 ///
 /// Get Message Code Detail
@@ -281,7 +281,7 @@ static inline uint8_t coap_get_code_class(coap_pdu *pdu) { return coap_get_code(
 /// @param  [in] pdu pointer to the coap message struct.
 /// @see    coap_get_code
 ///
-static inline uint8_t coap_get_code_detail(coap_pdu *pdu) { return coap_get_code(pdu) & 0x1F; }
+static inline uint8_t pcoap_get_code_detail(pcoap_pdu *pdu) { return pcoap_get_code(pdu) & 0x1F; }
 
 ///
 /// Get Message ID
@@ -290,7 +290,7 @@ static inline uint8_t coap_get_code_detail(coap_pdu *pdu) { return coap_get_code
 /// @param  [in] pdu pointer to the coap message struct.
 /// @return mid.
 ///
-static inline uint16_t coap_get_mid(coap_pdu *pdu) { return (pdu->buf[2] << 8) | pdu->buf[3]; }
+static inline uint16_t pcoap_get_mid(pcoap_pdu *pdu) { return (pdu->buf[2] << 8) | pdu->buf[3]; }
 
 ///
 /// Get Message Token
@@ -299,7 +299,7 @@ static inline uint16_t coap_get_mid(coap_pdu *pdu) { return (pdu->buf[2] << 8) |
 /// @param  [in] pdu pointer to the coap message struct.
 /// @return token.
 ///
-uint8_t coap_get_token(coap_pdu *pdu, uint8_t* ptr);
+uint8_t pcoap_get_token(pcoap_pdu *pdu, uint8_t* ptr);
 
 ///
 /// Get Option
@@ -310,7 +310,7 @@ uint8_t coap_get_token(coap_pdu *pdu, uint8_t* ptr);
 ///                    0 for the first option.
 /// @return coap_option
 ///
-coap_option coap_get_option(coap_pdu *pdu, coap_option *last);
+pcoap_option pcoap_get_option(pcoap_pdu *pdu, pcoap_option *last);
 
 ///
 /// Get Option by Option Number
@@ -323,7 +323,7 @@ coap_option coap_get_option(coap_pdu *pdu, coap_option *last);
 ///                    0 for the first option.
 /// @return coap_option
 ///
-coap_option coap_get_option_by_num(coap_pdu *pdu, coap_option_number num, uint8_t occ);
+pcoap_option pcoap_get_option_by_num(pcoap_pdu *pdu, pcoap_option_number num, uint8_t occ);
 
 ///
 /// Get Option
@@ -332,12 +332,12 @@ coap_option coap_get_option_by_num(coap_pdu *pdu, coap_option_number num, uint8_
 /// @param  [in]  pdu    pointer to the coap message struct.
 /// @return coap_payload
 ///
-coap_payload coap_get_payload(coap_pdu *pdu);
+pcoap_payload pcoap_get_payload(pcoap_pdu *pdu);
 
 ///
 /// Internal Method
 ///
-coap_error coap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
+pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
 	                          uint16_t *option_number, size_t *option_length, uint8_t **value);
 
 //
@@ -354,7 +354,7 @@ coap_error coap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
 /// @param  [in, out] pdu pointer to the coap message struct.
 /// @return coap_error (0 == no error)
 ///
-coap_error coap_init_pdu(coap_pdu *pdu);
+pcoap_error pcoap_init_pdu(pcoap_pdu *pdu);
 
 ///
 /// Set Version
@@ -365,7 +365,7 @@ coap_error coap_init_pdu(coap_pdu *pdu);
 /// @return coap_error (0 == no error)
 /// @see coap_version
 ///
-coap_error coap_set_version(coap_pdu *pdu, coap_version ver);
+pcoap_error pcoap_set_version(pcoap_pdu *pdu, pcoap_version ver);
 
 ///
 /// Set Message Type
@@ -376,7 +376,7 @@ coap_error coap_set_version(coap_pdu *pdu, coap_version ver);
 /// @return coap_error (0 == no error)
 /// @see coap_type
 ///
-coap_error coap_set_type(coap_pdu *pdu, coap_type mtype);
+pcoap_error pcoap_set_type(pcoap_pdu *pdu, pcoap_type mtype);
 
 ///
 /// Set Message Code
@@ -387,7 +387,7 @@ coap_error coap_set_type(coap_pdu *pdu, coap_type mtype);
 /// @return coap_error (0 == no error)
 /// @see coap_code
 ///
-coap_error coap_set_code(coap_pdu *pdu, coap_code code);
+pcoap_error pcoap_set_code(pcoap_pdu *pdu, pcoap_code code);
 
 ///
 /// Set Message ID
@@ -397,7 +397,7 @@ coap_error coap_set_code(coap_pdu *pdu, coap_code code);
 /// @param  [in]      mid      message ID to set.
 /// @return coap_error (0 == no error)
 ///
-coap_error coap_set_mid(coap_pdu *pdu, uint16_t mid);
+pcoap_error pcoap_set_mid(pcoap_pdu *pdu, uint16_t mid);
 
 ///
 /// Set Message Token
@@ -407,7 +407,7 @@ coap_error coap_set_mid(coap_pdu *pdu, uint16_t mid);
 /// @param  [in]      token    pointer to the token array to set.
 /// @return coap_error (0 == no error)
 ///
-coap_error coap_set_token(coap_pdu *pdu, uint8_t* token, uint8_t tkl);
+pcoap_error pcoap_set_token(pcoap_pdu *pdu, uint8_t* token, uint8_t tkl);
 
 ///
 /// Add Message Option
@@ -419,7 +419,7 @@ coap_error coap_set_token(coap_pdu *pdu, uint8_t* token, uint8_t tkl);
 /// @param  [in]      opt  option container.
 /// @return coap_error (0 == no error)
 ///
-coap_error coap_add_option(coap_pdu *pdu, int32_t opt_num, uint8_t* value, uint16_t opt_len);
+pcoap_error pcoap_add_option(pcoap_pdu *pdu, int32_t opt_num, uint8_t* value, uint16_t opt_len);
 
 ///
 /// Add Message Option
@@ -429,7 +429,7 @@ coap_error coap_add_option(coap_pdu *pdu, int32_t opt_num, uint8_t* value, uint1
 /// @param  [in]      pl   payload container.
 /// @return coap_error (0 == no error)
 ///
-coap_error coap_set_payload(coap_pdu *pdu, uint8_t *payload, size_t payload_len);
+pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, size_t payload_len);
 
 ///
 /// Build Message Code from Class and Detail
@@ -439,7 +439,7 @@ coap_error coap_set_payload(coap_pdu *pdu, uint8_t *payload, size_t payload_len)
 /// @param  [in]  detail the code detail.
 /// @see    coap_get_code
 ///
-static inline uint8_t coap_build_code(uint8_t _class, uint8_t detail) { return (_class << 5) | detail; }
+static inline uint8_t pcoap_build_code(uint8_t _class, uint8_t detail) { return (_class << 5) | detail; }
 
 //
 // Internal
@@ -448,17 +448,17 @@ static inline uint8_t coap_build_code(uint8_t _class, uint8_t detail) { return (
 ///
 /// Internal Method
 ///
-coap_error coap_adjust_option_deltas(uint8_t *opts, size_t *opts_len, size_t max_len, int32_t offset);
+pcoap_error pcoap_adjust_option_deltas(uint8_t *opts, size_t *opts_len, size_t max_len, int32_t offset);
 
 ///
 /// Internal Method
 ///
-int8_t coap_build_option_header(uint8_t *buf, size_t max_len, int32_t opt_delta, int32_t opt_len);
+int8_t pcoap_build_option_header(uint8_t *buf, size_t max_len, int32_t opt_delta, int32_t opt_len);
 
 ///
 /// Internal Method
 ///
-int8_t coap_compute_option_header_len(int32_t opt_delta, int32_t opt_len);
+int8_t pcoap_compute_option_header_len(int32_t opt_delta, int32_t opt_len);
 
 #ifdef __cplusplus
 }
