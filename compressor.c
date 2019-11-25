@@ -849,7 +849,7 @@ static uint8_t decompress_udp_rule(struct schc_udp_rule_t* rule, unsigned char *
  * @return the length of the array, which represents the number of CoAP fields
  *
  */
-static uint8_t generate_coap_header_fields(coap_pdu *pdu) {
+static uint8_t generate_coap_header_fields(pcoap_pdu *pdu) {
 	uint8_t i = 0;
 	// the 5 first fields are always present (!= bytes)
 	uint8_t field_length = 5;
@@ -974,7 +974,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, 
  *
  */
 static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
-		unsigned char *data, uint8_t* header_offset, coap_pdu *msg) {
+		unsigned char *data, uint8_t* header_offset, pcoap_pdu *msg) {
 	 // ToDo
 	// directly alter the packet buffer
 	// or the coap_header buffer to save RAM
@@ -1549,9 +1549,9 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		memcpy((unsigned char*) (buf + IP6_HLEN + UDP_HLEN), (uint8_t *) (data + header_offset), coap_len);
 
 		// use CoAP lib to calculate CoAP offset
-		coap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
-		memcpy(coap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
-		coap_offset = pcoap_get_coap_offset(&coap_msg);
+		pcoap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
+		memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
+		coap_offset = pcoap_get_coap_offset(&pcoap_msg);
 
 		header_offset += coap_offset;
 #endif
@@ -1576,13 +1576,13 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &coap_msg);
+			ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &pcoap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
-			coap_offset = coap_msg.len;
+			coap_offset = pcoap_msg.len;
 		}
-		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), coap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
+		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), pcoap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
 #endif
 		header_offset += RULE_SIZE_BYTES;
 	}
