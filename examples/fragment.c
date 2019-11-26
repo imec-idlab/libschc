@@ -245,6 +245,12 @@ int main() {
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
 	}
 
+	if (schc_rule == NULL) {
+		cleanup();
+		finalize_timer_thread();
+		return -1;
+	}
+
 	set_rule_id(schc_rule, compressed_packet);
 
 	tx_conn.data_ptr = &compressed_packet;

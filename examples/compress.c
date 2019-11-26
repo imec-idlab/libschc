@@ -49,7 +49,6 @@ uint8_t msg[PACKET_LENGTH] = {
 			device_id, UP, DEVICE, &schc_rule);
 	
 	// DECOMPRESSION
-	uint8_t schc_offset = 0; // schc offset is the compressed header size
 	uint8_t new_packet_len = 0;
 
 	// NOTE: DIRECTION remains UP as this packet is forwarded to the IPv6 network

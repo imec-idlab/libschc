@@ -5,9 +5,9 @@
 #include <inttypes.h>
 
 #define CLICK					0
+#define SCHC_BUFSIZE			256
 
 #define DYNAMIC_MEMORY			0
-#define SCHC_BUFSIZE 			256
 
 #define SCHC_CONF_RX_CONNS		1
 #define SCHC_CONF_MBUF_POOL_LEN	8
