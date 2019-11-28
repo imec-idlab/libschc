@@ -610,7 +610,7 @@ static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
 	// the values are identified by their role and not by their position in the frame
 	// therefore, we switch positions depending on the direction indicator
 
-	if( (DEVICE_TYPE != NETWORK_GATEWAY) && DI == UP) {
+	if( (DEVICE_TYPE != DEVICE) && DI == UP) {
 		// swap fields
 		memcpy(ipv6_header_fields[6], dest_prefix, 8);
 		memcpy(ipv6_header_fields[7], dest_iid, 8);
@@ -706,7 +706,7 @@ static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char
 		pckt_out[4] = ip_header[5];
 		pckt_out[5] = ip_header[6];
 
-		if( (DI == UP) && (DEVICE_TYPE == NETWORK_GATEWAY)) {
+		if( (DI == UP) && (DEVICE_TYPE == DEVICE)) {
 			// next header, hop limit
 			memcpy(&pckt_out[6], &ip_header[7], 2);
 			// swap source and destination
