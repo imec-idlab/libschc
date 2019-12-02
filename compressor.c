@@ -148,23 +148,20 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 		const struct schc_rule_t* curr_rule = (*device->context)[i];
 
 #if USE_IPv6
-		if(curr_rule->compression_rule->ipv6_rule->rule_id != ip_rule_id) {
-			break;
-		}
-#endif
+		if (curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {
 #if USE_UDP
-		if(curr_rule->compression_rule->udp_rule->rule_id != udp_rule_id ) {
-			break;
-		}
-#endif
+			if (curr_rule->compression_rule->udp_rule->rule_id == udp_rule_id) {
 #if USE_COAP
-		if(curr_rule->compression_rule->coap_rule->rule_id != coap_rule_id) {
-			break;
+				if (curr_rule->compression_rule->coap_rule->rule_id == coap_rule_id) {
+					if (curr_rule->mode == mode) {
+						return curr_rule;
+					}
+				}
+#endif
+			}
+#endif
 		}
 #endif
-		if(curr_rule->mode == mode) {
-				return curr_rule;
-		}
 	}
 
 	return NULL;
