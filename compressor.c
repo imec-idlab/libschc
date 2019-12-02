@@ -148,23 +148,20 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 		const struct schc_rule_t* curr_rule = (*device->context)[i];
 
 #if USE_IPv6
-		if(curr_rule->compression_rule->ipv6_rule->rule_id != ip_rule_id) {
-			break;
-		}
-#endif
+		if (curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {
 #if USE_UDP
-		if(curr_rule->compression_rule->udp_rule->rule_id != udp_rule_id ) {
-			break;
-		}
-#endif
+			if (curr_rule->compression_rule->udp_rule->rule_id == udp_rule_id) {
 #if USE_COAP
-		if(curr_rule->compression_rule->coap_rule->rule_id != coap_rule_id) {
-			break;
+				if (curr_rule->compression_rule->coap_rule->rule_id == coap_rule_id) {
+					if (curr_rule->mode == mode) {
+						return curr_rule;
+					}
+				}
+#endif
+			}
+#endif
 		}
 #endif
-		if(curr_rule->mode == mode) {
-				return curr_rule;
-		}
 	}
 
 	return NULL;
@@ -610,7 +607,7 @@ static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
 	// the values are identified by their role and not by their position in the frame
 	// therefore, we switch positions depending on the direction indicator
 
-	if( (DEVICE_TYPE != NETWORK_GATEWAY) && DI == UP) {
+	if( (DEVICE_TYPE != DEVICE) && DI == DOWN) {
 		// swap fields
 		memcpy(ipv6_header_fields[6], dest_prefix, 8);
 		memcpy(ipv6_header_fields[7], dest_iid, 8);
@@ -706,7 +703,7 @@ static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char
 		pckt_out[4] = ip_header[5];
 		pckt_out[5] = ip_header[6];
 
-		if( (DI == UP) && (DEVICE_TYPE == NETWORK_GATEWAY)) {
+		if( (DI == DOWN) && (DEVICE_TYPE == DEVICE)) {
 			// next header, hop limit
 			memcpy(&pckt_out[6], &ip_header[7], 2);
 			// swap source and destination
@@ -849,34 +846,34 @@ static uint8_t decompress_udp_rule(struct schc_udp_rule_t* rule, unsigned char *
  * @return the length of the array, which represents the number of CoAP fields
  *
  */
-static uint8_t generate_coap_header_fields(coap_pdu *pdu) {
+static uint8_t generate_coap_header_fields(pcoap_pdu *pdu) {
 	uint8_t i = 0;
 	// the 5 first fields are always present (!= bytes)
 	uint8_t field_length = 5;
 
-	coap_header_fields[0][0] = coap_get_version(pdu);
-	coap_header_fields[1][0] = coap_get_type(pdu);
-	coap_header_fields[2][0] = coap_get_tkl(pdu);
-	coap_header_fields[3][0] = coap_get_code(pdu);
+	coap_header_fields[0][0] = pcoap_get_version(pdu);
+	coap_header_fields[1][0] = pcoap_get_type(pdu);
+	coap_header_fields[2][0] = pcoap_get_tkl(pdu);
+	coap_header_fields[3][0] = pcoap_get_code(pdu);
 
-	unsigned char msg_id[2] = { (coap_get_mid(pdu) & 0xFF00) >> 8, coap_get_mid(
+	unsigned char msg_id[2] = { (pcoap_get_mid(pdu) & 0xFF00) >> 8, pcoap_get_mid(
 			pdu) & 0x00FF };
 	memcpy(&coap_header_fields[4], msg_id, 2);
 
-	if (coap_get_tkl(pdu) > 0) {
+	if (pcoap_get_tkl(pdu) > 0) {
 		uint8_t token[8];
-		coap_get_token(pdu, token);
+		pcoap_get_token(pdu, token);
 
-		memcpy(&coap_header_fields[5], &token, coap_get_tkl(pdu));
+		memcpy(&coap_header_fields[5], &token, pcoap_get_tkl(pdu));
 
 		field_length++;
 	}
 
 	uint8_t coap_length = pdu->len;
 
-	coap_option option;
+	pcoap_option option;
 	// get first option
-	option = coap_get_option(pdu, NULL);
+	option = pcoap_get_option(pdu, NULL);
 
 	while (option.num > 0) {
 		for (i = 0; i < option.len; ++i) {
@@ -884,11 +881,11 @@ static uint8_t generate_coap_header_fields(coap_pdu *pdu) {
 		}
 
 		// get next option
-		option = coap_get_option(pdu, &option);
+		option = pcoap_get_option(pdu, &option);
 		field_length++;
 	}
 
-	coap_payload pl = coap_get_payload(pdu);
+	pcoap_payload pl = pcoap_get_payload(pdu);
 	if (pl.len > 0) {
 		// add payload marker
 		coap_header_fields[field_length][0] = 0xFF;
@@ -907,13 +904,13 @@ static uint8_t generate_coap_header_fields(coap_pdu *pdu) {
  * @return id 					the CoAP rule id
  *         0 					if no rule was found
  */
-static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, uint32_t device_id) {
+static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, uint32_t device_id) {
 	uint16_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
 	uint8_t direction_field_length = 0;
 
-	if(coap_validate_pkt(pdu) != CE_NONE) {
+	if(pcoap_validate_pkt(pdu) != CE_NONE) {
 		DEBUG_PRINTF("schc_find_coap_rule_from_header(): invalid CoAP packet");
 		return 0;
 	}
@@ -974,7 +971,7 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(coap_pdu *pdu, u
  *
  */
 static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
-		unsigned char *data, uint8_t* header_offset, coap_pdu *msg) {
+		unsigned char *data, uint8_t* header_offset, pcoap_pdu *msg) {
 	 // ToDo
 	// directly alter the packet buffer
 	// or the coap_header buffer to save RAM
@@ -989,17 +986,17 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 	if (rule != NULL) {
 		uint8_t coap_length = decompress(&coap_header, (const struct schc_layer_rule_t*) rule, data, header_offset);
 
-		coap_init_pdu(msg);
-		coap_set_version(msg, coap_header[0]);
-		coap_set_type(msg, coap_header[1]);
-		coap_set_code(msg, coap_header[3]);
+		pcoap_init_pdu(msg);
+		pcoap_set_version(msg, coap_header[0]);
+		pcoap_set_type(msg, coap_header[1]);
+		pcoap_set_code(msg, coap_header[3]);
 
 		uint16_t msg_id = ((coap_header[4] << 8) | coap_header[5]);
-		coap_set_mid(msg, msg_id);
+		pcoap_set_mid(msg, msg_id);
 
 		uint8_t tkl = coap_header[2];
 		if(tkl != 0){
-			coap_set_token(msg, (uint8_t*) (coap_header + 6), tkl);
+			pcoap_set_token(msg, (uint8_t*) (coap_header + 6), tkl);
 			byte_length += tkl;
 		}
 
@@ -1016,7 +1013,7 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 				for(j = 0; j < COAP_OPTIONS_LENGTH; j++) {
 					if( !strcmp(rule->content[i].field, coap_options[j].name) ) {
 						// for each matching value, create a new option in the message
-						coap_add_option(msg, coap_options[j].id, (uint8_t*) (coap_header + field_length), rule->content[i].field_length);
+						pcoap_add_option(msg, coap_options[j].id, (uint8_t*) (coap_header + field_length), rule->content[i].field_length);
 						field_length += rule->content[i].field_length;
 					}
 				}
@@ -1248,17 +1245,14 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 	DEVICE_TYPE = device_type;
 
 	uint16_t schc_offset = RULE_SIZE_BYTES;
-	uint16_t coap_length = 0;
+	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 #if USE_COAP
-	uint8_t coap_rule_id = 0;
 	struct schc_coap_rule_t *coap_rule;
 #endif
 #if USE_UDP
-	uint8_t udp_rule_id = 0;
 	struct schc_udp_rule_t *udp_rule;
 #endif
 #if USE_IPv6
-	uint8_t ipv6_rule_id = 0;
 	struct schc_ipv6_rule_t *ipv6_rule;
 #endif
 
@@ -1269,10 +1263,10 @@ int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length,
 	// construct CoAP message from buffer
 	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
 	memcpy(coap_buf, (uint8_t*) (data + IP6_HLEN + UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN)); // copy CoAP header
-	coap_pdu coap_msg = { coap_buf, (total_length - IP6_HLEN - UDP_HLEN), MAX_COAP_MSG_SIZE };
+	pcoap_pdu coap_msg = { coap_buf, (total_length - IP6_HLEN - UDP_HLEN), MAX_COAP_MSG_SIZE };
 
 	// check the buffer for determining the CoAP header length
-	coap_length = coap_get_coap_offset(&coap_msg);
+	coap_length = pcoap_get_coap_offset(&coap_msg);
 
 	// retrieve the first matching CoAP rule
 	coap_rule = schc_find_coap_rule_from_header(&coap_msg, device_id);
@@ -1532,7 +1526,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 
 	// CoAP buffers for parsing
 	uint8_t msg_recv_buf[MAX_COAP_MSG_SIZE];
-	coap_pdu coap_msg = { msg_recv_buf, 0, MAX_COAP_MSG_SIZE };
+	pcoap_pdu pcoap_msg = { msg_recv_buf, 0, MAX_COAP_MSG_SIZE };
 
 	if (rule_id == UNCOMPRESSED_RULE_ID) { // uncompressed packet
 		header_offset += RULE_SIZE_BYTES;
@@ -1552,9 +1546,9 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		memcpy((unsigned char*) (buf + IP6_HLEN + UDP_HLEN), (uint8_t *) (data + header_offset), coap_len);
 
 		// use CoAP lib to calculate CoAP offset
-		coap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
-		memcpy(coap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
-		coap_offset = coap_get_coap_offset(&coap_msg);
+		pcoap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
+		memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
+		coap_offset = pcoap_get_coap_offset(&pcoap_msg);
 
 		header_offset += coap_offset;
 #endif
@@ -1579,13 +1573,13 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &coap_msg);
+			ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &pcoap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
-			coap_offset = coap_msg.len;
+			coap_offset = pcoap_msg.len;
 		}
-		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), coap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
+		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), pcoap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
 #endif
 		header_offset += RULE_SIZE_BYTES;
 	}

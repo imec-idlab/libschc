@@ -1,12 +1,6 @@
 #ifndef _RULES_H_
 #define _RULES_H_
 
-#define IPV6_RULES				3
-#define UDP_RULES				3
-#define COAP_RULES				4
-
-#define DEVICE_COUNT			2
-
 #include "schc_config.h"
 
 #if USE_IPv6
@@ -247,6 +241,10 @@ const struct schc_rule_t schc_rule_6 = { 0x06, &compression_rule_2, NO_ACK, 1, 0
 const struct schc_rule_t schc_rule_7 = { 0x07, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
 const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
 
+/* define total rules per layer */
+#define IPV6_RULES				3
+#define UDP_RULES				3
+#define COAP_RULES				4
 
 /* save rules in flash */
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
@@ -257,6 +255,8 @@ const struct schc_rule_t* node2_schc_rules[] = { &schc_rule_1 };
 /* rules for a particular device */
 const struct schc_device node1 = { 1, 8, &node1_schc_rules };
 const struct schc_device node2 = { 2, 1, &node2_schc_rules};
+
+#define DEVICE_COUNT			2
 
 /* server keeps track of multiple devices: add devices to device list */
 const struct schc_device* devices[DEVICE_COUNT] = { &node1, &node2 };

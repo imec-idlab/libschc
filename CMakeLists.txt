@@ -28,7 +28,7 @@ MODULE_BUILD_SETTINGS_FILE()
 EXPORT_GLOBAL_INCLUDE_DIRECTORIES(.)
 
 #By convention, each module should generate a single 'static' library that can be included by the application
-ADD_LIBRARY(libschc STATIC
+ADD_LIBRARY(schc STATIC
     picocoap.c
     compressor.c
     fragmenter.c
@@ -38,7 +38,7 @@ ADD_LIBRARY(libschc STATIC
 #ADD_DEFINITIONS()
 
 GET_PROPERTY(__global_include_dirs GLOBAL PROPERTY GLOBAL_INCLUDE_DIRECTORIES)
-target_include_directories(libschc PUBLIC
+target_include_directories(schc PUBLIC
     .
 
     ${__global_include_dirs}
@@ -46,4 +46,4 @@ target_include_directories(libschc PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR} # MODULE_SCHC_defs.h
 )
 
-#TARGET_LINK_LIBRARIES(lorawan d7ap)
+#TARGET_LINK_LIBRARIES()
