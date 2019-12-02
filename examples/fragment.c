@@ -98,6 +98,8 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
 
 	free(compressed_packet);
+
+	schc_reset(conn);
 }
 
 void timer_handler(size_t timer_id, void* user_data) {
