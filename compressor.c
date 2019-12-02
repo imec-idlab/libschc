@@ -610,7 +610,7 @@ static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
 	// the values are identified by their role and not by their position in the frame
 	// therefore, we switch positions depending on the direction indicator
 
-	if( (DEVICE_TYPE != DEVICE) && DI == UP) {
+	if( (DEVICE_TYPE != DEVICE) && DI == DOWN) {
 		// swap fields
 		memcpy(ipv6_header_fields[6], dest_prefix, 8);
 		memcpy(ipv6_header_fields[7], dest_iid, 8);
