@@ -706,7 +706,7 @@ static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char
 		pckt_out[4] = ip_header[5];
 		pckt_out[5] = ip_header[6];
 
-		if( (DI == UP) && (DEVICE_TYPE == DEVICE)) {
+		if( (DI == DOWN) && (DEVICE_TYPE == DEVICE)) {
 			// next header, hop limit
 			memcpy(&pckt_out[6], &ip_header[7], 2);
 			// swap source and destination
