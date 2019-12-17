@@ -21,11 +21,12 @@
 
 #include "timer.h"
 
-#define PACKET_LENGTH			104
+#define PACKET_LENGTH			204
 #define MAX_PACKET_LENGTH		128
 #define MAX_TIMERS				256
 
 int RUN = 1;
+int counter = 1;
 
 struct cb_t {
     schc_fragmentation_t* conn;
@@ -52,7 +53,19 @@ uint8_t msg[PACKET_LENGTH] = {
 		// Data
 		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
 		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
-		0x25, 0x26
+		0x25,
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
+		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
+		0x25,
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
+		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
+		0x25,
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
+		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
+		0x25,
+		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
+		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
+		0x25,
 };
 
 void cleanup() {
@@ -115,6 +128,8 @@ void timer_handler(size_t timer_id, void* user_data) {
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
 static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+	counter++;
+
 	uint16_t delay_sec = delay / 1000;
 
 	struct cb_t* cb_t_= malloc(sizeof(struct cb_t)); // create on heap
@@ -130,6 +145,10 @@ static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 		}
 		curr->next = cb_t_;
 	}
+
+	DEBUG_PRINTF("\n+------------------------+");
+	DEBUG_PRINTF("\n|         TX  %02d         |", counter);
+	DEBUG_PRINTF("\n+------------------------+\n");
 
 	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
@@ -180,11 +199,16 @@ void remove_timer_entry(uint32_t device_id) {
 	DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", device_id);
 }
 
-void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
-	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			&tx_conn_ngw, device_id); // get active connection and set the correct rule for this connection
+void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
 
-	if (conn != &tx_conn_ngw) { // if returned value is tx_conn: acknowledgement is received
+	DEBUG_PRINTF("\n+------------------------+");
+	DEBUG_PRINTF("\n|         RX  %02d         |", counter);
+	DEBUG_PRINTF("\n+------------------------+\n");
+
+	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
+			&receiving_conn, device_id); // get active connection and set the correct rule for this connection
+
+	if (conn != &receiving_conn) { // if returned value is receiving_conn: acknowledgement is received, which is handled by the library
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 
@@ -206,9 +230,15 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
  * whether the network driver is busy or not
  *
  */
-uint8_t send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
-	DEBUG_PRINTF("send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	received_packet(data, length, device_id); // send packet to network gateway
+uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
+	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+	received_packet(data, length, device_id, &tx_conn_ngw); // send packet to network gateway
+	return 1;
+}
+
+uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
+	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+	received_packet(data, length, device_id, &tx_conn); // send packet to constrained device
 	return 1;
 }
 
@@ -222,7 +252,12 @@ void init() {
 	schc_compressor_init(src);
 
 	// initialize fragmenter for constrained device
-	schc_fragmenter_init(&tx_conn, &send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
+	
+	// initialize fragmenter for ngw
+	tx_conn_ngw.send = &rx_send_callback;
+	tx_conn_ngw.end_rx = &end_rx;
+	tx_conn_ngw.remove_timer_entry = &remove_timer_entry;
 }
 
 int main() {
@@ -236,13 +271,13 @@ int main() {
 	uint16_t compressed_len = schc_compress(msg, compressed_packet,
 			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
 
-	tx_conn.mtu = 25; // network driver MTU
+	tx_conn.mtu = 12; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
 	if(compressed_len > tx_conn.mtu) { // should fragment, change rule
 		// select a similar rule based on a reliability mode
-		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, ACK_ON_ERROR, device_id);
+		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
 	} else { // do not fragment
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
 	}
@@ -257,7 +292,7 @@ int main() {
 
 	tx_conn.data_ptr = &compressed_packet;
 	tx_conn.packet_len = compressed_len;
-	tx_conn.send = &send_callback;
+	tx_conn.send = &tx_send_callback;
 	tx_conn.end_tx = &end_tx;
 
 	tx_conn.schc_rule = schc_rule;
@@ -266,6 +301,9 @@ int main() {
 	tx_conn.post_timer_task = &set_tx_timer;
 
 	// start fragmentation loop
+	DEBUG_PRINTF("\n+------------------------+");
+	DEBUG_PRINTF("\n|         TX  %02d         |", counter);
+	DEBUG_PRINTF("\n+------------------------+\n");
 	int ret = schc_fragment(&tx_conn);
 
 	while(RUN) {

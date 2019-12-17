@@ -250,11 +250,10 @@ const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
 		&schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
 		&schc_rule_8 };
-const struct schc_rule_t* node2_schc_rules[] = { &schc_rule_1 };
 
 /* rules for a particular device */
 const struct schc_device node1 = { 1, 8, &node1_schc_rules };
-const struct schc_device node2 = { 2, 1, &node2_schc_rules};
+const struct schc_device node2 = { 2, 8, &node2_schc_rules};
 
 #define DEVICE_COUNT			2
 

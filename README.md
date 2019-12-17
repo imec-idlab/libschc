@@ -24,8 +24,10 @@ Please keep in mind that the library works, but is still very experimental!
 In the folder examples are both basic compression and fragmentation examples provided. The fragmentation example makes use of a timer library and should be adapted to your platform (see [Fragmentation](/docs#fragmentation) and the examples folder).
 
 ## LICENSE
-Licensed under the GNU General Public License, Version 3 (the "License"): You may not use these files except in compliance with the License. You may obtain a copy of the License at <https://www.gnu.org/licenses/gpl-3.0.nl.html>
+libschc has dual licenses. The GNU General Public License, Version 3 (the "License") is the open source license: You may not use these files except in compliance with the License. You may obtain a copy of the License at <https://www.gnu.org/licenses/gpl-3.0.nl.html>
 
 See the License for the specific language governing permissions and limitations under the License.
+
+For non open source licenses, please contact Ilse Bracke <ilse.bracke@imec.be>.
 
 © Copyright 2018-2019, Bart Moons <bamoons.moons@ugent.be> and Ghent University
