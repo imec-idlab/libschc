@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['val_722',['val',['../structcoap__option.html#afb5e77ba3357fff5295c4ed04e1f3bc9',1,'coap_option::val()'],['../structcoap__payload.html#a68cc484089179d101be8b63a851a4849',1,'coap_payload::val()']]],
-  ['vtc_723',['vtc',['../structuip__udpip__hdr.html#a9fb4bb2d1c1190657287482984a93f61',1,'uip_udpip_hdr']]]
+  ['val_725',['val',['../structpcoap__option.html#a6cad6184d76b3a8c96a742834b25a5f1',1,'pcoap_option::val()'],['../structpcoap__payload.html#aae7b0f41c4c59558379b8b2a8b25674f',1,'pcoap_payload::val()']]],
+  ['vtc_726',['vtc',['../structschc__udpip__hdr.html#a9c167374bdff807c90416faca0fd0de8',1,'schc_udpip_hdr']]]
 ];

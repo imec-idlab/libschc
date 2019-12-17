@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['reliability_5fmode_750',['reliability_mode',['../schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34',1,'reliability_mode():&#160;schc_config.h'],['../schc__config__example_8h.html#a00b61f9b90ab7065eb6a978141d7fd34',1,'reliability_mode():&#160;schc_config_example.h']]],
-  ['rx_5fstate_751',['rx_state',['../fragmenter_8h.html#a20874253e23bc4c1d20f69479175ce6f',1,'fragmenter.h']]]
+  ['pcoap_5fcode_751',['pcoap_code',['../picocoap_8h.html#a38d6e34ee134b30dc8e0ff2645bdefc8',1,'picocoap.h']]],
+  ['pcoap_5foption_5fnumber_752',['pcoap_option_number',['../picocoap_8h.html#a07242620cf4343b2a2b3b9e085c8bfc5',1,'picocoap.h']]]
 ];
