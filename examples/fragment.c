@@ -238,7 +238,7 @@ uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 
 uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	received_packet(data, length, device_id, &tx_conn); // send packet to constrained device
+	// received_packet(data, length, device_id, &tx_conn); // send packet to constrained device
 	return 1;
 }
 

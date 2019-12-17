@@ -32,7 +32,7 @@ make fragment
 ./fragment
 ```
 ### Ack-on-Error
-By changing the reliability mode to `ACK_ON_ERROR`, the receiver will make use of the bitmap mechanism, of which you will see output in the terminal.
+By changing the reliability mode to `ACK_ON_ERROR`, the receiver will acknowledge each erroneous window.
 
 ### Ack-Always
-By changing the reliability mode to `ACK_ALWAYS`, all windows will be acknowledged. As there is no function implemented for the receiver to transmit any packets (acknowledgements) to the sender, the acknowledgements will get lost and the reliability mode will time out after 3 tries.
+By changing the reliability mode to `ACK_ALWAYS`, all windows will be acknowledged.
