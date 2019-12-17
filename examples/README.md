@@ -12,6 +12,10 @@ make compress
 ```
 
 ## Fragmentation
+Because the fragmenter of the network gateway will search for an mbuf collection based on the id of the constrained device when calling fragment_input(), `ACK_ALWAYS` and `ACK_ON_ERROR` won't work properly in this example.
+As the device id will be the same for an incoming fragment or an outgoing acknowledgement, the fragmenter will get confused and will use the same mbuf collection for both devices.
+I did not find the time to provide a proper example. However, with the example provided, it is easy to deploy two physically separated devices.
+
 ### No-Ack
 The fragmentation examples make use of a timer library and implements the `timer_handler` as an API between the library and the application and is platform specific.
 
