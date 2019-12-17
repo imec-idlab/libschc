@@ -9,6 +9,10 @@ For further information related to SCHC, see <https://datatracker.ietf.org/doc/d
 
 See the [docs](/docs) for more information on the implemenation and configuration.
 
+### ACKNOWLEDGEMENT
+
+libschc has been developed with the support of VLAIO (Flanders Innovation and Entrepreneurship) and imec. It is part of the IoT middleware stack, developed for the European Union’s Horizon 2020 PortForward project, where amongst others LwM2M will be integrated with this library.
+
 ## LIMITATIONS
 As this implementation is work in progress, there are some limitations you should keep in mind.
 
@@ -30,4 +34,4 @@ See the License for the specific language governing permissions and limitations 
 
 For non open source licenses, please contact Ilse Bracke <ilse.bracke@imec.be>.
 
-© Copyright 2018-2019, Bart Moons <bamoons.moons@ugent.be> and Ghent University
+© Copyright 2018-2019, Bart Moons <bamoons.moons@ugent.be>, imec and Ghent University
