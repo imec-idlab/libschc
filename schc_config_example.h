@@ -41,16 +41,6 @@
 // the maximum number of tokens inside a JSON structure
 #define JSON_TOKENS				16
 
-/*
- * define the number of bits to shift in order
- * for the layered rule header to look as follows
- *
- *    0     1     2    3     4     5    6     7
- * +-----+-----+-----+-----+----+----+-----+-----+
- * |  F  | APL | APL | APL | TL | TL | NWL | NWL |
- * +-----+-----+-----+-----+----+----+-----+-----+
- */
-
 #define RULE_SIZE_BITS			8
 
 #define UNCOMPRESSED_RULE_ID	0
