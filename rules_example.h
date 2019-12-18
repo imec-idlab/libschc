@@ -253,7 +253,7 @@ const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
 
 /* rules for a particular device */
 const struct schc_device node1 = { 1, 8, &node1_schc_rules };
-const struct schc_device node2 = { 2, 8, &node2_schc_rules};
+const struct schc_device node2 = { 2, 8, &node1_schc_rules};
 
 #define DEVICE_COUNT			2
 
