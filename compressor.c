@@ -1545,10 +1545,12 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		uint16_t coap_len = (total_length - RULE_SIZE_BYTES - IP6_HLEN - UDP_HLEN);
 		memcpy((unsigned char*) (buf + IP6_HLEN + UDP_HLEN), (uint8_t *) (data + header_offset), coap_len);
 
+		coap_offset = coap_len;
+
 		// use CoAP lib to calculate CoAP offset
-		pcoap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
-		memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
-		coap_offset = pcoap_get_coap_offset(&pcoap_msg);
+		// pcoap_msg.len = 4; // we validate the CoAP packet, which also uses the length of the header
+		// memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
+		// coap_offset = pcoap_get_coap_offset(&pcoap_msg);
 
 		header_offset += coap_offset;
 #endif
