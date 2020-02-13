@@ -103,7 +103,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 
 	if (device == NULL) {
 		DEBUG_PRINTF(
-				"get_schc_rule(): no device was found for this id");
+				"get_schc_rule(): no device was found for the id: %d\n", device_id);
 		return NULL;
 	}
 

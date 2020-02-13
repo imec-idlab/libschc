@@ -21,7 +21,7 @@
 
 #include "timer.h"
 
-#define PACKET_LENGTH			204
+#define PACKET_LENGTH			251
 #define MAX_PACKET_LENGTH		128
 #define MAX_TIMERS				256
 
