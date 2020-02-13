@@ -1954,6 +1954,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	uint32_t i;
 
 	// initializes the schc tx connection
+	tx_conn->head = NULL;
 	schc_reset(tx_conn);
 
 	// initializes the schc rx connections
