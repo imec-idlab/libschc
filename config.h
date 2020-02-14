@@ -36,7 +36,7 @@ typedef enum {
 struct schc_field {
 	char field[32];
 	uint8_t msb_length; // custom added field
-	uint8_t field_length;
+	uint8_t field_length; // in bits
 	uint8_t field_pos;
 	direction dir;
 	unsigned char target_value[MAX_COAP_FIELD_LENGTH];
