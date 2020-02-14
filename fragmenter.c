@@ -2452,7 +2452,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 
 	int8_t err = mbuf_push(&conn->head, fragment, len);
 
-	// mbuf_print(conn->head);
+	mbuf_print(conn->head);
 
 	if(err != SCHC_SUCCESS) {
 		return NULL;

@@ -10,7 +10,7 @@
 #define DYNAMIC_MEMORY			0
 
 #define SCHC_CONF_RX_CONNS		1
-#define SCHC_CONF_MBUF_POOL_LEN	8
+#define SCHC_CONF_MBUF_POOL_LEN	32
 
 #define USE_COAP				1
 #define USE_UDP					1

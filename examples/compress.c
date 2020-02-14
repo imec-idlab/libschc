@@ -16,11 +16,10 @@
 #include "../compressor.h"
 #include "../config.h"
 
-#define PACKET_LENGTH			70
 #define MAX_PACKET_LENGTH		128
 
 // the ipv6/udp/coap packet
-uint8_t msg[PACKET_LENGTH] = {
+uint8_t msg[] = {
 		// IPv6 header
 		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -45,7 +44,7 @@ uint8_t msg[PACKET_LENGTH] = {
 
 	// compress packet
 	struct schc_rule_t* schc_rule;
-	int compressed_len = schc_compress(msg, compressed_buf, PACKET_LENGTH,
+	int compressed_len = schc_compress(msg, compressed_buf, sizeof(msg),
 			device_id, UP, DEVICE, &schc_rule);
 	
 	// DECOMPRESSION

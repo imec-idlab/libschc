@@ -21,8 +21,7 @@
 
 #include "timer.h"
 
-#define PACKET_LENGTH			251
-#define MAX_PACKET_LENGTH		128
+#define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
 
 int RUN = 1;
@@ -41,7 +40,7 @@ schc_fragmentation_t tx_conn;
 schc_fragmentation_t tx_conn_ngw;
 
 // the ipv6/udp/coap packet
-uint8_t msg[PACKET_LENGTH] = {
+uint8_t msg[] = {
 		// IPv6 header
 		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -253,6 +252,7 @@ void init() {
 
 	// initialize fragmenter for constrained device
 	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn_ngw, &tx_send_callback, &end_rx, &remove_timer_entry);
 	
 	// initialize fragmenter for ngw
 	tx_conn_ngw.send = &rx_send_callback;
@@ -269,9 +269,9 @@ int main() {
 	// compress packet
 	struct schc_rule_t* schc_rule;
 	uint16_t compressed_len = schc_compress(msg, compressed_packet,
-			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
+			sizeof(msg), device_id, UP, DEVICE, &schc_rule);
 
-	tx_conn.mtu = 12; // network driver MTU
+	tx_conn.mtu = 61; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
