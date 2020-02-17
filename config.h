@@ -35,7 +35,7 @@ typedef enum {
 
 struct schc_field {
 	char field[32];
-	uint8_t msb_length; // custom added field
+	uint8_t MO_param_length; // indicate special value used with MSB, LSB and MATCH-MAP
 	uint8_t field_length; // in bits
 	uint8_t field_pos;
 	direction dir;
@@ -101,7 +101,7 @@ struct schc_compression_rule_t {
 
 struct schc_rule_t {
 	/* the rule id */
-	uint8_t id;
+	uint8_t id[RULE_SIZE_BYTES];
 	/* a pointer to the SCHC rule */
 	const struct schc_compression_rule_t *compression_rule;
 	/* the reliability mode */

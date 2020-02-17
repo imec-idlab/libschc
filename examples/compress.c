@@ -44,8 +44,11 @@ uint8_t msg[] = {
 
 	// compress packet
 	struct schc_rule_t* schc_rule;
-	int compressed_len = schc_compress(msg, compressed_buf, sizeof(msg),
-			device_id, UP, DEVICE, &schc_rule);
+	schc_bitarray_t bit_arr;
+	bit_arr.ptr = &compressed_buf;
+
+	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
+			UP, DEVICE, &schc_rule);
 	
 	// DECOMPRESSION
 	uint8_t new_packet_len = 0;
@@ -57,6 +60,9 @@ uint8_t msg[] = {
 	if(new_packet_len == 0) { // some error occured
 		return 1;
 	}
+
+	// todo
+	// padding management
 
  	return 0;
  }

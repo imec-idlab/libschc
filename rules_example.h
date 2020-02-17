@@ -8,20 +8,23 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
 		1, 10, 10, 10,
 		{
-			//	field, 			   MSB,len,	 pos,dir, 	val,			MO,			CDA
+			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
 				{ "version", 		0, 4,	 1, BI, 	{6},			&equal, 	NOTSENT },
 				{ "traffic class", 	0, 8,	 1, BI, 	{0},			&ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
-				{ "next header", 	0, 8, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
+				{ "next header", 	2, 8, 	 1, BI, 	{17, 58}, 		&matchmap, 	MAPPINGSENT },
 				{ "hop limit", 		0, 8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",		0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
+						// todo how to store multiple IP's for match-map?
+						// 32 bit field?
+						// 8 bit field with an index to a list containing pointers?
 				{ "src iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&equal, 	NOTSENT },
 				{ "dest prefix",	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "dest iid",		56, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "dest iid",		4, 64,  1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&MSB, 		LSB },
 		}
 };
@@ -37,11 +40,13 @@ const static struct schc_ipv6_rule_t ipv6_rule2 = {
 				{ "hop limit", 		0,  8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",	 	0,  64,	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
-				{ "src iid",		48, 64, 	 1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
-						&MSB, 	LSB }, // by setting the last 2 bytes to 0x00, we allow 16 bit variations
+				{ "src iid",		16, 64, 	 1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
+						&MSB, 	LSB },
+						// todo
+						// by setting the last 2 bytes to 0x00, we allow 16 bit variations
 				{ "dest prefix",	0,  64, 	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
-				{ "dest iid",		48, 64, 	 1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
+				{ "dest iid",		16, 64, 	 1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
 						&MSB, 	LSB },
 		}
 };
@@ -63,7 +68,7 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 						&equal, 	NOTSENT },
 				{ "dest prefix",	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "dest iid",		56, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "dest iid",		8, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&MSB, 		LSB },
 		}
 };
@@ -83,8 +88,8 @@ const static struct schc_udp_rule_t udp_rule1 = {
 const static struct schc_udp_rule_t udp_rule2 = {
 		2, 4, 4, 4,
 		{
-				{ "src port", 		12, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
-				{ "dest port", 		12, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "src port", 		4, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "dest port", 		4, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
 				{ "length", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
 				{ "checksum", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
@@ -114,8 +119,10 @@ const static struct schc_coap_rule_t coap_rule1 = {
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
-				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB }, // by setting the last byte to 0x00, we allow 8 bit variations
+				{ "token",			8,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB },
+						// todo
+						// by setting the last byte to 0x00, we allow 8 bit variations
 				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
 				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT },
 				{ "payload marker",	0,	8,   1, BI, 	{0xFF},			&equal,		NOTSENT }
@@ -128,15 +135,17 @@ const static struct schc_coap_rule_t coap_rule2 = {
 		2, 8, 8, 10,
 		{
 				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
-				{ "type",			3,	2,	 1, BI,		{CT_CON, CT_ACK, CT_NON}, // the MSB field is used to indicate the true length of the list
+				{ "type",			3,	2,	 1, BI,		{CT_CON, CT_ACK, CT_NON},
+						// the MO_param_length is used to indicate the true length of the list
 						&matchmap, MAPPINGSENT	},
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_CONTENT},	&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
-				{ "message ID",		12,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
-				{ "message ID",		12,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB },
+				{ "message ID",		4,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
+				{ "message ID",		4,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB },
 				{ "token",			0,	32,	 1, BI,		{0, 0, 0, 0},	&ignore,	VALUESENT }, // GET sensor value
-				{ "uri-path", 		4,	0,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]\0", // todo variable field length
+				{ "uri-path", 		4,	0,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
+						// todo variable field length
 						&matchmap,		MAPPINGSENT },
 				{ "payload marker",	0,	8,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
 		}
@@ -151,8 +160,10 @@ const static struct schc_coap_rule_t coap_rule3 = {
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
-				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB }, // by setting the last byte to 0x00, we allow 8 bit variations
+				{ "token",			8,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB },
+						// todo
+						// by setting the last byte to 0x00, we allow 8 bit variations
 				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
 				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT }
 
@@ -162,22 +173,24 @@ const static struct schc_coap_rule_t coap_rule3 = {
 const static struct schc_coap_rule_t coap_rule4 = {
 		4, 12, 12, 12,
 		{
-				{ "version",            0,      2,      1, BI,      {COAP_V1},		&equal,         NOTSENT },
-				{ "type",               0,  	2,      1, BI,      {CT_CON},		&equal,         NOTSENT },
-				{ "token length",       0,      4,      1, BI,      {8}, 			&equal,         NOTSENT },
-				{ "code",               0,     	4,		1, BI,      {CC_POST},      &equal,         NOTSENT },
-				{ "message ID",         0,      16,		1, BI,      {0x23, 0xBB},   &ignore,	    VALUESENT },
-				{ "token",             24,     	32,      1, BI,      {0x21, 0xFA, 0x01, 0x00},
-																					&ignore,        VALUESENT }, // by setting the last byte to 0x00, we allow 8 bit variations
-				{ "uri-path",           0,      16,      1, BI,      "rd",           &equal,         NOTSENT },
-                { "content-format",     0,     	8,      1, BI,      {0x28},         &equal,         NOTSENT },
-                { "uri-query",          0,      72,      1, BI,      {0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x30},
-                																	&equal,         NOTSENT },
-                { "uri-query",          0,      88,     1, BI,      {0x65, 0x70, 0x3D, 0x6D, 0x61, 0x67, 0x69, 0x63, 0x69, 0x61, 0x6E},
-                																	&equal,         NOTSENT },
-                { "uri-query",          0,      48,      1, BI,      {0x6C, 0x74, 0x3D, 0x31, 0x32, 0x31},
-                																	&equal,         NOTSENT },
-				{ "payload marker",   	0,      8,   	1, BI,		{255},			&equal,         NOTSENT } // respond with CONTENT
+				{ "version",        0,	2,	1, BI,      {COAP_V1},		&equal,         NOTSENT },
+				{ "type",           0,  2,	1, BI,      {CT_CON},		&equal,         NOTSENT },
+				{ "token length",   0,  4,	1, BI,      {8}, 			&equal,         NOTSENT },
+				{ "code",           0,  4,	1, BI,      {CC_POST},      &equal,         NOTSENT },
+				{ "message ID",     0,  16,	1, BI,      {0x23, 0xBB},   &ignore,	    VALUESENT },
+				{ "token",          8,  32,	1, BI,      {0x21, 0xFA, 0x01, 0x00},
+						&ignore,        VALUESENT },
+						// todo
+						// by setting the last byte to 0x00, we allow 8 bit variations
+				{ "uri-path",       0,  16,	1, BI,      "rd",           &equal,         NOTSENT },
+                { "content-format", 0,  8,	1, BI,      {0x28},         &equal,         NOTSENT },
+                { "uri-query",      0,  72,	1, BI,      {0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x30},
+                		&equal,         NOTSENT },
+                { "uri-query",      0,  88,	1, BI,      {0x65, 0x70, 0x3D, 0x6D, 0x61, 0x67, 0x69, 0x63, 0x69, 0x61, 0x6E},
+                		&equal,         NOTSENT },
+                { "uri-query",      0,  48,	1, BI,      {0x6C, 0x74, 0x3D, 0x31, 0x32, 0x31},
+                		&equal,         NOTSENT },
+				{ "payload marker", 0,  8,	1, BI,		{255},			&equal,         NOTSENT } // respond with CONTENT
                }
 
 };
