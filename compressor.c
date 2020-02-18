@@ -193,7 +193,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 
 	for (i = 0; i < device->rule_count; i++) {
 		struct schc_rule_t* curr_rule = (*device->context)[i];
-		if( compare_bits_big_endian(curr_rule->id, rule_arr, RULE_SIZE_BITS)) {
+		if( compare_bits_BIG_END(curr_rule->id, rule_arr, RULE_SIZE_BITS)) {
 			return curr_rule;
 		}
 	}
@@ -213,12 +213,11 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
  * @return the length 			length of the compressed header
  *
  */
-static uint8_t compress(schc_bitarray_t* bit_array, unsigned char *header,
+static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 		uint16_t cols, const struct schc_layer_rule_t *rule) {
-	uint8_t i = 0; uint8_t field_counter = 0;
-	uint8_t index = 0; // index in compressed header // todo
-	uint8_t field_length; uint8_t j; uint8_t lsb = 0;
-	uint8_t json_result;
+	uint8_t i = 0; uint8_t j = 0; uint8_t index = 0;
+	uint8_t field_counter = 0;
+	uint8_t field_length; uint8_t lsb = 0; uint8_t json_result;
 
 	for (i = 0; i < rule->length; i++) {
 		// exclude fields in other direction
@@ -226,17 +225,16 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char *header,
 			field_length = rule->content[i].field_length;
 
 			switch (rule->content[i].action) {
-			case NOTSENT: {
-				// do nothing
+			case NOTSENT: { // do nothing
 			} break;
 			case VALUESENT: {
-				copy_bits(bit_array->ptr, bit_array->offset, header, 0, field_length);
-				bit_array->offset += field_length;
+				uint8_t src_pos = 0;
+				if(field_length % 8) { // position in first byte
+					src_pos = 8 - (field_length % 8);
+				}
 
-//				for (j = 0; j < field_length; j++) {
-//					schc_header[index + j] = *((header + field_counter * cols) + j);
-//				}
-//				index += field_length;
+				copy_bits(bit_array->ptr, bit_array->offset, (uint8_t*) (header + index), src_pos, field_length);
+				bit_array->offset += field_length;
 			} break;
 			case MAPPINGSENT: {
 				// reset the parser
@@ -294,7 +292,6 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char *header,
 //						j++;
 //					}
 				}
-				index++;
 			} break;
 			case LSB: {
 				lsb = ( ( (rule->content[i].field_length) * 8) - rule->content[i].MO_param_length);
@@ -346,13 +343,9 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char *header,
 			field_counter++;
 
 		}
+
+		index ++;
 	}
-/*
-	printf("\n");
-	for (i = 0; i < index; i++) {
-		printf("%x ", schc_header[i]);
-	}
-	printf("\n"); */
 
 	return index;
 }
@@ -361,127 +354,126 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char *header,
 /**
  * The decompression mechanism
  *
- * @param schc_header 	pointer to the header in which to operate
  * @param rule 			pointer to the rule to use during the decompression
- * @param nr_of_fields 	the number of fields
- * @param rule 			the rule to match the compression with
- * @param nr_of_fields 	the number of fields as found in the rule
+ * @param src			the received SCHC bit buffer
+ * @param dst			the buffer to store the decompressed, original packet
  *
  * @return the length of the decompressed header
  *
  */
-static uint8_t decompress(unsigned char *schc_header,
-		const struct schc_layer_rule_t* rule, unsigned char *data, uint8_t* header_offset) {
+static uint8_t decompress(const struct schc_layer_rule_t* rule, schc_bitarray_t* src, schc_bitarray_t* dst) {
 	uint8_t i = 0;
 	uint8_t index = 0;
 	uint8_t field_length;
 	uint8_t j; int8_t json_result = -1;
 	uint8_t lsb = 0;
 
-	// remove rules from header
-	uint8_t *payload;
-	payload = (uint8_t *) (data + RULE_SIZE_BYTES);
-
 	for (i = 0; i < rule->length; i++) {
 		// exclude fields in other direction
 		if (((rule->content[i].dir) == BI) || ((rule->content[i].dir) == DI)) {
 			field_length = rule->content[i].field_length;
-
 			switch (rule->content[i].action) {
 			case NOTSENT: {
 				// use value stored in context
-				for (j = 0; j < field_length; j++) {
-					schc_header[index + j] = rule->content[i].target_value[j];
+				uint8_t src_pos = 0;
+				if (field_length % 8) { // position in first byte
+					src_pos = 8 - (field_length % 8);
 				}
+				copy_bits(dst->ptr, dst->offset, rule->content[i].target_value, src_pos, field_length);
+				dst->offset += field_length;
 			} break;
 			case VALUESENT: {
 				// build from received value
-				for (j = 0; j < field_length; j++) {
-					schc_header[index + j] = payload[*header_offset + j];
-				}
-				*header_offset += field_length;
+				copy_bits(dst->ptr, dst->offset, src->ptr, src->offset, field_length);
+				dst->offset += field_length; src->offset += field_length;
+
+
+//				for (j = 0; j < field_length; j++) {
+//					schc_header[index + j] = payload[*header_offset + j];
+//				}
+//				*header_offset += field_length;
 			} break;
 			case MAPPINGSENT: {
 				// reset the parser
 				jsmn_init(&json_parser);
 
 				// parse the json string
-				json_result = jsmn_parse(&json_parser, rule->content[i].target_value,
-						strlen(rule->content[i].target_value), json_token, sizeof(json_token) / sizeof(json_token[0]));
-
-				uint8_t mapping_index = payload[*header_offset]; // mapping index is the index in the rule field, representing the decompressed value
-
-				// if result is 0,
-				if (json_result == 0) {
-					// formatted as a normal unsigned uint8_t array
-					// grab the value at the index
-					memcpy((uint8_t*)(schc_header + index), (uint8_t*) (rule->content[i].target_value + mapping_index), 1);
-
-					field_length = 1;
-				} else if(json_result > 0) {
-					// JSON object, grab the value(s), starting from the received index
-					mapping_index = mapping_index + 1; // first element in json token is total array, next are individual tokens
-					uint8_t length = (json_token[mapping_index].end - json_token[mapping_index].start);
-
-					uint8_t k = 0;
-					// store rule value in decompressed header
-					for (j = json_token[mapping_index].start; j < json_token[mapping_index].end; j++) {
-						schc_header[index + k] = rule->content[i].target_value[j];
-						k++;
-					}
-
-					field_length = length;
-				}
-
-				*header_offset = *header_offset + 1;
+//				json_result = jsmn_parse(&json_parser, rule->content[i].target_value,
+//						strlen(rule->content[i].target_value), json_token, sizeof(json_token) / sizeof(json_token[0]));
+//
+//				uint8_t mapping_index = payload[*header_offset]; // mapping index is the index in the rule field, representing the decompressed value
+//
+//				// if result is 0,
+//				if (json_result == 0) {
+//					// formatted as a normal unsigned uint8_t array
+//					// grab the value at the index
+//					memcpy((uint8_t*)(schc_header + index), (uint8_t*) (rule->content[i].target_value + mapping_index), 1);
+//
+//					field_length = 1;
+//				} else if(json_result > 0) {
+//					// JSON object, grab the value(s), starting from the received index
+//					mapping_index = mapping_index + 1; // first element in json token is total array, next are individual tokens
+//					uint8_t length = (json_token[mapping_index].end - json_token[mapping_index].start);
+//
+//					uint8_t k = 0;
+//					// store rule value in decompressed header
+//					for (j = json_token[mapping_index].start; j < json_token[mapping_index].end; j++) {
+//						schc_header[index + k] = rule->content[i].target_value[j];
+//						k++;
+//					}
+//
+//					field_length = length;
+//				}
+//
+//				*header_offset = *header_offset + 1;
 
 			} break;
 			case LSB: {
 				// compute value from received lsb
-				for (j = 0; j < field_length; j++) {
-					// the byte to do the bitwise operation on
-					if (((j + 1) * 8) > rule->content[i].MO_param_length) {
-						// cast to unsigned char for bitwise operation
-						unsigned char tv_rule = rule->content[i].target_value[j];
-						unsigned char tv_header = payload[*header_offset];
-
-						schc_header[index + j] = (tv_rule | tv_header);
-
-						// only move index pointer when LSB value is found
-						*header_offset = *header_offset + 1;
-					} else {
-						// set field from rule
-						schc_header[index + j] = rule->content[i].target_value[j];
-					}
-				}
+//				for (j = 0; j < field_length; j++) {
+//					// the byte to do the bitwise operation on
+//					if (((j + 1) * 8) > rule->content[i].MO_param_length) {
+//						// cast to unsigned char for bitwise operation
+//						unsigned char tv_rule = rule->content[i].target_value[j];
+//						unsigned char tv_header = payload[*header_offset];
+//
+//						schc_header[index + j] = (tv_rule | tv_header);
+//
+//						// only move index pointer when LSB value is found
+//						*header_offset = *header_offset + 1;
+//					} else {
+//						// set field from rule
+//						schc_header[index + j] = rule->content[i].target_value[j];
+//					}
+//				}
 			} break;
 			case COMPLENGTH:
 			case COMPCHK: {
 				// set to 0, to indicate that it will be calculated after decompression
-				schc_header[index] = 0;
-				schc_header[index + 1] = 0;
+//				schc_header[index] = 0;
+//				schc_header[index + 1] = 0;
 			} break;
 			case DEVIID: {
-				if (!strcmp(rule->content[i].field, "src iid")) {
-
-					schc_ipaddr_t node_ip;
-					get_node_ip(node_ip);
-
-					unsigned char ip_addr[8] = {
-							(node_ip[4] & 0xFF),
-							(node_ip[4] & 0xFF00) >> 8,
-							(node_ip[5] & 0xFF),
-							(node_ip[5] & 0xFF00) >> 8,
-							(node_ip[6] & 0xFF),
-							(node_ip[6] & 0xFF00) >> 8,
-							(node_ip[7] & 0xFF),
-							(node_ip[7] & 0xFF00) >> 8,
-					};
-
-					for (j = 0; j < field_length; j++) {
-						schc_header[index + j] = ip_addr[j];
-					}
-				}
+//				if (!strcmp(rule->content[i].field, "src iid")) {
+//
+//					schc_ipaddr_t node_ip;
+//					get_node_ip(node_ip);
+//
+//					unsigned char ip_addr[8] = {
+//							(node_ip[4] & 0xFF),
+//							(node_ip[4] & 0xFF00) >> 8,
+//							(node_ip[5] & 0xFF),
+//							(node_ip[5] & 0xFF00) >> 8,
+//							(node_ip[6] & 0xFF),
+//							(node_ip[6] & 0xFF00) >> 8,
+//							(node_ip[7] & 0xFF),
+//							(node_ip[7] & 0xFF00) >> 8,
+//					};
+//
+//					for (j = 0; j < field_length; j++) {
+//						schc_header[index + j] = ip_addr[j];
+//					}
+//				}
 			} break;
 			case APPIID: {
 				// build iid from L2 server address
@@ -700,41 +692,40 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct schc_udpi
  * @param header_offset pointer to the current offset in the decompressed header
  *
  */
-static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule, unsigned char *data, unsigned char* pckt_out,
-	uint8_t* header_offset) {
-	// +1, flow label takes up 20 bits (formatted as 3 bytes)
-	unsigned char ip_header[IP6_HLEN + 1];
-
-	if (rule != NULL) {
-		// fill the ipv6 header according to the decompression action
-		// as described in the rule field
-		decompress(ip_header, (const struct schc_layer_rule_t*) rule, data, header_offset);
-
-		// version, flow label, traffic class
-		pckt_out[0] = (ip_header[0] << 4) | (ip_header[1] >> 4);
-		pckt_out[1] = (ip_header[1] << 4) | (ip_header[4] >> 4);
-		pckt_out[2] = ip_header[3];
-		pckt_out[3] = ip_header[2];
-		// payload length
-		pckt_out[4] = ip_header[5];
-		pckt_out[5] = ip_header[6];
-
-		if( (DI == DOWN) && (DEVICE_TYPE == DEVICE)) {
-			// next header, hop limit
-			memcpy(&pckt_out[6], &ip_header[7], 2);
-			// swap source and destination
-			memcpy(&pckt_out[8], &ip_header[25], 16);
-			memcpy(&pckt_out[24], &ip_header[9], 16);
-		} else {
-			memcpy(&pckt_out[6], &ip_header[7], (IP6_HLEN - 6));
-		}
-	} else {
-		DEBUG_PRINTF("decompress_ipv6_rule(): no rule was found");
-		return 0;
-	}
-
-	return 1;
-}
+//static uint8_t decompress_ipv6_rule(struct schc_ipv6_rule_t* rule,
+//		const unsigned char *data, schc_bitarray_t* bit_arr) {
+//	unsigned char ip_header[IP6_HLEN + 1]; // +1, flow label takes up 20 bits (formatted as 3 bytes)
+//
+//	if (rule != NULL) {
+//		// fill the ipv6 header according to the decompression action
+//		// as described in the rule field
+//		decompress(ip_header, (const struct schc_layer_rule_t*) rule, bit_arr);
+//
+//		// version, flow label, traffic class
+//		pckt_out[0] = (ip_header[0] << 4) | (ip_header[1] >> 4);
+//		pckt_out[1] = (ip_header[1] << 4) | (ip_header[4] >> 4);
+//		pckt_out[2] = ip_header[3];
+//		pckt_out[3] = ip_header[2];
+//		// payload length
+//		pckt_out[4] = ip_header[5];
+//		pckt_out[5] = ip_header[6];
+//
+//		if( (DI == DOWN) && (DEVICE_TYPE == DEVICE)) {
+//			// next header, hop limit
+//			memcpy(&pckt_out[6], &ip_header[7], 2);
+//			// swap source and destination
+//			memcpy(&pckt_out[8], &ip_header[25], 16);
+//			memcpy(&pckt_out[24], &ip_header[9], 16);
+//		} else {
+//			memcpy(&pckt_out[6], &ip_header[7], (IP6_HLEN - 6));
+//		}
+//	} else {
+//		DEBUG_PRINTF("decompress_ipv6_rule(): no rule was found");
+//		return 0;
+//	}
+//
+//	return 1;
+//}
 #endif
 
 #if USE_UDP
@@ -829,26 +820,26 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct schc_
  * 			0				decompression failed
  *
  */
-static uint8_t decompress_udp_rule(struct schc_udp_rule_t* rule, unsigned char *data,
-		unsigned char* pckt_out, uint8_t* header_offset) {
-	uint8_t udp_header[UDP_HLEN];
-
-	if (rule != NULL) {
-		// fill the udp header according to the decompression action
-		// as described in the rule field
-		decompress(udp_header, (const struct schc_layer_rule_t*) rule, data,
-				header_offset);
-
-		// copy UDP header after IP6 header
-		memcpy(&pckt_out[IP6_HLEN], udp_header, UDP_HLEN);
-	} else {
-		DEBUG_PRINTF(
-				"decompress_udp_rule(): no UDP rule could be found \n");
-		return 0;
-	}
-
-	return 1;
-}
+//static uint8_t decompress_udp_rule(struct schc_udp_rule_t* rule, unsigned char *data,
+//		unsigned char* pckt_out, uint8_t* header_offset) {
+//	uint8_t udp_header[UDP_HLEN];
+//
+//	if (rule != NULL) {
+//		// fill the udp header according to the decompression action
+//		// as described in the rule field
+//		decompress(udp_header, (const struct schc_layer_rule_t*) rule, data,
+//				header_offset);
+//
+//		// copy UDP header after IP6 header
+//		memcpy(&pckt_out[IP6_HLEN], udp_header, UDP_HLEN);
+//	} else {
+//		DEBUG_PRINTF(
+//				"decompress_udp_rule(): no UDP rule could be found \n");
+//		return 0;
+//	}
+//
+//	return 1;
+//}
 #endif
 
 #if USE_COAP
@@ -1338,63 +1329,49 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 		data_offset += UDP_HLEN;
 #endif
 #if USE_COAP
-		copy_bits(bit_array->ptr, bit_array->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
+		copy_bits_BIG_END(bit_array->ptr, bit_array->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
 		bit_array->offset += BYTES_TO_BITS(coap_length);
 		data_offset += coap_length;
 #endif
 	} else { // A RULE WAS FOUND: COMPRESS
 		copy_bits(bit_array->ptr, 0, (*schc_rule)->id, 0, RULE_SIZE_BITS); // matching rule id in front of buffer
 
-		DEBUG_PRINTF("schc_compress(): SCHC rule bitmap \n");
-		print_bitmap(bit_array->ptr, RULE_SIZE_BITS);
-
-		// ... now compress the headers according to the rule
-		// and copy the contents to the buffer
+		// ... now compress the headers according to the rule, copy the contents to the bit array and keep track of the offset
 #if USE_IPv6
 		generate_ip_header_fields(&ip_udp_header);
-		// schc_offset += compress((uint8_t*) (buf + schc_offset), ipv6_header_fields, MAX_IPV6_FIELD_LENGTH, (const struct schc_layer_rule_t*) ipv6_rule);
 		compress(bit_array, ipv6_header_fields, MAX_IPV6_FIELD_LENGTH, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
 #if USE_UDP
 		generate_udp_header_fields(&ip_udp_header);
-		// schc_offset += compress((uint8_t*) (buf + schc_offset), udp_header_fields, MAX_UDP_FIELD_LENGTH, (const struct schc_layer_rule_t*) udp_rule);
 		compress(bit_array, udp_header_fields, MAX_UDP_FIELD_LENGTH, (const struct schc_layer_rule_t*) udp_rule);
 #endif
 #if USE_COAP
 		generate_coap_header_fields(&coap_msg); // generate a char array, which can easily be compared to the rule
-		// schc_offset += compress((uint8_t*) (buf + schc_offset), coap_header_fields, MAX_COAP_FIELD_LENGTH, (const struct schc_layer_rule_t*) coap_rule);
 		compress(bit_array, coap_header_fields, MAX_COAP_FIELD_LENGTH, (const struct schc_layer_rule_t*) coap_rule);
 #endif
 	}
 
+	uint16_t payload_len = (total_length - IP6_HLEN - UDP_HLEN - coap_length); // copy the payload
+	const uint8_t* payload_ptr = (data + IP6_HLEN + UDP_HLEN + coap_length);
+
+	copy_bits(bit_array->ptr, bit_array->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
+    uint16_t new_pkt_length = (BITS_TO_BYTES(bit_array->offset) + payload_len);
+
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("schc_compress(): compressed header length: %d \n", BITS_TO_BYTES(bit_array->offset));
+	DEBUG_PRINTF("schc_compress(): payload length: %d (total length: %d) \n", payload_len, new_pkt_length);
 	DEBUG_PRINTF("+---------------------------------+\n");
-	DEBUG_PRINTF("|          SCHC Header            |\n");
+	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");
 
 	int i;
-	for(i = 0; i <  BITS_TO_BYTES(bit_array->offset); i++) {
+	for(i = 0; i <  new_pkt_length; i++) {
 		DEBUG_PRINTF("%02X ", bit_array->ptr[i]);
 		if(!((i + 1) % 12)) {
 			DEBUG_PRINTF("\n");
 		}
 	}
-	DEBUG_PRINTF("\n\n");
 
-	uint16_t payload_len = (total_length - IP6_HLEN - UDP_HLEN - coap_length); // copy the payload
-	uint8_t* payload_ptr = (data + IP6_HLEN + UDP_HLEN + coap_length);
-
-	copy_bits(bit_array->ptr, bit_array->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
-    uint16_t new_pkt_length = (BITS_TO_BYTES(bit_array->offset) + payload_len);
-
-	DEBUG_PRINTF("schc_compress(): payload length: %d (total length: %d) \n", payload_len, new_pkt_length);
-	for(i = 0; i < payload_len; i++) {
-		DEBUG_PRINTF("%02X ", payload_ptr[i]);
-		if(!(((i - payload_len) + 1) % 12)) {
-			DEBUG_PRINTF("\n");
-		}
-	}
 	DEBUG_PRINTF("\n\n");
 
 	// return the new length of the packet
@@ -1568,9 +1545,17 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		bit_offset += BYTES_TO_BITS(coap_offset);
 #endif
 	} else { // compressed packet
+		schc_bitarray_t src_arr;
+		src_arr.ptr = data;
+		src_arr.offset = RULE_SIZE_BITS;
+
+		schc_bitarray_t dst_arr;
+		dst_arr.ptr = buf;
+		dst_arr.offset = 0;
+
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
-			// ret = decompress_ipv6_rule(rule->compression_rule->ipv6_rule, data, buf, &header_offset);
+			ret = decompress(rule->compression_rule->ipv6_rule, &src_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1579,7 +1564,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_UDP
 		// search udp rule
 		if (udp_rule_id != 0) {
-			// ret = decompress_udp_rule(rule->compression_rule->udp_rule, data, buf, &header_offset);
+			ret = decompress(rule->compression_rule->udp_rule, &src_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1596,7 +1581,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		}
 		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), pcoap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
 #endif
-		bit_offset += RULE_SIZE_BITS;
+		bit_offset = src_arr.offset; // the source array holds the offset of the SCHC header, and thus its length
 	}
 
 	uint8_t new_header_length = IP6_HLEN + UDP_HLEN + coap_offset;

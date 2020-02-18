@@ -46,10 +46,15 @@ uint8_t msg[] = {
 	struct schc_rule_t* schc_rule;
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = &compressed_buf;
+//
+//	uint8_t ds[2] = { 0 }; uint8_t sr[2] = { 0x06 };
+//
+//	copy_bits_BIG_END(ds, 4, sr, 0, 4);
+//	DEBUG_PRINTF("%2x %2x \n", ds[0], ds[1]);
 
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
 			UP, DEVICE, &schc_rule);
-	
+
 	// DECOMPRESSION
 	uint8_t new_packet_len = 0;
 
