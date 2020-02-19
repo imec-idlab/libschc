@@ -335,7 +335,7 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
  * @return the length of the decompressed header
  *
  */
-static uint8_t decompress(const struct schc_layer_rule_t* rule, schc_bitarray_t* src, schc_bitarray_t* dst) {
+static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src, schc_bitarray_t* dst) {
 	uint8_t i = 0; uint8_t j;
 	uint8_t field_length; int8_t json_result = -1;
 
@@ -864,7 +864,8 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 	uint8_t byte_length = 4;
 
 	if (rule != NULL) {
-		uint8_t coap_length = decompress(&coap_header, (const struct schc_layer_rule_t*) rule, data, header_offset);
+		// todo
+		uint8_t coap_length = 12; // decompress(&coap_header, (const struct schc_layer_rule_t*) rule, data, header_offset);
 
 		pcoap_init_pdu(msg);
 		pcoap_set_version(msg, coap_header[0]);
@@ -1172,7 +1173,7 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 		data_offset += UDP_HLEN;
 #endif
 #if USE_COAP
-		copy_bits_BIG_END(bit_array->ptr, bit_array->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
+		copy_bits(bit_array->ptr, bit_array->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
 		bit_array->offset += BYTES_TO_BITS(coap_length);
 		data_offset += coap_length;
 #endif
@@ -1201,8 +1202,9 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
     uint16_t new_pkt_length = (BITS_TO_BYTES(bit_array->offset) + payload_len);
 
 	DEBUG_PRINTF("\n");
-	DEBUG_PRINTF("schc_compress(): compressed header length: %d \n", BITS_TO_BYTES(bit_array->offset));
-	DEBUG_PRINTF("schc_compress(): payload length: %d (total length: %d) \n", payload_len, new_pkt_length);
+	DEBUG_PRINTF(
+			"schc_compress(): compressed header length: %d, payload length: %d (total length: %d) \n",
+			BITS_TO_BYTES(bit_array->offset), payload_len, new_pkt_length);
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");
@@ -1398,7 +1400,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
-			ret = decompress(rule->compression_rule->ipv6_rule, &src_arr, &dst_arr);
+			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, &src_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1407,7 +1409,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_UDP
 		// search udp rule
 		if (udp_rule_id != 0) {
-			ret = decompress(rule->compression_rule->udp_rule, &src_arr, &dst_arr);
+			ret = decompress((struct schc_layer_rule_t *) (rule->compression_rule->udp_rule), &src_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}

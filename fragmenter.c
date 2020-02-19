@@ -196,7 +196,7 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 
 	while (curr->next != mbuf) {
 		DEBUG_PRINTF(
-				"head is 0x%x, looking for 0x%x with curr 0x%x, next is 0x%x \n",
+				"head is %p, looking for %p with curr %p, next is %p \n",
 				head, mbuf, curr, curr->next);
 		curr = curr->next;
 	}
@@ -1744,7 +1744,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  *
  */
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
+		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
 		void (*remove_timer_entry)(uint32_t device_id)) {
 	uint32_t i;
@@ -2231,7 +2231,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 	if(conn->schc_rule == NULL) {
-		uint8_t rule_id = data[0]; // todo adapt to profile and bitwise operation
+		uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // todo adapt to profile and bitwise operation
+		copy_bits(rule_id, 0, data, 0, RULE_SIZE_BITS);
 		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(rule_id, device_id);
 		conn->schc_rule = ptr;
 	}

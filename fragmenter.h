@@ -151,7 +151,7 @@ typedef struct schc_fragmentation_t {
 } schc_fragmentation_t;
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
+		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
 		void (*remove_timer_entry)(uint32_t device_id));
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);

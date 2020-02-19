@@ -9,30 +9,30 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 		1, 10, 10, 10,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
-				{ "version", 		0, 4,	 1, BI, 	{6},			&equal, 	NOTSENT },
-				{ "traffic class", 	0, 8,	 1, BI, 	{0},			&ignore, 	NOTSENT },
-				{ "flow label", 	0, 20,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
-				{ "length", 		0, 16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
-				{ "next header", 	2, 8, 	 1, BI, 	{17, 58}, 		&matchmap, 	MAPPINGSENT },
-				{ "hop limit", 		0, 8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
-				{ "src prefix",		0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "version", 		0, 4,	1, BI, 		{6},			&equal, 	NOTSENT },
+				{ "traffic class", 	0, 8,	1, BI, 		{0},			&ignore, 	NOTSENT },
+				{ "flow label", 	0, 20,	1, BI, 		{0, 0, 0},		&ignore, 	NOTSENT },
+				{ "length", 		0, 16,	1, BI, 		{0, 0},			&ignore, 	COMPLENGTH },
+				{ "next header", 	0, 8, 	1, BI, 		{17}, 			&equal, 	NOTSENT },
+				{ "hop limit", 		0, 8, 	1, BI, 		{64}, 			&ignore, 	NOTSENT },
+				{ "src prefix",		0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
 						// todo how to store multiple IP's for match-map?
 						// 32 bit field?
 						// 8 bit field with an index to a list containing pointers?
-				{ "src iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+				{ "src iid",		0, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&equal, 	NOTSENT },
-				{ "dest prefix",	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "dest prefix",	0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "dest iid",		4, 64,  1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&MSB, 		LSB },
+				{ "dest iid",		60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&MSB, 		LSB }, // match the 60 first bits, send the last 4
 		}
 };
 
 const static struct schc_ipv6_rule_t ipv6_rule2 = {
 		2, 10, 10, 10,
 		{
-				{ "version", 		0,  4,	 1, BI, 	{6},			&equal, 	NOTSENT },
+				{ "version", 		0,  4,	 1, BI, 	{7},			&equal, 	NOTSENT },
 				{ "traffic class", 	0,  8,	 1, BI, 	{0},			&equal, 	NOTSENT },
 				{ "flow label", 	0,  20,	 1, BI, 	{0, 0, 0x20},	&equal, 	NOTSENT },
 				{ "length", 		0,  16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
@@ -40,13 +40,11 @@ const static struct schc_ipv6_rule_t ipv6_rule2 = {
 				{ "hop limit", 		0,  8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",	 	0,  64,	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
-				{ "src iid",		16, 64, 	 1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
-						&MSB, 	LSB },
-						// todo
-						// by setting the last 2 bytes to 0x00, we allow 16 bit variations
-				{ "dest prefix",	0,  64, 	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
+				{ "src iid",		16, 64,  1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
+						&MSB, 	LSB }, // match the 16 first bits, send the last 48
+				{ "dest prefix",	0,  64,  1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&equal, 	NOTSENT },
-				{ "dest iid",		16, 64, 	 1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
+				{ "dest iid",		16, 64,  1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
 						&MSB, 	LSB },
 		}
 };
@@ -55,21 +53,21 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 	//	id, up, down, length
 		3, 10, 10, 10,
 		{
-			//	field, 			   MSB,len,	 pos,dir, 	val,			MO,			CDA
-				{ "version", 		0, 4,	 1, BI, 	{6},			&equal, 	NOTSENT },
+			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
+				{ "version", 		0, 4,	 1, BI, 	{6},			&equal, 	VALUESENT },
 				{ "traffic class", 	0, 8,	 1, BI, 	{0},			&ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
-				{ "next header", 	0, 8, 	 1, BI, 	{17}, 			&equal, 	NOTSENT },
+				{ "next header", 	3, 8, 	 1, BI, 	{6, 17, 58},	&matchmap, 	MAPPINGSENT },
 				{ "hop limit", 		0, 8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",		0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "src iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
+				{ "src iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&equal, 	NOTSENT },
 				{ "dest prefix",	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "dest iid",		8, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&MSB, 		LSB },
+				{ "dest iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
+						&equal, 	NOTSENT},
 		}
 };
 #endif
@@ -78,18 +76,18 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 const static struct schc_udp_rule_t udp_rule1 = {
 		1, 4, 4, 4,
 		{
-				{ "src port", 		0, 16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT }, // 5683
-				{ "dest port", 		0, 16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
-				{ "length", 		0, 16, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
-				{ "checksum", 		0, 16, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
+				{ "src port", 		0,	16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT }, // 5683
+				{ "dest port", 		0,	16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
+				{ "length", 		0,	16, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
+				{ "checksum", 		0,	16, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
 };
 
 const static struct schc_udp_rule_t udp_rule2 = {
 		2, 4, 4, 4,
 		{
-				{ "src port", 		4, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
-				{ "dest port", 		4, 16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "src port", 		4,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "dest port", 		4,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
 				{ "length", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
 				{ "checksum", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
@@ -244,15 +242,36 @@ const struct schc_compression_rule_t compression_rule_4 = {
 #endif
 };
 
-const struct schc_rule_t schc_rule_1 = { 0x01, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_2 = { 0x02, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_3 = { 0x03, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_4 = { 0x04, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+const struct schc_compression_rule_t compression_rule_5 = {
+#if USE_IPv6
+		&ipv6_rule3,
+#endif
+#if USE_UDP
+		&udp_rule1,
+#endif
+#if USE_COAP
+		&coap_rule4,
+#endif
+};
 
-const struct schc_rule_t schc_rule_5 = { 0x05, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_6 = { 0x06, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_7 = { 0x07, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0 }; // the rule id for an uncompressed packet
+// todo
+// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
+
+const struct schc_rule_t schc_rule_1 = { { 0x01 }, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_2 = { { 0x02 }, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_3 = { { 0x03 }, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_4 = { { 0x04 }, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_5 = { { 0x05 }, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_6 = { { 0x06 }, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_7 = { { 0x07 }, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_8 = { { 0x08 }, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_9 = { { 0x09 }, &compression_rule_5, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_10 = { { 0x0A }, &compression_rule_5, NO_ACK, 1, 0, 0, 0 };
 
 /* define total rules per layer */
 #define IPV6_RULES				3
@@ -262,11 +281,11 @@ const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 
 /* save rules in flash */
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
 		&schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
-		&schc_rule_8 };
+		&schc_rule_8, &schc_rule_9, &schc_rule_10 };
 
 /* rules for a particular device */
-const struct schc_device node1 = { 1, 8, &node1_schc_rules };
-const struct schc_device node2 = { 2, 8, &node1_schc_rules};
+const struct schc_device node1 = { 1, 10, &node1_schc_rules };
+const struct schc_device node2 = { 2, 10, &node1_schc_rules};
 
 #define DEVICE_COUNT			2
 
