@@ -35,7 +35,7 @@ typedef enum {
 
 struct schc_field {
 	char field[32];
-	uint8_t MO_param_length; // indicate special value used with MSB, LSB and MATCH-MAP
+	uint8_t MO_param_length; // indicate number of bits for MSB and LSB or list length for MATCH-MAP
 	uint8_t field_length; // in bits
 	uint8_t field_pos;
 	direction dir;
