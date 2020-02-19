@@ -216,31 +216,33 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 		uint16_t cols, const struct schc_layer_rule_t *rule) {
 	uint8_t i = 0; uint8_t j = 0; uint8_t index = 0;
-	uint8_t field_counter = 0;
-	uint8_t field_length; uint8_t lsb = 0; uint8_t json_result;
+	uint8_t field_length; uint8_t json_result;
 
 	for (i = 0; i < rule->length; i++) {
 		// exclude fields in other direction
-		if( ( (rule->content[i].dir) == BI) || ( (rule->content[i].dir) == DI)) {
+		if (((rule->content[i].dir) == BI) || ((rule->content[i].dir) == DI)) {
 			field_length = rule->content[i].field_length;
 
 			switch (rule->content[i].action) {
 			case NOTSENT: { // do nothing
-			} break;
+			}
+				break;
 			case VALUESENT: {
 				uint8_t src_pos = get_position_in_first_byte(field_length);
-				copy_bits(bit_array->ptr, bit_array->offset, (uint8_t*) (header + index), src_pos, field_length);
+				copy_bits(bit_array->ptr, bit_array->offset,
+						(uint8_t*) (header + index), src_pos, field_length);
 				bit_array->offset += field_length;
-			} break;
+			}
+				break;
 			case MAPPINGSENT: {
 				// reset the parser
 				jsmn_init(&json_parser);
 
 				// parse the json string
 				json_result = 0; // todo
-						//jsmn_parse(&json_parser, rule->content[i].target_value,
-						// strlen(rule->content[i].target_value), json_token,
-						// sizeof(json_token) / sizeof(json_token[0]));
+				//jsmn_parse(&json_parser, rule->content[i].target_value,
+				// strlen(rule->content[i].target_value), json_token,
+				// sizeof(json_token) / sizeof(json_token[0]));
 				uint8_t match_counter = 0;
 
 				// if result is 0,
@@ -248,10 +250,14 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 					uint32_t list_len = get_required_number_of_bits(
 							rule->content[i].MO_param_length);
 					for (j = 0; j < rule->content[i].MO_param_length; j++) {
-						if (compare_bits_BIG_END((uint8_t*) (header + index), (uint8_t*) (rule->content[i].target_value + j), field_length)) {
+						if (compare_bits_BIG_END((uint8_t*) (header + index),
+								(uint8_t*) (rule->content[i].target_value + j),
+								field_length)) {
 							uint8_t ind[1] = { j }; // room for 255 indices
-							uint8_t src_pos = get_position_in_first_byte(list_len);
-							copy_bits(bit_array->ptr, bit_array->offset, ind, src_pos, list_len);
+							uint8_t src_pos = get_position_in_first_byte(
+									list_len);
+							copy_bits(bit_array->ptr, bit_array->offset, ind,
+									src_pos, list_len);
 							bit_array->offset += list_len;
 						}
 					}
@@ -284,59 +290,35 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 //						j++;
 //					}
 				}
-			} break;
+			}
+				break;
 			case LSB: {
-				lsb = ( ( (rule->content[i].field_length) * 8) - rule->content[i].MO_param_length);
-
-//				for (j = 0; j < field_length; j++) {
-//					// if the last bit of the current byte is larger than the msb length
-//					if( ((j + 1) * 8) > rule->content[i].MO_param_length) {
-//						uint8_t byte_marker = (rule->content[i].MO_param_length / 8);
-//						// start adding the lsb's to the compressed header field
-//						if(j >= byte_marker) {
-//							if( j == byte_marker ) {
-//								uint8_t number_of_bits_to_mask; uint8_t mask = 0;
-//								if(! (lsb % 8) ) {
-//									// on byte boundary
-//									number_of_bits_to_mask = 8;
-//								} else {
-//									number_of_bits_to_mask = (lsb - ( (lsb / 8) * 8));
-//								}
-//
-//								// create mask
-//								uint8_t k;
-//								for (k = 0; k < number_of_bits_to_mask; k++) {
-//									mask |= 1 << k;
-//								}
-//
-//								schc_header[index] = ( *((header + field_counter * cols) + j) & mask);
-//							} else {
-//								// add the remaining bytes
-//								schc_header[index] = *((header + field_counter * cols) + j);
-//							}
-//							index++;
-//						}
-//					}
-//
-//				}
-			} break;
+				uint16_t lsb_len = rule->content[i].field_length
+						- rule->content[i].MO_param_length;
+				copy_bits(bit_array->ptr, bit_array->offset,
+						(uint8_t*) (header + index),
+						rule->content[i].MO_param_length, lsb_len);
+				bit_array->offset += lsb_len;
+			}
+				break;
 			case COMPLENGTH:
 			case COMPCHK: {
 				// do nothing
-			} break;
+			}
+				break;
 			case DEVIID: {
 				// ToDo
-			} break;
+			}
+				break;
 			case APPIID: {
 				// ToDo
-			} break;
 			}
-
-			field_counter++;
+				break;
+			}
 
 		}
 
-		index ++;
+		index++;
 	}
 
 	return index;
@@ -412,23 +394,14 @@ static uint8_t decompress(const struct schc_layer_rule_t* rule, schc_bitarray_t*
 
 			} break;
 			case LSB: {
-				// compute value from received lsb
-//				for (j = 0; j < field_length; j++) {
-//					// the byte to do the bitwise operation on
-//					if (((j + 1) * 8) > rule->content[i].MO_param_length) {
-//						// cast to unsigned char for bitwise operation
-//						unsigned char tv_rule = rule->content[i].target_value[j];
-//						unsigned char tv_header = payload[*header_offset];
-//
-//						schc_header[index + j] = (tv_rule | tv_header);
-//
-//						// only move index pointer when LSB value is found
-//						*header_offset = *header_offset + 1;
-//					} else {
-//						// set field from rule
-//						schc_header[index + j] = rule->content[i].target_value[j];
-//					}
-//				}
+				uint8_t msb_len = rule->content[i].MO_param_length;
+				uint8_t lsb_len = rule->content[i].field_length - msb_len;
+				// build partially from rule
+				copy_bits(dst->ptr, dst->offset, rule->content[i].target_value, 0, msb_len);
+
+				// .. and from received value
+				copy_bits(dst->ptr, dst->offset + msb_len, src->ptr, src->offset, lsb_len);
+				src->offset += lsb_len;
 			} break;
 			case COMPLENGTH:
 			case COMPCHK: {
@@ -982,6 +955,12 @@ static uint8_t ignore(struct schc_field* target_field, unsigned char* field_valu
 
 /**
  * The MSB matching operator
+ * MSB(x): 	a match is obtained if the most significant (leftmost) x
+ *    		bits of the packet header field value are equal to the TV in the
+ *			Rule.  The x parameter of the MSB MO indicates how many bits are
+ * 	 	 	involved in the comparison.  If the FL is described as variable,
+ *     	  	the x parameter must be a multiple of the FL unit.  For example, x
+ *			must be multiple of 8 if the unit of the variable length is bytes.
  *
  * @param target_field the field from the rule
  * @param field_value the value from the header to compare with the rule value
@@ -991,54 +970,20 @@ static uint8_t ignore(struct schc_field* target_field, unsigned char* field_valu
  *
  */
 static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value){
-	uint8_t i; uint8_t j;
-
-	printf("MSB %s \n", target_field->field);
-
-	for (i = 0; i < target_field->field_length; i++) {
-		printf("%d - %d \n", target_field->target_value[i], field_value[i]);
-
-		// the byte to do the bitwise operation on
-		if( ( (i + 1) * 8) >=  target_field->MO_param_length) {
-			uint8_t msb = 0; uint8_t mask = 0;
-
-			if(target_field->MO_param_length > 8) {
-				msb = ( (target_field->field_length * 8) - target_field->MO_param_length);
-			} else {
-				msb = target_field->MO_param_length;
-			}
-
-			// create mask
-			for (j = (8 - msb); j <= 8; j++) {
-			       mask |= 1 << j;
-			}
-
-			// cast to unsigned char for bitwise operation
-			unsigned char tv_rule = target_field->target_value[i] ;
-			unsigned char tv_header = field_value[i];
-
-			printf("msb is %d tv rule %d, tv header %d i is %d \n", msb, tv_rule, tv_header, i);
-
-
-			if ( ( tv_rule & mask ) != ( tv_header & mask) ) {
-				return 0;
-			} else {
-				// target value matches field value
-				return 1;
-			}
-		} else {
-			// normal check if fields are equal
-			if(target_field->target_value[i] != field_value[i]){
-				return 0;
-			}
-		}
-		printf("\n");
+	if(compare_bits(target_field->target_value, field_value, target_field->MO_param_length)) {
+		return 1; // left x bits match the target value
 	}
+
+	return 0;
 }
 
 
 /**
  * The match-map matching operator
+ * match-mapping: 	With match-mapping, the Target Value is a list of
+ * 					values.  Each value of the list is identified by an index.
+ *					Compression is achieved by sending the index instead of the
+ *					original header field value.
  *
  * @param target_field the field from the rule
  * @param field_value the value from the header to compare with the rule value
