@@ -611,19 +611,19 @@ static uint8_t generate_coap_header_fields(pcoap_pdu *pdu) {
  * @return id 					the CoAP rule id
  *         0 					if no rule was found
  */
-static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, uint32_t device_id) {
+static struct schc_coap_rule_t* schc_find_coap_rule_from_header(schc_bitarray_t* src, uint32_t device_id) {
 	uint16_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
 	uint8_t direction_field_length = 0;
 
-	if(pcoap_validate_pkt(pdu) != CE_NONE) {
+	/*if(pcoap_validate_pkt(pdu) != CE_NONE) {
 		DEBUG_PRINTF("schc_find_coap_rule_from_header(): invalid CoAP packet");
 		return 0;
-	}
+	}*/
 
 	// generate a char array, matchable to the rule
-	uint8_t coap_field_length = generate_coap_header_fields(pdu);
+	// uint8_t coap_field_length = generate_coap_header_fields(pdu);
 
 	// get device rules
 	struct schc_device *device = get_device_by_id(device_id);
@@ -635,8 +635,44 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, 
 	int j; int k;
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_coap_rule_t* curr_rule = (*device->context)[i]->compression_rule->coap_rule;
+		const struct schc_udp_rule_t* curr_rule =
+				(*device->context)[i]->compression_rule->udp_rule;
 
+		uint8_t j = 0;
+		uint8_t k = 0;
+
+		while (j < curr_rule->length) {
+			// exclude fields in other direction
+			if ((curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) {
+
+				uint8_t value[MAX_HEADER_FIELD_LENGTH] = { 0 };
+				copy_bits(value, 0, src->ptr, src->offset, curr_rule->content[k].field_length);
+
+				// encode CoAP options before comparing
+				// but how do we compress them?
+
+				uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
+
+				if (!curr_rule->content[k].MO(&curr_rule->content[k],
+						(uint8_t*) (src->ptr + src_pos))) { // compare header field and rule field using the matching operator
+					rule_is_found = 0;
+					break;
+				} else {
+					rule_is_found = 1;
+				}
+				j++;
+				src->offset += curr_rule->content[k].field_length;
+			}
+			k++;
+		}
+
+		if (rule_is_found) {
+			return (struct schc_udp_rule_t*) (curr_rule);
+		}
+	}
+
+	return NULL;
+		/*
 		(DI == DOWN) ? (direction_field_length = curr_rule->down) : (direction_field_length = curr_rule->up);
 
 		// save compare cycles by checking the number of the specified direction fields
@@ -645,10 +681,10 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, 
 			while (k < curr_rule->length) {
 				// exclude fields in other direction
 				if( (curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) {
-
+					uint8_t value[MAX_HEADER_FIELD_LENGTH] = { 0 };
+					copy_bits(value, );
 					// compare header field and rule field using the matching operator
-					if (!curr_rule->content[k].MO(&curr_rule->content[k],
-							coap_header_fields[j])) {
+					if (!curr_rule->content[k].MO(&curr_rule->content[k], (uint8_t*) value)) {
 						rule_is_found = 0;
 						break;
 					} else {
@@ -660,12 +696,9 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, 
 			}
 
 			if (rule_is_found) {
-				return curr_rule;
+				return (struct schc_coap_rule_t*) (curr_rule);
 			}
-		}
-	}
-
-	return NULL;
+		} */
 }
 
 /**
@@ -1025,8 +1058,8 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		data_offset += UDP_HLEN;
 #endif
 #if USE_COAP
-		copy_bits(bit_array->ptr, bit_array->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
-		bit_array->offset += BYTES_TO_BITS(coap_length);
+		copy_bits(dst->ptr, dst->offset, coap_buf, 0, BYTES_TO_BITS(coap_length));
+		dst->offset += BYTES_TO_BITS(coap_length);
 		data_offset += coap_length;
 #endif
 	} else {
@@ -1044,7 +1077,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 #endif
 #if USE_COAP
 		generate_coap_header_fields(&coap_msg); // generate a char array, which can easily be compared to the rule
-		compress(bit_array, coap_header_fields, MAX_COAP_FIELD_LENGTH, (const struct schc_layer_rule_t*) coap_rule);
+		// compress(bit_array, coap_header_fields, MAX_COAP_FIELD_LENGTH, (const struct schc_layer_rule_t*) coap_rule);
 #endif
 	}
 

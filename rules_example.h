@@ -9,7 +9,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 		1, 10, 10, 10,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
-				{ "version", 		0, 4,	1, BI, 		{7},			&equal, 	NOTSENT },
+				{ "version", 		0, 4,	1, BI, 		{6},			&equal, 	NOTSENT },
 				{ "traffic class", 	0, 8,	1, BI, 		{0},			&ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	1, BI, 		{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 16,	1, BI, 		{0, 0},			&ignore, 	COMPLENGTH },
@@ -32,7 +32,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 const static struct schc_ipv6_rule_t ipv6_rule2 = {
 		2, 10, 10, 10,
 		{
-				{ "version", 		0,  4,	 1, BI, 	{7},			&equal, 	NOTSENT },
+				{ "version", 		0,  4,	 1, BI, 	{6},			&equal, 	NOTSENT },
 				{ "traffic class", 	0,  8,	 1, BI, 	{0},			&equal, 	NOTSENT },
 				{ "flow label", 	0,  20,	 1, BI, 	{0, 0, 0x20},	&equal, 	NOTSENT },
 				{ "length", 		0,  16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
@@ -115,7 +115,7 @@ const static struct schc_coap_rule_t coap_rule1 = {
 				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
 				{ "type",			0,	2,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
-				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
+				{ "code",			0,	8,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
 				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
 						&MSB,		LSB }, // match the 24 first bits, send the last 8
@@ -136,7 +136,7 @@ const static struct schc_coap_rule_t coap_rule2 = {
 						&matchmap, MAPPINGSENT	},
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_CONTENT},	&equal,		NOTSENT },
-				{ "code",			0,	4,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
+				{ "code",			0,	8,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
 				{ "message ID",		12,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
 				{ "message ID",		12,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB }, // match the first 12 bits
 				{ "token",			0,	32,	 1, BI,		{0, 0, 0, 0},	&ignore,	VALUESENT }, // GET sensor value
@@ -154,7 +154,7 @@ const static struct schc_coap_rule_t coap_rule3 = {
 				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
 				{ "type",			0,	2,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
-				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
+				{ "code",			0,	8,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
 				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
 						&MSB,		LSB }, // match the 24 first bits, send the last 8
@@ -170,7 +170,7 @@ const static struct schc_coap_rule_t coap_rule4 = {
 				{ "version",        0,	2,	1, BI,      {COAP_V1},		&equal,         NOTSENT },
 				{ "type",           0,  2,	1, BI,      {CT_CON},		&equal,         NOTSENT },
 				{ "token length",   0,  4,	1, BI,      {8}, 			&equal,         NOTSENT },
-				{ "code",           0,  4,	1, BI,      {CC_POST},      &equal,         NOTSENT },
+				{ "code",           0,  8,	1, BI,      {CC_POST},      &equal,         NOTSENT },
 				{ "message ID",     0,  16,	1, BI,      {0x23, 0xBB},   &ignore,	    VALUESENT },
 				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
 						&MSB,		LSB }, // match the 24 first bits, send the last 8

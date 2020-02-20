@@ -46,12 +46,6 @@ uint8_t msg[] = {
 	struct schc_rule_t* schc_rule;
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = (uint8_t*) (compressed_buf);
-//
-//	uint8_t arr1[2] = { 0x06, 0x30 }; uint8_t arr2[2] = { 0x63, 0x00 };
-//	uint8_t result = compare_bits_aligned((uint8_t*) (arr1), 4, (uint8_t*) (arr2), 0, 12);
-//
-//	DEBUG_PRINTF("RESULT is %d \n", result);
-//
 
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
 			UP, DEVICE, &schc_rule);
