@@ -135,8 +135,8 @@ uint8_t compare_bits_aligned(const uint8_t SRC1[], uint16_t pos1,
 	shift2 = pos2 % 8;
 
 	// todo no copy
-	uint8_t SRC1_copy[MAX_HEADER_FIELD_LENGTH] = { 0 };
-	uint8_t SRC2_copy[MAX_HEADER_FIELD_LENGTH] = { 0 };
+	uint8_t SRC1_copy[MAX_FIELD_LENGTH] = { 0 };
+	uint8_t SRC2_copy[MAX_FIELD_LENGTH] = { 0 };
 
 	copy_bits(SRC1_copy, 0, SRC1, shift1, len);
 	copy_bits(SRC2_copy, 0, SRC2, shift2, len);

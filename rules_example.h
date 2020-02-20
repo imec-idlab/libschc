@@ -15,11 +15,11 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 				{ "length", 		0, 16,	1, BI, 		{0, 0},			&ignore, 	COMPLENGTH },
 				{ "next header", 	3, 8, 	1, BI, 		{6, 17, 58},	&matchmap, 	MAPPINGSENT },
 				{ "hop limit", 		0, 8, 	1, BI, 		{64}, 			&ignore, 	NOTSENT },
-				{ "src prefix",		0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&equal, 	NOTSENT },
-						// todo how to store multiple IP's for match-map?
-						// 32 bit field?
-						// 8 bit field with an index to a list containing pointers?
+				{ "src prefix",		4, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xBB, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
 				{ "src iid",		0, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&equal, 	NOTSENT },
 				{ "dest prefix",	0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -76,8 +76,12 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 const static struct schc_udp_rule_t udp_rule1 = {
 		1, 4, 4, 4,
 		{
-				{ "src port", 		0,	16, 	 1, BI, 	{0x33, 0x17}, 		&equal,		NOTSENT }, // 5683
-				{ "dest port", 		0,	16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
+				{ "src port", 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
+						&matchmap,	MAPPINGSENT }, // 5683 or 5684
+				{ "dest port", 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
+						&matchmap,	MAPPINGSENT },
+						// set field length to 16 to indicate 2 byte values
+						// MO param to 2 to indicate 2 indices
 				{ "length", 		0,	16, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
 				{ "checksum", 		0,	16, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}

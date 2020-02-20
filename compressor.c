@@ -33,7 +33,7 @@ jsmntok_t json_token[JSON_TOKENS];
 
 // todo remove
 
-unsigned char coap_header_fields[COAP_FIELDS][MAX_COAP_FIELD_LENGTH];
+unsigned char coap_header_fields[COAP_FIELDS][MAX_FIELD_LENGTH];
 
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
@@ -250,8 +250,13 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 					uint32_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
 					for (j = 0; j < rule->content[i].MO_param_length; j++) {
 						uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
+
+						uint8_t ptr = j;
+						if (! (field_length % 8) ) // only support byte aligned matchmap
+							ptr = j * get_number_of_bytes_from_bits(field_length);
+
 						if (compare_bits_BIG_END( (uint8_t*) (src->ptr + src_pos),
-								(uint8_t*) (rule->content[i].target_value + j), field_length)) {
+								(uint8_t*) (rule->content[i].target_value + ptr), field_length)) {
 							uint8_t ind[1] = { j }; // room for 255 indices
 							uint8_t src_pos = get_position_in_first_byte(list_len);
 							copy_bits(dst->ptr, dst->offset, ind, src_pos, list_len);
@@ -360,9 +365,12 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src, 
 				if (json_result == 0) { // formatted as a normal unsigned uint8_t array
 					uint32_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
 					uint8_t src_pos = get_position_in_first_byte(list_len);
-					// copy the index from the received header to an array
+
 					uint8_t index[1] = { 0 };
-					copy_bits(index, src_pos, src->ptr, src->offset, list_len);
+					copy_bits((uint8_t*) index, src_pos, src->ptr, src->offset, list_len); // copy the index from the received header
+					if( ! (get_number_of_bytes_from_bits(field_length) % 8) ) // multiply with byte alligned field length
+						index[0] = index[0] * get_number_of_bytes_from_bits(field_length);
+
 
 					copy_bits(dst->ptr, dst->offset, (uint8_t*) (rule->content[i].target_value + index[0]), 0, field_length);
 					src->offset += list_len;
@@ -883,10 +891,17 @@ static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_va
 			// strlen(target_field->target_value), json_token, sizeof(json_token) / sizeof(json_token[0]));
 
 	// if result is 0,
-	if(result == 0) {
-		uint16_t list_len = get_required_number_of_bits(target_field->MO_param_length);
+	if (result == 0) {
+		uint16_t list_len = get_required_number_of_bits(
+				target_field->MO_param_length);
 		for (i = 0; i < target_field->MO_param_length; i++) {
-			if (compare_bits_BIG_END(field_value, (uint8_t*) (target_field->target_value + i), target_field->field_length)) {
+			uint8_t ptr = i;
+			if (! (target_field->field_length % 8) ) // only support byte aligned matchmap
+				ptr = i * get_number_of_bytes_from_bits(target_field->field_length);
+
+			if (compare_bits_BIG_END(field_value,
+					(uint8_t*) (target_field->target_value + ptr),
+					target_field->field_length)) {
 				return 1;
 			}
 		}
@@ -994,17 +1009,16 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	schc_bitarray_t src; src.ptr = data; src.offset = 0; // use bit array for comparison
 
 #if USE_IPv6
-	src.offset = 0;
-	ipv6_rule = schc_find_ipv6_rule_from_header(&src, device_id);
+	ipv6_rule = schc_find_ipv6_rule_from_header(&src, device_id); // todo merge
 	if(ipv6_rule != NULL) {
 		ipv6_rule_id = ipv6_rule->rule_id;
 		DEBUG_PRINTF("schc_compress(): IPv6 rule id %d \n", ipv6_rule->rule_id);
 	} else {
 		DEBUG_PRINTF("schc_compress(): no IPv6 rule was found \n");
 	}
+	src.offset = 320; // todo should update in find method
 #endif
 #if USE_UDP
-	src.offset = 320;
 	udp_rule = schc_find_udp_rule_from_header(&src, device_id);
 	if(udp_rule != NULL) {
 		udp_rule_id = udp_rule->rule_id;
@@ -1014,7 +1028,6 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	}
 #endif
 #if USE_COAP
-	src.offset = 384;
 	// construct CoAP message from buffer
 	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
 	memcpy(coap_buf, (uint8_t*) (data + IP6_HLEN + UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN)); // copy CoAP header
@@ -1035,19 +1048,19 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 	src.offset = 0; // reset the bit array offset and start compressing
 
-	// find the rule for this device by combining the available id's
+	// find the rule for this device by combining the available id's // todo pointers?
 	uint8_t data_offset = 0;
 	(*schc_rule) = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
 	if((*schc_rule) == NULL) {
 		/*
-		 * **** no rule was found: copy orignial headers ****
+		 * **** no rule was found ****
+		 * set the uncompressed rule id
+		 * and copy the original header
 		 * */
 		copy_bits(dst->ptr, 0, UNCOMPRESSED_ID, 0, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
-
-		// ... now copy the uncompressed headers
 #if USE_IPv6
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
 		dst->offset += BYTES_TO_BITS(IP6_HLEN); data_offset += IP6_HLEN;
@@ -1064,11 +1077,12 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 #endif
 	} else {
 		/*
-		 * **** a rule was found: compress ****
+		 * **** a rule was found - compress ****
+		 * compress the headers according to the rule
+		 * copy the contents to the bit array
+		 * to keep track of the offset
 		 * */
 		copy_bits(dst->ptr, 0, (*schc_rule)->id, 0, RULE_SIZE_BITS); // matching rule id in front of buffer
-
-		// ... now compress the headers according to the rule, copy the contents to the bit array and keep track of the offset
 #if USE_IPv6
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
@@ -1122,17 +1136,20 @@ static uint16_t compute_length(unsigned char *data, uint16_t data_len) {
 	// if the length fields are set to 0
 	// the length must be calculated
 	uint8_t* packet_ptr = (uint8_t*) data;
-
+#if USE_IPv6
 	if(packet_ptr[4] == 0 && packet_ptr[5] == 0) {
 		// ip length
 		packet_ptr[4] = (((data_len - IP6_HLEN) & 0xFF00) >> 8);
 		packet_ptr[5] = ((data_len - IP6_HLEN) & 0xFF);
 	}
+#endif
+#if USE_UDP
 	if(packet_ptr[44] == 0 && packet_ptr[45] == 0) {
 		// udp length
 		packet_ptr[44] = (((data_len - IP6_HLEN) & 0xFF00) >> 8);
 		packet_ptr[45] = ((data_len - IP6_HLEN) & 0xFF);
 	}
+#endif
 
 	return 0;
 }
@@ -1177,6 +1194,7 @@ static uint16_t chksum(uint16_t sum, const uint8_t *data, uint16_t len) {
 uint16_t compute_checksum(unsigned char *data) {
 	// if the checksum fields are set to 0
 	// the checksum must be calculated
+#if USE_UDP
 	if(data[46] == 0 && data[47] == 0) {
 		uint16_t upper_layer_len; uint16_t sum; uint16_t result;
 
@@ -1199,6 +1217,7 @@ uint16_t compute_checksum(unsigned char *data) {
 
 		return 1;
 	}
+#endif
 
 	return 0;
 }
@@ -1293,7 +1312,6 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		}
 #endif
 #if USE_UDP
-		// search udp rule
 		if (udp_rule_id != 0) {
 			ret = decompress((struct schc_layer_rule_t *) (rule->compression_rule->udp_rule), &src_arr, &dst_arr);
 			if (ret == 0) {

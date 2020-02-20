@@ -39,7 +39,7 @@ struct schc_field {
 	uint8_t field_length; // in bits
 	uint8_t field_pos;
 	direction dir;
-	unsigned char target_value[MAX_COAP_FIELD_LENGTH];
+	unsigned char target_value[MAX_FIELD_LENGTH];
 	uint8_t (*MO)(struct schc_field* target_field, unsigned char* field_value);
 	CDA action;
 };

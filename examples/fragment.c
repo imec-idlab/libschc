@@ -268,8 +268,11 @@ int main() {
 
 	// compress packet
 	struct schc_rule_t* schc_rule;
-	uint16_t compressed_len = schc_compress(msg, compressed_packet,
-			sizeof(msg), device_id, UP, DEVICE, &schc_rule);
+	schc_bitarray_t bit_arr;
+	bit_arr.ptr = (uint8_t*) (compressed_packet);
+
+	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
+			UP, DEVICE, &schc_rule);
 
 	tx_conn.mtu = 61; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
