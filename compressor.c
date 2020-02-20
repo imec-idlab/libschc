@@ -367,8 +367,8 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src, 
 					uint8_t src_pos = get_position_in_first_byte(list_len);
 
 					uint8_t index[1] = { 0 };
-					copy_bits((uint8_t*) index, src_pos, src->ptr, src->offset, list_len); // copy the index from the received header
-					if( ! (get_number_of_bytes_from_bits(field_length) % 8) ) // multiply with byte alligned field length
+					copy_bits((uint8_t*) (index), src_pos, src->ptr, src->offset, list_len); // copy the index from the received header
+					if( ! (field_length % 8) ) // multiply with byte alligned field length
 						index[0] = index[0] * get_number_of_bytes_from_bits(field_length);
 
 
