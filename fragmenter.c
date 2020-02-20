@@ -36,210 +36,6 @@ static uint8_t buf_ptr = 0;
 uint8_t schc_buf[SCHC_BUFSIZE] = { 0 };
 #endif
 
-// ToDo
-// create file bit_array.c?
-// compressor will need this too
-
-/**
- * sets bits at a certain position in a bit array
- * big endian
- *
- * @param A				the bit array
- * @param pos			which bit to set
- * @param len			the number of consecutive bits to set
- *
- */
-static void set_bits(uint8_t A[], uint32_t pos, uint32_t len) {
-	uint32_t i;
-	for(i = pos; i < (len + pos); i++) {
-		A[i / 8] |= 128 >> (i % 8);
-	}
-}
-
-/**
- * get bits at a certain position in a bit array
- *
- * @param A				the bit array
- * @param pos			the position to start from
- * @param len			the number of consecutive bits to get
- *
- * @note  limited to 32 consecutive bits
- *
- */
-static uint32_t get_bits(uint8_t A[], uint32_t pos, uint8_t len) {
-	uint32_t i; uint32_t j = (len - 1); uint32_t number = 0;
-
-	for(i = pos; i < (len + pos); i++) {
-		uint8_t bit = A[i / 8] & 128 >> (i % 8);
-		number |= (!!bit << j);
-		j--;
-	}
-
-	return number;
-}
-
-/**
- * clear bits at a certain position in a bit array
- * big endian
- *
- * @param A				the bit array
- * @param pos			which bit to clear
- * @param len			the number of consecutive bits to clear
- *
- */
-static void clear_bits(uint8_t A[], uint32_t pos, uint32_t len) {
-	uint32_t i;
-	for(i = pos; i < (len + pos); i++) {
-		A[i / 8] &= ~(128 >> (i % 8));
-	}
-}
-
-/**
- * copy bits to a certain position in a bit array
- * from another array
- * big endian
- *
- * @param DST			the array to copy to
- * @param dst_pos		which bit to start from
- * @param SRC			the array to copy from
- * @param src_pos		which bit to start from
- * @param len			the number of consecutive bits to set
- *
- */
-static void copy_bits(uint8_t DST[], uint32_t dst_pos, uint8_t SRC[], uint32_t src_pos,
-		uint32_t len) {
-	uint32_t i;
-	uint32_t k = 0;
-
-	for(i = 0; i < len; i++) { // for each bit
-		uint8_t src_val = ((128 >> ( (k + src_pos) % 8)) & SRC[((k + src_pos) / 8)]);
-		if(src_val) {
-			// DEBUG_PRINTF("set bits for %d at position %d len is %d", DST[i+dst_pos], i+dst_pos, len);
-			set_bits(DST, i + dst_pos, 1);
-		}
-		k++;
-	}
-}
-
-/**
- * compare two bit arrays
- *
- * @param 	SRC1		the array to compare
- * @param 	SRC2		the array to compare with
- * @param 	len			the number of consecutive bits to compare
- *
- * @return	1			both arrays match
- * 			0			the arrays differ
- *
- */
-static uint8_t compare_bits(uint8_t SRC1[], uint8_t SRC2[], uint32_t len) {
-	uint32_t i;
-
-	for (i = 0; i < len; i++) {
-		if ( (SRC1[i / 8] & (128 >> (i % 8) )) != (SRC2[i / 8] & (128 >> (i % 8) )) ) {
-			return 0;
-		}
-	}
-
-	return 1;
-}
-
-/**
- * shift a number of bits to the left
- *
- * @param 	SRC			the array to shift
- * @param	len			the length of the array
- * @param 	shift		the number of consecutive bits to shift
- *
- */
-static void shift_bits_left(uint8_t SRC[], uint16_t len, uint32_t shift) {
-	uint32_t i = 0; uint32_t j = 0;
-
-	uint8_t start = shift / 8;
-	uint8_t rest = shift % 8;
-
-	for(i = start; i < len; i++) {
-		uint8_t value = (SRC[i] << rest) | (SRC[i + 1] >> (8 - rest));
-		SRC[j] = value;
-		j++;
-	}
-
-}
-
-/**
- * shift a number of bits to the right
- *
- * @param 	SRC			the array to shift
- * @param	len			the length of the array
- * @param 	shift		the number of consecutive bits to shift
- *
- */
-static void shift_bits_right(uint8_t SRC[], uint16_t len, uint32_t shift) {
-	uint32_t i = 0;
-
-	uint8_t start = shift / 8;
-	uint8_t rest = shift % 8;
-	uint8_t previous = 0;
-
-	for(i = 0; i < len; i++) {
-		if(start <= i) {
-			previous = SRC[i - start];
-		}
-		uint8_t value = (previous << (8 - rest)) | SRC[i + start] >> rest;
-		SRC[i + start] = value;
-	}
-}
-
-/**
- * logical XOR two bit arrays
- *
- * @param 	DST			the array to save the result in
- * @param 	SRC1		the array to compare with
- * @param 	SRC2		the array to compare with
- * @param 	len			the number of consecutive bits to compare
- *
- */
-static void xor_bits(uint8_t DST[], uint8_t SRC1[], uint8_t SRC2[], uint32_t len) {
-	uint32_t i;
-
-	for(i = 0; i < len; i++) {
-		DST[i / 8] |= (SRC1[i / 8] & (128 >> (i % 8) )) ^ (SRC2[i / 8] & (128 >> (i % 8) ));
-	}
-}
-
-/**
- * logical AND two bit arrays
- *
- * @param 	DST			the array to save the result in
- * @param 	SRC1		the array to compare with
- * @param 	SRC2		the array to compare with
- * @param 	len			the number of consecutive bits to compare
- *
- */
-static void and_bits(uint8_t DST[], uint8_t SRC1[], uint8_t SRC2[], uint32_t len) {
-	uint32_t i;
-
-	for(i = 0; i < len; i++) {
-		DST[i / 8] |= (SRC1[i / 8] & (128 >> (i % 8) )) & (SRC2[i / 8] & (128 >> (i % 8) ));
-	}
-}
-
-/**
- * print a bitmap
- *
- * @param bitmap		the bit array
- * @param len			the number of consecutive bits to print
- *
- */
-static void print_bitmap(uint8_t bitmap[], uint32_t length) {
-	uint32_t i;
-	for (i = 0; i < length; i++) {
-		uint8_t bit = bitmap[i / 8] & 128 >> (i % 8);
-		DEBUG_PRINTF("%d ", bit ? 1 : 0);
-	}
-	DEBUG_PRINTF("\n"); // flush buffer
-}
-
 /**
  * get the FCN value
  *
@@ -400,7 +196,7 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 
 	while (curr->next != mbuf) {
 		DEBUG_PRINTF(
-				"head is 0x%x, looking for 0x%x with curr 0x%x, next is 0x%x \n",
+				"head is %p, looking for %p with curr %p, next is %p \n",
 				head, mbuf, curr, curr->next);
 		curr = curr->next;
 	}
@@ -1948,7 +1744,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  *
  */
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		void (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
+		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
 		void (*remove_timer_entry)(uint32_t device_id)) {
 	uint32_t i;
@@ -2435,7 +2231,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 	if(conn->schc_rule == NULL) {
-		uint8_t rule_id = data[0]; // todo adapt to profile and bitwise operation
+		uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // todo adapt to profile and bitwise operation
+		copy_bits(rule_id, 0, data, 0, RULE_SIZE_BITS);
 		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(rule_id, device_id);
 		conn->schc_rule = ptr;
 	}
