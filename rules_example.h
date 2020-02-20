@@ -9,11 +9,11 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 		1, 10, 10, 10,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
-				{ "version", 		0, 4,	1, BI, 		{6},			&equal, 	NOTSENT },
+				{ "version", 		0, 4,	1, BI, 		{7},			&equal, 	NOTSENT },
 				{ "traffic class", 	0, 8,	1, BI, 		{0},			&ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	1, BI, 		{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 16,	1, BI, 		{0, 0},			&ignore, 	COMPLENGTH },
-				{ "next header", 	0, 8, 	1, BI, 		{17}, 			&equal, 	NOTSENT },
+				{ "next header", 	3, 8, 	1, BI, 		{6, 17, 58},	&matchmap, 	MAPPINGSENT },
 				{ "hop limit", 		0, 8, 	1, BI, 		{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",		0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
@@ -58,7 +58,7 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 				{ "traffic class", 	0, 8,	 1, BI, 	{0},			&ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	 1, BI, 	{0, 0, 0},		&ignore, 	NOTSENT },
 				{ "length", 		0, 16,	 1, BI, 	{0, 0},			&ignore, 	COMPLENGTH },
-				{ "next header", 	3, 8, 	 1, BI, 	{6, 17, 58},	&matchmap, 	MAPPINGSENT },
+				{ "next header", 	0, 8, 	 1, BI, 	{17},			&equal, 	NOTSENT },
 				{ "hop limit", 		0, 8, 	 1, BI, 	{64}, 			&ignore, 	NOTSENT },
 				{ "src prefix",		0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
@@ -66,8 +66,8 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 						&equal, 	NOTSENT },
 				{ "dest prefix",	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&equal, 	NOTSENT },
-				{ "dest iid",		0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
-						&equal, 	NOTSENT},
+				{ "dest iid",		60, 64,  1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&MSB, 		LSB},
 		}
 };
 #endif
@@ -76,7 +76,7 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 const static struct schc_udp_rule_t udp_rule1 = {
 		1, 4, 4, 4,
 		{
-				{ "src port", 		0,	16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT }, // 5683
+				{ "src port", 		0,	16, 	 1, BI, 	{0x33, 0x17}, 		&equal,		NOTSENT }, // 5683
 				{ "dest port", 		0,	16, 	 1, BI, 	{0x33, 0x16}, 		&equal,		NOTSENT },
 				{ "length", 		0,	16, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
 				{ "checksum", 		0,	16, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
@@ -86,8 +86,8 @@ const static struct schc_udp_rule_t udp_rule1 = {
 const static struct schc_udp_rule_t udp_rule2 = {
 		2, 4, 4, 4,
 		{
-				{ "src port", 		4,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
-				{ "dest port", 		4,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "src port", 		12,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
+				{ "dest port", 		12,	16,	 1, BI, 	{0x33, 0x16},		&MSB,		LSB },
 				{ "length", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPLENGTH },
 				{ "checksum", 		0,  16,	 1, BI, 	{0, 0},				&ignore,	COMPCHK },
 		}
@@ -117,10 +117,8 @@ const static struct schc_coap_rule_t coap_rule1 = {
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
-				{ "token",			8,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB },
-						// todo
-						// by setting the last byte to 0x00, we allow 8 bit variations
+				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB }, // match the 24 first bits, send the last 8
 				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
 				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT },
 				{ "payload marker",	0,	8,   1, BI, 	{0xFF},			&equal,		NOTSENT }
@@ -139,8 +137,8 @@ const static struct schc_coap_rule_t coap_rule2 = {
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_CONTENT},	&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, DOWN,	{CC_GET},		&equal,		NOTSENT },
-				{ "message ID",		4,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
-				{ "message ID",		4,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB },
+				{ "message ID",		12,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
+				{ "message ID",		12,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB }, // match the first 12 bits
 				{ "token",			0,	32,	 1, BI,		{0, 0, 0, 0},	&ignore,	VALUESENT }, // GET sensor value
 				{ "uri-path", 		4,	0,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
 						// todo variable field length
@@ -158,10 +156,8 @@ const static struct schc_coap_rule_t coap_rule3 = {
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
 				{ "code",			0,	4,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
 				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
-				{ "token",			8,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB },
-						// todo
-						// by setting the last byte to 0x00, we allow 8 bit variations
+				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB }, // match the 24 first bits, send the last 8
 				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
 				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT }
 
@@ -176,10 +172,8 @@ const static struct schc_coap_rule_t coap_rule4 = {
 				{ "token length",   0,  4,	1, BI,      {8}, 			&equal,         NOTSENT },
 				{ "code",           0,  4,	1, BI,      {CC_POST},      &equal,         NOTSENT },
 				{ "message ID",     0,  16,	1, BI,      {0x23, 0xBB},   &ignore,	    VALUESENT },
-				{ "token",          8,  32,	1, BI,      {0x21, 0xFA, 0x01, 0x00},
-						&ignore,        VALUESENT },
-						// todo
-						// by setting the last byte to 0x00, we allow 8 bit variations
+				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
+						&MSB,		LSB }, // match the 24 first bits, send the last 8
 				{ "uri-path",       0,  16,	1, BI,      "rd",           &equal,         NOTSENT },
                 { "content-format", 0,  8,	1, BI,      {0x28},         &equal,         NOTSENT },
                 { "uri-query",      0,  72,	1, BI,      {0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x30},
@@ -211,7 +205,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 		&ipv6_rule1,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_rule2,
 #endif
 #if USE_COAP
 		&coap_rule2,
@@ -220,7 +214,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 
 const struct schc_compression_rule_t compression_rule_3 = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_rule2,
 #endif
 #if USE_UDP
 		&udp_rule1,
@@ -232,10 +226,10 @@ const struct schc_compression_rule_t compression_rule_3 = {
 
 const struct schc_compression_rule_t compression_rule_4 = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_rule2,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_rule2,
 #endif
 #if USE_COAP
 		&coap_rule4,
@@ -247,10 +241,10 @@ const struct schc_compression_rule_t compression_rule_5 = {
 		&ipv6_rule3,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_rule2,
 #endif
 #if USE_COAP
-		&coap_rule4,
+		&coap_rule1,
 #endif
 };
 
@@ -272,11 +266,6 @@ const struct schc_rule_t schc_rule_8 = { { 0x08 }, &compression_rule_2, ACK_ALWA
 
 const struct schc_rule_t schc_rule_9 = { { 0x09 }, &compression_rule_5, NOT_FRAGMENTED, 0, 0, 0, 0 };
 const struct schc_rule_t schc_rule_10 = { { 0x0A }, &compression_rule_5, NO_ACK, 1, 0, 0, 0 };
-
-/* define total rules per layer */
-#define IPV6_RULES				3
-#define UDP_RULES				3
-#define COAP_RULES				4
 
 /* save rules in flash */
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,

@@ -19,7 +19,7 @@ extern "C" {
 int8_t set_rule_id(struct schc_rule_t* schc_rule, uint8_t* data);
 
 uint8_t schc_compressor_init(uint8_t src[16]);
-int16_t schc_compress(const uint8_t *data, uint16_t total_length,
+int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		schc_bitarray_t* buf, uint32_t device_id, direction dir,
 		device_type device, struct schc_rule_t **schc_rule);
 

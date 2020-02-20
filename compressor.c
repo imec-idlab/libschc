@@ -30,8 +30,9 @@ jsmn_parser json_parser;
 jsmntok_t json_token[JSON_TOKENS];
 
 // buffers to store headers so we can compare rules and headers
-unsigned char ipv6_header_fields[IPV6_FIELDS][MAX_IPV6_FIELD_LENGTH];
-unsigned char udp_header_fields[UDP_FIELDS][MAX_UDP_FIELD_LENGTH];
+
+// todo remove
+
 unsigned char coap_header_fields[COAP_FIELDS][MAX_COAP_FIELD_LENGTH];
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ static struct schc_device* get_device_by_id(uint32_t device_id) {
 
 	for (i = 0; i < DEVICE_COUNT; i++) {
 		if (devices[i]->device_id == device_id) {
-			return devices[i];
+			return (struct schc_device*) devices[i];
 		}
 	}
 
@@ -113,7 +114,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 		const struct schc_rule_t* curr_rule = (*device->context)[i];
 		if ((schc_rule->compression_rule == curr_rule->compression_rule)
 				&& (curr_rule->mode == mode)) {
-			return curr_rule;
+			return (struct schc_rule_t*) (curr_rule);
 		}
 	}
 
@@ -160,7 +161,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 				}
 #else
 				if (curr_rule->mode == mode) {
-					return curr_rule;
+					return (struct schc_rule_t*) (curr_rule);
 				}
 #endif
 			}
@@ -192,7 +193,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		struct schc_rule_t* curr_rule = (*device->context)[i];
+		struct schc_rule_t* curr_rule = (struct schc_rule_t*) (*device->context)[i];
 		if( compare_bits_BIG_END(curr_rule->id, rule_arr, RULE_SIZE_BITS)) {
 			return curr_rule;
 		}
@@ -205,18 +206,19 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 /**
  * The compression mechanism
  *
- * @param bit_array 			the bit array in which to copy the contents to
- * @param header 				the original header
- * @param cols 					the number of fields the header contains
+ * @param dst_arr	 			the bit array in which to copy the contents to
+ * @param src_arr 				the original header
  * @param rule 					the rule to match the compression with
  *
  * @return the length 			length of the compressed header
  *
  */
-static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
-		uint16_t cols, const struct schc_layer_rule_t *rule) {
-	uint8_t i = 0; uint8_t j = 0; uint8_t index = 0;
-	uint8_t field_length; uint8_t json_result;
+static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
+		const struct schc_layer_rule_t *rule) {
+	uint8_t i = 0;
+	uint8_t j = 0;
+	uint8_t field_length;
+	uint8_t json_result;
 
 	for (i = 0; i < rule->length; i++) {
 		// exclude fields in other direction
@@ -228,37 +230,32 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 			}
 				break;
 			case VALUESENT: {
-				uint8_t src_pos = get_position_in_first_byte(field_length);
-				copy_bits(bit_array->ptr, bit_array->offset,
-						(uint8_t*) (header + index), src_pos, field_length);
-				bit_array->offset += field_length;
+				uint8_t src_pos = get_position_in_first_byte((field_length + src->offset));
+				copy_bits(dst->ptr, dst->offset, src->ptr, src->offset, field_length);
+				dst->offset += field_length;
 			}
 				break;
 			case MAPPINGSENT: {
-				// reset the parser
-				jsmn_init(&json_parser);
+				json_result = 0;
 
-				// parse the json string
-				json_result = 0; // todo
-				//jsmn_parse(&json_parser, rule->content[i].target_value,
-				// strlen(rule->content[i].target_value), json_token,
-				// sizeof(json_token) / sizeof(json_token[0]));
-				uint8_t match_counter = 0;
+				/*
+				jsmn_init(&json_parser); // reset the parser
+				json_result = jsmn_parse(&json_parser, rule->content[i].target_value,
+						strlen(rule->content[i].target_value), json_token,
+						sizeof(json_token) / sizeof(json_token[0]));
+				uint8_t match_counter = 0; */
 
 				// if result is 0,
 				if (json_result == 0) { // formatted as a normal unsigned char array
-					uint32_t list_len = get_required_number_of_bits(
-							rule->content[i].MO_param_length);
+					uint32_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
 					for (j = 0; j < rule->content[i].MO_param_length; j++) {
-						if (compare_bits_BIG_END((uint8_t*) (header + index),
-								(uint8_t*) (rule->content[i].target_value + j),
-								field_length)) {
+						uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
+						if (compare_bits_BIG_END( (uint8_t*) (src->ptr + src_pos),
+								(uint8_t*) (rule->content[i].target_value + j), field_length)) {
 							uint8_t ind[1] = { j }; // room for 255 indices
-							uint8_t src_pos = get_position_in_first_byte(
-									list_len);
-							copy_bits(bit_array->ptr, bit_array->offset, ind,
-									src_pos, list_len);
-							bit_array->offset += list_len;
+							uint8_t src_pos = get_position_in_first_byte(list_len);
+							copy_bits(dst->ptr, dst->offset, ind, src_pos, list_len);
+							dst->offset += list_len;
 						}
 					}
 
@@ -293,12 +290,10 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 			}
 				break;
 			case LSB: {
-				uint16_t lsb_len = rule->content[i].field_length
-						- rule->content[i].MO_param_length;
-				copy_bits(bit_array->ptr, bit_array->offset,
-						(uint8_t*) (header + index),
-						rule->content[i].MO_param_length, lsb_len);
-				bit_array->offset += lsb_len;
+				uint16_t lsb_len = rule->content[i].field_length - rule->content[i].MO_param_length;
+				copy_bits(dst->ptr, dst->offset, (uint8_t*) (src->ptr),
+						rule->content[i].MO_param_length + src->offset, lsb_len);
+				dst->offset += lsb_len;
 			}
 				break;
 			case COMPLENGTH:
@@ -315,13 +310,11 @@ static uint8_t compress(schc_bitarray_t* bit_array, unsigned char* header[],
 			}
 				break;
 			}
-
+			src->offset += field_length;
 		}
-
-		index++;
 	}
 
-	return index;
+	return 1;
 }
 
 
@@ -443,142 +436,7 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src, 
 	return 1;
 }
 
-/**
- * Fills the passed IP/UDP header struct from a 8-bit buffer
- *
- * @param data 				the buffer to copy the data from
- * @param ip_udp_header 	the IP/UDP header to construct the unified array from
- *
- */
-static void generate_ip_udp_header_struct(const uint8_t* data, struct schc_udpip_hdr *ip_udp_header) {
 #if USE_IPv6
-	// construct the IP header
-	ip_udp_header->vtc = data[0];
-	ip_udp_header->tcf = data[1];
-	ip_udp_header->flow = (uint16_t) ((data[2] << 8) | data[3]);
-	ip_udp_header->len[0] = data[4];
-	ip_udp_header->len[1] = data[5];
-	ip_udp_header->proto = data[6];
-	ip_udp_header->ttl = data[7];
-
-	schc_ipaddr_t src = { ((data[9] << 8) | data[8]),
-			((data[11] << 8) | data[10]), ((data[13] << 8) | data[12]),
-			((data[15] << 8) | data[14]), ((data[17] << 8) | data[16]),
-			((data[19] << 8) | data[18]), ((data[21] << 8) | data[20]),
-			((data[23] << 8) | data[22]) };
-
-	schc_ipaddr_t dest = { ((data[25] << 8) | data[24]), ((data[27] << 8)
-			| data[26]), ((data[29] << 8) | data[28]), ((data[31] << 8)
-			| data[30]), ((data[33] << 8) | data[32]), ((data[35] << 8)
-			| data[34]), ((data[37] << 8) | data[36]), ((data[39] << 8)
-			| data[38]) };
-
-	memcpy(ip_udp_header->srcipaddr, src, sizeof(schc_ipaddr_t));
-	memcpy(ip_udp_header->destipaddr, dest, sizeof(schc_ipaddr_t));
-#endif
-
-#if USE_UDP
-	// construct the UDP header
-	ip_udp_header->srcport = (uint16_t)((data[40] << 8) | data[41]);
-	ip_udp_header->destport = (uint16_t)((data[42] << 8) | data[43]);
-	ip_udp_header->udplen = (uint16_t)((data[44] << 8) | data[45]);
-	ip_udp_header->udpchksum	= (uint16_t)((data[46] << 8) | data[47]);
-#endif
-}
-
-#if USE_IPv6
-/**
- * Generates a unified unsigned char array, based on the IP header provided
- *
- * @param header_fields the array to transfer the header to
- * @param ip_udp_header the IP/UDP header to construct the unified array from
- *
- * @return the length of the array, which represents the number of UDP fields
- *
- */
-static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
-
-	unsigned char version[1] = { (ip_udp_header->vtc & 0xF0) >> 4};
-	unsigned char traffic_class[1] = { (((ip_udp_header->vtc & 0xF) << 4) | (ip_udp_header->tcf & 0xF0) >> 4)  };
-	unsigned char flow_label[3] = { ( (ip_udp_header->tcf & 0xF) >> 4),
-			((ip_udp_header->flow & 0xFF00) >> 8), (ip_udp_header->flow & 0xFF) };
-	unsigned char p_length[2] = { ip_udp_header->len[0], ip_udp_header->len[1]};
-	unsigned char next_header[1] = { ip_udp_header->proto };
-	unsigned char hop_limit[1] = { ip_udp_header->ttl };
-
-	unsigned char src_prefix[8] = {
-			(ip_udp_header->srcipaddr[0] & 0xFF),
-			((ip_udp_header->srcipaddr[0] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[1] & 0xFF),
-			((ip_udp_header->srcipaddr[1] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[2] & 0xFF),
-			((ip_udp_header->srcipaddr[2] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[3] & 0xFF),
-			((ip_udp_header->srcipaddr[3] & 0xFF00) >> 8 ),
-	};
-
-	unsigned char src_iid[8] = {
-			(ip_udp_header->srcipaddr[4] & 0xFF),
-			((ip_udp_header->srcipaddr[4] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[5] & 0xFF),
-			((ip_udp_header->srcipaddr[5] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[6] & 0xFF),
-			((ip_udp_header->srcipaddr[6] & 0xFF00) >> 8 ),
-			(ip_udp_header->srcipaddr[7] & 0xFF),
-			((ip_udp_header->srcipaddr[7] & 0xFF00) >> 8 ),
-	};
-
-
-	unsigned char dest_prefix[8] = {
-			(ip_udp_header->destipaddr[0] & 0xFF),
-			((ip_udp_header->destipaddr[0] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[1] & 0xFF),
-			((ip_udp_header->destipaddr[1] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[2] & 0xFF),
-			((ip_udp_header->destipaddr[2] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[3] & 0xFF),
-			((ip_udp_header->destipaddr[3] & 0xFF00) >> 8 ),
-		};
-
-	unsigned char dest_iid[8] = {
-			(ip_udp_header->destipaddr[4] & 0xFF),
-			((ip_udp_header->destipaddr[4] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[5] & 0xFF),
-			((ip_udp_header->destipaddr[5] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[6] & 0xFF),
-			((ip_udp_header->destipaddr[6] & 0xFF00) >> 8 ),
-			(ip_udp_header->destipaddr[7] & 0xFF),
-			((ip_udp_header->destipaddr[7] & 0xFF00) >> 8 ),
-	};
-
-	// extract header fields at same position as rule fields
-	memcpy(ipv6_header_fields[0], version, 1);
-	memcpy(ipv6_header_fields[1], traffic_class, 1);
-	memcpy(ipv6_header_fields[2], flow_label, 3);
-	memcpy(ipv6_header_fields[3], p_length, 2);
-	memcpy(ipv6_header_fields[4], next_header, 1);
-	memcpy(ipv6_header_fields[5], hop_limit, 1);
-
-	// to allow a single rule for destination and source,
-	// the values are identified by their role and not by their position in the frame
-	// therefore, we switch positions depending on the direction indicator
-
-	if( (DEVICE_TYPE != DEVICE) && DI == DOWN) {
-		// swap fields
-		memcpy(ipv6_header_fields[6], dest_prefix, 8);
-		memcpy(ipv6_header_fields[7], dest_iid, 8);
-		memcpy(ipv6_header_fields[8], src_prefix, 8);
-		memcpy(ipv6_header_fields[9], src_iid, 8);
-	} else {
-		memcpy(ipv6_header_fields[6], src_prefix, 8);
-		memcpy(ipv6_header_fields[7], src_iid, 8);
-		memcpy(ipv6_header_fields[8], dest_prefix, 8);
-		memcpy(ipv6_header_fields[9], dest_iid, 8);
-	}
-
-	return IPV6_FIELDS;
-}
-
 /**
  * Find a matching rule for the IP header
  *
@@ -588,12 +446,11 @@ static uint8_t generate_ip_header_fields(struct schc_udpip_hdr *ip_udp_header) {
  * @return the rule
  *         NULL if no rule is found
  */
-static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct schc_udpip_hdr *ip_udp_header, uint32_t device_id) {
+static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(
+		schc_bitarray_t* src, uint32_t device_id) {
 	uint8_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
-
-	generate_ip_header_fields(ip_udp_header);
 
 	struct schc_device *device = get_device_by_id(device_id);
 	if (device == NULL) {
@@ -602,29 +459,28 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct schc_udpi
 		return 0;
 	}
 
-	for (i = 0; i < device->rule_count; i++) {
+	for (i = 0; i < device->rule_count; i++) { // process device context
 		const struct schc_ipv6_rule_t* curr_rule = (*device->context)[i]->compression_rule->ipv6_rule;
 
 		uint8_t j = 0; uint8_t k = 0;
 
-		while (j < curr_rule->length) {
-			// exclude fields in other direction
-			if( (curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) {
-				// compare header field and rule field using the matching operator
+		do { // process one rule
+			if( (curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) { // exclude fields in other direction
+				uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
 				if (!curr_rule->content[k].MO(&curr_rule->content[k],
-						ipv6_header_fields[j])) {
+						(uint8_t*) (src->ptr + src_pos))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
-					break;
+					break; // break from while loop
 				} else {
 					rule_is_found = 1;
 				}
-				j++;
+				j++; src->offset += curr_rule->content[k].field_length;
 			}
 			k++;
-		}
+		} while (j < curr_rule->length);
 
 		if (rule_is_found) {
-			return curr_rule;
+			return (struct schc_ipv6_rule_t*) (curr_rule);
 		}
 	}
 
@@ -635,33 +491,6 @@ static struct schc_ipv6_rule_t* schc_find_ipv6_rule_from_header(struct schc_udpi
 
 #if USE_UDP
 /**
- * Generates a unified unsigned char array, based on the UDP header provided
- *
- * @param header_fields the array to transfer the header to
- * @param ip_udp_header the IP/UDP header to construct the unified array from
- *
- * @return the length of the array, which represents the number of UDP fields
- *
- */
-static uint8_t generate_udp_header_fields(struct schc_udpip_hdr *ip_udp_header) {
-
-	uint8_t cols = MAX_UDP_FIELD_LENGTH;
-
-	unsigned char src[2] = { ((ip_udp_header->srcport & 0xFF00) >> 8), (ip_udp_header->srcport & 0x00FF) };
-	unsigned char dest[2] = { ((ip_udp_header->destport & 0xFF00) >> 8), (ip_udp_header->destport & 0x00FF) };
-	unsigned char len[2] = { ((ip_udp_header->udplen & 0xFF00) >> 8), (ip_udp_header->udplen & 0x00FF) };
-	unsigned char chksum[2] = { ((ip_udp_header->udpchksum & 0xFF00) >> 8), (ip_udp_header->udpchksum & 0x00FF) };
-
-	// extract header fields at same position as rule fields
-	memcpy(udp_header_fields[0], src, 2);
-	memcpy(udp_header_fields[1], dest, 2);
-	memcpy(udp_header_fields[2], len, 2);
-	memcpy(udp_header_fields[3], chksum, 2);
-
-	return UDP_FIELDS;
-}
-
-/**
  * Find a matching rule for the UDP header
  *
  * @param data 				pointer to the application generated data
@@ -670,12 +499,10 @@ static uint8_t generate_udp_header_fields(struct schc_udpip_hdr *ip_udp_header) 
  * @return rule id 			the rule id
  *         0 				if no rule is found
  */
-static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct schc_udpip_hdr *ip_udp_header, uint32_t device_id) {
+static struct schc_udp_rule_t* schc_find_udp_rule_from_header(schc_bitarray_t* src, uint32_t device_id) {
 	uint8_t i = 0;
 	// set to 0 when a rule doesn't match
 	uint8_t rule_is_found = 1;
-
-	generate_udp_header_fields(ip_udp_header);
 
 	struct schc_device *device = get_device_by_id(device_id);
 	if (device == NULL) {
@@ -691,22 +518,22 @@ static struct schc_udp_rule_t* schc_find_udp_rule_from_header(const struct schc_
 
 		while (j < curr_rule->length) {
 			// exclude fields in other direction
-			if( (curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) {
-				// compare header field and rule field using the matching operator
+			if ((curr_rule->content[k].dir == BI) || (curr_rule->content[k].dir == DI)) {
+				uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
 				if (!curr_rule->content[k].MO(&curr_rule->content[k],
-						udp_header_fields[j])) {
+						(uint8_t*) (src->ptr + src_pos))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
 					break;
 				} else {
 					rule_is_found = 1;
 				}
-				j++;
+				j++; src->offset += curr_rule->content[k].field_length;
 			}
 			k++;
 		}
 
 		if (rule_is_found) {
-			return curr_rule;
+			return (struct schc_udp_rule_t*) (curr_rule);
 		}
 	}
 
@@ -844,14 +671,14 @@ static struct schc_coap_rule_t* schc_find_coap_rule_from_header(pcoap_pdu *pdu, 
 /**
  * Decompress a CoAP rule, based on an input packet
  *
- * @param rule 			the id of the CoAP rule to use during the decompression
- * @param data 			pointer to the input data
- * @param header_offset pointer to the current offset in the decompressed header
+ * @param rule 			the CoAP rule to use for decompression
+ * @param src			the received SCHC bit buffer
+ * @param dst			the buffer to store the decompressed, original packet
  * @param msg 			pointer to the CoAP message to use during the reconstruction
  *
  */
 static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
-		unsigned char *data, uint8_t* header_offset, pcoap_pdu *msg) {
+		schc_bitarray_t* src, schc_bitarray_t* dst, pcoap_pdu *msg) {
 	 // ToDo
 	// directly alter the packet buffer
 	// or the coap_header buffer to save RAM
@@ -864,8 +691,35 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 	uint8_t byte_length = 4;
 
 	if (rule != NULL) {
-		// todo
-		uint8_t coap_length = 12; // decompress(&coap_header, (const struct schc_layer_rule_t*) rule, data, header_offset);
+
+		// the problem with the CoAP header is that we have to encode the options
+		// the options are encoded using type-length-value
+
+		// two options
+
+		// 1
+		// first encode the option found in a rule
+		// compress the encoded option, uncompress on the other side
+		// transfer the uncompressed data to the header
+
+		// 2
+		// grab the raw value from the rule
+		// compress the raw value, uncompress the raw value on the other side
+		// encode the uncompressed raw value in the header
+		// .. this is what we used to do in the past
+
+		// what happens when we send a coap packet
+		// first encode the options
+		// send the packet to the compressor
+		// decode the options in order to read what is inside them
+		//
+
+		// the tlv value can not be used in the rule;
+		// for match-map: different values, based on the previous type
+		// for rule management: too difficult
+
+
+		uint8_t coap_length = decompress((struct schc_layer_rule_t*) coap_header, src, dst);
 
 		pcoap_init_pdu(msg);
 		pcoap_set_version(msg, coap_header[0]);
@@ -925,19 +779,11 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
  *         0 if the target field doesn't match the field value
  *
  */
-static uint8_t equal(struct schc_field* target_field, unsigned char* field_value){
-	uint8_t i;
-
-	uint8_t length = get_number_of_bytes_from_bits(target_field->field_length);
-
-	for(i = 0; i < length; i++) {
-		if(target_field->target_value[i] != field_value[i]){
-			return 0;
-		}
-	}
-
-	// target value matches field value
-	return 1;
+static uint8_t equal(struct schc_field* target_field,
+		unsigned char* field_value) {
+	uint8_t bit_pos = get_position_in_first_byte(target_field->field_length);
+	return compare_bits_aligned((uint8_t*) (target_field->target_value), bit_pos,
+			(uint8_t*) (field_value), 0, target_field->field_length);
 }
 
 /**
@@ -1077,7 +923,7 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
  *
  * @param 	data 			pointer to the original packet
  * @param 	total_length 	the length of the packet
- * @param 	bit_array		pointer to the bit array object
+ * @param 	dst				pointer to the bit array object, where the compressed packet will reside
  * @param 	device_id		the device id to find a rule for
  * @param 	direction		the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
  * @param	device_type		the device type: NETWORK_GATEWAY or DEVICE
@@ -1090,10 +936,9 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
  * 			NOT_FRAGMENTED reliability mode
  */
 
-int16_t schc_compress(const uint8_t *data, uint16_t total_length,
-		schc_bitarray_t* bit_array, uint32_t device_id, direction dir,
-		device_type device_type,
-		struct schc_rule_t **schc_rule) {
+int16_t schc_compress(uint8_t *data, uint16_t total_length,
+		schc_bitarray_t* dst, uint32_t device_id, direction dir,
+		device_type device_type, struct schc_rule_t **schc_rule) {
 	DI = dir;
 	DEVICE_TYPE = device_type;
 
@@ -1108,11 +953,35 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 	struct schc_ipv6_rule_t *ipv6_rule;
 #endif
 
-	// clear buffer
-	bit_array->offset = RULE_SIZE_BITS;
-	memset(bit_array->ptr, 0, total_length);
+	/*
+	 * **** look for a matching rule ****
+	 * */
+	dst->offset = RULE_SIZE_BITS;
+	memset(dst->ptr, 0, total_length);
+	schc_bitarray_t src; src.ptr = data; src.offset = 0; // use bit array for comparison
 
+#if USE_IPv6
+	src.offset = 0;
+	ipv6_rule = schc_find_ipv6_rule_from_header(&src, device_id);
+	if(ipv6_rule != NULL) {
+		ipv6_rule_id = ipv6_rule->rule_id;
+		DEBUG_PRINTF("schc_compress(): IPv6 rule id %d \n", ipv6_rule->rule_id);
+	} else {
+		DEBUG_PRINTF("schc_compress(): no IPv6 rule was found \n");
+	}
+#endif
+#if USE_UDP
+	src.offset = 320;
+	udp_rule = schc_find_udp_rule_from_header(&src, device_id);
+	if(udp_rule != NULL) {
+		udp_rule_id = udp_rule->rule_id;
+		DEBUG_PRINTF("schc_compress(): UDP rule id %d \n", udp_rule->rule_id);
+	} else {
+		DEBUG_PRINTF("schc_compress(): no UDP rule was found \n");
+	}
+#endif
 #if USE_COAP
+	src.offset = 384;
 	// construct CoAP message from buffer
 	uint8_t coap_buf[MAX_COAP_MSG_SIZE] = { 0 };
 	memcpy(coap_buf, (uint8_t*) (data + IP6_HLEN + UDP_HLEN), (total_length - IP6_HLEN - UDP_HLEN)); // copy CoAP header
@@ -1131,45 +1000,28 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 	}
 #endif
 
-	struct schc_udpip_hdr ip_udp_header;
-	generate_ip_udp_header_struct(data, &ip_udp_header);
-
-#if USE_UDP
-	udp_rule = schc_find_udp_rule_from_header(&ip_udp_header, device_id);
-	if(udp_rule != NULL) {
-		udp_rule_id = udp_rule->rule_id;
-		DEBUG_PRINTF("schc_compress(): UDP rule id %d \n", udp_rule->rule_id);
-	} else {
-		DEBUG_PRINTF("schc_compress(): no UDP rule was found \n");
-	}
-#endif
-#if USE_IPv6
-	ipv6_rule = schc_find_ipv6_rule_from_header(&ip_udp_header, device_id);
-	if(ipv6_rule != NULL) {
-		ipv6_rule_id = ipv6_rule->rule_id;
-		DEBUG_PRINTF("schc_compress(): IPv6 rule id %d \n", ipv6_rule->rule_id);
-	} else {
-		DEBUG_PRINTF("schc_compress(): no IPv6 rule was found \n");
-	}
-#endif
+	src.offset = 0; // reset the bit array offset and start compressing
 
 	// find the rule for this device by combining the available id's
 	uint8_t data_offset = 0;
 	(*schc_rule) = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
-	if((*schc_rule) == NULL) { // NO RULE WAS FOUND: COPY UNCOMPRESSED
-		copy_bits(bit_array->ptr, 0, UNCOMPRESSED_ID, 0, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
+	if((*schc_rule) == NULL) {
+		/*
+		 * **** no rule was found: copy orignial headers ****
+		 * */
+		copy_bits(dst->ptr, 0, UNCOMPRESSED_ID, 0, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 
 		// ... now copy the uncompressed headers
 #if USE_IPv6
-		copy_bits(bit_array->ptr, bit_array->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
-		bit_array->offset += BYTES_TO_BITS(IP6_HLEN); data_offset += IP6_HLEN;
+		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
+		dst->offset += BYTES_TO_BITS(IP6_HLEN); data_offset += IP6_HLEN;
 #endif
 #if USE_UDP
-		copy_bits(bit_array->ptr, bit_array->offset, data, BYTES_TO_BITS(data_offset), BYTES_TO_BITS(UDP_HLEN));
-		bit_array->offset += BYTES_TO_BITS(UDP_HLEN);
+		copy_bits(dst->ptr, dst->offset, data, BYTES_TO_BITS(data_offset), BYTES_TO_BITS(UDP_HLEN));
+		dst->offset += BYTES_TO_BITS(UDP_HLEN);
 		data_offset += UDP_HLEN;
 #endif
 #if USE_COAP
@@ -1177,17 +1029,18 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 		bit_array->offset += BYTES_TO_BITS(coap_length);
 		data_offset += coap_length;
 #endif
-	} else { // A RULE WAS FOUND: COMPRESS
-		copy_bits(bit_array->ptr, 0, (*schc_rule)->id, 0, RULE_SIZE_BITS); // matching rule id in front of buffer
+	} else {
+		/*
+		 * **** a rule was found: compress ****
+		 * */
+		copy_bits(dst->ptr, 0, (*schc_rule)->id, 0, RULE_SIZE_BITS); // matching rule id in front of buffer
 
 		// ... now compress the headers according to the rule, copy the contents to the bit array and keep track of the offset
 #if USE_IPv6
-		generate_ip_header_fields(&ip_udp_header);
-		compress(bit_array, ipv6_header_fields, MAX_IPV6_FIELD_LENGTH, (const struct schc_layer_rule_t*) ipv6_rule);
+		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
 #if USE_UDP
-		generate_udp_header_fields(&ip_udp_header);
-		compress(bit_array, udp_header_fields, MAX_UDP_FIELD_LENGTH, (const struct schc_layer_rule_t*) udp_rule);
+		compress(dst, &src, (const struct schc_layer_rule_t*) udp_rule);
 #endif
 #if USE_COAP
 		generate_coap_header_fields(&coap_msg); // generate a char array, which can easily be compared to the rule
@@ -1198,20 +1051,20 @@ int16_t schc_compress(const uint8_t *data, uint16_t total_length,
 	uint16_t payload_len = (total_length - IP6_HLEN - UDP_HLEN - coap_length); // copy the payload
 	const uint8_t* payload_ptr = (data + IP6_HLEN + UDP_HLEN + coap_length);
 
-	copy_bits(bit_array->ptr, bit_array->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
-    uint16_t new_pkt_length = (BITS_TO_BYTES(bit_array->offset) + payload_len);
+	copy_bits(dst->ptr, dst->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
+    uint16_t new_pkt_length = (BITS_TO_BYTES(dst->offset) + payload_len);
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
 			"schc_compress(): compressed header length: %d, payload length: %d (total length: %d) \n",
-			BITS_TO_BYTES(bit_array->offset), payload_len, new_pkt_length);
+			BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length);
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");
 
 	int i;
 	for(i = 0; i <  new_pkt_length; i++) {
-		DEBUG_PRINTF("%02X ", bit_array->ptr[i]);
+		DEBUG_PRINTF("%02X ", dst->ptr[i]);
 		if(!((i + 1) % 12)) {
 			DEBUG_PRINTF("\n");
 		}
@@ -1379,7 +1232,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #endif
 #if USE_COAP
 		// copy the uncompressed CoAP headers
-		uint16_t coap_len = total_length - IP6_HLEN - UDP_HLEN - get_number_of_bytes_from_bits(RULE_SIZE_BITS); // todo define does not work
+		uint16_t coap_len = total_length - IP6_HLEN - UDP_HLEN - get_number_of_bytes_from_bits(RULE_SIZE_BITS);
 		copy_bits(buf, BYTES_TO_BITS((IP6_HLEN + UDP_HLEN)), data, bit_offset, BYTES_TO_BITS(coap_len));
 
 		// use CoAP lib to calculate CoAP offset
@@ -1418,9 +1271,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			// for IP & UDP no need to unify the array
-			// might still be required for CoAP
-			// ret = decompress_coap_rule(rule->compression_rule->coap_rule, data, &header_offset, &pcoap_msg);
+			ret = decompress_coap_rule(rule->compression_rule->coap_rule, &src_arr, &dst_arr, &pcoap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
