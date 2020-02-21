@@ -93,8 +93,8 @@ typedef struct schc_fragmentation_t {
 	uint32_t device_id;
 	/* the length of the packet */
 	uint16_t packet_len;
-	/* a pointer to the start of the unfragmented, compressed packet */
-	uint8_t* data_ptr;
+	/* a pointer to the start of the unfragmented, compressed packet in a bit array */
+	schc_bitarray_t* bit_arr;
 	/* the start of the packet + the total length */
 	uint8_t* tail_ptr;
 	/* the rule which will be applied to the header */

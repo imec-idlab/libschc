@@ -622,10 +622,10 @@ static unsigned int compute_mic(schc_fragmentation_t *conn) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
-	uint16_t len = (conn->tail_ptr - conn->data_ptr);
+	uint16_t len = (conn->tail_ptr - conn->bit_arr->ptr);
 
 	while (i < len) {
-		byte = conn->data_ptr[i];
+		byte = conn->bit_arr->ptr[i];
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
@@ -707,7 +707,7 @@ static void set_conn_frag_cnt(schc_fragmentation_t* conn, uint8_t frag) {
  *
  */
 static int8_t init_tx_connection(schc_fragmentation_t* conn) {
-	if (!conn->data_ptr) {
+	if (!conn->bit_arr->ptr) {
 		DEBUG_PRINTF(
 				"init_connection(): no pointer to compressed packet given \n");
 		return 0;
@@ -718,7 +718,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 	}
 	if (conn->mtu > MAX_MTU_LENGTH) {
 		DEBUG_PRINTF(
-				"init_connection(): MAX_MTU_LENGTH should be set according to conn->mtu \n");
+				"init_connection(): conn->mtu cannot exceed MAX_MTU_LENGTH \n");
 		return 0;
 	}
 	if (!conn->packet_len) {
@@ -750,9 +750,10 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		return 0;
 	}
 
-	memcpy(conn->rule_id, (uint8_t*) (conn->data_ptr + 0), RULE_SIZE_BYTES); // set rule id
+	uint8_t pos = get_position_in_first_byte(RULE_SIZE_BITS);
+	copy_bits(conn->rule_id, pos, conn->bit_arr->ptr, 0, RULE_SIZE_BITS);
 
-	conn->tail_ptr = (uint8_t*) (conn->data_ptr + conn->packet_len); // set end of packet
+	conn->tail_ptr = (uint8_t*) (conn->bit_arr->ptr + conn->packet_len); // set end of packet
 
 	conn->window = 0;
 	conn->window_cnt = 0;
@@ -776,7 +777,9 @@ void schc_reset(schc_fragmentation_t* conn) {
 	/* reset connection variables */
 	conn->device_id = 0;
 	conn->packet_len = 0;
-	conn->data_ptr = 0;
+	if(conn->bit_arr) {
+		conn->bit_arr->ptr = 0;
+	}
 	conn->tail_ptr = 0;
 	conn->dc = 0;
 	conn->mtu = 0;
@@ -819,7 +822,7 @@ void schc_reset(schc_fragmentation_t* conn) {
  *
  */
 static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
-	uint8_t total_fragments = ((conn->tail_ptr - conn->data_ptr) / conn->mtu);
+	uint8_t total_fragments = ((conn->tail_ptr - conn->bit_arr->ptr) / conn->mtu);
 
 	if (conn->frag_cnt > total_fragments) { // this is the last packet
 		uint16_t bit_offset = conn->RULE_SIZE + conn->schc_rule->DTAG_SIZE + conn->schc_rule->WINDOW_SIZE
@@ -830,7 +833,7 @@ static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
 		uint16_t total_byte_offset = total_bit_offset / 8;
 		uint8_t remaining_bit_offset = total_bit_offset % 8;
 
-		int16_t packet_len = conn->tail_ptr - (conn->data_ptr
+		int16_t packet_len = conn->tail_ptr - (conn->bit_arr->ptr
 				+ total_byte_offset)
 				+ (ceil((bit_offset + remaining_bit_offset) / 8));
 
@@ -1100,14 +1103,14 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	uint16_t packet_bit_offset = has_no_more_fragments(conn);
 
 	uint16_t packet_len = 0; uint16_t total_byte_offset; uint8_t remaining_bit_offset;
-	uint16_t total_bit_offset = ((conn->tail_ptr - conn->data_ptr) * 8);
+	uint16_t total_bit_offset = ((conn->tail_ptr - conn->bit_arr->ptr) * 8);
 
 	if(!packet_bit_offset) { // normal fragment
 		packet_len = conn->mtu;
 		packet_bit_offset = ((conn->mtu * 8) - header_offset) * (conn->frag_cnt - 1); // the number of bits left to copy
 
-		if( (((conn->tail_ptr - conn->data_ptr) * 8) - packet_bit_offset) < (packet_len * 8) ) { // special case when mic is sent in the next packet seperately
-			packet_len = ((conn->tail_ptr - conn->data_ptr) - (packet_bit_offset / 8)) + 1;
+		if( (((conn->tail_ptr - conn->bit_arr->ptr) * 8) - packet_bit_offset) < (packet_len * 8) ) { // special case when mic is sent in the next packet seperately
+			packet_len = ((conn->tail_ptr - conn->bit_arr->ptr) - (packet_bit_offset / 8)) + 1;
 		}
 	}
 
@@ -1120,7 +1123,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 
 	if (!packet_len) { // all-1 fragment
 
-		packet_bits = (((conn->tail_ptr - conn->data_ptr) * 8)
+		packet_bits = (((conn->tail_ptr - conn->bit_arr->ptr) * 8)
 				- ((total_byte_offset * 8) + remaining_bit_offset))
 				- conn->RULE_SIZE; // rule was not sent and is thus deducted from the total length
 
@@ -1144,7 +1147,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	}
 
 	copy_bits(fragmentation_buffer, header_offset,
-				(conn->data_ptr + total_byte_offset),
+				(conn->bit_arr->ptr + total_byte_offset),
 				(remaining_bit_offset + conn->RULE_SIZE), packet_bits); // copy bits
 
 	// if(conn->frag_cnt != 10 || ATTEMPTS == 1) {
@@ -1843,7 +1846,7 @@ static void tx_fragment_resend(schc_fragmentation_t *tx_conn) {
 	uint8_t last = 0;
 
 	if (get_next_fragment_from_bitmap(tx_conn) == get_max_fcn_value(tx_conn)) {
-		tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->data_ptr)
+		tx_conn->frag_cnt = ((tx_conn->tail_ptr - tx_conn->bit_arr->ptr)
 				/ tx_conn->mtu) + 1;
 		tx_conn->fcn = get_max_fcn_value(tx_conn);
 		last = 1;
@@ -1921,7 +1924,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		if (!ret) {
 			return SCHC_FAILURE;
 		} else if (ret < 0) {
-			tx_conn->send(tx_conn->data_ptr, tx_conn->packet_len,
+			tx_conn->send(tx_conn->bit_arr->ptr, tx_conn->packet_len,
 					tx_conn->device_id); // send packet right away
 			return SCHC_NO_FRAGMENTATION;
 		}

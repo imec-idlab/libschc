@@ -7,7 +7,7 @@
  *
  */
 
-#include "schc_config.h"
+#include "config.h"
 #include "bit_operations.h"
 
 /**

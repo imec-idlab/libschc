@@ -82,7 +82,12 @@ static struct schc_device* get_device_by_id(uint32_t device_id) {
  */
 int8_t set_rule_id(struct schc_rule_t* schc_rule, uint8_t* data) {
 	// copy uncompressed rule id in front of the buffer
-	memcpy((uint8_t*) data, &schc_rule->id, RULE_SIZE_BYTES);
+	uint8_t pos = get_position_in_first_byte(RULE_SIZE_BITS);
+	if(schc_rule != NULL) {
+		copy_bits(data, 0, schc_rule->id, pos, RULE_SIZE_BITS);
+	} else {
+		copy_bits(data, 0, UNCOMPRESSED_ID, pos, RULE_SIZE_BITS);
+	}
 
 	return 1;
 }
@@ -1056,7 +1061,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		 * set the uncompressed rule id
 		 * and copy the original header
 		 * */
-		copy_bits(dst->ptr, 0, UNCOMPRESSED_ID, id_pos, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
+		set_rule_id((*schc_rule), dst->ptr);
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 #if USE_IPv6
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
@@ -1075,11 +1080,12 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	} else {
 		/*
 		 * **** a rule was found - compress ****
+		 *
 		 * compress the headers according to the rule
-		 * copy the contents to the bit array
-		 * to keep track of the offset
+		 * copy the contents to the bit array to keep track of the offset
+		 *
 		 * */
-		copy_bits(dst->ptr, 0, (*schc_rule)->id, id_pos, RULE_SIZE_BITS); // matching rule id in front of buffer
+		set_rule_id((*schc_rule), dst->ptr);
 #if USE_IPv6
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
@@ -1100,8 +1106,8 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
-			"schc_compress(): compressed header length: %d, payload length: %d (total length: %d) \n",
-			BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length);
+			"schc_compress(): compressed header length: %d bits (%dB), payload length: %d (total length: %d) \n",
+			dst->offset, BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length);
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");

@@ -14,6 +14,29 @@
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
 
+#if !(RULE_SIZE_BITS % 8)
+#define RULE_SIZE_BYTES			(RULE_SIZE_BITS / 8)
+#else
+#define RULE_SIZE_BYTES			(RULE_SIZE_BITS / 8) + 1
+#endif
+
+#if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) % 8)
+#define DTAG_SIZE_BYTES			((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8)
+#else
+#define DTAG_SIZE_BYTES			((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) + 1
+#endif
+
+#if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) % 8)
+#define WINDOW_SIZE_BYTES		1
+#else
+#define WINDOW_SIZE_BYTES		((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) + 1
+#endif
+
+typedef struct schc_bitarray_t {
+	uint8_t* ptr;
+	uint32_t offset; // in bits
+} schc_bitarray_t;
+
 typedef enum {
 	UP = 0, DOWN = 1, BI = 2
 } direction;
@@ -32,6 +55,10 @@ typedef enum {
 	DEVIID = 6,
 	APPIID = 7
 } CDA;
+
+typedef enum {
+	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3, NOT_FRAGMENTED = 4
+} reliability_mode;
 
 struct schc_field {
 	char field[32];
@@ -125,7 +152,7 @@ struct schc_device {
 	const struct schc_rule_t *(*context)[];
 };
 
-typedef uint16_t schc_ip6addr_t[8];
+typedef uint8_t schc_ip6addr_t[16];
 typedef schc_ip6addr_t schc_ipaddr_t;
 
 struct schc_udpip_hdr {

@@ -8,14 +8,10 @@
  */
 
 #include <stdint.h>
+#include "schc_config.h"
 
 #define BYTES_TO_BITS(x)	(x * 8)
 #define BITS_TO_BYTES(x)	(((x) == 0) ? 0 : (((x) - 1) / 8 + 1)) // bytes required for a number of bits
-
-typedef struct schc_bitarray_t {
-	uint8_t* ptr;
-	uint32_t offset; // in bits
-} schc_bitarray_t;
 
 // sets bits at a certain position in a bit array
 void set_bits(uint8_t A[], uint32_t pos, uint32_t len);
