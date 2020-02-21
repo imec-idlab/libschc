@@ -2231,9 +2231,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 	if(conn->schc_rule == NULL) {
-		uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // todo adapt to profile and bitwise operation
-		copy_bits(rule_id, 0, data, 0, RULE_SIZE_BITS);
-		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(rule_id, device_id);
+		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(data, device_id);
 		conn->schc_rule = ptr;
 	}
 

@@ -194,7 +194,8 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 
 	for (i = 0; i < device->rule_count; i++) {
 		struct schc_rule_t* curr_rule = (struct schc_rule_t*) (*device->context)[i];
-		if( compare_bits_BIG_END(curr_rule->id, rule_arr, RULE_SIZE_BITS)) {
+		uint8_t curr_rule_pos = get_position_in_first_byte(RULE_SIZE_BITS);
+		if( compare_bits_aligned(curr_rule->id, curr_rule_pos, rule_arr, 0, RULE_SIZE_BITS)) {
 			return curr_rule;
 		}
 	}
@@ -971,9 +972,11 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
  *
  * @param 	data 			pointer to the original packet
  * @param 	total_length 	the length of the packet
- * @param 	dst				pointer to the bit array object, where the compressed packet will reside
+ * @param 	dst				pointer to the bit array object, where the compressed packet will
+ * 							be stored. Can later be passed to fragmenter
  * @param 	device_id		the device id to find a rule for
- * @param 	direction		the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
+ * @param 	direction		the direction of the flow
+ * 							UP: LPWAN to IPv6 or DOWN: IPv6 to LPWAN
  * @param	device_type		the device type: NETWORK_GATEWAY or DEVICE
  * @param	schc_rule		a pointer to a schc rule struct to return the rule that was found
  *
@@ -991,14 +994,15 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	DEVICE_TYPE = device_type;
 
 	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
-#if USE_COAP
-	struct schc_coap_rule_t *coap_rule;
+
+#if USE_IPv6
+	struct schc_ipv6_rule_t *ipv6_rule;
 #endif
 #if USE_UDP
 	struct schc_udp_rule_t *udp_rule;
 #endif
-#if USE_IPv6
-	struct schc_ipv6_rule_t *ipv6_rule;
+#if USE_COAP
+	struct schc_coap_rule_t *coap_rule;
 #endif
 
 	/*
@@ -1012,9 +1016,6 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	ipv6_rule = schc_find_ipv6_rule_from_header(&src, device_id); // todo merge
 	if(ipv6_rule != NULL) {
 		ipv6_rule_id = ipv6_rule->rule_id;
-		DEBUG_PRINTF("schc_compress(): IPv6 rule id %d \n", ipv6_rule->rule_id);
-	} else {
-		DEBUG_PRINTF("schc_compress(): no IPv6 rule was found \n");
 	}
 	src.offset = 320; // todo should update in find method
 #endif
@@ -1022,9 +1023,6 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	udp_rule = schc_find_udp_rule_from_header(&src, device_id);
 	if(udp_rule != NULL) {
 		udp_rule_id = udp_rule->rule_id;
-		DEBUG_PRINTF("schc_compress(): UDP rule id %d \n", udp_rule->rule_id);
-	} else {
-		DEBUG_PRINTF("schc_compress(): no UDP rule was found \n");
 	}
 #endif
 #if USE_COAP
@@ -1040,16 +1038,15 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	coap_rule = schc_find_coap_rule_from_header(&coap_msg, device_id);
 	if(coap_rule != NULL) {
 		coap_rule_id = coap_rule->rule_id;
-		DEBUG_PRINTF("schc_compress(): CoAP rule id %d \n", coap_rule->rule_id);
-	} else {
-		DEBUG_PRINTF("schc_compress(): no CoAP rule was found \n");
 	}
 #endif
+
+	DEBUG_PRINTF("schc_compress(): IPv6 rule: %d, UDP rule: %d, CoAP rule: %d \n", ipv6_rule_id, udp_rule_id, coap_rule_id);
 
 	src.offset = 0; // reset the bit array offset and start compressing
 
 	// find the rule for this device by combining the available id's // todo pointers?
-	uint8_t data_offset = 0;
+	uint8_t data_offset = 0; uint8_t id_pos = get_position_in_first_byte(RULE_SIZE_BITS);
 	(*schc_rule) = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
@@ -1059,7 +1056,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		 * set the uncompressed rule id
 		 * and copy the original header
 		 * */
-		copy_bits(dst->ptr, 0, UNCOMPRESSED_ID, 0, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
+		copy_bits(dst->ptr, 0, UNCOMPRESSED_ID, id_pos, RULE_SIZE_BITS); // uncompressed rule id in front of buffer
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 #if USE_IPv6
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
@@ -1082,7 +1079,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		 * copy the contents to the bit array
 		 * to keep track of the offset
 		 * */
-		copy_bits(dst->ptr, 0, (*schc_rule)->id, 0, RULE_SIZE_BITS); // matching rule id in front of buffer
+		copy_bits(dst->ptr, 0, (*schc_rule)->id, id_pos, RULE_SIZE_BITS); // matching rule id in front of buffer
 #if USE_IPv6
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
@@ -1235,18 +1232,16 @@ uint16_t compute_checksum(unsigned char *data) {
  * @return 	length 				length of the newly constructed packet
  * 			0 					the rule was not found
  */
-uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
+uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir,
 		device_type device_type) {
 	DI = dir;
 	DEVICE_TYPE = device_type;
 
 	uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
-	uint32_t bit_offset = RULE_SIZE_BITS;
+	bit_arr->offset = RULE_SIZE_BITS;
 
-	uint8_t rule_id[RULE_SIZE_BYTES] = { 0 };
-	copy_bits(rule_id, 0, data, 0, RULE_SIZE_BITS);
-	struct schc_rule_t *rule = get_schc_rule_by_rule_id(rule_id, device_id);
+	struct schc_rule_t *rule = get_schc_rule_by_rule_id(bit_arr->ptr, device_id);
 	if(rule != NULL) {
 #if USE_COAP
 		coap_rule_id = rule->compression_rule->coap_rule->rule_id;
@@ -1261,8 +1256,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
-			"schc_decompress(): rule id: %d (0x%02X) = | %d | %d | %d | \n",
-			rule_id[0], rule_id[0], ipv6_rule_id, udp_rule_id, coap_rule_id);
+			"schc_decompress(): IPv6 rule: %d, UDP rule id: %d, CoAP rule id: %d \n", ipv6_rule_id, udp_rule_id, coap_rule_id);
 
 	uint8_t ret = 0;
 	uint8_t coap_offset = 0;
@@ -1271,16 +1265,16 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 	uint8_t msg_recv_buf[MAX_COAP_MSG_SIZE];
 	pcoap_pdu pcoap_msg = { msg_recv_buf, 0, MAX_COAP_MSG_SIZE };
 
-	if (compare_bits(rule_id, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet
+	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet
 #if USE_IPv6
 		// copy the uncompressed IPv6 header from the SCHC packet
-		copy_bits(buf, 0, data, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
-		bit_offset += BYTES_TO_BITS(IP6_HLEN);
+		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
+		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
 #endif
 #if USE_UDP
 		// copy the uncompressed UDP headers
-		copy_bits(buf, BYTES_TO_BITS(IP6_HLEN), data, bit_offset, BYTES_TO_BITS(UDP_HLEN));
-		bit_offset += BYTES_TO_BITS(UDP_HLEN);
+		copy_bits(buf, BYTES_TO_BITS(IP6_HLEN), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
+		bit_arr->offset += BYTES_TO_BITS(UDP_HLEN);
 #endif
 #if USE_COAP
 		// copy the uncompressed CoAP headers
@@ -1292,12 +1286,10 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
 		coap_offset = pcoap_get_coap_offset(&pcoap_msg);
 
-		bit_offset += BYTES_TO_BITS(coap_offset);
+		bit_arr->offset += BYTES_TO_BITS(coap_offset);
 #endif
 	} else { // compressed packet
-		schc_bitarray_t src_arr;
-		src_arr.ptr = data;
-		src_arr.offset = RULE_SIZE_BITS;
+		bit_arr->offset = RULE_SIZE_BITS;
 
 		schc_bitarray_t dst_arr;
 		dst_arr.ptr = buf;
@@ -1305,7 +1297,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
-			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, &src_arr, &dst_arr);
+			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1313,7 +1305,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #endif
 #if USE_UDP
 		if (udp_rule_id != 0) {
-			ret = decompress((struct schc_layer_rule_t *) (rule->compression_rule->udp_rule), &src_arr, &dst_arr);
+			ret = decompress((struct schc_layer_rule_t *) (rule->compression_rule->udp_rule), bit_arr, &dst_arr);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1322,7 +1314,7 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 #if USE_COAP
 		// grab CoAP rule and decompress
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(rule->compression_rule->coap_rule, &src_arr, &dst_arr, &pcoap_msg);
+			ret = decompress_coap_rule(rule->compression_rule->coap_rule, bit_arr, &dst_arr, &pcoap_msg);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1330,19 +1322,23 @@ uint16_t schc_decompress(const uint8_t* data, uint8_t *buf,
 		}
 		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), pcoap_msg.buf, coap_offset); // grab the CoAP header from the CoAP buffer
 #endif
-		bit_offset = src_arr.offset; // the source array holds the offset of the SCHC header, and thus its length
+		// the bit_arr contains the compressed header in bits
 	}
 
 	uint8_t new_header_length = IP6_HLEN + UDP_HLEN + coap_offset;
-	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_offset; // the schc header minus the total length is the payload length
+	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_arr->offset; // the schc header minus the total length is the payload length
 
-	copy_bits(buf, BYTES_TO_BITS(new_header_length), data, bit_offset, payload_bit_length);
+	copy_bits(buf, BYTES_TO_BITS(new_header_length), bit_arr->ptr, bit_arr->offset, payload_bit_length);
 	uint16_t payload_length = get_number_of_bytes_from_bits(payload_bit_length);
 
 	compute_length(buf, (payload_length + new_header_length));
 	compute_checksum(buf);
 
-	DEBUG_PRINTF("schc_decompress(): header length: %d, payload length (with padding) %d \n", new_header_length, payload_length);
+	if(padded(bit_arr)) { // remove padding
+		payload_length--;
+	}
+
+	DEBUG_PRINTF("schc_decompress(): header length: %d, payload length %d \n", new_header_length, payload_length);
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("+---------------------------------+\n");

@@ -58,3 +58,6 @@ uint32_t get_required_number_of_bits(uint32_t value);
 
 // return the starting bit of a value
 uint8_t get_position_in_first_byte(uint8_t value);
+
+// remove padding
+uint8_t padded(schc_bitarray_t* bit_array);

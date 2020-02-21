@@ -80,7 +80,7 @@ const static struct schc_udp_rule_t udp_rule1 = {
 						&matchmap,	MAPPINGSENT }, // 5683 or 5684
 				{ "dest port", 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
 						&matchmap,	MAPPINGSENT },
-						// set field length to 16 to indicate 2 byte values
+						// set field length to 16 to indicate 16 bit values
 						// MO param to 2 to indicate 2 indices
 				{ "length", 		0,	16, 	 1, BI, 	{0, 0},		 		&ignore,	COMPLENGTH },
 				{ "checksum", 		0,	16, 	 1, BI, 	{0, 0},				&ignore,	COMPCHK },

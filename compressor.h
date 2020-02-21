@@ -30,7 +30,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_id,
 		uint32_t device_id);
 
-uint16_t schc_decompress(const uint8_t* data, uint8_t *buf, uint32_t device_id,
+uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf, uint32_t device_id,
 		uint16_t total_length, direction dir, device_type device);
 
 #ifdef __cplusplus

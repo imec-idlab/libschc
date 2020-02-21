@@ -306,3 +306,21 @@ uint8_t get_position_in_first_byte(uint8_t value) {
 	}
 	return src_pos;
 }
+
+/**
+ * remove padding
+ *
+ * @param 	bit_arr		the bit array to remove padding for
+ *
+ * @return 	1			remove the last byte
+ * 			0			word aligned
+ *
+ */
+uint8_t padded(schc_bitarray_t* bit_array) {
+	if( (bit_array->offset % 8) ) {
+		return 1;
+	}
+
+	return 0;
+}
+
