@@ -21,8 +21,7 @@
 
 #include "timer.h"
 
-#define PACKET_LENGTH			204
-#define MAX_PACKET_LENGTH		128
+#define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
 
 int RUN = 1;
@@ -41,13 +40,13 @@ schc_fragmentation_t tx_conn;
 schc_fragmentation_t tx_conn_ngw;
 
 // the ipv6/udp/coap packet
-uint8_t msg[PACKET_LENGTH] = {
+uint8_t msg[] = {
 		// IPv6 header
-		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x02,
 		// UDP header
-		0x33, 0x16, 0x33, 0x16, 0x00, 0x41, 0xB2, 0x9E,
+		0x33, 0x16, 0x33, 0x17, 0x00, 0x1E, 0x27, 0x4E,
 		// CoAP header
 		0x54, 0x03, 0x23, 0xBB, 0x21, 0xFA, 0x01, 0xFB, 0xB5, 0x75, 0x73, 0x61, 0x67, 0x65, 0xD1, 0xEA, 0x1A, 0xFF,
 		// Data
@@ -102,7 +101,9 @@ void end_rx(schc_fragmentation_t *conn) {
 	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
 
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
-	uint16_t new_packet_len = schc_decompress(compressed_packet, decomp_packet,
+	schc_bitarray_t bit_arr;
+	bit_arr.ptr = compressed_packet;
+	uint16_t new_packet_len = schc_decompress(&bit_arr, decomp_packet,
 			conn->device_id, packetlen, UP, NETWORK_GATEWAY);
 	if (new_packet_len == 0) { // some error occured
 		exit(0);
@@ -206,9 +207,9 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 	DEBUG_PRINTF("\n+------------------------+\n");
 
 	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			&receiving_conn, device_id); // get active connection and set the correct rule for this connection
+			receiving_conn, device_id); // get active connection and set the correct rule for this connection
 
-	if (conn != &receiving_conn) { // if returned value is receiving_conn: acknowledgement is received, which is handled by the library
+	if (conn != receiving_conn) { // if returned value is receiving_conn: acknowledgement is received, which is handled by the library
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 
@@ -268,10 +269,13 @@ int main() {
 
 	// compress packet
 	struct schc_rule_t* schc_rule;
-	uint16_t compressed_len = schc_compress(msg, compressed_packet,
-			PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
+	schc_bitarray_t bit_arr;
+	bit_arr.ptr = (uint8_t*) (compressed_packet);
 
-	tx_conn.mtu = 12; // network driver MTU
+	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
+			UP, DEVICE, &schc_rule);
+
+	tx_conn.mtu = 242; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
@@ -279,6 +283,7 @@ int main() {
 		// select a similar rule based on a reliability mode
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
 	} else { // do not fragment
+		// todo padding
 		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
 	}
 
@@ -290,13 +295,13 @@ int main() {
 
 	set_rule_id(schc_rule, compressed_packet);
 
-	tx_conn.data_ptr = &compressed_packet;
+	tx_conn.bit_arr = &bit_arr;
 	tx_conn.packet_len = compressed_len;
 	tx_conn.send = &tx_send_callback;
 	tx_conn.end_tx = &end_tx;
 
 	tx_conn.schc_rule = schc_rule;
-	tx_conn.RULE_SIZE = 8; // todo get from profile
+	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
 
 	tx_conn.post_timer_task = &set_tx_timer;
 

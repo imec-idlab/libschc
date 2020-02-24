@@ -60,8 +60,8 @@ struct schc_field {
 };
 ```
 - `field` holds a string of the field name (i.e. the human-readability of the rules). 
-- the `msb_length` is used in combination with the Matching Operator `MSB`, but should be removed in coming releases.
-- the `field_length` indicates the length of **bytes**, (should be bits in coming releases). 
+- the `MO_param_length` indicates the amount of bits that were sent, when used in combination with the Matching Operator `MSB` or with the Decompression Action `LSB`. When used in combination with the `match-map` MO, it represents the length of the list
+- the `field_length` indicates the field length in bits. 
 - `field_pos` is only used for headers where multiple fields can exist for the same entry (e.g. CoAP uri-path).
 - `dir` indicates the direction (`UP`, `DOWN` or `BI`) and will have an impact on how the rules behave while compressing/decompressing. Depending on the direction of the flow and which device is performing the (de)compression, the source and destination in the `decompress_ipv6_rule` and `generate_ip_header_fields` will be swapped, to ensure a single rule for server and end device.
 - `target_value` holds a `char` array in order to support larger values. The downside of this approach is the `MAX_COAP_FIELD_LENGTH` definition, which should be set to the largest defined Target Value in order to save as much memory as possible.
