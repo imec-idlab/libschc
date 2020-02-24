@@ -13,6 +13,7 @@
 extern "C" {
 #endif
 
+#include "config.h"
 #include "schc_config.h"
 
 /**
