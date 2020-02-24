@@ -2237,6 +2237,9 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	if(conn->schc_rule == NULL) {
 		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(data, device_id);
 		conn->schc_rule = ptr;
+		// todo
+		// if no rule was found
+		// this is a null pointer -> return function will get confused (checks for rule->mode)
 	}
 
 	uint8_t* fragment;
