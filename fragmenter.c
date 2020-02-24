@@ -860,7 +860,8 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 	uint8_t bit_offset = conn->RULE_SIZE;
 
 	 // set rule id
-	copy_bits(fragmentation_buffer, 0, conn->rule_id, 0, bit_offset);
+	uint8_t src_pos = get_position_in_first_byte(conn->RULE_SIZE);
+	copy_bits(fragmentation_buffer, 0, conn->rule_id, src_pos, bit_offset);
 
 	// set dtag field
 	uint8_t dtag[1] = { conn->dtag << (8 - conn->schc_rule->DTAG_SIZE) };

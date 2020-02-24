@@ -275,7 +275,7 @@ int main() {
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
 			UP, DEVICE, &schc_rule);
 
-	tx_conn.mtu = 242; // network driver MTU
+	tx_conn.mtu = 121; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
