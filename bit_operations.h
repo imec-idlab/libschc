@@ -8,7 +8,8 @@
  */
 
 #include <stdint.h>
-#include "schc_config.h"
+
+#include "schc.h"
 
 #define BYTES_TO_BITS(x)	(x * 8)
 #define BITS_TO_BYTES(x)	(((x) == 0) ? 0 : (((x) - 1) / 8 + 1)) // bytes required for a number of bits

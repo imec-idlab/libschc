@@ -11,11 +11,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "config.h"
 #include "schc_config.h"
 
 #include "compressor.h"
 #include "fragmenter.h"
+#include "schc.h"
 
 uint8_t ATTEMPTS = 0; // for debugging
 
@@ -117,7 +117,7 @@ static void mbuf_print(schc_mbuf_t *head) {
 	uint8_t i = 0; uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: 0x%X\n", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("%d: %p\n", curr->frag_cnt, curr->ptr);
 		// DEBUG_PRINTF("0x%X", curr);
 		for (j = 0; j < curr->len; j++) {
 			DEBUG_PRINTF("0x%02X ", curr->ptr[j]);
@@ -495,6 +495,7 @@ static uint8_t get_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) 
 
 /**
  * Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain
+ * containing the compressed, unfragmented packet
  * which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)
  *
  * @param  head			the head of the list
@@ -505,12 +506,39 @@ static uint8_t get_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) 
 static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
+	/*
+	uint32_t crc, crc_mask; uint8_t k = 0;
+	uint8_t byte[1] = { 0 }; uint8_t first = 1;
+
+	crc = 0xFFFFFFFF;
+
+	while(curr != NULL) {
+
+		// get bits from the mbuf chain by moving forward the pointer
+		// first copy the (partial) rule id for the first byte
+		// increase bit offset by fragmentation header bits
+		// get bits at this offset
+		// the bit offset can be matched with the length of an mbuf entry
+		// to determine whether the mbuf should be moved forward or not
+		// copy_bits(byte, 0, curr->ptr);
+
+		prev = curr;
+		curr = curr->next;
+
+		crc = crc ^ byte;
+		for (k = 7; k >= 0; k--) { // do eight times.
+			crc_mask = -(crc & 1);
+			crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
+		}
+		printf("0x%02X ", byte);
+	}
+	*/
 
 	int i, j, k;
 	uint32_t offset = 0;
 	uint8_t first = 1; uint8_t last = 0;
 	uint16_t len;
-	uint8_t start, rest, byte;
+	uint8_t start, rest, byte; uint8_t bits[4] = { 0 };
 	uint8_t prev_offset = 0;
 	uint32_t crc, crc_mask;
 
@@ -529,10 +557,16 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 
 		while (cont) {
 			if (prev == NULL && first) { // first byte(s) originally contained the rule id
-				byte = (curr->ptr[0] << (8 - conn->RULE_SIZE))
-						| (curr->ptr[1] >> conn->RULE_SIZE);
-				prev_offset = (RULE_SIZE_BYTES * 8) - conn->RULE_SIZE;
-				first = 0;
+				if(conn->RULE_SIZE < 8) {
+					uint8_t pos = get_position_in_first_byte(conn->RULE_SIZE);
+					copy_bits(bits, 0, curr->ptr, pos, conn->RULE_SIZE);
+					copy_bits(bits, conn->RULE_SIZE, (uint8_t*) (curr->ptr + start), offset, pos); // pos is also length of remainder
+					byte = bits[0];
+					prev_offset = pos; // pos is also length of remainder
+					first = 0;
+				} else {
+					// todo
+				}
 			} else {
 				i += 8;
 				if (i >= len) {
@@ -576,10 +610,10 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 					crc_mask = -(crc & 1);
 					crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 				}
-				// printf("0x%02X ", byte);
+				printf("0x%02X ", byte);
 			}
 		}
-		// printf("\n");
+		printf("\n");
 
 		prev = curr;
 		curr = curr->next;
@@ -1154,6 +1188,13 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	// if(conn->frag_cnt != 10 || ATTEMPTS == 1) {
 		DEBUG_PRINTF("send_fragment(): sending fragment %d with length %d to device %d \n",
 			conn->frag_cnt, packet_len, conn->device_id);
+
+		int j = 0;
+		for (j = 0; j < packet_len; j++) {
+			DEBUG_PRINTF("0x%02X ", fragmentation_buffer[j]);
+		}
+		DEBUG_PRINTF("\n");
+
 		return conn->send(fragmentation_buffer, packet_len, conn->device_id);
 	/*} else {
 		ATTEMPTS++;

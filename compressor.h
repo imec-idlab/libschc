@@ -9,8 +9,8 @@
 #ifndef __SCHCCOMPRESSOR_H__
 #define __SCHCCOMPRESSOR_H__
 
-#include "config.h"
 #include "bit_operations.h"
+#include "schc.h"
 
 #ifdef __cplusplus
 extern "C" {
