@@ -256,7 +256,7 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 
 						uint8_t ptr = j;
 						if (! (field_length % 8) ) // only support byte aligned matchmap
-							ptr = j * get_number_of_bytes_from_bits(field_length);
+							ptr = j * get_number_of_bytes_from_bits(field_length); // for multiple byte entry
 
 						if (compare_bits_BIG_END( (uint8_t*) (src->ptr + src_pos),
 								(uint8_t*) (rule->content[i].target_value + ptr), field_length)) { // match which index to send
@@ -516,6 +516,24 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(schc_bitarray_t* src
 
 	return NULL;
 }
+
+#if USE_IPv6
+
+/**
+ * Swaps the IPv6 source and destination
+ *
+ * @param ptr	pointer to the ipv6 header
+ *
+ * @return the length of the array, which represents the number of CoAP fields
+ *
+ */
+static void swap_ipv6_source_and_destination(uint8_t* ptr) {
+	schc_ip6addr_t tmp_addr;
+	memcpy(tmp_addr, (uint8_t*) (ptr + 8), 16);
+	memmove((uint8_t*) (ptr + 8), (uint8_t*) (ptr + 24), 16);
+	memcpy((uint8_t*) (ptr + 24), tmp_addr, 16);
+}
+#endif
 
 #if USE_COAP
 /**
@@ -832,6 +850,9 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 #if USE_IPv6
 	struct schc_ipv6_rule_t *ipv6_rule;
+	if(dir == DOWN) { // swap source and destination to match the rule
+		swap_ipv6_source_and_destination(src.ptr);
+	}
 	ipv6_rule = (struct schc_ipv6_rule_t*) schc_find_rule_from_header(&src, device_id, SCHC_IPV6);
 	if(ipv6_rule != NULL) {
 		ipv6_rule_id = ipv6_rule->rule_id;
@@ -1101,11 +1122,11 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		dst_arr.offset = 0;
 
 #if USE_IPv6
-		// todo
-		// if direction is DOWN
-		// swap IP fields
 		if (ipv6_rule_id != 0) {
 			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr);
+			if (dir == DOWN) { // swap source and destination to match the rule
+				swap_ipv6_source_and_destination(dst_arr.ptr);
+			}
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
