@@ -116,16 +116,17 @@ const static struct schc_udp_rule_t udp_rule3 = {
 const static struct schc_coap_rule_t coap_rule1 = {
 		1, 9, 7, 9,
 		{
-				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
-				{ "type",			0,	2,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
-				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
-				{ "code",			0,	8,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
-				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
+				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,			NOTSENT },
+				{ "type",			4,	2,	 1, BI,		{CT_CON, CT_NON, CT_ACK, CT_RST},
+						&matchmap,	MAPPINGSENT	},
+				{ "token length",	0,	4,	 1, BI,		{4},			&equal,			NOTSENT },
+				{ "code",			0,	8,	 1, BI,		{CC_PUT},		&equal,			NOTSENT },
+				{ "message ID",		0,	16,	 1, BI,		{0x23, 0xBB},	&equal,			NOTSENT },
 				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB }, // match the 24 first bits, send the last 8
-				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
-				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT },
-				{ "payload marker",	0,	8,   1, BI, 	{0xFF},			&equal,		NOTSENT }
+						&MSB,		LSB },
+				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,			NOTSENT },
+				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,			NOTSENT },
+				{ "payload marker",	0,	8,   1, BI, 	{0xFF},			&equal,			NOTSENT }
 
 		}
 };
@@ -144,27 +145,10 @@ const static struct schc_coap_rule_t coap_rule2 = {
 				{ "message ID",		12,	16,	 1, UP,		{0x23, 0xBB},	&MSB,		LSB },
 				{ "message ID",		12,	16,	 1, DOWN,	{0x7A, 0x10},	&MSB,		LSB }, // match the first 12 bits
 				{ "token",			0,	32,	 1, BI,		{0, 0, 0, 0},	&ignore,	VALUESENT }, // GET sensor value
-				{ "uri-path", 		4,	0,	 2, BI,	"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
-						// todo variable field length
+				{ "uri-path", 		4,	0,	 2, BI,		"[\"temp\",\"humi\",\"batt\",\"r\"]\0",
+						// todo variable field length and json
 						&matchmap,		MAPPINGSENT },
 				{ "payload marker",	0,	8,   1, BI, 	{255},			&equal,		NOTSENT } // respond with CONTENT
-		}
-};
-
-// GET usage
-const static struct schc_coap_rule_t coap_rule3 = {
-		3, 8, 6, 8,
-		{
-				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,		NOTSENT },
-				{ "type",			0,	2,	 1, BI,		{CT_NON},		&equal, 	NOTSENT	},
-				{ "token length",	0,	4,	 1, BI,		{4},			&equal,		NOTSENT },
-				{ "code",			0,	8,	 1, UP,		{CC_PUT},		&equal,		NOTSENT },
-				{ "message ID",		0,	16,	 1, UP,		{0x23, 0xBB},	&equal,		NOTSENT },
-				{ "token",			24,	32,	 1, BI,		{0x21, 0xFA, 0x01, 0x00},
-						&MSB,		LSB }, // match the 24 first bits, send the last 8
-				{ "uri-path", 		0,	40,	 1, BI,		"usage", 		&equal,		NOTSENT },
-				{ "no-response", 	0,	8,	 1, BI,		{0x1A}, 		&equal,		NOTSENT }
-
 		}
 };
 
@@ -221,18 +205,6 @@ const struct schc_compression_rule_t compression_rule_3 = {
 		&ipv6_rule2,
 #endif
 #if USE_UDP
-		&udp_rule1,
-#endif
-#if USE_COAP
-		&coap_rule3,
-#endif
-};
-
-const struct schc_compression_rule_t compression_rule_4 = {
-#if USE_IPv6
-		&ipv6_rule2,
-#endif
-#if USE_UDP
 		&udp_rule2,
 #endif
 #if USE_COAP
@@ -240,7 +212,7 @@ const struct schc_compression_rule_t compression_rule_4 = {
 #endif
 };
 
-const struct schc_compression_rule_t compression_rule_5 = {
+const struct schc_compression_rule_t compression_rule_4 = {
 #if USE_IPv6
 		&ipv6_rule3,
 #endif
@@ -252,7 +224,7 @@ const struct schc_compression_rule_t compression_rule_5 = {
 #endif
 };
 
-const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0 }; // the rule id for an uncompressed packet
+const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
 // todo
 // const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
 // const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
@@ -268,8 +240,8 @@ const struct schc_rule_t schc_rule_6 = { { 0x06 }, &compression_rule_2, NO_ACK, 
 const struct schc_rule_t schc_rule_7 = { { 0x07 }, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
 const struct schc_rule_t schc_rule_8 = { { 0x08 }, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
 
-const struct schc_rule_t schc_rule_9 = { { 0x09 }, &compression_rule_5, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_10 = { { 0x0A }, &compression_rule_5, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_9 = { { 0x09 }, &compression_rule_3, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_10 = { { 0x0A }, &compression_rule_3, NO_ACK, 1, 0, 0, 0 };
 
 /* save rules in flash */
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,

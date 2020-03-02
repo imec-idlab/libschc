@@ -23,7 +23,6 @@
 
 // changes on server/client
 static direction DI;
-static device_type DEVICE_TYPE;
 static schc_ipaddr_t node_ip_6;
 
 jsmn_parser json_parser;
@@ -250,7 +249,7 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 
 				// if result is 0,
 				if (json_result == 0) { // formatted as a normal unsigned char array
-					uint32_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
+					uint8_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
 					for (j = 0; j < rule->content[i].MO_param_length; j++) {
 						uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
 
@@ -258,8 +257,10 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 						if (! (field_length % 8) ) // only support byte aligned matchmap
 							ptr = j * get_number_of_bytes_from_bits(field_length); // for multiple byte entry
 
-						if (compare_bits_BIG_END( (uint8_t*) (src->ptr + src_pos),
-								(uint8_t*) (rule->content[i].target_value + ptr), field_length)) { // match which index to send
+						if (compare_bits_BIG_END(
+								(uint8_t*) (src->ptr + src_pos),
+								(uint8_t*) (rule->content[i].target_value + ptr),
+								field_length)) { // match which index to send
 							uint8_t ind[1] = { j }; // room for 255 indices
 							uint8_t src_pos = get_position_in_first_byte(list_len);
 							copy_bits(dst->ptr, dst->offset, ind, src_pos, list_len);
@@ -524,8 +525,6 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(schc_bitarray_t* src
  *
  * @param ptr	pointer to the ipv6 header
  *
- * @return the length of the array, which represents the number of CoAP fields
- *
  */
 static void swap_ipv6_source_and_destination(uint8_t* ptr) {
 	schc_ip6addr_t tmp_addr;
@@ -611,8 +610,7 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 		pcoap_set_version(msg, version);
 		uint8_t type = get_bits(dst.ptr, 2, 2);
 		pcoap_set_type(msg, type);
-		uint8_t code = dst.ptr[1];
-		pcoap_set_code(msg, code);
+		pcoap_set_code(msg, dst.ptr[1]);
 
 		uint16_t msg_id = ((dst.ptr[2] << 8) | dst.ptr[3]);
 		pcoap_set_mid(msg, msg_id);
@@ -834,9 +832,8 @@ uint8_t schc_compressor_init(uint8_t src[16]) {
 
 int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		schc_bitarray_t* dst, uint32_t device_id, direction dir,
-		device_type device_type, struct schc_rule_t **schc_rule) {
+		struct schc_rule_t **schc_rule) {
 	DI = dir;
-	DEVICE_TYPE = device_type;
 
 	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 
@@ -850,7 +847,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 #if USE_IPv6
 	struct schc_ipv6_rule_t *ipv6_rule;
-	if(dir == DOWN) { // swap source and destination to match the rule
+	if(dir == DOWN) {
 		swap_ipv6_source_and_destination(src.ptr);
 	}
 	ipv6_rule = (struct schc_ipv6_rule_t*) schc_find_rule_from_header(&src, device_id, SCHC_IPV6);
@@ -1057,16 +1054,13 @@ uint16_t compute_checksum(unsigned char *data) {
  * @param 	device_id 			the device its id
  * @param 	total_length 		the total length of the received data
  * @param 	direction			the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
- * @param	device_type			the type of device: NETWORK_GATEWAY or DEVICE
  *
  * @return 	length 				length of the newly constructed packet
  * 			0 					the rule was not found
  */
 uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
-		uint32_t device_id, uint16_t total_length, direction dir,
-		device_type device_type) {
+		uint32_t device_id, uint16_t total_length, direction dir) {
 	DI = dir;
-	DEVICE_TYPE = device_type;
 
 	uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 	bit_arr->offset = RULE_SIZE_BITS;
@@ -1124,7 +1118,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
 			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr);
-			if (dir == DOWN) { // swap source and destination to match the rule
+			if (dir == DOWN) {
 				swap_ipv6_source_and_destination(dst_arr.ptr);
 			}
 			if (ret == 0) {

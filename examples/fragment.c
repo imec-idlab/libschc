@@ -104,7 +104,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = compressed_packet;
 	uint16_t new_packet_len = schc_decompress(&bit_arr, decomp_packet,
-			conn->device_id, packetlen, UP, NETWORK_GATEWAY);
+			conn->device_id, packetlen, UP);
 	if (new_packet_len == 0) { // some error occured
 		exit(0);
 	}
@@ -269,9 +269,9 @@ int main() {
 	bit_arr.ptr = (uint8_t*) (compressed_packet);
 
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
-			UP, DEVICE, &schc_rule);
+			UP, &schc_rule);
 
-	tx_conn.mtu = 242; // network driver MTU
+	tx_conn.mtu = 121; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 

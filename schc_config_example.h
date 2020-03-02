@@ -1,6 +1,7 @@
 #ifndef SCHC_CONFIG_H_
 #define SCHC_CONFIG_H_
 
+#include <stdio.h>
 #include <unistd.h>
 #include <inttypes.h>
 
@@ -12,7 +13,7 @@
 #define SCHC_CONF_RX_CONNS		1
 #define SCHC_CONF_MBUF_POOL_LEN	32
 
-#define USE_COAP				0
+#define USE_COAP				1
 #define USE_UDP					1
 #define USE_IPv6				1
 
@@ -39,7 +40,7 @@
 // the maximum number of tokens inside a JSON structure
 #define JSON_TOKENS				16
 
-#define RULE_SIZE_BITS			8
+#define RULE_SIZE_BITS			4
 
 #define DEBUG_PRINTF(...) 		printf(__VA_ARGS__) //log_print_string(__VA_ARGS__)
 
@@ -48,9 +49,6 @@
 
 // the number of FCN bits
 #define FCN_SIZE_BITS			3
-
-// the maximum number of fragments per window
-#define MAX_WIND_FCN			6
 
 // the number of DTAG bits
 #define DTAG_SIZE_BITS			0
