@@ -2,7 +2,8 @@
 #include <stddef.h>
 #include <string.h>
 #include "picocoap.h"
-#include "config.h"
+
+#include "schc.h"
 
 #if CLICK
 #include <click/config.h>
@@ -317,7 +318,7 @@ pcoap_error pcoap_init_pdu(pcoap_pdu *pdu)
 	pcoap_set_version(pdu, COAP_V1);
 	pcoap_set_type(pdu, CT_RST);
 	uint8_t token[8] = { 0 };
-	pcoap_set_token(pdu, &token, 0);
+	pcoap_set_token(pdu, (uint8_t*) (token), 0);
 	pcoap_set_code(pdu, CC_EMPTY);
 	pcoap_set_mid(pdu, 0);
 

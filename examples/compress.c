@@ -13,16 +13,15 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "../schc.h"
 #include "../compressor.h"
-#include "../config.h"
 
-#define PACKET_LENGTH			70
 #define MAX_PACKET_LENGTH		128
 
 // the ipv6/udp/coap packet
-uint8_t msg[PACKET_LENGTH] = {
+uint8_t msg[] = {
 		// IPv6 header
-		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x02,
 		// UDP header
@@ -33,7 +32,7 @@ uint8_t msg[PACKET_LENGTH] = {
 		0x01, 0x02, 0x03, 0x04
 };
 
- int main() {
+int main() {
 	// COMPRESSION
 	// initialize the client compressor
 	uint8_t src[16] = { 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -45,16 +44,19 @@ uint8_t msg[PACKET_LENGTH] = {
 
 	// compress packet
 	struct schc_rule_t* schc_rule;
-	int compressed_len = schc_compress(msg, compressed_buf, PACKET_LENGTH,
-			device_id, UP, DEVICE, &schc_rule);
-	
+	schc_bitarray_t bit_arr;
+	bit_arr.ptr = (uint8_t*) (compressed_buf);
+
+	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
+			UP, &schc_rule);
+
 	// DECOMPRESSION
 	uint8_t new_packet_len = 0;
 
 	// NOTE: DIRECTION remains UP as this packet is forwarded to the IPv6 network
 	unsigned char decomp_packet[MAX_PACKET_LENGTH] = { 0 };
-	new_packet_len = schc_decompress((unsigned char*) compressed_buf,
-			decomp_packet, device_id, compressed_len, UP, NETWORK_GATEWAY);
+	new_packet_len = schc_decompress(&bit_arr, decomp_packet, device_id,
+			compressed_len, UP);
 	if(new_packet_len == 0) { // some error occured
 		return 1;
 	}
