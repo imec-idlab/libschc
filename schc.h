@@ -7,9 +7,6 @@
 #define UDP_HLEN				8
 #define IP6_HLEN				40
 
-// total number of CoAP options available
-#define COAP_OPTIONS_LENGTH		16 // .. actually a picocoap variable
-
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
@@ -42,10 +39,6 @@ typedef enum {
 } direction;
 
 typedef enum {
-	NETWORK_GATEWAY = 0, DEVICE = 1
-} device_type;
-
-typedef enum {
 	NOTSENT = 0,
 	VALUESENT = 1,
 	MAPPINGSENT = 2,
@@ -55,6 +48,12 @@ typedef enum {
 	DEVIID = 6,
 	APPIID = 7
 } CDA;
+
+typedef enum {
+	SCHC_IPV6 = 0,
+	SCHC_UDP = 1,
+	SCHC_COAP = 2
+} schc_layer_t;
 
 typedef enum {
 	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3, NOT_FRAGMENTED = 4
@@ -67,7 +66,7 @@ struct schc_field {
 	uint8_t field_pos;
 	direction dir;
 	unsigned char target_value[MAX_FIELD_LENGTH];
-	uint8_t (*MO)(struct schc_field* target_field, unsigned char* field_value);
+	uint8_t (*MO)(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 	CDA action;
 };
 
@@ -171,9 +170,9 @@ struct schc_udpip_hdr {
   uint16_t udpchksum;
 };
 
-static uint8_t equal(struct schc_field* target_field, unsigned char* field_value);
-static uint8_t ignore(struct schc_field* target_field, unsigned char* field_value);
-static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value);
-static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_value);
+static uint8_t equal(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+static uint8_t ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 
 #endif

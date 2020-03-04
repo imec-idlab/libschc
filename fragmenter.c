@@ -11,11 +11,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "config.h"
 #include "schc_config.h"
 
 #include "compressor.h"
 #include "fragmenter.h"
+#include "schc.h"
 
 uint8_t ATTEMPTS = 0; // for debugging
 
@@ -117,7 +117,7 @@ static void mbuf_print(schc_mbuf_t *head) {
 	uint8_t i = 0; uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
-		DEBUG_PRINTF("%d: 0x%X\n", curr->frag_cnt, curr->ptr);
+		DEBUG_PRINTF("%d: %p\n", curr->frag_cnt, curr->ptr);
 		// DEBUG_PRINTF("0x%X", curr);
 		for (j = 0; j < curr->len; j++) {
 			DEBUG_PRINTF("0x%02X ", curr->ptr[j]);
@@ -284,7 +284,7 @@ uint16_t get_mbuf_len(schc_mbuf_t *head) {
 
 	while (curr != NULL) {
 		total_len += (curr->len * 8);
-		total_offset += curr->offset;
+		total_offset = curr->offset; // last offset is the total offset
 
 		curr = curr->next;
 	}
@@ -350,9 +350,12 @@ void mbuf_clean(schc_mbuf_t **head) {
 
 
 /**
- * sort the complete mbuf chain based on fragment counter
+ * sort the complete mbuf chain based on fragment counter (fcn)
+ * note: 	some packets will arrive out of order, as they
+ * 			were part of a retransmission, and consequently
+ * 			arrive out of order, but carry the same fcn
  *
- * @param  head			double pointer to the head of the list
+ * @param  	head		double pointer to the head of the list
  *
  */
 static void mbuf_sort(schc_mbuf_t **head) {
@@ -398,77 +401,82 @@ static void mbuf_sort(schc_mbuf_t **head) {
  * remove the fragmentation headers and
  * concat the data bits of the complete mbuf chain
  *
+ * +----+------------+                      +----+------------+
+ * | FH |    DATA    |    <---  ...  <---   | FH |    DATA    |
+ * +----+------------+                      +----+------------+
+ *
+ * 1. remove the fragmentation header (FH), but keep the rule id
+ * 2. shift the DATA bits to the left, to overwrite the FH bits
+ * 3.
+ *
  * @param  head			double pointer to the head of the list
  *
  */
 static void mbuf_format(schc_mbuf_t **head, schc_fragmentation_t* conn) {
 	schc_mbuf_t **curr = &(*head);
-		schc_mbuf_t **next = &((*head)->next);
-		schc_mbuf_t **prev = NULL;
+	schc_mbuf_t **next = &((*head)->next);
+	schc_mbuf_t **prev = NULL;
 
-		uint8_t i = 0; uint8_t counter = 1; uint16_t total_bits_shifted = 0;
+	while (*curr != NULL) {
+		uint8_t fcn = get_fcn_value((*curr)->ptr, conn);
+		uint32_t offset = conn->RULE_SIZE + conn->schc_rule->DTAG_SIZE
+				+ conn->schc_rule->WINDOW_SIZE + conn->schc_rule->FCN_SIZE;
+		uint8_t overflow = 0;
 
-		while (*curr != NULL) {
-			uint8_t fcn = get_fcn_value((*curr)->ptr, conn);
-			uint32_t offset = conn->RULE_SIZE + conn->schc_rule->DTAG_SIZE + conn->schc_rule->WINDOW_SIZE
-					+ conn->schc_rule->FCN_SIZE; uint8_t overflow = 0;
+		if (prev == NULL) { // first
+			(*curr)->offset = offset - conn->RULE_SIZE;
 
+			uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
+			copy_bits(rule_id, 0, (*curr)->ptr, 0, conn->RULE_SIZE);
 
-			if(prev == NULL) { // first
-				(*curr)->offset = offset - conn->RULE_SIZE;
+			// remove fragmentation header by shifting left
+			shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset);
 
-				uint8_t rule_id[RULE_SIZE_BYTES] = { 0 }; // get rule id
-				copy_bits(rule_id, 0, (*curr)->ptr, 0, conn->RULE_SIZE);
-
-				shift_bits_left((*curr)->ptr, (*curr)->len, (*curr)->offset); // shift left
-
-				clear_bits((*curr)->ptr, 0, conn->RULE_SIZE); // set rule id at first position
-				copy_bits((*curr)->ptr, 0, rule_id, 0, conn->RULE_SIZE);
-
-				total_bits_shifted += (*curr)->offset;
-			} else { // normal
-				if (fcn == get_max_fcn_value(conn)) {
-					offset += (MIC_SIZE_BYTES * 8);
-				}
-
-				int16_t start = ((*prev)->len * 8) - (*prev)->offset;
-				int16_t room_left = ((*prev)->len * 8) - start;
-				int16_t bits_to_copy = (*curr)->len * 8 - offset;
-
-				// copy (part of) curr buffer to prev
-				clear_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*prev)->offset);
-				copy_bits((*prev)->ptr, ((*prev)->len * 8) -  (*prev)->offset, (*curr)->ptr, offset, (*prev)->offset);
-
-				if(room_left > bits_to_copy) {
-					// do not advance pointer and merge prev and curr in one buffer
-					(*prev)->offset = start + offset;
-					if((*curr)->next != NULL) {
-						(*prev)->next = (*curr)->next;
-						curr = next;
-					}
-					overflow = 1;
-				} else {
-					// shift bits left
-					shift_bits_left((*curr)->ptr, (*curr)->len, offset + (*prev)->offset); // shift left to remove headers and bits that were copied
-					overflow = 0;
-				}
-
-				(*curr)->offset = offset;
+			// left shift has overwritten rule id, so set the rule id at the first position
+			clear_bits((*curr)->ptr, 0, conn->RULE_SIZE);
+			copy_bits((*curr)->ptr, 0, rule_id, 0, conn->RULE_SIZE);
+		} else { // normal
+			if (fcn == get_max_fcn_value(conn)) {
+				offset += (MIC_SIZE_BYTES * 8);
 			}
 
-			if(!overflow) { // do not advance prev if this contains parts of 3 fragments
-				if(prev != NULL) {
-					prev = &(*prev)->next; // could be that we skipped a buffer
-				} else {
-					prev = curr;
+			uint16_t start_prev 	= ((*prev)->len * 8) - (*prev)->offset;
+			uint16_t room_prev 		= ((*prev)->len * 8) - start_prev;
+			uint16_t bits_to_copy 	= ((*curr)->len * 8) - offset;
+
+			// copy (part of) the curr buffer to the prev
+			clear_bits((*prev)->ptr, start_prev, room_prev);
+			copy_bits((*prev)->ptr, start_prev, (*curr)->ptr, offset, room_prev);
+
+			if (room_prev > bits_to_copy) {
+				// do not advance pointer and merge prev and curr in one buffer
+				(*prev)->offset = start_prev + offset;
+				if ((*curr)->next != NULL) {
+					(*prev)->next = (*curr)->next;
+					curr = next;
 				}
+				overflow = 1;
+			} else {
+				shift_bits_left((*curr)->ptr, (*curr)->len,
+						offset + (*prev)->offset); // shift left to remove headers and bits that were copied
+				overflow = 0;
 			}
 
-			i++;
-
-			curr = next; // advance both pointer-pointers
-			next = &(*next)->next;
+			(*curr)->offset = offset + (*prev)->offset;
 		}
+
+		// advance pointers
+		if (!overflow) { // do not advance prev if this contains parts of 3 fragments
+			if (prev != NULL) {
+				prev = &(*prev)->next; // could be that we skipped a buffer
+			} else {
+				prev = curr;
+			}
+		}
+		 // always advance both pointer-pointers
+		curr = next;
+		next = &(*next)->next;
+	}
 }
 
 
@@ -495,6 +503,7 @@ static uint8_t get_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) 
 
 /**
  * Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain
+ * containing the compressed, unfragmented packet
  * which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)
  *
  * @param  head			the head of the list
@@ -505,12 +514,39 @@ static uint8_t get_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) 
 static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
+	/*
+	uint32_t crc, crc_mask; uint8_t k = 0;
+	uint8_t byte[1] = { 0 }; uint8_t first = 1;
+
+	crc = 0xFFFFFFFF;
+
+	while(curr != NULL) {
+
+		// get bits from the mbuf chain by moving forward the pointer
+		// first copy the (partial) rule id for the first byte
+		// increase bit offset by fragmentation header bits
+		// get bits at this offset
+		// the bit offset can be matched with the length of an mbuf entry
+		// to determine whether the mbuf should be moved forward or not
+		// copy_bits(byte, 0, curr->ptr);
+
+		prev = curr;
+		curr = curr->next;
+
+		crc = crc ^ byte;
+		for (k = 7; k >= 0; k--) { // do eight times.
+			crc_mask = -(crc & 1);
+			crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
+		}
+		printf("0x%02X ", byte);
+	}
+	*/
 
 	int i, j, k;
 	uint32_t offset = 0;
 	uint8_t first = 1; uint8_t last = 0;
 	uint16_t len;
-	uint8_t start, rest, byte;
+	uint8_t start, rest, byte; uint8_t bits[4] = { 0 };
 	uint8_t prev_offset = 0;
 	uint32_t crc, crc_mask;
 
@@ -529,10 +565,16 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 
 		while (cont) {
 			if (prev == NULL && first) { // first byte(s) originally contained the rule id
-				byte = (curr->ptr[0] << (8 - conn->RULE_SIZE))
-						| (curr->ptr[1] >> conn->RULE_SIZE);
-				prev_offset = (RULE_SIZE_BYTES * 8) - conn->RULE_SIZE;
-				first = 0;
+				if(conn->RULE_SIZE < 8) {
+					uint8_t pos = get_position_in_first_byte(conn->RULE_SIZE);
+					copy_bits(bits, 0, curr->ptr, pos, conn->RULE_SIZE);
+					copy_bits(bits, conn->RULE_SIZE, (uint8_t*) (curr->ptr + start), offset, pos); // pos is also length of remainder
+					byte = bits[0];
+					prev_offset = pos; // pos is also length of remainder
+					first = 0;
+				} else {
+					// todo
+				}
 			} else {
 				i += 8;
 				if (i >= len) {
@@ -576,10 +618,10 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 					crc_mask = -(crc & 1);
 					crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 				}
-				// printf("0x%02X ", byte);
+				printf("0x%02X ", byte);
 			}
 		}
-		// printf("\n");
+		printf("\n");
 
 		prev = curr;
 		curr = curr->next;
@@ -751,7 +793,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 	}
 
 	uint8_t pos = get_position_in_first_byte(RULE_SIZE_BITS);
-	copy_bits(conn->rule_id, pos, conn->bit_arr->ptr, 0, RULE_SIZE_BITS);
+	copy_bits(conn->rule_id, pos, conn->bit_arr->ptr, 0, conn->RULE_SIZE);
 
 	conn->tail_ptr = (uint8_t*) (conn->bit_arr->ptr + conn->packet_len); // set end of packet
 
@@ -1154,6 +1196,13 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	// if(conn->frag_cnt != 10 || ATTEMPTS == 1) {
 		DEBUG_PRINTF("send_fragment(): sending fragment %d with length %d to device %d \n",
 			conn->frag_cnt, packet_len, conn->device_id);
+
+		int j = 0;
+		for (j = 0; j < packet_len; j++) {
+			DEBUG_PRINTF("0x%02X ", fragmentation_buffer[j]);
+		}
+		DEBUG_PRINTF("\n");
+
 		return conn->send(fragmentation_buffer, packet_len, conn->device_id);
 	/*} else {
 		ATTEMPTS++;
@@ -1328,7 +1377,7 @@ static int8_t mic_correct(schc_fragmentation_t* rx_conn) {
 	mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
 
 	if (!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
-		return 0;
+		// return 0;
 	}
 
 	return 1;
@@ -2235,8 +2284,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 	if(conn->schc_rule == NULL) {
-		struct schc_rule_t* ptr = get_schc_rule_by_rule_id(data, device_id);
-		conn->schc_rule = ptr;
+		struct schc_rule_t* rule = get_schc_rule_by_rule_id(data, device_id);
+		conn->schc_rule = rule;
 		// todo
 		// if no rule was found
 		// this is a null pointer -> return function will get confused (checks for rule->mode)

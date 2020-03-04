@@ -15,9 +15,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "../schc.h"
 #include "../compressor.h"
 #include "../fragmenter.h"
-#include "../config.h"
 
 #include "timer.h"
 
@@ -30,7 +30,7 @@ int counter = 1;
 struct cb_t {
     schc_fragmentation_t* conn;
     void (*cb)(schc_fragmentation_t* conn);
-    struct cb_t_ *next;
+    struct cb_t *next;
 };
 
 struct cb_t *head = NULL;
@@ -42,11 +42,11 @@ schc_fragmentation_t tx_conn_ngw;
 // the ipv6/udp/coap packet
 uint8_t msg[] = {
 		// IPv6 header
-		0x60, 0x00, 0x00, 0x00, 0x00, 0x1E, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x60, 0x00, 0x00, 0x00, 0x00, 0xD4, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x02,
 		// UDP header
-		0x33, 0x16, 0x33, 0x17, 0x00, 0x1E, 0x27, 0x4E,
+		0x33, 0x16, 0x33, 0x17, 0x00, 0xD4, 0x19, 0xEA,
 		// CoAP header
 		0x54, 0x03, 0x23, 0xBB, 0x21, 0xFA, 0x01, 0xFB, 0xB5, 0x75, 0x73, 0x61, 0x67, 0x65, 0xD1, 0xEA, 0x1A, 0xFF,
 		// Data
@@ -95,7 +95,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
 
 	uint16_t packetlen = get_mbuf_len(conn->head); // calculate the length of the original packet
-	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen);
+	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen); // todo pass the mbuf chain to the decompressor
 	uint8_t decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 
 	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
@@ -104,7 +104,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = compressed_packet;
 	uint16_t new_packet_len = schc_decompress(&bit_arr, decomp_packet,
-			conn->device_id, packetlen, UP, NETWORK_GATEWAY);
+			conn->device_id, packetlen, UP);
 	if (new_packet_len == 0) { // some error occured
 		exit(0);
 	}
@@ -128,7 +128,8 @@ void timer_handler(size_t timer_id, void* user_data) {
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
-static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+static void set_tx_timer(void (*callback)(schc_fragmentation_t* conn),
+		uint32_t device_id, uint32_t delay, void *arg) {
 	counter++;
 
 	uint16_t delay_sec = delay / 1000;
@@ -147,9 +148,7 @@ static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
 		curr->next = cb_t_;
 	}
 
-	DEBUG_PRINTF("\n+------------------------+");
-	DEBUG_PRINTF("\n|         TX  %02d         |", counter);
-	DEBUG_PRINTF("\n+------------------------+\n");
+	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
 
 	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
@@ -165,7 +164,8 @@ static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
  * The timer used by the SCHC library to time out the reception of fragments
  * should have multiple timers for a device
  */
-static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+static void set_rx_timer(void (*callback)(schc_fragmentation_t* conn),
+		uint32_t device_id, uint32_t delay, void *arg) {
 	uint16_t delay_sec = delay / 1000;
 
 	struct cb_t* cb_t_= malloc(sizeof(struct cb_t)); // create on heap
@@ -202,9 +202,7 @@ void remove_timer_entry(uint32_t device_id) {
 
 void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
 
-	DEBUG_PRINTF("\n+------------------------+");
-	DEBUG_PRINTF("\n|         RX  %02d         |", counter);
-	DEBUG_PRINTF("\n+------------------------+\n");
+	DEBUG_PRINTF("\n+-------- RX  %02d --------+\n", counter);
 
 	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
 			receiving_conn, device_id); // get active connection and set the correct rule for this connection
@@ -273,7 +271,7 @@ int main() {
 	bit_arr.ptr = (uint8_t*) (compressed_packet);
 
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
-			UP, DEVICE, &schc_rule);
+			UP, &schc_rule);
 
 	tx_conn.mtu = 121; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
@@ -306,9 +304,7 @@ int main() {
 	tx_conn.post_timer_task = &set_tx_timer;
 
 	// start fragmentation loop
-	DEBUG_PRINTF("\n+------------------------+");
-	DEBUG_PRINTF("\n|         TX  %02d         |", counter);
-	DEBUG_PRINTF("\n+------------------------+\n");
+	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
 	int ret = schc_fragment(&tx_conn);
 
 	while(RUN) {

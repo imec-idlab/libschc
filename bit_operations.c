@@ -7,8 +7,8 @@
  *
  */
 
-#include "config.h"
 #include "bit_operations.h"
+#include "schc.h"
 
 /**
  * sets bits at a certain position in a bit array

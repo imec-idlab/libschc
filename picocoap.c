@@ -2,7 +2,8 @@
 #include <stddef.h>
 #include <string.h>
 #include "picocoap.h"
-#include "config.h"
+
+#include "schc.h"
 
 #if CLICK
 #include <click/config.h>
