@@ -50,7 +50,7 @@
 #define FCN_SIZE_BITS			3
 
 // the maximum number of fragments per window
-#define MAX_WIND_FCN			6
+#define WINDOW_SIZE			6
 
 // the number of DTAG bits
 #define DTAG_SIZE_BITS			0
