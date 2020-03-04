@@ -620,36 +620,37 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 			pcoap_set_token(msg, (uint8_t*) (dst.ptr + 4), tkl);
 		}
 
-		// now the options
 		uint8_t i;
 		// keep track of the coap_header index
 		field_length = (4 + tkl);
 
-
-		for(i = 0; i < rule->length; i++) {
+		for(i = 0; i < rule->length; i++) { // now the options
 			if( ( (rule->content[i].dir) == BI) || ( (rule->content[i].dir) == DI)) {
 				uint8_t j;
 				// check which options are included in the rule
 				for(j = 0; j < COAP_OPTIONS_LENGTH; j++) {
 					if( !strcmp(rule->content[i].field, coap_options[j].name) ) {
 						// for each matching value, create a new option in the message
-						uint8_t opt_len = msg->len;
 						pcoap_add_option(msg, coap_options[j].id,
 								(uint8_t*) (dst.ptr + field_length),
-								(rule->content[i].field_length / 8));
-						field_length += (msg->len - opt_len); // increased length matches option length
+ 								(rule->content[i].field_length / 8));
+						field_length += (rule->content[i].field_length / 8); // increased length matches option length
 					}
 				}
 			}
 		}
 
-		uint8_t coap_length = get_number_of_bytes_from_bits(dst.offset);
+		if(dst.ptr[field_length] == 0xFF) { // check if a payload marker is present in the decompressed rule
+			msg->buf[msg->len] = 0xFF;
+			msg->len = msg->len + 1;
+		}
+
 	} else {
 		DEBUG_PRINTF("decompress_coap_rule(): no CoAP rule was found");
 		return 0;
 	}
 
-	return field_length;
+	return msg->len;
 }
 #endif
 
@@ -892,7 +893,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 	set_rule_id((*schc_rule), dst->ptr); // set rule id
 
-	if((*schc_rule) == NULL) { /* **** no rule was found **** */
+	if((*schc_rule) == NULL) { // no rule was found
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 #if USE_IPv6
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
@@ -907,7 +908,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 		dst->offset += BYTES_TO_BITS(coap_length);
 #endif
 	}
-	else { /* **** a rule was found - compress **** */
+	else { // a rule was found - compress
 #if USE_IPv6
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule);
 #endif
@@ -943,8 +944,7 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 	DEBUG_PRINTF("\n\n");
 
-	// return the new length of the packet
-	return new_pkt_length;
+	return new_pkt_length; // return the new length of the packet
 }
 
 /**
@@ -1118,9 +1118,6 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #if USE_IPv6
 		if (ipv6_rule_id != 0) {
 			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr);
-			if (dir == DOWN) {
-				swap_ipv6_source_and_destination(dst_arr.ptr);
-			}
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1153,6 +1150,10 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 	copy_bits(buf, BYTES_TO_BITS(new_header_length), bit_arr->ptr, bit_arr->offset, payload_bit_length);
 	uint16_t payload_length = get_number_of_bytes_from_bits(payload_bit_length);
+
+	if (dir == DOWN) {
+		swap_ipv6_source_and_destination(buf);
+	}
 
 	compute_length(buf, (payload_length + new_header_length));
 	compute_checksum(buf);

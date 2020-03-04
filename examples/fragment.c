@@ -30,7 +30,7 @@ int counter = 1;
 struct cb_t {
     schc_fragmentation_t* conn;
     void (*cb)(schc_fragmentation_t* conn);
-    struct cb_t_ *next;
+    struct cb_t *next;
 };
 
 struct cb_t *head = NULL;
@@ -95,7 +95,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
 
 	uint16_t packetlen = get_mbuf_len(conn->head); // calculate the length of the original packet
-	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen);
+	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen); // todo pass the mbuf chain to the decompressor
 	uint8_t decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 
 	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
@@ -128,7 +128,8 @@ void timer_handler(size_t timer_id, void* user_data) {
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
-static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+static void set_tx_timer(void (*callback)(schc_fragmentation_t* conn),
+		uint32_t device_id, uint32_t delay, void *arg) {
 	counter++;
 
 	uint16_t delay_sec = delay / 1000;
@@ -163,7 +164,8 @@ static void set_tx_timer(void (*callback)(void* conn), uint32_t device_id, uint3
  * The timer used by the SCHC library to time out the reception of fragments
  * should have multiple timers for a device
  */
-static void set_rx_timer(void (*callback)(void* conn), uint32_t device_id, uint32_t delay, void *arg) {
+static void set_rx_timer(void (*callback)(schc_fragmentation_t* conn),
+		uint32_t device_id, uint32_t delay, void *arg) {
 	uint16_t delay_sec = delay / 1000;
 
 	struct cb_t* cb_t_= malloc(sizeof(struct cb_t)); // create on heap

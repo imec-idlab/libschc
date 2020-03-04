@@ -118,7 +118,7 @@ const static struct schc_coap_rule_t coap_rule1 = {
 		{
 				{ "version",		0,	2,	 1, BI,		{COAP_V1},		&equal,			NOTSENT },
 				{ "type",			4,	2,	 1, BI,		{CT_CON, CT_NON, CT_ACK, CT_RST},
-						&matchmap,	MAPPINGSENT	},
+						&matchmap,	MAPPINGSENT	}, // todo: non word-aligned matchmap
 				{ "token length",	0,	4,	 1, BI,		{4},			&equal,			NOTSENT },
 				{ "code",			0,	8,	 1, BI,		{CC_PUT},		&equal,			NOTSENT },
 				{ "message ID",		0,	16,	 1, BI,		{0x23, 0xBB},	&equal,			NOTSENT },
