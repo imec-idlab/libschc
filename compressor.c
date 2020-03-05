@@ -1184,5 +1184,5 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 #if CLICK
 ELEMENT_PROVIDES(schcCOMPRESSOR)
-ELEMENT_REQUIRES(schcJSON schcCOAP)
+ELEMENT_REQUIRES(schcJSON schcCOAP schcBIT)
 #endif

@@ -6,6 +6,12 @@
  * This file is part of the SCHC stack implementation
  *
  */
+#ifndef _SCHC_BIT_H_
+#define _SCHC_BIT_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdint.h>
 
@@ -58,3 +64,10 @@ uint8_t get_position_in_first_byte(uint8_t value);
 
 // remove padding
 uint8_t padded(schc_bitarray_t* bit_array);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
