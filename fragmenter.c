@@ -2316,4 +2316,5 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 
 #if CLICK
 ELEMENT_PROVIDES(schcFRAGMENTER)
+ELEMENT_REQUIRES(schcBIT)
 #endif

@@ -8,7 +8,10 @@
  */
 
 #include "bit_operations.h"
-#include "schc.h"
+
+#if CLICK
+#include <click/config.h>
+#endif
 
 /**
  * sets bits at a certain position in a bit array
@@ -324,3 +327,6 @@ uint8_t padded(schc_bitarray_t* bit_array) {
 	return 0;
 }
 
+#if CLICK
+ELEMENT_PROVIDES(schcBIT)
+#endif
