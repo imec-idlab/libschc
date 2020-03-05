@@ -16,7 +16,7 @@
 #include "compressor.h"
 #include "schc_config.h"
 
-#include "rules/rules_lwm2m.h" // todo add to config file
+#include "rules/rule_config.h"
 
 #if CLICK
 #include <click/config.h>

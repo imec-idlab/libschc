@@ -1,5 +1,8 @@
 schc_config.h
 click_config.h
-rules.h
+rules/rules.h
+rules/rule_config.h
 
 examples/compress
+examples/fragment
+examples/lwm2m
