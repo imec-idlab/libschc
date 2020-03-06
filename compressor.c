@@ -484,12 +484,16 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 		} else if(layer == SCHC_UDP) {
 			max_layer_fields = UDP_FIELDS;
 			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->udp_rule;
-		} else if (layer == SCHC_COAP) {
+		}
+#if USE_COAP
+		else if (layer == SCHC_COAP) {
 			max_layer_fields = COAP_FIELDS;
 			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->coap_rule;
-		} else {
+		}
+#endif
+		else {
 			DEBUG_PRINTF(
-					"schc_find_rule_from_header(): no layer specified");
+					"schc_find_rule_from_header(): no layer specified \n");
 			return NULL;
 		}
 
@@ -505,6 +509,8 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 				if (!curr_rule->content[k].MO(&curr_rule->content[k],
 						(uint8_t*) (src->ptr + src_pos), (src->offset % 8))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
+					DEBUG_PRINTF(
+							"schc_find_rule_from_header(): skipped rule %d due to %s \n",curr_rule->rule_id ,curr_rule->content[k].field);
 					break;
 				} else {
 					rule_is_found = 1;
@@ -888,11 +894,11 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	if(coap_rule != NULL) {
 		coap_rule_id = coap_rule->rule_id;
 	}
+
+	src.offset = 0; coap_src.offset = 0; // reset the bit arrays offset and start compressing
 #endif
 
 	DEBUG_PRINTF("schc_compress(): IPv6 rule: %d, UDP rule: %d, CoAP rule: %d \n", ipv6_rule_id, udp_rule_id, coap_rule_id);
-
-	src.offset = 0; coap_src.offset = 0; // reset the bit arrays offset and start compressing
 
 	// find the rule for this device by combining the available id's // todo pointers?
 	uint8_t id_pos = get_position_in_first_byte(RULE_SIZE_BITS);
