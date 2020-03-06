@@ -513,7 +513,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 				j++;
 			}
 			k++; // increment to skip other directions
-			if(k >= max_layer_fields) {
+			if(k > max_layer_fields) {
 				DEBUG_PRINTF("schc_find_rule_from_header(): more fields present than LAYER_FIELDS \n");
 				return NULL;
 			}
