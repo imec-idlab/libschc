@@ -1163,12 +1163,12 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		swap_ipv6_source_and_destination(buf);
 	}
 
-	compute_length(buf, (payload_length + new_header_length));
-	compute_checksum(buf);
-
 	if(padded(bit_arr)) { // remove padding
 		payload_length--;
 	}
+
+	compute_length(buf, (payload_length + new_header_length));
+	compute_checksum(buf);
 
 	DEBUG_PRINTF("schc_decompress(): header length: %d, payload length %d \n", new_header_length, payload_length);
 
