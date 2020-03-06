@@ -1069,6 +1069,8 @@ uint16_t compute_checksum(unsigned char *data) {
 uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir) {
 	uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
+
+	// prepare output buffer
 	bit_arr->offset = RULE_SIZE_BITS;
 
 	struct schc_rule_t *rule = get_schc_rule_by_rule_id(bit_arr->ptr, device_id);

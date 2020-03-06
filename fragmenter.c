@@ -819,9 +819,9 @@ void schc_reset(schc_fragmentation_t* conn) {
 	/* reset connection variables */
 	conn->device_id = 0;
 	conn->packet_len = 0;
-	if(conn->bit_arr) {
-		conn->bit_arr->ptr = 0;
-	}
+//	if(conn->bit_arr != NULL) {
+//		conn->bit_arr->ptr = NULL;
+//	}
 	conn->tail_ptr = 0;
 	conn->dc = 0;
 	conn->mtu = 0;

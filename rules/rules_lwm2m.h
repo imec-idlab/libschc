@@ -67,7 +67,7 @@ const static struct schc_coap_rule_t lwm2m_registration_rule = {
                 		&equal,         NOTSENT },
 		        { "uri-query",          0,      24,     1, UP,      "b=U",			&equal,         NOTSENT },
 		        { "uri-query",          0,      48,     1, UP,      "lt=300",		&equal,         NOTSENT },
-				{ "payload marker",   	0,      1,   	1, UP,		{0xFF},			&equal,         NOTSENT }
+				{ "payload marker",   	0,      8,   	1, UP,		{0xFF},			&equal,         NOTSENT }
 		}
 };
 
