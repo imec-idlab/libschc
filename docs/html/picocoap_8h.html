@@ -120,6 +120,8 @@ Macros</h2></td></tr>
 <tr class="separator:a25528ec74a52f6c3c1c90298e797cae4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87fd7d7dd618371cbc930e30bf1c27d9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a87fd7d7dd618371cbc930e30bf1c27d9">COAP_NON_LIFETIME</a>&#160;&#160;&#160;145</td></tr>
 <tr class="separator:a87fd7d7dd618371cbc930e30bf1c27d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32c693bd3dc87d85f8256028e9f0e0bf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a32c693bd3dc87d85f8256028e9f0e0bf">COAP_OPTIONS_LENGTH</a>&#160;&#160;&#160;16</td></tr>
+<tr class="separator:a32c693bd3dc87d85f8256028e9f0e0bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -327,8 +329,8 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a25294a87ed5e837d7ed611e767dbdfd3"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structpcoap__option__names.html">pcoap_option_names</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a25294a87ed5e837d7ed611e767dbdfd3">coap_options</a> [16]</td></tr>
-<tr class="separator:a25294a87ed5e837d7ed611e767dbdfd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18cfdd40118563c137b6b911332dde6e"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structpcoap__option__names.html">pcoap_option_names</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="picocoap_8h.html#a18cfdd40118563c137b6b911332dde6e">coap_options</a> [<a class="el" href="picocoap_8h.html#a32c693bd3dc87d85f8256028e9f0e0bf">COAP_OPTIONS_LENGTH</a>]</td></tr>
+<tr class="separator:a18cfdd40118563c137b6b911332dde6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a343c27d1c7ad3346aec70646caa341a0"></a>
@@ -481,6 +483,20 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define COAP_NSTART&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a32c693bd3dc87d85f8256028e9f0e0bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32c693bd3dc87d85f8256028e9f0e0bf">&#9670;&nbsp;</a></span>COAP_OPTIONS_LENGTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define COAP_OPTIONS_LENGTH&#160;&#160;&#160;16</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1791,8 +1807,8 @@ coap_init_pdu </dd></dl>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="a25294a87ed5e837d7ed611e767dbdfd3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25294a87ed5e837d7ed611e767dbdfd3">&#9670;&nbsp;</a></span>coap_options</h2>
+<a id="a18cfdd40118563c137b6b911332dde6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18cfdd40118563c137b6b911332dde6e">&#9670;&nbsp;</a></span>coap_options</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1801,7 +1817,7 @@ coap_init_pdu </dd></dl>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">struct <a class="el" href="structpcoap__option__names.html">pcoap_option_names</a> coap_options[16]</td>
+          <td class="memname">struct <a class="el" href="structpcoap__option__names.html">pcoap_option_names</a> coap_options[<a class="el" href="picocoap_8h.html#a32c693bd3dc87d85f8256028e9f0e0bf">COAP_OPTIONS_LENGTH</a>]</td>
         </tr>
       </table>
   </td>

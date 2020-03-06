@@ -1,5 +1,6 @@
 \hypertarget{fragmenter_8h}{}\doxysection{fragmenter.\+h File Reference}
 \label{fragmenter_8h}\index{fragmenter.h@{fragmenter.h}}
+{\ttfamily \#include \char`\"{}schc.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
 \doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
@@ -60,7 +61,7 @@ enum \mbox{\hyperlink{fragmenter_8h_a20874253e23bc4c1d20f69479175ce6f}{rx\+\_\+s
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}{schc\+\_\+fragmenter\+\_\+init}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, void($\ast$send)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id), void($\ast$end\+\_\+rx)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn), void($\ast$remove\+\_\+timer\+\_\+entry)(uint32\+\_\+t device\+\_\+id))
+int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_adaabb8a36ff87d9f89d8215b2773c6c7}{schc\+\_\+fragmenter\+\_\+init}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, uint8\+\_\+t($\ast$send)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id), void($\ast$end\+\_\+rx)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn), void($\ast$remove\+\_\+timer\+\_\+entry)(uint32\+\_\+t device\+\_\+id))
 \begin{DoxyCompactList}\small\item\em Initializes the S\+C\+HC fragmenter. \end{DoxyCompactList}\item 
 int8\+\_\+t \mbox{\hyperlink{fragmenter_8h_a5c375e7b44652a0eccb9248083a6251d}{schc\+\_\+fragment}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn)
 \begin{DoxyCompactList}\small\item\em the sender state machine \end{DoxyCompactList}\item 
@@ -330,11 +331,11 @@ This function should be called whenever a fragment is received an open connectio
 \begin{DoxyReturn}{Returns}
 conn the connection 
 \end{DoxyReturn}
-\mbox{\Hypertarget{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}\label{fragmenter_8h_a8d563c2c366a59b52ae25123a38c7603}} 
+\mbox{\Hypertarget{fragmenter_8h_adaabb8a36ff87d9f89d8215b2773c6c7}\label{fragmenter_8h_adaabb8a36ff87d9f89d8215b2773c6c7}} 
 \index{fragmenter.h@{fragmenter.h}!schc\_fragmenter\_init@{schc\_fragmenter\_init}}
 \index{schc\_fragmenter\_init@{schc\_fragmenter\_init}!fragmenter.h@{fragmenter.h}}
 \doxysubsubsection{\texorpdfstring{schc\_fragmenter\_init()}{schc\_fragmenter\_init()}}
-{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragmenter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{void($\ast$)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id)}]{send,  }\item[{void($\ast$)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}]{end\+\_\+rx,  }\item[{void($\ast$)(uint32\+\_\+t device\+\_\+id)}]{remove\+\_\+timer\+\_\+entry }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragmenter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{uint8\+\_\+t($\ast$)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id)}]{send,  }\item[{void($\ast$)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}]{end\+\_\+rx,  }\item[{void($\ast$)(uint32\+\_\+t device\+\_\+id)}]{remove\+\_\+timer\+\_\+entry }\end{DoxyParamCaption})}
 
 
 

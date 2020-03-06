@@ -72,13 +72,13 @@ $(function() {
 <code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="jsmn_8h_source.html">jsmn.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="picocoap_8h_source.html">picocoap.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="rules_8h_source.html">rules.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="compressor_8h_source.html">compressor.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="schc__config_8h_source.html">schc_config.h</a>&quot;</code><br />
+<code>#include &quot;rules/rule_config.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac1569580e90e636a6d48366af83f3164"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ac1569580e90e636a6d48366af83f3164">get_node_ip</a> (<a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *node_ip)</td></tr>
+<tr class="memitem:ac1569580e90e636a6d48366af83f3164"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ac1569580e90e636a6d48366af83f3164">get_node_ip</a> (<a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *node_ip)</td></tr>
 <tr class="memdesc:ac1569580e90e636a6d48366af83f3164"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the node its IP address as set during initialization.  <a href="compressor_8c.html#ac1569580e90e636a6d48366af83f3164">More...</a><br /></td></tr>
 <tr class="separator:ac1569580e90e636a6d48366af83f3164"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9e32a3cb72316274db7b597a9aca407"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__device.html">schc_device</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ac9e32a3cb72316274db7b597a9aca407">get_device_by_id</a> (uint32_t device_id)</td></tr>
@@ -86,69 +86,45 @@ Functions</h2></td></tr>
 <tr class="separator:ac9e32a3cb72316274db7b597a9aca407"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15002a02e9cae01e5629cb2d474fe482"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a15002a02e9cae01e5629cb2d474fe482">set_rule_id</a> (struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *schc_rule, uint8_t *data)</td></tr>
 <tr class="separator:a15002a02e9cae01e5629cb2d474fe482"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf76c0525a94eecb1f694ba09b435c49"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#aaf76c0525a94eecb1f694ba09b435c49">get_schc_rule_by_reliability_mode</a> (struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *schc_rule, <a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> mode, uint32_t device_id)</td></tr>
+<tr class="memitem:aaf76c0525a94eecb1f694ba09b435c49"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#aaf76c0525a94eecb1f694ba09b435c49">get_schc_rule_by_reliability_mode</a> (struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *schc_rule, <a class="el" href="schc_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> mode, uint32_t device_id)</td></tr>
 <tr class="separator:aaf76c0525a94eecb1f694ba09b435c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1cdc4ecc8218636dd177a43cf85bb63"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ab1cdc4ecc8218636dd177a43cf85bb63">get_schc_rule_by_layer_ids</a> (uint8_t ip_rule_id, uint8_t udp_rule_id, uint8_t coap_rule_id, uint32_t device_id, <a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> mode)</td></tr>
+<tr class="memitem:ab1cdc4ecc8218636dd177a43cf85bb63"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ab1cdc4ecc8218636dd177a43cf85bb63">get_schc_rule_by_layer_ids</a> (uint8_t ip_rule_id, uint8_t udp_rule_id, uint8_t coap_rule_id, uint32_t device_id, <a class="el" href="schc_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a> mode)</td></tr>
 <tr class="separator:ab1cdc4ecc8218636dd177a43cf85bb63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bafc11a567bc093210ab7cb3afe650f"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a5bafc11a567bc093210ab7cb3afe650f">get_schc_rule_by_rule_id</a> (uint8_t rule_id, uint32_t device_id)</td></tr>
-<tr class="separator:a5bafc11a567bc093210ab7cb3afe650f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a011f3d1c1af22b637345516f372e67ec"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a011f3d1c1af22b637345516f372e67ec">compress</a> (unsigned char *schc_header, unsigned char *header, uint16_t cols, const struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *rule)</td></tr>
-<tr class="memdesc:a011f3d1c1af22b637345516f372e67ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compression mechanism.  <a href="compressor_8c.html#a011f3d1c1af22b637345516f372e67ec">More...</a><br /></td></tr>
-<tr class="separator:a011f3d1c1af22b637345516f372e67ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb2e4f6850b938ede75698f05fc09df7"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#aeb2e4f6850b938ede75698f05fc09df7">decompress</a> (unsigned char *schc_header, const struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *rule, unsigned char *data, uint8_t *header_offset)</td></tr>
-<tr class="memdesc:aeb2e4f6850b938ede75698f05fc09df7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The decompression mechanism.  <a href="compressor_8c.html#aeb2e4f6850b938ede75698f05fc09df7">More...</a><br /></td></tr>
-<tr class="separator:aeb2e4f6850b938ede75698f05fc09df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a282d7dd1e4fca538ce83c2b59f80f025"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a282d7dd1e4fca538ce83c2b59f80f025">generate_ip_udp_header_struct</a> (const uint8_t *data, struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *ip_udp_header)</td></tr>
-<tr class="memdesc:a282d7dd1e4fca538ce83c2b59f80f025"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the passed IP/UDP header struct from a 8-bit buffer.  <a href="compressor_8c.html#a282d7dd1e4fca538ce83c2b59f80f025">More...</a><br /></td></tr>
-<tr class="separator:a282d7dd1e4fca538ce83c2b59f80f025"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a833249a99cd83a96924d83a54653d524"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a833249a99cd83a96924d83a54653d524">generate_ip_header_fields</a> (struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *ip_udp_header)</td></tr>
-<tr class="memdesc:a833249a99cd83a96924d83a54653d524"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a unified unsigned char array, based on the IP header provided.  <a href="compressor_8c.html#a833249a99cd83a96924d83a54653d524">More...</a><br /></td></tr>
-<tr class="separator:a833249a99cd83a96924d83a54653d524"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8a76b825f1ad7fe92118e7604c59cce"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__ipv6__rule__t.html">schc_ipv6_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#aa8a76b825f1ad7fe92118e7604c59cce">schc_find_ipv6_rule_from_header</a> (struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *ip_udp_header, uint32_t device_id)</td></tr>
-<tr class="memdesc:aa8a76b825f1ad7fe92118e7604c59cce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a matching rule for the IP header.  <a href="compressor_8c.html#aa8a76b825f1ad7fe92118e7604c59cce">More...</a><br /></td></tr>
-<tr class="separator:aa8a76b825f1ad7fe92118e7604c59cce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1320d30f4ad75c404538114bad13bec6"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a1320d30f4ad75c404538114bad13bec6">decompress_ipv6_rule</a> (struct <a class="el" href="structschc__ipv6__rule__t.html">schc_ipv6_rule_t</a> *rule, unsigned char *data, unsigned char *pckt_out, uint8_t *header_offset)</td></tr>
-<tr class="memdesc:a1320d30f4ad75c404538114bad13bec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompress an IPv6 rule, based on an input packet.  <a href="compressor_8c.html#a1320d30f4ad75c404538114bad13bec6">More...</a><br /></td></tr>
-<tr class="separator:a1320d30f4ad75c404538114bad13bec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33691e9bd9cf5b38a033863deddc2c44"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a33691e9bd9cf5b38a033863deddc2c44">generate_udp_header_fields</a> (struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *ip_udp_header)</td></tr>
-<tr class="memdesc:a33691e9bd9cf5b38a033863deddc2c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a unified unsigned char array, based on the UDP header provided.  <a href="compressor_8c.html#a33691e9bd9cf5b38a033863deddc2c44">More...</a><br /></td></tr>
-<tr class="separator:a33691e9bd9cf5b38a033863deddc2c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a899a5ee1d8a65d6df0143667b3f218e0"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__udp__rule__t.html">schc_udp_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a899a5ee1d8a65d6df0143667b3f218e0">schc_find_udp_rule_from_header</a> (const struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *ip_udp_header, uint32_t device_id)</td></tr>
-<tr class="memdesc:a899a5ee1d8a65d6df0143667b3f218e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a matching rule for the UDP header.  <a href="compressor_8c.html#a899a5ee1d8a65d6df0143667b3f218e0">More...</a><br /></td></tr>
-<tr class="separator:a899a5ee1d8a65d6df0143667b3f218e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c03acf1d57759cfe3d4e514bcf8d914"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a2c03acf1d57759cfe3d4e514bcf8d914">decompress_udp_rule</a> (struct <a class="el" href="structschc__udp__rule__t.html">schc_udp_rule_t</a> *rule, unsigned char *data, unsigned char *pckt_out, uint8_t *header_offset)</td></tr>
-<tr class="memdesc:a2c03acf1d57759cfe3d4e514bcf8d914"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompress a UDP rule, based on an input packet.  <a href="compressor_8c.html#a2c03acf1d57759cfe3d4e514bcf8d914">More...</a><br /></td></tr>
-<tr class="separator:a2c03acf1d57759cfe3d4e514bcf8d914"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a245641c6d319735ed5b7bf171fbede17"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a245641c6d319735ed5b7bf171fbede17">generate_coap_header_fields</a> (<a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *pdu)</td></tr>
-<tr class="memdesc:a245641c6d319735ed5b7bf171fbede17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates an unsigned char array, based on the CoAP header provided.  <a href="compressor_8c.html#a245641c6d319735ed5b7bf171fbede17">More...</a><br /></td></tr>
-<tr class="separator:a245641c6d319735ed5b7bf171fbede17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6513773b3be40ec48f9db466ad89e37"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__coap__rule__t.html">schc_coap_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#af6513773b3be40ec48f9db466ad89e37">schc_find_coap_rule_from_header</a> (<a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *pdu, uint32_t device_id)</td></tr>
-<tr class="memdesc:af6513773b3be40ec48f9db466ad89e37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a matching rule for the CoAP header for a device id.  <a href="compressor_8c.html#af6513773b3be40ec48f9db466ad89e37">More...</a><br /></td></tr>
-<tr class="separator:af6513773b3be40ec48f9db466ad89e37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a101b46fd538512a0324fc51b2d3a20ae"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a101b46fd538512a0324fc51b2d3a20ae">decompress_coap_rule</a> (struct <a class="el" href="structschc__coap__rule__t.html">schc_coap_rule_t</a> *rule, unsigned char *data, uint8_t *header_offset, <a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *msg)</td></tr>
-<tr class="memdesc:a101b46fd538512a0324fc51b2d3a20ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompress a CoAP rule, based on an input packet.  <a href="compressor_8c.html#a101b46fd538512a0324fc51b2d3a20ae">More...</a><br /></td></tr>
-<tr class="separator:a101b46fd538512a0324fc51b2d3a20ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61950fdd581e34878efece4973ac1159"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a61950fdd581e34878efece4973ac1159">equal</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value)</td></tr>
-<tr class="memdesc:a61950fdd581e34878efece4973ac1159"><td class="mdescLeft">&#160;</td><td class="mdescRight">The equal matching operator.  <a href="compressor_8c.html#a61950fdd581e34878efece4973ac1159">More...</a><br /></td></tr>
-<tr class="separator:a61950fdd581e34878efece4973ac1159"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3700c9316a3fa2826dd77686c161638c"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a3700c9316a3fa2826dd77686c161638c">ignore</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value)</td></tr>
-<tr class="memdesc:a3700c9316a3fa2826dd77686c161638c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ignore matching operator.  <a href="compressor_8c.html#a3700c9316a3fa2826dd77686c161638c">More...</a><br /></td></tr>
-<tr class="separator:a3700c9316a3fa2826dd77686c161638c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e20dc749624654a5c2a59a7ab0a45b8"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a6e20dc749624654a5c2a59a7ab0a45b8">MSB</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value)</td></tr>
-<tr class="memdesc:a6e20dc749624654a5c2a59a7ab0a45b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MSB matching operator.  <a href="compressor_8c.html#a6e20dc749624654a5c2a59a7ab0a45b8">More...</a><br /></td></tr>
-<tr class="separator:a6e20dc749624654a5c2a59a7ab0a45b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6535816b00df52f9f7b05970feca0a"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#aaa6535816b00df52f9f7b05970feca0a">matchmap</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value)</td></tr>
-<tr class="memdesc:aaa6535816b00df52f9f7b05970feca0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The match-map matching operator.  <a href="compressor_8c.html#aaa6535816b00df52f9f7b05970feca0a">More...</a><br /></td></tr>
-<tr class="separator:aaa6535816b00df52f9f7b05970feca0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e74925e4bb4cb937a3ac4b951f41119"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a3e74925e4bb4cb937a3ac4b951f41119">set_node_ip</a> (<a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *node_ip)</td></tr>
+<tr class="memitem:a0403165232716bdd5f3a06169692c2a9"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a0403165232716bdd5f3a06169692c2a9">get_schc_rule_by_rule_id</a> (uint8_t *rule_arr, uint32_t device_id)</td></tr>
+<tr class="separator:a0403165232716bdd5f3a06169692c2a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a965c3a63dd22c405c83c4164f10f9985"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a965c3a63dd22c405c83c4164f10f9985">compress</a> (<a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *dst, <a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *src, const struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *rule, <a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> DI)</td></tr>
+<tr class="memdesc:a965c3a63dd22c405c83c4164f10f9985"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compression mechanism.  <a href="compressor_8c.html#a965c3a63dd22c405c83c4164f10f9985">More...</a><br /></td></tr>
+<tr class="separator:a965c3a63dd22c405c83c4164f10f9985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8317d5d5e72076851ec7fe49688f4a7"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#af8317d5d5e72076851ec7fe49688f4a7">decompress</a> (struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *rule, <a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *src, <a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *dst, <a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> DI)</td></tr>
+<tr class="memdesc:af8317d5d5e72076851ec7fe49688f4a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The decompression mechanism.  <a href="compressor_8c.html#af8317d5d5e72076851ec7fe49688f4a7">More...</a><br /></td></tr>
+<tr class="separator:af8317d5d5e72076851ec7fe49688f4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8137a81bb5ae333086b8aaf814b10a62"><td class="memItemLeft" align="right" valign="top">static struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a8137a81bb5ae333086b8aaf814b10a62">schc_find_rule_from_header</a> (<a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *src, uint32_t device_id, <a class="el" href="schc_8h.html#ac6a26bb50f32ca8810179e894e284ea0">schc_layer_t</a> layer, <a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> DI)</td></tr>
+<tr class="memdesc:a8137a81bb5ae333086b8aaf814b10a62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a matching rule for a layer.  <a href="compressor_8c.html#a8137a81bb5ae333086b8aaf814b10a62">More...</a><br /></td></tr>
+<tr class="separator:a8137a81bb5ae333086b8aaf814b10a62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a263bfe2b1b6914b5b715f434f154d07b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a263bfe2b1b6914b5b715f434f154d07b">swap_ipv6_source_and_destination</a> (uint8_t *ptr)</td></tr>
+<tr class="memdesc:a263bfe2b1b6914b5b715f434f154d07b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps the IPv6 source and destination.  <a href="compressor_8c.html#a263bfe2b1b6914b5b715f434f154d07b">More...</a><br /></td></tr>
+<tr class="separator:a263bfe2b1b6914b5b715f434f154d07b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9991f6ae222b8d657ebb0e0b162ea282"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a9991f6ae222b8d657ebb0e0b162ea282">equal</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value, uint16_t field_offset)</td></tr>
+<tr class="memdesc:a9991f6ae222b8d657ebb0e0b162ea282"><td class="mdescLeft">&#160;</td><td class="mdescRight">The equal matching operator.  <a href="compressor_8c.html#a9991f6ae222b8d657ebb0e0b162ea282">More...</a><br /></td></tr>
+<tr class="separator:a9991f6ae222b8d657ebb0e0b162ea282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a394540a77045dcb0230079435b631960"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a394540a77045dcb0230079435b631960">ignore</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value, uint16_t field_offset)</td></tr>
+<tr class="memdesc:a394540a77045dcb0230079435b631960"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ignore matching operator.  <a href="compressor_8c.html#a394540a77045dcb0230079435b631960">More...</a><br /></td></tr>
+<tr class="separator:a394540a77045dcb0230079435b631960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd91def21b62074e08368e9bb11593d5"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#abd91def21b62074e08368e9bb11593d5">MSB</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value, uint16_t field_offset)</td></tr>
+<tr class="memdesc:abd91def21b62074e08368e9bb11593d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MSB matching operator MSB(x): a match is obtained if the most significant (leftmost) x bits of the packet header field value are equal to the TV in the Rule.  <a href="compressor_8c.html#abd91def21b62074e08368e9bb11593d5">More...</a><br /></td></tr>
+<tr class="separator:abd91def21b62074e08368e9bb11593d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5371dbc9847ed58dc760b7f028ea14e9"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a5371dbc9847ed58dc760b7f028ea14e9">matchmap</a> (struct <a class="el" href="structschc__field.html">schc_field</a> *target_field, unsigned char *field_value, uint16_t field_offset)</td></tr>
+<tr class="memdesc:a5371dbc9847ed58dc760b7f028ea14e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The match-map matching operator match-mapping: With match-mapping, the Target Value is a list of values.  <a href="compressor_8c.html#a5371dbc9847ed58dc760b7f028ea14e9">More...</a><br /></td></tr>
+<tr class="separator:a5371dbc9847ed58dc760b7f028ea14e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e74925e4bb4cb937a3ac4b951f41119"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a3e74925e4bb4cb937a3ac4b951f41119">set_node_ip</a> (<a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *node_ip)</td></tr>
 <tr class="memdesc:a3e74925e4bb4cb937a3ac4b951f41119"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notifies the compressor about the node its IP address.  <a href="compressor_8c.html#a3e74925e4bb4cb937a3ac4b951f41119">More...</a><br /></td></tr>
 <tr class="separator:a3e74925e4bb4cb937a3ac4b951f41119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fd03f3acd56b4bf55fc4c8e48567ab7"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a4fd03f3acd56b4bf55fc4c8e48567ab7">schc_compressor_init</a> (uint8_t src[16])</td></tr>
 <tr class="memdesc:a4fd03f3acd56b4bf55fc4c8e48567ab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SCHC compressor.  <a href="compressor_8c.html#a4fd03f3acd56b4bf55fc4c8e48567ab7">More...</a><br /></td></tr>
 <tr class="separator:a4fd03f3acd56b4bf55fc4c8e48567ab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36e8de302d391da17499a00daaf598de"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a36e8de302d391da17499a00daaf598de">schc_compress</a> (const uint8_t *data, uint8_t *buf, uint16_t total_length, uint32_t device_id, <a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> dir, <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a> <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a>, struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> **schc_rule)</td></tr>
-<tr class="memdesc:a36e8de302d391da17499a00daaf598de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compresses a CoAP/UDP/IP packet.  <a href="compressor_8c.html#a36e8de302d391da17499a00daaf598de">More...</a><br /></td></tr>
-<tr class="separator:a36e8de302d391da17499a00daaf598de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b8fe3cf10dcb9935bcbc92bb1b9c8f9"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a7b8fe3cf10dcb9935bcbc92bb1b9c8f9">schc_compress</a> (uint8_t *data, uint16_t total_length, <a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *dst, uint32_t device_id, <a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> dir, struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a> **schc_rule)</td></tr>
+<tr class="memdesc:a7b8fe3cf10dcb9935bcbc92bb1b9c8f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compresses a CoAP/UDP/IP packet.  <a href="compressor_8c.html#a7b8fe3cf10dcb9935bcbc92bb1b9c8f9">More...</a><br /></td></tr>
+<tr class="separator:a7b8fe3cf10dcb9935bcbc92bb1b9c8f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67645e8b7174e226c4fd4892f81ae517"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a67645e8b7174e226c4fd4892f81ae517">compute_length</a> (unsigned char *data, uint16_t data_len)</td></tr>
 <tr class="memdesc:a67645e8b7174e226c4fd4892f81ae517"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the packet length for the UDP and IP headers.  <a href="compressor_8c.html#a67645e8b7174e226c4fd4892f81ae517">More...</a><br /></td></tr>
 <tr class="separator:a67645e8b7174e226c4fd4892f81ae517"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,28 +133,18 @@ Functions</h2></td></tr>
 <tr class="memitem:a89368d1a9e14855697684aa89b0f1aac"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a89368d1a9e14855697684aa89b0f1aac">compute_checksum</a> (unsigned char *data)</td></tr>
 <tr class="memdesc:a89368d1a9e14855697684aa89b0f1aac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the UDP checksum and sets the appropriate header fields.  <a href="compressor_8c.html#a89368d1a9e14855697684aa89b0f1aac">More...</a><br /></td></tr>
 <tr class="separator:a89368d1a9e14855697684aa89b0f1aac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7cac7873bdecbbf5ea769d90d91cc7e"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#ab7cac7873bdecbbf5ea769d90d91cc7e">schc_decompress</a> (const uint8_t *data, uint8_t *buf, uint32_t device_id, uint16_t total_length, <a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> dir, <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a> <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a>)</td></tr>
-<tr class="memdesc:ab7cac7873bdecbbf5ea769d90d91cc7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the header from the layered set of rules.  <a href="compressor_8c.html#ab7cac7873bdecbbf5ea769d90d91cc7e">More...</a><br /></td></tr>
-<tr class="separator:ab7cac7873bdecbbf5ea769d90d91cc7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8af6027989d3e39cdcc37f16ff38d7ff"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a8af6027989d3e39cdcc37f16ff38d7ff">schc_decompress</a> (<a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *bit_arr, uint8_t *buf, uint32_t device_id, uint16_t total_length, <a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> dir)</td></tr>
+<tr class="memdesc:a8af6027989d3e39cdcc37f16ff38d7ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the header from the layered set of rules.  <a href="compressor_8c.html#a8af6027989d3e39cdcc37f16ff38d7ff">More...</a><br /></td></tr>
+<tr class="separator:a8af6027989d3e39cdcc37f16ff38d7ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a9002ee397432c569fdda24ab772716e5"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a9002ee397432c569fdda24ab772716e5">DI</a></td></tr>
-<tr class="separator:a9002ee397432c569fdda24ab772716e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b2173bb0d4d2c74c3f1e683922ac905"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a8b2173bb0d4d2c74c3f1e683922ac905">DEVICE_TYPE</a></td></tr>
-<tr class="separator:a8b2173bb0d4d2c74c3f1e683922ac905"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af88fc53bc74390cc215e9b1548f38359"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#af88fc53bc74390cc215e9b1548f38359">node_ip_6</a></td></tr>
+<tr class="memitem:af88fc53bc74390cc215e9b1548f38359"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#af88fc53bc74390cc215e9b1548f38359">node_ip_6</a></td></tr>
 <tr class="separator:af88fc53bc74390cc215e9b1548f38359"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a832436cdee822ecccd06537f5e889955"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjsmn__parser.html">jsmn_parser</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a832436cdee822ecccd06537f5e889955">json_parser</a></td></tr>
 <tr class="separator:a832436cdee822ecccd06537f5e889955"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d19fbe1409f7470283881e0b642c417"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structjsmntok__t.html">jsmntok_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a6d19fbe1409f7470283881e0b642c417">json_token</a> [<a class="el" href="schc__config__example_8h.html#a4e7d67d7aea26c4f57d1098595f90662">JSON_TOKENS</a>]</td></tr>
 <tr class="separator:a6d19fbe1409f7470283881e0b642c417"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a092ee897de6debb778fc14e1f242dc18"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a092ee897de6debb778fc14e1f242dc18">ipv6_header_fields</a> [<a class="el" href="schc__config__example_8h.html#ae1b67de7a1c26318d23f1c34e89fb989">IPV6_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#a96b977962436620ec037645e3e2e0ee8">MAX_IPV6_FIELD_LENGTH</a>]</td></tr>
-<tr class="separator:a092ee897de6debb778fc14e1f242dc18"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19692020241c44be02a07c6ac77b3d92"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#a19692020241c44be02a07c6ac77b3d92">udp_header_fields</a> [<a class="el" href="schc__config__example_8h.html#aed36719a087639bf1875b85276f09e55">UDP_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#aac32e96e8faf7ff86aced84537107bca">MAX_UDP_FIELD_LENGTH</a>]</td></tr>
-<tr class="separator:a19692020241c44be02a07c6ac77b3d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb9db911b050d292c34053ab9e8cdf8c"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="compressor_8c.html#afb9db911b050d292c34053ab9e8cdf8c">coap_header_fields</a> [<a class="el" href="schc__config__example_8h.html#af1690024e8fe24a690d86ec4dd5d3bb6">COAP_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#aa6420ecddb30151dd25bc1a2da3aacd1">MAX_COAP_FIELD_LENGTH</a>]</td></tr>
-<tr class="separator:afb9db911b050d292c34053ab9e8cdf8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aa4e0f02b97163cd6f8c09b6ac5736aa7"></a>
@@ -223,8 +189,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a011f3d1c1af22b637345516f372e67ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a011f3d1c1af22b637345516f372e67ec">&#9670;&nbsp;</a></span>compress()</h2>
+<a id="a965c3a63dd22c405c83c4164f10f9985"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a965c3a63dd22c405c83c4164f10f9985">&#9670;&nbsp;</a></span>compress()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,26 +201,26 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">static uint8_t compress </td>
           <td>(</td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>schc_header</em>, </td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>header</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>cols</em>, </td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *&#160;</td>
-          <td class="paramname"><em>rule</em>&#160;</td>
+          <td class="paramname"><em>rule</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
+          <td class="paramname"><em>DI</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -272,9 +238,8 @@ Variables</h2></td></tr>
 <p>The compression mechanism. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">schc_header</td><td>the header in which to operate </td></tr>
-    <tr><td class="paramname">header</td><td>the original header </td></tr>
-    <tr><td class="paramname">cols</td><td>the number of fields the header contains </td></tr>
+    <tr><td class="paramname">dst_arr</td><td>the bit array in which to copy the contents to </td></tr>
+    <tr><td class="paramname">src_arr</td><td>the original header </td></tr>
     <tr><td class="paramname">rule</td><td>the rule to match the compression with</td></tr>
   </table>
   </dd>
@@ -356,8 +321,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="aeb2e4f6850b938ede75698f05fc09df7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb2e4f6850b938ede75698f05fc09df7">&#9670;&nbsp;</a></span>decompress()</h2>
+<a id="af8317d5d5e72076851ec7fe49688f4a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8317d5d5e72076851ec7fe49688f4a7">&#9670;&nbsp;</a></span>decompress()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -368,26 +333,26 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">static uint8_t decompress </td>
           <td>(</td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>schc_header</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *&#160;</td>
+          <td class="paramtype">struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a> *&#160;</td>
           <td class="paramname"><em>rule</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>header_offset</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
+          <td class="paramname"><em>DI</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -405,11 +370,9 @@ Variables</h2></td></tr>
 <p>The decompression mechanism. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">schc_header</td><td>pointer to the header in which to operate </td></tr>
     <tr><td class="paramname">rule</td><td>pointer to the rule to use during the decompression </td></tr>
-    <tr><td class="paramname">nr_of_fields</td><td>the number of fields </td></tr>
-    <tr><td class="paramname">rule</td><td>the rule to match the compression with </td></tr>
-    <tr><td class="paramname">nr_of_fields</td><td>the number of fields as found in the rule</td></tr>
+    <tr><td class="paramname">src</td><td>the received SCHC bit buffer </td></tr>
+    <tr><td class="paramname">dst</td><td>the buffer to store the decompressed, original packet</td></tr>
   </table>
   </dd>
 </dl>
@@ -417,186 +380,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a101b46fd538512a0324fc51b2d3a20ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a101b46fd538512a0324fc51b2d3a20ae">&#9670;&nbsp;</a></span>decompress_coap_rule()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t decompress_coap_rule </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__coap__rule__t.html">schc_coap_rule_t</a> *&#160;</td>
-          <td class="paramname"><em>rule</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>header_offset</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *&#160;</td>
-          <td class="paramname"><em>msg</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Decompress a CoAP rule, based on an input packet. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rule</td><td>the id of the CoAP rule to use during the decompression </td></tr>
-    <tr><td class="paramname">data</td><td>pointer to the input data </td></tr>
-    <tr><td class="paramname">header_offset</td><td>pointer to the current offset in the decompressed header </td></tr>
-    <tr><td class="paramname">msg</td><td>pointer to the CoAP message to use during the reconstruction </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a1320d30f4ad75c404538114bad13bec6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1320d30f4ad75c404538114bad13bec6">&#9670;&nbsp;</a></span>decompress_ipv6_rule()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t decompress_ipv6_rule </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__ipv6__rule__t.html">schc_ipv6_rule_t</a> *&#160;</td>
-          <td class="paramname"><em>rule</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>pckt_out</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>header_offset</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Decompress an IPv6 rule, based on an input packet. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rule</td><td>the IPv6 rule to use during the decompression </td></tr>
-    <tr><td class="paramname">data</td><td>pointer to the input data </td></tr>
-    <tr><td class="paramname">pckt_out</td><td>buffer to the packet to store the decompressed data in </td></tr>
-    <tr><td class="paramname">header_offset</td><td>pointer to the current offset in the decompressed header </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2c03acf1d57759cfe3d4e514bcf8d914"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c03acf1d57759cfe3d4e514bcf8d914">&#9670;&nbsp;</a></span>decompress_udp_rule()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t decompress_udp_rule </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__udp__rule__t.html">schc_udp_rule_t</a> *&#160;</td>
-          <td class="paramname"><em>rule</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>pckt_out</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>header_offset</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Decompress a UDP rule, based on an input packet. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rule_id</td><td>the id of the UDP rule to use during the decompression </td></tr>
-    <tr><td class="paramname">data</td><td>pointer to the input data </td></tr>
-    <tr><td class="paramname">pckt_out</td><td>buffer to the packet to store the decompressed data in </td></tr>
-    <tr><td class="paramname">header_offset</td><td>pointer to the current offset in the decompressed header</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>1 decompression succeeded 0 decompression failed </dd></dl>
-
-</div>
-</div>
-<a id="a61950fdd581e34878efece4973ac1159"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61950fdd581e34878efece4973ac1159">&#9670;&nbsp;</a></span>equal()</h2>
+<a id="a9991f6ae222b8d657ebb0e0b162ea282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9991f6ae222b8d657ebb0e0b162ea282">&#9670;&nbsp;</a></span>equal()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -614,7 +399,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>field_value</em>&#160;</td>
+          <td class="paramname"><em>field_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>field_offset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -633,165 +424,12 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_field</td><td>the field from the rule </td></tr>
-    <tr><td class="paramname">field_value</td><td>the value from the header to compare with the rule value</td></tr>
+    <tr><td class="paramname">field_value</td><td>the value from the header to compare with the rule value </td></tr>
+    <tr><td class="paramname">field_offset</td><td>the offset (in bits), starting from the field value pointer</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 if the target field matches the field value 0 if the target field doesn't match the field value </dd></dl>
-
-</div>
-</div>
-<a id="a245641c6d319735ed5b7bf171fbede17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a245641c6d319735ed5b7bf171fbede17">&#9670;&nbsp;</a></span>generate_coap_header_fields()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t generate_coap_header_fields </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *&#160;</td>
-          <td class="paramname"><em>pdu</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generates an unsigned char array, based on the CoAP header provided. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">header_fields</td><td>the array to transfer the header to </td></tr>
-    <tr><td class="paramname">cols</td><td>the number of columns the header contains </td></tr>
-    <tr><td class="paramname">pdu</td><td>the CoAP message to construct the header from</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the length of the array, which represents the number of CoAP fields </dd></dl>
-
-</div>
-</div>
-<a id="a833249a99cd83a96924d83a54653d524"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a833249a99cd83a96924d83a54653d524">&#9670;&nbsp;</a></span>generate_ip_header_fields()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t generate_ip_header_fields </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *&#160;</td>
-          <td class="paramname"><em>ip_udp_header</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generates a unified unsigned char array, based on the IP header provided. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">header_fields</td><td>the array to transfer the header to </td></tr>
-    <tr><td class="paramname">ip_udp_header</td><td>the IP/UDP header to construct the unified array from</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the length of the array, which represents the number of UDP fields </dd></dl>
-
-</div>
-</div>
-<a id="a282d7dd1e4fca538ce83c2b59f80f025"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a282d7dd1e4fca538ce83c2b59f80f025">&#9670;&nbsp;</a></span>generate_ip_udp_header_struct()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void generate_ip_udp_header_struct </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *&#160;</td>
-          <td class="paramname"><em>ip_udp_header</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Fills the passed IP/UDP header struct from a 8-bit buffer. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>the buffer to copy the data from </td></tr>
-    <tr><td class="paramname">ip_udp_header</td><td>the IP/UDP header to construct the unified array from </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a33691e9bd9cf5b38a033863deddc2c44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33691e9bd9cf5b38a033863deddc2c44">&#9670;&nbsp;</a></span>generate_udp_header_fields()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t generate_udp_header_fields </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *&#160;</td>
-          <td class="paramname"><em>ip_udp_header</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Generates a unified unsigned char array, based on the UDP header provided. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">header_fields</td><td>the array to transfer the header to </td></tr>
-    <tr><td class="paramname">ip_udp_header</td><td>the IP/UDP header to construct the unified array from</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the length of the array, which represents the number of UDP fields </dd></dl>
 
 </div>
 </div>
@@ -842,7 +480,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">static void get_node_ip </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *&#160;</td>
           <td class="paramname"><em>node_ip</em></td><td>)</td>
           <td></td>
         </tr>
@@ -895,7 +533,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a>&#160;</td>
           <td class="paramname"><em>mode</em>&#160;</td>
         </tr>
         <tr>
@@ -928,7 +566,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="schc__config_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a00b61f9b90ab7065eb6a978141d7fd34">reliability_mode</a>&#160;</td>
           <td class="paramname"><em>mode</em>, </td>
         </tr>
         <tr>
@@ -947,8 +585,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a5bafc11a567bc093210ab7cb3afe650f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bafc11a567bc093210ab7cb3afe650f">&#9670;&nbsp;</a></span>get_schc_rule_by_rule_id()</h2>
+<a id="a0403165232716bdd5f3a06169692c2a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0403165232716bdd5f3a06169692c2a9">&#9670;&nbsp;</a></span>get_schc_rule_by_rule_id()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -956,8 +594,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">struct <a class="el" href="structschc__rule__t.html">schc_rule_t</a>* get_schc_rule_by_rule_id </td>
           <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>rule_id</em>, </td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>rule_arr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -975,8 +613,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a3700c9316a3fa2826dd77686c161638c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3700c9316a3fa2826dd77686c161638c">&#9670;&nbsp;</a></span>ignore()</h2>
+<a id="a394540a77045dcb0230079435b631960"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a394540a77045dcb0230079435b631960">&#9670;&nbsp;</a></span>ignore()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -994,7 +632,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>field_value</em>&#160;</td>
+          <td class="paramname"><em>field_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>field_offset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1021,8 +665,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="aaa6535816b00df52f9f7b05970feca0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6535816b00df52f9f7b05970feca0a">&#9670;&nbsp;</a></span>matchmap()</h2>
+<a id="a5371dbc9847ed58dc760b7f028ea14e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5371dbc9847ed58dc760b7f028ea14e9">&#9670;&nbsp;</a></span>matchmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1040,7 +684,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>field_value</em>&#160;</td>
+          <td class="paramname"><em>field_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>field_offset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1055,7 +705,8 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The match-map matching operator. </p>
+<p>The match-map matching operator match-mapping: With match-mapping, the Target Value is a list of values. </p>
+<p>Each value of the list is identified by an index. Compression is achieved by sending the index instead of the original header field value.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_field</td><td>the field from the rule </td></tr>
@@ -1067,8 +718,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a6e20dc749624654a5c2a59a7ab0a45b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e20dc749624654a5c2a59a7ab0a45b8">&#9670;&nbsp;</a></span>MSB()</h2>
+<a id="abd91def21b62074e08368e9bb11593d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd91def21b62074e08368e9bb11593d5">&#9670;&nbsp;</a></span>MSB()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1086,7 +737,13 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned char *&#160;</td>
-          <td class="paramname"><em>field_value</em>&#160;</td>
+          <td class="paramname"><em>field_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t&#160;</td>
+          <td class="paramname"><em>field_offset</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1101,7 +758,8 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The MSB matching operator. </p>
+<p>The MSB matching operator MSB(x): a match is obtained if the most significant (leftmost) x bits of the packet header field value are equal to the TV in the Rule. </p>
+<p>The x parameter of the MSB MO indicates how many bits are involved in the comparison. If the FL is described as variable, the x parameter must be a multiple of the FL unit. For example, x must be multiple of 8 if the unit of the variable length is bytes.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_field</td><td>the field from the rule </td></tr>
@@ -1113,8 +771,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a36e8de302d391da17499a00daaf598de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36e8de302d391da17499a00daaf598de">&#9670;&nbsp;</a></span>schc_compress()</h2>
+<a id="a7b8fe3cf10dcb9935bcbc92bb1b9c8f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b8fe3cf10dcb9935bcbc92bb1b9c8f9">&#9670;&nbsp;</a></span>schc_compress()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1122,14 +780,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">int16_t schc_compress </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>buf</em>, </td>
+          <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1140,20 +792,20 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>dst</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">uint32_t&#160;</td>
           <td class="paramname"><em>device_id</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
           <td class="paramname"><em>dir</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a>&#160;</td>
-          <td class="paramname"><em>device_type</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1172,11 +824,11 @@ Variables</h2></td></tr>
 <p>Compresses a CoAP/UDP/IP packet. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data</td><td>pointer to the packet </td></tr>
-    <tr><td class="paramname">buf</td><td>pointer to the compressed packet buffer </td></tr>
+    <tr><td class="paramname">data</td><td>pointer to the original packet </td></tr>
     <tr><td class="paramname">total_length</td><td>the length of the packet </td></tr>
+    <tr><td class="paramname">dst</td><td>pointer to the bit array object, where the compressed packet will be stored. Can later be passed to fragmenter </td></tr>
     <tr><td class="paramname">device_id</td><td>the device id to find a rule for </td></tr>
-    <tr><td class="paramname">direction</td><td>the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN) </td></tr>
+    <tr><td class="paramname">direction</td><td>the direction of the flow UP: LPWAN to IPv6 or DOWN: IPv6 to LPWAN </td></tr>
     <tr><td class="paramname">device_type</td><td>the device type: NETWORK_GATEWAY or DEVICE </td></tr>
     <tr><td class="paramname">schc_rule</td><td>a pointer to a schc rule struct to return the rule that was found</td></tr>
   </table>
@@ -1214,8 +866,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ab7cac7873bdecbbf5ea769d90d91cc7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7cac7873bdecbbf5ea769d90d91cc7e">&#9670;&nbsp;</a></span>schc_decompress()</h2>
+<a id="a8af6027989d3e39cdcc37f16ff38d7ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8af6027989d3e39cdcc37f16ff38d7ff">&#9670;&nbsp;</a></span>schc_decompress()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1223,8 +875,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">uint16_t schc_decompress </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>bit_arr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1247,14 +899,8 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
-          <td class="paramname"><em>dir</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a>&#160;</td>
-          <td class="paramname"><em>device_type</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
+          <td class="paramname"><em>dir</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1271,8 +917,7 @@ Variables</h2></td></tr>
     <tr><td class="paramname">buf</td><td>pointer where to save the decompressed packet </td></tr>
     <tr><td class="paramname">device_id</td><td>the device its id </td></tr>
     <tr><td class="paramname">total_length</td><td>the total length of the received data </td></tr>
-    <tr><td class="paramname">direction</td><td>the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN) </td></tr>
-    <tr><td class="paramname">device_type</td><td>the type of device: NETWORK_GATEWAY or DEVICE</td></tr>
+    <tr><td class="paramname">direction</td><td>the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)</td></tr>
   </table>
   </dd>
 </dl>
@@ -1280,8 +925,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="af6513773b3be40ec48f9db466ad89e37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6513773b3be40ec48f9db466ad89e37">&#9670;&nbsp;</a></span>schc_find_coap_rule_from_header()</h2>
+<a id="a8137a81bb5ae333086b8aaf814b10a62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8137a81bb5ae333086b8aaf814b10a62">&#9670;&nbsp;</a></span>schc_find_rule_from_header()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1290,16 +935,28 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static struct <a class="el" href="structschc__coap__rule__t.html">schc_coap_rule_t</a>* schc_find_coap_rule_from_header </td>
+          <td class="memname">static struct <a class="el" href="structschc__layer__rule__t.html">schc_layer_rule_t</a>* schc_find_rule_from_header </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structpcoap__pdu.html">pcoap_pdu</a> *&#160;</td>
-          <td class="paramname"><em>pdu</em>, </td>
+          <td class="paramtype"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>device_id</em>&#160;</td>
+          <td class="paramname"><em>device_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#ac6a26bb50f32ca8810179e894e284ea0">schc_layer_t</a>&#160;</td>
+          <td class="paramname"><em>layer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a>&#160;</td>
+          <td class="paramname"><em>DI</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1314,107 +971,16 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Find a matching rule for the CoAP header for a device id. </p>
+<p>Find a matching rule for a layer. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pdu</td><td>the CoAP buffer </td></tr>
-    <tr><td class="paramname">device_id</td><td>the device to find a rule for</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>id the CoAP rule id 0 if no rule was found </dd></dl>
-
-</div>
-</div>
-<a id="aa8a76b825f1ad7fe92118e7604c59cce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8a76b825f1ad7fe92118e7604c59cce">&#9670;&nbsp;</a></span>schc_find_ipv6_rule_from_header()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static struct <a class="el" href="structschc__ipv6__rule__t.html">schc_ipv6_rule_t</a>* schc_find_ipv6_rule_from_header </td>
-          <td>(</td>
-          <td class="paramtype">struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *&#160;</td>
-          <td class="paramname"><em>ip_udp_header</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>device_id</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Find a matching rule for the IP header. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ip_udp_header</td><td>the IP/UDP header struct </td></tr>
-    <tr><td class="paramname">device_id</td><td>the device to find an IP rule for</td></tr>
+    <tr><td class="paramname">schc_bitarray</td><td>the bit array as received from the network note: a conversion is required for CoAP to decode the options</td></tr>
+    <tr><td class="paramname">device_id</td><td>the device to find an IP rule for </td></tr>
+    <tr><td class="paramname">schc_layer</td><td>the layer for which to find a rule for</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the rule NULL if no rule is found </dd></dl>
-
-</div>
-</div>
-<a id="a899a5ee1d8a65d6df0143667b3f218e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a899a5ee1d8a65d6df0143667b3f218e0">&#9670;&nbsp;</a></span>schc_find_udp_rule_from_header()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static struct <a class="el" href="structschc__udp__rule__t.html">schc_udp_rule_t</a>* schc_find_udp_rule_from_header </td>
-          <td>(</td>
-          <td class="paramtype">const struct <a class="el" href="structschc__udpip__hdr.html">schc_udpip_hdr</a> *&#160;</td>
-          <td class="paramname"><em>ip_udp_header</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>device_id</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Find a matching rule for the UDP header. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>pointer to the application generated data </td></tr>
-    <tr><td class="paramname">device_id</td><td>the device to find a UDP rule for</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>rule id the rule id 0 if no rule is found </dd></dl>
 
 </div>
 </div>
@@ -1430,7 +996,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">static void set_node_ip </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> *&#160;</td>
           <td class="paramname"><em>node_ip</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1481,79 +1047,41 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a263bfe2b1b6914b5b715f434f154d07b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a263bfe2b1b6914b5b715f434f154d07b">&#9670;&nbsp;</a></span>swap_ipv6_source_and_destination()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void swap_ipv6_source_and_destination </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Swaps the IPv6 source and destination. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>pointer to the ipv6 header </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="afb9db911b050d292c34053ab9e8cdf8c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb9db911b050d292c34053ab9e8cdf8c">&#9670;&nbsp;</a></span>coap_header_fields</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned char coap_header_fields[<a class="el" href="schc__config__example_8h.html#af1690024e8fe24a690d86ec4dd5d3bb6">COAP_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#aa6420ecddb30151dd25bc1a2da3aacd1">MAX_COAP_FIELD_LENGTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8b2173bb0d4d2c74c3f1e683922ac905"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b2173bb0d4d2c74c3f1e683922ac905">&#9670;&nbsp;</a></span>DEVICE_TYPE</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="config_8h.html#af2b559cc2ee2eaee47fe1f15cc99f49e">device_type</a> DEVICE_TYPE</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9002ee397432c569fdda24ab772716e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9002ee397432c569fdda24ab772716e5">&#9670;&nbsp;</a></span>DI</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="config_8h.html#a99f26e6ee9fcd62f75203b5402df8098">direction</a> DI</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a092ee897de6debb778fc14e1f242dc18"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a092ee897de6debb778fc14e1f242dc18">&#9670;&nbsp;</a></span>ipv6_header_fields</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned char ipv6_header_fields[<a class="el" href="schc__config__example_8h.html#ae1b67de7a1c26318d23f1c34e89fb989">IPV6_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#a96b977962436620ec037645e3e2e0ee8">MAX_IPV6_FIELD_LENGTH</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a832436cdee822ecccd06537f5e889955"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a832436cdee822ecccd06537f5e889955">&#9670;&nbsp;</a></span>json_parser</h2>
 
@@ -1592,7 +1120,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="config_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> node_ip_6</td>
+          <td class="memname"><a class="el" href="schc_8h.html#a871e6877df8d1bf5f1d0690d6b918f6b">schc_ipaddr_t</a> node_ip_6</td>
         </tr>
       </table>
   </td>
@@ -1600,20 +1128,6 @@ Variables</h2></td></tr>
 <span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a19692020241c44be02a07c6ac77b3d92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19692020241c44be02a07c6ac77b3d92">&#9670;&nbsp;</a></span>udp_header_fields</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned char udp_header_fields[<a class="el" href="schc__config__example_8h.html#aed36719a087639bf1875b85276f09e55">UDP_FIELDS</a>][<a class="el" href="schc__config__example_8h.html#aac32e96e8faf7ff86aced84537107bca">MAX_UDP_FIELD_LENGTH</a>]</td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>

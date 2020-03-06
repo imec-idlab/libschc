@@ -71,43 +71,13 @@ $(function() {
 <div class="textblock"><code>#include &lt;math.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="config_8h_source.html">config.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="schc__config_8h_source.html">schc_config.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="compressor_8h_source.html">compressor.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="fragmenter_8h_source.html">fragmenter.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="schc_8h_source.html">schc.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a61d48fd21d46c222b24a1afa1d10fa2c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a61d48fd21d46c222b24a1afa1d10fa2c">set_bits</a> (uint8_t A[], uint32_t pos, uint32_t len)</td></tr>
-<tr class="memdesc:a61d48fd21d46c222b24a1afa1d10fa2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets bits at a certain position in a bit array big endian  <a href="fragmenter_8c.html#a61d48fd21d46c222b24a1afa1d10fa2c">More...</a><br /></td></tr>
-<tr class="separator:a61d48fd21d46c222b24a1afa1d10fa2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac43ee8f42b947cbf9d5f5634ca25df26"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ac43ee8f42b947cbf9d5f5634ca25df26">get_bits</a> (uint8_t A[], uint32_t pos, uint8_t len)</td></tr>
-<tr class="memdesc:ac43ee8f42b947cbf9d5f5634ca25df26"><td class="mdescLeft">&#160;</td><td class="mdescRight">get bits at a certain position in a bit array  <a href="fragmenter_8c.html#ac43ee8f42b947cbf9d5f5634ca25df26">More...</a><br /></td></tr>
-<tr class="separator:ac43ee8f42b947cbf9d5f5634ca25df26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9591970ee127d9aac1a9be6cb0e341c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ab9591970ee127d9aac1a9be6cb0e341c">clear_bits</a> (uint8_t A[], uint32_t pos, uint32_t len)</td></tr>
-<tr class="memdesc:ab9591970ee127d9aac1a9be6cb0e341c"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear bits at a certain position in a bit array big endian  <a href="fragmenter_8c.html#ab9591970ee127d9aac1a9be6cb0e341c">More...</a><br /></td></tr>
-<tr class="separator:ab9591970ee127d9aac1a9be6cb0e341c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd0b1eb449a1817ced7dc7d5aef364e5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#afd0b1eb449a1817ced7dc7d5aef364e5">copy_bits</a> (uint8_t DST[], uint32_t dst_pos, uint8_t SRC[], uint32_t src_pos, uint32_t len)</td></tr>
-<tr class="memdesc:afd0b1eb449a1817ced7dc7d5aef364e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy bits to a certain position in a bit array from another array big endian  <a href="fragmenter_8c.html#afd0b1eb449a1817ced7dc7d5aef364e5">More...</a><br /></td></tr>
-<tr class="separator:afd0b1eb449a1817ced7dc7d5aef364e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6badb335854afb2820f3460497f6aef"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ab6badb335854afb2820f3460497f6aef">compare_bits</a> (uint8_t SRC1[], uint8_t SRC2[], uint32_t len)</td></tr>
-<tr class="memdesc:ab6badb335854afb2820f3460497f6aef"><td class="mdescLeft">&#160;</td><td class="mdescRight">compare two bit arrays  <a href="fragmenter_8c.html#ab6badb335854afb2820f3460497f6aef">More...</a><br /></td></tr>
-<tr class="separator:ab6badb335854afb2820f3460497f6aef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a323d4137cff83b04a84277381f6e9d00"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a323d4137cff83b04a84277381f6e9d00">shift_bits_left</a> (uint8_t SRC[], uint16_t len, uint32_t shift)</td></tr>
-<tr class="memdesc:a323d4137cff83b04a84277381f6e9d00"><td class="mdescLeft">&#160;</td><td class="mdescRight">shift a number of bits to the left  <a href="fragmenter_8c.html#a323d4137cff83b04a84277381f6e9d00">More...</a><br /></td></tr>
-<tr class="separator:a323d4137cff83b04a84277381f6e9d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7c970cd13abace69b7cb14f2952a470"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ad7c970cd13abace69b7cb14f2952a470">shift_bits_right</a> (uint8_t SRC[], uint16_t len, uint32_t shift)</td></tr>
-<tr class="memdesc:ad7c970cd13abace69b7cb14f2952a470"><td class="mdescLeft">&#160;</td><td class="mdescRight">shift a number of bits to the right  <a href="fragmenter_8c.html#ad7c970cd13abace69b7cb14f2952a470">More...</a><br /></td></tr>
-<tr class="separator:ad7c970cd13abace69b7cb14f2952a470"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5bb874f988764a34f6001a8970569ef"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#af5bb874f988764a34f6001a8970569ef">xor_bits</a> (uint8_t DST[], uint8_t SRC1[], uint8_t SRC2[], uint32_t len)</td></tr>
-<tr class="memdesc:af5bb874f988764a34f6001a8970569ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">logical XOR two bit arrays  <a href="fragmenter_8c.html#af5bb874f988764a34f6001a8970569ef">More...</a><br /></td></tr>
-<tr class="separator:af5bb874f988764a34f6001a8970569ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addabd3eb9fa8eed29292c109c78647ac"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#addabd3eb9fa8eed29292c109c78647ac">and_bits</a> (uint8_t DST[], uint8_t SRC1[], uint8_t SRC2[], uint32_t len)</td></tr>
-<tr class="memdesc:addabd3eb9fa8eed29292c109c78647ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">logical AND two bit arrays  <a href="fragmenter_8c.html#addabd3eb9fa8eed29292c109c78647ac">More...</a><br /></td></tr>
-<tr class="separator:addabd3eb9fa8eed29292c109c78647ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1157ac0c35307f917b4050c4ca1f025"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ad1157ac0c35307f917b4050c4ca1f025">print_bitmap</a> (uint8_t bitmap[], uint32_t length)</td></tr>
-<tr class="memdesc:ad1157ac0c35307f917b4050c4ca1f025"><td class="mdescLeft">&#160;</td><td class="mdescRight">print a bitmap  <a href="fragmenter_8c.html#ad1157ac0c35307f917b4050c4ca1f025">More...</a><br /></td></tr>
-<tr class="separator:ad1157ac0c35307f917b4050c4ca1f025"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc44be1dce0c424c7a0dba4b99049bfc"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#acc44be1dce0c424c7a0dba4b99049bfc">get_fcn_value</a> (uint8_t *fragment, <a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn)</td></tr>
 <tr class="memdesc:acc44be1dce0c424c7a0dba4b99049bfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the FCN value  <a href="fragmenter_8c.html#acc44be1dce0c424c7a0dba4b99049bfc">More...</a><br /></td></tr>
 <tr class="separator:acc44be1dce0c424c7a0dba4b99049bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,7 +118,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a343086d922526b9c211a315f156041e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete all fragments chained in an mbuf  <a href="fragmenter_8c.html#a343086d922526b9c211a315f156041e6">More...</a><br /></td></tr>
 <tr class="separator:a343086d922526b9c211a315f156041e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32ae5e155bb05dd96543b5e18ec7e632"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a32ae5e155bb05dd96543b5e18ec7e632">mbuf_sort</a> (<a class="el" href="structschc__mbuf__t.html">schc_mbuf_t</a> **head)</td></tr>
-<tr class="memdesc:a32ae5e155bb05dd96543b5e18ec7e632"><td class="mdescLeft">&#160;</td><td class="mdescRight">sort the complete mbuf chain based on fragment counter  <a href="fragmenter_8c.html#a32ae5e155bb05dd96543b5e18ec7e632">More...</a><br /></td></tr>
+<tr class="memdesc:a32ae5e155bb05dd96543b5e18ec7e632"><td class="mdescLeft">&#160;</td><td class="mdescRight">sort the complete mbuf chain based on fragment counter (fcn) note: some packets will arrive out of order, as they were part of a retransmission, and consequently arrive out of order, but carry the same fcn  <a href="fragmenter_8c.html#a32ae5e155bb05dd96543b5e18ec7e632">More...</a><br /></td></tr>
 <tr class="separator:a32ae5e155bb05dd96543b5e18ec7e632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a023b34894f235fb324430b3dbda704ff"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a023b34894f235fb324430b3dbda704ff">mbuf_format</a> (<a class="el" href="structschc__mbuf__t.html">schc_mbuf_t</a> **head, <a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn)</td></tr>
 <tr class="memdesc:a023b34894f235fb324430b3dbda704ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove the fragmentation headers and concat the data bits of the complete mbuf chain  <a href="fragmenter_8c.html#a023b34894f235fb324430b3dbda704ff">More...</a><br /></td></tr>
@@ -157,7 +127,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ac8a2b026fc0d12d1e7d1dcc09a2bb139"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of bits the current header exists off.  <a href="fragmenter_8c.html#ac8a2b026fc0d12d1e7d1dcc09a2bb139">More...</a><br /></td></tr>
 <tr class="separator:ac8a2b026fc0d12d1e7d1dcc09a2bb139"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac86ec2c2210d0627256b9493d38dc79f"><td class="memItemLeft" align="right" valign="top">static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ac86ec2c2210d0627256b9493d38dc79f">mbuf_compute_mic</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn)</td></tr>
-<tr class="memdesc:ac86ec2c2210d0627256b9493d38dc79f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)  <a href="fragmenter_8c.html#ac86ec2c2210d0627256b9493d38dc79f">More...</a><br /></td></tr>
+<tr class="memdesc:ac86ec2c2210d0627256b9493d38dc79f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain containing the compressed, unfragmented packet which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)  <a href="fragmenter_8c.html#ac86ec2c2210d0627256b9493d38dc79f">More...</a><br /></td></tr>
 <tr class="separator:ac86ec2c2210d0627256b9493d38dc79f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24b1894bc266588db9e6d796ce056259"><td class="memItemLeft" align="right" valign="top">static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a24b1894bc266588db9e6d796ce056259">compute_mic</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn)</td></tr>
 <tr class="memdesc:a24b1894bc266588db9e6d796ce056259"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Message Integrity Check (MIC) which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC)  <a href="fragmenter_8c.html#a24b1894bc266588db9e6d796ce056259">More...</a><br /></td></tr>
@@ -246,9 +216,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6a248f74b7a8b0ef5f7dbc3f418e05a8"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a6a248f74b7a8b0ef5f7dbc3f418e05a8">schc_reassemble</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *rx_conn)</td></tr>
 <tr class="memdesc:a6a248f74b7a8b0ef5f7dbc3f418e05a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">the receiver state machine  <a href="fragmenter_8c.html#a6a248f74b7a8b0ef5f7dbc3f418e05a8">More...</a><br /></td></tr>
 <tr class="separator:a6a248f74b7a8b0ef5f7dbc3f418e05a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d563c2c366a59b52ae25123a38c7603"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#a8d563c2c366a59b52ae25123a38c7603">schc_fragmenter_init</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn, void(*send)(uint8_t *data, uint16_t length, uint32_t device_id), void(*end_rx)(<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn), void(*remove_timer_entry)(uint32_t device_id))</td></tr>
-<tr class="memdesc:a8d563c2c366a59b52ae25123a38c7603"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SCHC fragmenter.  <a href="fragmenter_8c.html#a8d563c2c366a59b52ae25123a38c7603">More...</a><br /></td></tr>
-<tr class="separator:a8d563c2c366a59b52ae25123a38c7603"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#adaabb8a36ff87d9f89d8215b2773c6c7">schc_fragmenter_init</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn, uint8_t(*send)(uint8_t *data, uint16_t length, uint32_t device_id), void(*end_rx)(<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn), void(*remove_timer_entry)(uint32_t device_id))</td></tr>
+<tr class="memdesc:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SCHC fragmenter.  <a href="fragmenter_8c.html#adaabb8a36ff87d9f89d8215b2773c6c7">More...</a><br /></td></tr>
+<tr class="separator:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5e5579cd82363858b434d8e06fd8a73"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8c.html#ad5e5579cd82363858b434d8e06fd8a73">tx_fragment_send</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn)</td></tr>
 <tr class="memdesc:ad5e5579cd82363858b434d8e06fd8a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">the function to call when the state machine is in SEND state  <a href="fragmenter_8c.html#ad5e5579cd82363858b434d8e06fd8a73">More...</a><br /></td></tr>
 <tr class="separator:ad5e5579cd82363858b434d8e06fd8a73"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -323,65 +293,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="addabd3eb9fa8eed29292c109c78647ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#addabd3eb9fa8eed29292c109c78647ac">&#9670;&nbsp;</a></span>and_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void and_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>DST</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC1</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC2</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>logical AND two bit arrays </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">DST</td><td>the array to save the result in </td></tr>
-    <tr><td class="paramname">SRC1</td><td>the array to compare with </td></tr>
-    <tr><td class="paramname">SRC2</td><td>the array to compare with </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to compare </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a2e7f5b0c689cf574b273258463b3c558"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e7f5b0c689cf574b273258463b3c558">&#9670;&nbsp;</a></span>clear_bitmap()</h2>
 
@@ -413,111 +324,6 @@ Variables</h2></td></tr>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="ab9591970ee127d9aac1a9be6cb0e341c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9591970ee127d9aac1a9be6cb0e341c">&#9670;&nbsp;</a></span>clear_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void clear_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>A</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>pos</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>clear bits at a certain position in a bit array big endian </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">A</td><td>the bit array </td></tr>
-    <tr><td class="paramname">pos</td><td>which bit to clear </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to clear </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ab6badb335854afb2820f3460497f6aef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6badb335854afb2820f3460497f6aef">&#9670;&nbsp;</a></span>compare_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint8_t compare_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC1</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC2</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>compare two bit arrays </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">SRC1</td><td>the array to compare </td></tr>
-    <tr><td class="paramname">SRC2</td><td>the array to compare with </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to compare</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>1 both arrays match 0 the arrays differ </dd></dl>
 
 </div>
 </div>
@@ -553,72 +359,6 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>checksum the computed checksum </dd></dl>
-
-</div>
-</div>
-<a id="afd0b1eb449a1817ced7dc7d5aef364e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd0b1eb449a1817ced7dc7d5aef364e5">&#9670;&nbsp;</a></span>copy_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void copy_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>DST</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>dst_pos</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>src_pos</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>copy bits to a certain position in a bit array from another array big endian </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">DST</td><td>the array to copy to </td></tr>
-    <tr><td class="paramname">dst_pos</td><td>which bit to start from </td></tr>
-    <tr><td class="paramname">SRC</td><td>the array to copy from </td></tr>
-    <tr><td class="paramname">src_pos</td><td>which bit to start from </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to set </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -846,59 +586,6 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>padding the bitmask </dd></dl>
-
-</div>
-</div>
-<a id="ac43ee8f42b947cbf9d5f5634ca25df26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac43ee8f42b947cbf9d5f5634ca25df26">&#9670;&nbsp;</a></span>get_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static uint32_t get_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>A</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>pos</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>get bits at a certain position in a bit array </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">A</td><td>the bit array </td></tr>
-    <tr><td class="paramname">pos</td><td>the position to start from </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to get</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section note"><dt>Note</dt><dd>limited to 32 consecutive bits </dd></dl>
 
 </div>
 </div>
@@ -1462,7 +1149,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC) </p>
+<p>Calculates the Message Integrity Check (MIC) over an unformatted mbuf chain containing the compressed, unfragmented packet which is the 8- 16- or 32- bit Cyclic Redundancy Check (CRC) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">head</td><td>the head of the list</td></tr>
@@ -1590,6 +1277,11 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>remove the fragmentation headers and concat the data bits of the complete mbuf chain </p>
+<p>+-&mdash;+---------&mdash;+ +-&mdash;+---------&mdash;+ | FH | DATA | &lt;&mdash; ... &lt;&mdash; | FH | DATA | +-&mdash;+---------&mdash;+ +-&mdash;+---------&mdash;+</p>
+<ol type="1">
+<li>remove the fragmentation header (FH), but keep the rule id</li>
+<li>shift the DATA bits to the left, to overwrite the FH bits 3.</li>
+</ol>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">head</td><td>double pointer to the head of the list </td></tr>
@@ -1763,7 +1455,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>sort the complete mbuf chain based on fragment counter </p>
+<p>sort the complete mbuf chain based on fragment counter (fcn) note: some packets will arrive out of order, as they were part of a retransmission, and consequently arrive out of order, but carry the same fcn </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">head</td><td>double pointer to the head of the list </td></tr>
@@ -1835,51 +1527,6 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tx_conn</td><td>a pointer to the tx connection structure </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ad1157ac0c35307f917b4050c4ca1f025"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1157ac0c35307f917b4050c4ca1f025">&#9670;&nbsp;</a></span>print_bitmap()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void print_bitmap </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>bitmap</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>length</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>print a bitmap </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">bitmap</td><td>the bit array </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to print </td></tr>
   </table>
   </dd>
 </dl>
@@ -2009,8 +1656,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a8d563c2c366a59b52ae25123a38c7603"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d563c2c366a59b52ae25123a38c7603">&#9670;&nbsp;</a></span>schc_fragmenter_init()</h2>
+<a id="adaabb8a36ff87d9f89d8215b2773c6c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaabb8a36ff87d9f89d8215b2773c6c7">&#9670;&nbsp;</a></span>schc_fragmenter_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2024,7 +1671,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void(*)(uint8_t *data, uint16_t length, uint32_t device_id)&#160;</td>
+          <td class="paramtype">uint8_t(*)(uint8_t *data, uint16_t length, uint32_t device_id)&#160;</td>
           <td class="paramname"><em>send</em>, </td>
         </tr>
         <tr>
@@ -2332,58 +1979,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a61d48fd21d46c222b24a1afa1d10fa2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61d48fd21d46c222b24a1afa1d10fa2c">&#9670;&nbsp;</a></span>set_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void set_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>A</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>pos</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>sets bits at a certain position in a bit array big endian </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">A</td><td>the bit array </td></tr>
-    <tr><td class="paramname">pos</td><td>which bit to set </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to set </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="adba6189ec34adbf6118b6446e4cc79f4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adba6189ec34adbf6118b6446e4cc79f4">&#9670;&nbsp;</a></span>set_conn_frag_cnt()</h2>
 
@@ -2611,110 +2206,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a323d4137cff83b04a84277381f6e9d00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a323d4137cff83b04a84277381f6e9d00">&#9670;&nbsp;</a></span>shift_bits_left()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void shift_bits_left </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>shift</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>shift a number of bits to the left </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">SRC</td><td>the array to shift </td></tr>
-    <tr><td class="paramname">len</td><td>the length of the array </td></tr>
-    <tr><td class="paramname">shift</td><td>the number of consecutive bits to shift </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ad7c970cd13abace69b7cb14f2952a470"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7c970cd13abace69b7cb14f2952a470">&#9670;&nbsp;</a></span>shift_bits_right()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void shift_bits_right </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>shift</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>shift a number of bits to the right </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">SRC</td><td>the array to shift </td></tr>
-    <tr><td class="paramname">len</td><td>the length of the array </td></tr>
-    <tr><td class="paramname">shift</td><td>the number of consecutive bits to shift </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a80315bb21fe508740e3b5cb066a376a2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a80315bb21fe508740e3b5cb066a376a2">&#9670;&nbsp;</a></span>tx_fragment_resend()</h2>
 
@@ -2821,65 +2312,6 @@ Variables</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rx_conn</td><td>a pointer to the rx connection structure </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af5bb874f988764a34f6001a8970569ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5bb874f988764a34f6001a8970569ef">&#9670;&nbsp;</a></span>xor_bits()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void xor_bits </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>DST</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC1</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>SRC2</em>[], </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>logical XOR two bit arrays </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">DST</td><td>the array to save the result in </td></tr>
-    <tr><td class="paramname">SRC1</td><td>the array to compare with </td></tr>
-    <tr><td class="paramname">SRC2</td><td>the array to compare with </td></tr>
-    <tr><td class="paramname">len</td><td>the number of consecutive bits to compare </td></tr>
   </table>
   </dd>
 </dl>

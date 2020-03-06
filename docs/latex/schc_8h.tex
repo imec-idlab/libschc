@@ -1,0 +1,292 @@
+\hypertarget{schc_8h}{}\doxysection{schc.\+h File Reference}
+\label{schc_8h}\index{schc.h@{schc.h}}
+{\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}}
+\item 
+struct \mbox{\hyperlink{structschc__ipv6__rule__t}{schc\+\_\+ipv6\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__udp__rule__t}{schc\+\_\+udp\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__layer__rule__t}{schc\+\_\+layer\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__compression__rule__t}{schc\+\_\+compression\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__rule__t}{schc\+\_\+rule\+\_\+t}}
+\item 
+struct \mbox{\hyperlink{structschc__device}{schc\+\_\+device}}
+\item 
+struct \mbox{\hyperlink{structschc__udpip__hdr}{schc\+\_\+udpip\+\_\+hdr}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{schc_8h_a5e211e5d295f6e70dee42f3083f89e71}{U\+D\+P\+\_\+\+H\+L\+EN}}~8
+\item 
+\#define \mbox{\hyperlink{schc_8h_afb4c1dc527be76d8f27591dfb726c023}{I\+P6\+\_\+\+H\+L\+EN}}~40
+\item 
+\#define \mbox{\hyperlink{schc_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~1
+\item 
+\#define \mbox{\hyperlink{schc_8h_a63504215b1f5f5190353b62949d05635}{M\+I\+C\+\_\+\+C\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~1
+\item 
+\#define \mbox{\hyperlink{schc_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~(\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} / 8)
+\item 
+\#define \mbox{\hyperlink{schc_8h_a3cab569df576271706014d87c13a7845}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1
+\item 
+\#define \mbox{\hyperlink{schc_8h_afb4b2bf43d4261b6afafc22d4d095092}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}} \mbox{\hyperlink{schc_8h_aeee2afb2e83587e59f955f4c7af74e07}{schc\+\_\+bitarray\+\_\+t}}
+\item 
+typedef uint8\+\_\+t \mbox{\hyperlink{schc_8h_a7ae12886f8a1d1bcc5dadfa632050677}{schc\+\_\+ip6addr\+\_\+t}}\mbox{[}16\mbox{]}
+\item 
+typedef \mbox{\hyperlink{schc_8h_a7ae12886f8a1d1bcc5dadfa632050677}{schc\+\_\+ip6addr\+\_\+t}} \mbox{\hyperlink{schc_8h_a871e6877df8d1bf5f1d0690d6b918f6b}{schc\+\_\+ipaddr\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{schc_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} \{ \mbox{\hyperlink{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}{UP}} = 0, 
+\mbox{\hyperlink{schc_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}{D\+O\+WN}} = 1, 
+\mbox{\hyperlink{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}{BI}} = 2
+ \}
+\item 
+enum \mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4}{C\+DA}} \{ \newline
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}{N\+O\+T\+S\+E\+NT}} = 0, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}{V\+A\+L\+U\+E\+S\+E\+NT}} = 1, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4afe73a1b760f465a54ad7244bfe3d719d}{M\+A\+P\+P\+I\+N\+G\+S\+E\+NT}} = 2, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}{L\+SB}} = 3, 
+\newline
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}{C\+O\+M\+P\+L\+E\+N\+G\+TH}} = 4, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}{C\+O\+M\+P\+C\+HK}} = 5, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4af2f71f1d6b980ffce7facf81da9d38b0}{D\+E\+V\+I\+ID}} = 6, 
+\mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab}{A\+P\+P\+I\+ID}} = 7
+ \}
+\item 
+enum \mbox{\hyperlink{schc_8h_ac6a26bb50f32ca8810179e894e284ea0}{schc\+\_\+layer\+\_\+t}} \{ \mbox{\hyperlink{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a0c11d2df909aba3545ce3f9a0f622af4}{S\+C\+H\+C\+\_\+\+I\+P\+V6}} = 0, 
+\mbox{\hyperlink{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a466b02e6c39f7b06862f76585c085935}{S\+C\+H\+C\+\_\+\+U\+DP}} = 1, 
+\mbox{\hyperlink{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a4f3573a26989d766758cb30328fd9ca2}{S\+C\+H\+C\+\_\+\+C\+O\+AP}} = 2
+ \}
+\item 
+enum \mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} \{ \mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}{A\+C\+K\+\_\+\+A\+L\+W\+A\+YS}} = 1, 
+\mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}{A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR}} = 2, 
+\mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}{N\+O\+\_\+\+A\+CK}} = 3, 
+\mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}{N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED}} = 4
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{schc_8h_a9991f6ae222b8d657ebb0e0b162ea282}{equal}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value, uint16\+\_\+t field\+\_\+offset)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{schc_8h_a394540a77045dcb0230079435b631960}{ignore}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value, uint16\+\_\+t field\+\_\+offset)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{schc_8h_abd91def21b62074e08368e9bb11593d5}{M\+SB}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value, uint16\+\_\+t field\+\_\+offset)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{schc_8h_a5371dbc9847ed58dc760b7f028ea14e9}{matchmap}} (struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$target\+\_\+field, unsigned char $\ast$field\+\_\+value, uint16\+\_\+t field\+\_\+offset)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{schc_8h_a3cab569df576271706014d87c13a7845}\label{schc_8h_a3cab569df576271706014d87c13a7845}} 
+\index{schc.h@{schc.h}!DTAG\_SIZE\_BYTES@{DTAG\_SIZE\_BYTES}}
+\index{DTAG\_SIZE\_BYTES@{DTAG\_SIZE\_BYTES}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{DTAG\_SIZE\_BYTES}{DTAG\_SIZE\_BYTES}}
+{\footnotesize\ttfamily \#define D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1}
+
+\mbox{\Hypertarget{schc_8h_afb4c1dc527be76d8f27591dfb726c023}\label{schc_8h_afb4c1dc527be76d8f27591dfb726c023}} 
+\index{schc.h@{schc.h}!IP6\_HLEN@{IP6\_HLEN}}
+\index{IP6\_HLEN@{IP6\_HLEN}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{IP6\_HLEN}{IP6\_HLEN}}
+{\footnotesize\ttfamily \#define I\+P6\+\_\+\+H\+L\+EN~40}
+
+\mbox{\Hypertarget{schc_8h_a63504215b1f5f5190353b62949d05635}\label{schc_8h_a63504215b1f5f5190353b62949d05635}} 
+\index{schc.h@{schc.h}!MIC\_C\_SIZE\_BITS@{MIC\_C\_SIZE\_BITS}}
+\index{MIC\_C\_SIZE\_BITS@{MIC\_C\_SIZE\_BITS}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{MIC\_C\_SIZE\_BITS}{MIC\_C\_SIZE\_BITS}}
+{\footnotesize\ttfamily \#define M\+I\+C\+\_\+\+C\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS~1}
+
+\mbox{\Hypertarget{schc_8h_ab264125e090b773a3c62c0587e2311f3}\label{schc_8h_ab264125e090b773a3c62c0587e2311f3}} 
+\index{schc.h@{schc.h}!RULE\_SIZE\_BYTES@{RULE\_SIZE\_BYTES}}
+\index{RULE\_SIZE\_BYTES@{RULE\_SIZE\_BYTES}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{RULE\_SIZE\_BYTES}{RULE\_SIZE\_BYTES}}
+{\footnotesize\ttfamily \#define R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~(\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} / 8)}
+
+\mbox{\Hypertarget{schc_8h_a5e211e5d295f6e70dee42f3083f89e71}\label{schc_8h_a5e211e5d295f6e70dee42f3083f89e71}} 
+\index{schc.h@{schc.h}!UDP\_HLEN@{UDP\_HLEN}}
+\index{UDP\_HLEN@{UDP\_HLEN}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{UDP\_HLEN}{UDP\_HLEN}}
+{\footnotesize\ttfamily \#define U\+D\+P\+\_\+\+H\+L\+EN~8}
+
+\mbox{\Hypertarget{schc_8h_aee02bb425cd8b2d526378e84db80752f}\label{schc_8h_aee02bb425cd8b2d526378e84db80752f}} 
+\index{schc.h@{schc.h}!WINDOW\_SIZE\_BITS@{WINDOW\_SIZE\_BITS}}
+\index{WINDOW\_SIZE\_BITS@{WINDOW\_SIZE\_BITS}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{WINDOW\_SIZE\_BITS}{WINDOW\_SIZE\_BITS}}
+{\footnotesize\ttfamily \#define W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS~1}
+
+\mbox{\Hypertarget{schc_8h_afb4b2bf43d4261b6afafc22d4d095092}\label{schc_8h_afb4b2bf43d4261b6afafc22d4d095092}} 
+\index{schc.h@{schc.h}!WINDOW\_SIZE\_BYTES@{WINDOW\_SIZE\_BYTES}}
+\index{WINDOW\_SIZE\_BYTES@{WINDOW\_SIZE\_BYTES}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{WINDOW\_SIZE\_BYTES}{WINDOW\_SIZE\_BYTES}}
+{\footnotesize\ttfamily \#define W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1}
+
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{schc_8h_aeee2afb2e83587e59f955f4c7af74e07}\label{schc_8h_aeee2afb2e83587e59f955f4c7af74e07}} 
+\index{schc.h@{schc.h}!schc\_bitarray\_t@{schc\_bitarray\_t}}
+\index{schc\_bitarray\_t@{schc\_bitarray\_t}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{schc\_bitarray\_t}{schc\_bitarray\_t}}
+{\footnotesize\ttfamily typedef struct \mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}} \mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}}}
+
+\mbox{\Hypertarget{schc_8h_a7ae12886f8a1d1bcc5dadfa632050677}\label{schc_8h_a7ae12886f8a1d1bcc5dadfa632050677}} 
+\index{schc.h@{schc.h}!schc\_ip6addr\_t@{schc\_ip6addr\_t}}
+\index{schc\_ip6addr\_t@{schc\_ip6addr\_t}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{schc\_ip6addr\_t}{schc\_ip6addr\_t}}
+{\footnotesize\ttfamily typedef uint8\+\_\+t schc\+\_\+ip6addr\+\_\+t\mbox{[}16\mbox{]}}
+
+\mbox{\Hypertarget{schc_8h_a871e6877df8d1bf5f1d0690d6b918f6b}\label{schc_8h_a871e6877df8d1bf5f1d0690d6b918f6b}} 
+\index{schc.h@{schc.h}!schc\_ipaddr\_t@{schc\_ipaddr\_t}}
+\index{schc\_ipaddr\_t@{schc\_ipaddr\_t}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{schc\_ipaddr\_t}{schc\_ipaddr\_t}}
+{\footnotesize\ttfamily typedef \mbox{\hyperlink{schc_8h_a7ae12886f8a1d1bcc5dadfa632050677}{schc\+\_\+ip6addr\+\_\+t}} \mbox{\hyperlink{schc_8h_a871e6877df8d1bf5f1d0690d6b918f6b}{schc\+\_\+ipaddr\+\_\+t}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4}} 
+\index{schc.h@{schc.h}!CDA@{CDA}}
+\index{CDA@{CDA}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{CDA}{CDA}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4}{C\+DA}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NOTSENT@{NOTSENT}!schc.h@{schc.h}}\index{schc.h@{schc.h}!NOTSENT@{NOTSENT}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ad6773d0a545d63251612fcd331aedb83}} 
+N\+O\+T\+S\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VALUESENT@{VALUESENT}!schc.h@{schc.h}}\index{schc.h@{schc.h}!VALUESENT@{VALUESENT}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a75a19a84697dffabb0bedafeff40ffcc}} 
+V\+A\+L\+U\+E\+S\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAPPINGSENT@{MAPPINGSENT}!schc.h@{schc.h}}\index{schc.h@{schc.h}!MAPPINGSENT@{MAPPINGSENT}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4afe73a1b760f465a54ad7244bfe3d719d}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4afe73a1b760f465a54ad7244bfe3d719d}} 
+M\+A\+P\+P\+I\+N\+G\+S\+E\+NT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LSB@{LSB}!schc.h@{schc.h}}\index{schc.h@{schc.h}!LSB@{LSB}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4ac8bd62065abff19ea8ce3ec18cf3d6fe}} 
+L\+SB&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COMPLENGTH@{COMPLENGTH}!schc.h@{schc.h}}\index{schc.h@{schc.h}!COMPLENGTH@{COMPLENGTH}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a7e32821d42dbaeb712ced531ee118153}} 
+C\+O\+M\+P\+L\+E\+N\+G\+TH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COMPCHK@{COMPCHK}!schc.h@{schc.h}}\index{schc.h@{schc.h}!COMPCHK@{COMPCHK}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4a666ff0fbe192b386d46e502fc990ce2f}} 
+C\+O\+M\+P\+C\+HK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DEVIID@{DEVIID}!schc.h@{schc.h}}\index{schc.h@{schc.h}!DEVIID@{DEVIID}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4af2f71f1d6b980ffce7facf81da9d38b0}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4af2f71f1d6b980ffce7facf81da9d38b0}} 
+D\+E\+V\+I\+ID&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{APPIID@{APPIID}!schc.h@{schc.h}}\index{schc.h@{schc.h}!APPIID@{APPIID}}}\mbox{\Hypertarget{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab}\label{schc_8h_a3e43f38d5254d1e3bbf1d0955eb98ce4accda58d5f1e00c63e2b59ae98965b7ab}} 
+A\+P\+P\+I\+ID&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{schc_8h_a99f26e6ee9fcd62f75203b5402df8098}\label{schc_8h_a99f26e6ee9fcd62f75203b5402df8098}} 
+\index{schc.h@{schc.h}!direction@{direction}}
+\index{direction@{direction}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{direction}{direction}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{schc_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UP@{UP}!schc.h@{schc.h}}\index{schc.h@{schc.h}!UP@{UP}}}\mbox{\Hypertarget{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}\label{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aba595d8bca8bc5e67c37c0a9d89becfa}} 
+UP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DOWN@{DOWN}!schc.h@{schc.h}}\index{schc.h@{schc.h}!DOWN@{DOWN}}}\mbox{\Hypertarget{schc_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}\label{schc_8h_a99f26e6ee9fcd62f75203b5402df8098a9b0b4a95b99523966e0e34ffdadac9da}} 
+D\+O\+WN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BI@{BI}!schc.h@{schc.h}}\index{schc.h@{schc.h}!BI@{BI}}}\mbox{\Hypertarget{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}\label{schc_8h_a99f26e6ee9fcd62f75203b5402df8098aa6faa6cc2b54e7dabf207ad5d989e49b}} 
+BI&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34}\label{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34}} 
+\index{schc.h@{schc.h}!reliability\_mode@{reliability\_mode}}
+\index{reliability\_mode@{reliability\_mode}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{reliability\_mode}{reliability\_mode}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ALWAYS@{ACK\_ALWAYS}!schc.h@{schc.h}}\index{schc.h@{schc.h}!ACK\_ALWAYS@{ACK\_ALWAYS}}}\mbox{\Hypertarget{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}\label{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}} 
+A\+C\+K\+\_\+\+A\+L\+W\+A\+YS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ON\_ERROR@{ACK\_ON\_ERROR}!schc.h@{schc.h}}\index{schc.h@{schc.h}!ACK\_ON\_ERROR@{ACK\_ON\_ERROR}}}\mbox{\Hypertarget{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}\label{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}} 
+A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_ACK@{NO\_ACK}!schc.h@{schc.h}}\index{schc.h@{schc.h}!NO\_ACK@{NO\_ACK}}}\mbox{\Hypertarget{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}\label{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}} 
+N\+O\+\_\+\+A\+CK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NOT\_FRAGMENTED@{NOT\_FRAGMENTED}!schc.h@{schc.h}}\index{schc.h@{schc.h}!NOT\_FRAGMENTED@{NOT\_FRAGMENTED}}}\mbox{\Hypertarget{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}\label{schc_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}} 
+N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{schc_8h_ac6a26bb50f32ca8810179e894e284ea0}\label{schc_8h_ac6a26bb50f32ca8810179e894e284ea0}} 
+\index{schc.h@{schc.h}!schc\_layer\_t@{schc\_layer\_t}}
+\index{schc\_layer\_t@{schc\_layer\_t}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{schc\_layer\_t}{schc\_layer\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{schc_8h_ac6a26bb50f32ca8810179e894e284ea0}{schc\+\_\+layer\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SCHC\_IPV6@{SCHC\_IPV6}!schc.h@{schc.h}}\index{schc.h@{schc.h}!SCHC\_IPV6@{SCHC\_IPV6}}}\mbox{\Hypertarget{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a0c11d2df909aba3545ce3f9a0f622af4}\label{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a0c11d2df909aba3545ce3f9a0f622af4}} 
+S\+C\+H\+C\+\_\+\+I\+P\+V6&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SCHC\_UDP@{SCHC\_UDP}!schc.h@{schc.h}}\index{schc.h@{schc.h}!SCHC\_UDP@{SCHC\_UDP}}}\mbox{\Hypertarget{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a466b02e6c39f7b06862f76585c085935}\label{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a466b02e6c39f7b06862f76585c085935}} 
+S\+C\+H\+C\+\_\+\+U\+DP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SCHC\_COAP@{SCHC\_COAP}!schc.h@{schc.h}}\index{schc.h@{schc.h}!SCHC\_COAP@{SCHC\_COAP}}}\mbox{\Hypertarget{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a4f3573a26989d766758cb30328fd9ca2}\label{schc_8h_ac6a26bb50f32ca8810179e894e284ea0a4f3573a26989d766758cb30328fd9ca2}} 
+S\+C\+H\+C\+\_\+\+C\+O\+AP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{schc_8h_a9991f6ae222b8d657ebb0e0b162ea282}\label{schc_8h_a9991f6ae222b8d657ebb0e0b162ea282}} 
+\index{schc.h@{schc.h}!equal@{equal}}
+\index{equal@{equal}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{equal()}{equal()}}
+{\footnotesize\ttfamily static uint8\+\_\+t equal (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value,  }\item[{uint16\+\_\+t}]{field\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{schc_8h_a394540a77045dcb0230079435b631960}\label{schc_8h_a394540a77045dcb0230079435b631960}} 
+\index{schc.h@{schc.h}!ignore@{ignore}}
+\index{ignore@{ignore}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{ignore()}{ignore()}}
+{\footnotesize\ttfamily static uint8\+\_\+t ignore (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value,  }\item[{uint16\+\_\+t}]{field\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{schc_8h_a5371dbc9847ed58dc760b7f028ea14e9}\label{schc_8h_a5371dbc9847ed58dc760b7f028ea14e9}} 
+\index{schc.h@{schc.h}!matchmap@{matchmap}}
+\index{matchmap@{matchmap}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{matchmap()}{matchmap()}}
+{\footnotesize\ttfamily static uint8\+\_\+t matchmap (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value,  }\item[{uint16\+\_\+t}]{field\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{schc_8h_abd91def21b62074e08368e9bb11593d5}\label{schc_8h_abd91def21b62074e08368e9bb11593d5}} 
+\index{schc.h@{schc.h}!MSB@{MSB}}
+\index{MSB@{MSB}!schc.h@{schc.h}}
+\doxysubsubsection{\texorpdfstring{MSB()}{MSB()}}
+{\footnotesize\ttfamily static uint8\+\_\+t M\+SB (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structschc__field}{schc\+\_\+field}} $\ast$}]{target\+\_\+field,  }\item[{unsigned char $\ast$}]{field\+\_\+value,  }\item[{uint16\+\_\+t}]{field\+\_\+offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+

@@ -71,7 +71,8 @@ $(function() {
 <div class="title">fragmenter.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="schc__config_8h_source.html">schc_config.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="schc_8h_source.html">schc.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="schc__config_8h_source.html">schc_config.h</a>&quot;</code><br />
 </div>
 <p><a href="fragmenter_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -141,9 +142,9 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8d563c2c366a59b52ae25123a38c7603"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a8d563c2c366a59b52ae25123a38c7603">schc_fragmenter_init</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn, void(*send)(uint8_t *data, uint16_t length, uint32_t device_id), void(*end_rx)(<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn), void(*remove_timer_entry)(uint32_t device_id))</td></tr>
-<tr class="memdesc:a8d563c2c366a59b52ae25123a38c7603"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SCHC fragmenter.  <a href="fragmenter_8h.html#a8d563c2c366a59b52ae25123a38c7603">More...</a><br /></td></tr>
-<tr class="separator:a8d563c2c366a59b52ae25123a38c7603"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#adaabb8a36ff87d9f89d8215b2773c6c7">schc_fragmenter_init</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn, uint8_t(*send)(uint8_t *data, uint16_t length, uint32_t device_id), void(*end_rx)(<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *conn), void(*remove_timer_entry)(uint32_t device_id))</td></tr>
+<tr class="memdesc:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the SCHC fragmenter.  <a href="fragmenter_8h.html#adaabb8a36ff87d9f89d8215b2773c6c7">More...</a><br /></td></tr>
+<tr class="separator:adaabb8a36ff87d9f89d8215b2773c6c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c375e7b44652a0eccb9248083a6251d"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fragmenter_8h.html#a5c375e7b44652a0eccb9248083a6251d">schc_fragment</a> (<a class="el" href="structschc__fragmentation__t.html">schc_fragmentation_t</a> *tx_conn)</td></tr>
 <tr class="memdesc:a5c375e7b44652a0eccb9248083a6251d"><td class="mdescLeft">&#160;</td><td class="mdescRight">the sender state machine  <a href="fragmenter_8h.html#a5c375e7b44652a0eccb9248083a6251d">More...</a><br /></td></tr>
 <tr class="separator:a5c375e7b44652a0eccb9248083a6251d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -551,8 +552,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8d563c2c366a59b52ae25123a38c7603"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d563c2c366a59b52ae25123a38c7603">&#9670;&nbsp;</a></span>schc_fragmenter_init()</h2>
+<a id="adaabb8a36ff87d9f89d8215b2773c6c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaabb8a36ff87d9f89d8215b2773c6c7">&#9670;&nbsp;</a></span>schc_fragmenter_init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -566,7 +567,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void(*)(uint8_t *data, uint16_t length, uint32_t device_id)&#160;</td>
+          <td class="paramtype">uint8_t(*)(uint8_t *data, uint16_t length, uint32_t device_id)&#160;</td>
           <td class="paramname"><em>send</em>, </td>
         </tr>
         <tr>

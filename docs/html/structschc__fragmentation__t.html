@@ -77,11 +77,11 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a87361e46e93bdf8d6f9cb60cb8f0b5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81a06b0db6f570800959533e1fd2ce58"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a81a06b0db6f570800959533e1fd2ce58">packet_len</a></td></tr>
 <tr class="separator:a81a06b0db6f570800959533e1fd2ce58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54c6634755f3b9737e8c61d0fdea3a37"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a54c6634755f3b9737e8c61d0fdea3a37">data_ptr</a></td></tr>
-<tr class="separator:a54c6634755f3b9737e8c61d0fdea3a37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fa56a7c26f1dcdcaed54367974052cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a4fa56a7c26f1dcdcaed54367974052cb">bit_arr</a></td></tr>
+<tr class="separator:a4fa56a7c26f1dcdcaed54367974052cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85a9626c3f4d779ed07f3bde3e745143"><td class="memItemLeft" align="right" valign="top">uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a85a9626c3f4d779ed07f3bde3e745143">tail_ptr</a></td></tr>
 <tr class="separator:a85a9626c3f4d779ed07f3bde3e745143"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d0044911dc3e6c6c5161f85133771ca"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a3d0044911dc3e6c6c5161f85133771ca">rule_id</a> [<a class="el" href="schc__config__example_8h.html#ab264125e090b773a3c62c0587e2311f3">RULE_SIZE_BYTES</a>]</td></tr>
+<tr class="memitem:a3d0044911dc3e6c6c5161f85133771ca"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#a3d0044911dc3e6c6c5161f85133771ca">rule_id</a> [<a class="el" href="schc_8h.html#ab264125e090b773a3c62c0587e2311f3">RULE_SIZE_BYTES</a>]</td></tr>
 <tr class="separator:a3d0044911dc3e6c6c5161f85133771ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacb88301231fdf7ebf596250d3b75201"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structschc__fragmentation__t.html#aacb88301231fdf7ebf596250d3b75201">mtu</a></td></tr>
 <tr class="separator:aacb88301231fdf7ebf596250d3b75201"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,6 +159,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a4fa56a7c26f1dcdcaed54367974052cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fa56a7c26f1dcdcaed54367974052cb">&#9670;&nbsp;</a></span>bit_arr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structschc__bitarray__t.html">schc_bitarray_t</a>* schc_fragmentation_t::bit_arr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="acf5022a1d397d0501594591d24b6c0bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acf5022a1d397d0501594591d24b6c0bf">&#9670;&nbsp;</a></span>bitmap</h2>
 
@@ -167,20 +181,6 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">uint8_t schc_fragmentation_t::bitmap[<a class="el" href="schc__config__example_8h.html#a5e6121b65e73cd727a9af2331bf5d897">BITMAP_SIZE_BYTES</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a54c6634755f3b9737e8c61d0fdea3a37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54c6634755f3b9737e8c61d0fdea3a37">&#9670;&nbsp;</a></span>data_ptr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t* schc_fragmentation_t::data_ptr</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -390,7 +390,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t schc_fragmentation_t::rule_id[<a class="el" href="schc__config__example_8h.html#ab264125e090b773a3c62c0587e2311f3">RULE_SIZE_BYTES</a>]</td>
+          <td class="memname">uint8_t schc_fragmentation_t::rule_id[<a class="el" href="schc_8h.html#ab264125e090b773a3c62c0587e2311f3">RULE_SIZE_BYTES</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">

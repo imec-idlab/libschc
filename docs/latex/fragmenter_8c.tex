@@ -3,33 +3,13 @@
 {\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$string.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
-{\ttfamily \#include \char`\"{}config.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}schc\+\_\+config.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}compressor.\+h\char`\"{}}\newline
 {\ttfamily \#include \char`\"{}fragmenter.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}schc.\+h\char`\"{}}\newline
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-static void \mbox{\hyperlink{fragmenter_8c_a61d48fd21d46c222b24a1afa1d10fa2c}{set\+\_\+bits}} (uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em sets bits at a certain position in a bit array big endian \end{DoxyCompactList}\item 
-static uint32\+\_\+t \mbox{\hyperlink{fragmenter_8c_ac43ee8f42b947cbf9d5f5634ca25df26}{get\+\_\+bits}} (uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint8\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em get bits at a certain position in a bit array \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_ab9591970ee127d9aac1a9be6cb0e341c}{clear\+\_\+bits}} (uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em clear bits at a certain position in a bit array big endian \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_afd0b1eb449a1817ced7dc7d5aef364e5}{copy\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint32\+\_\+t dst\+\_\+pos, uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint32\+\_\+t src\+\_\+pos, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em copy bits to a certain position in a bit array from another array big endian \end{DoxyCompactList}\item 
-static uint8\+\_\+t \mbox{\hyperlink{fragmenter_8c_ab6badb335854afb2820f3460497f6aef}{compare\+\_\+bits}} (uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em compare two bit arrays \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_a323d4137cff83b04a84277381f6e9d00}{shift\+\_\+bits\+\_\+left}} (uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint16\+\_\+t len, uint32\+\_\+t shift)
-\begin{DoxyCompactList}\small\item\em shift a number of bits to the left \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_ad7c970cd13abace69b7cb14f2952a470}{shift\+\_\+bits\+\_\+right}} (uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint16\+\_\+t len, uint32\+\_\+t shift)
-\begin{DoxyCompactList}\small\item\em shift a number of bits to the right \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_af5bb874f988764a34f6001a8970569ef}{xor\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em logical X\+OR two bit arrays \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_addabd3eb9fa8eed29292c109c78647ac}{and\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
-\begin{DoxyCompactList}\small\item\em logical A\+ND two bit arrays \end{DoxyCompactList}\item 
-static void \mbox{\hyperlink{fragmenter_8c_ad1157ac0c35307f917b4050c4ca1f025}{print\+\_\+bitmap}} (uint8\+\_\+t bitmap\mbox{[}$\,$\mbox{]}, uint32\+\_\+t length)
-\begin{DoxyCompactList}\small\item\em print a bitmap \end{DoxyCompactList}\item 
 static uint16\+\_\+t \mbox{\hyperlink{fragmenter_8c_acc44be1dce0c424c7a0dba4b99049bfc}{get\+\_\+fcn\+\_\+value}} (uint8\+\_\+t $\ast$fragment, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
 \begin{DoxyCompactList}\small\item\em get the F\+CN value \end{DoxyCompactList}\item 
 static uint16\+\_\+t \mbox{\hyperlink{fragmenter_8c_adbf76eacc23d6ac58b5eaf3908573b87}{get\+\_\+max\+\_\+fcn\+\_\+value}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
@@ -57,13 +37,13 @@ void \mbox{\hyperlink{fragmenter_8c_a3b3e7a45b2ff0f407adfcc266f47c3dc}{mbuf\+\_\
 void \mbox{\hyperlink{fragmenter_8c_a343086d922526b9c211a315f156041e6}{mbuf\+\_\+clean}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$$\ast$head)
 \begin{DoxyCompactList}\small\item\em delete all fragments chained in an mbuf \end{DoxyCompactList}\item 
 static void \mbox{\hyperlink{fragmenter_8c_a32ae5e155bb05dd96543b5e18ec7e632}{mbuf\+\_\+sort}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$$\ast$head)
-\begin{DoxyCompactList}\small\item\em sort the complete mbuf chain based on fragment counter \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em sort the complete mbuf chain based on fragment counter (fcn) note\+: some packets will arrive out of order, as they were part of a retransmission, and consequently arrive out of order, but carry the same fcn \end{DoxyCompactList}\item 
 static void \mbox{\hyperlink{fragmenter_8c_a023b34894f235fb324430b3dbda704ff}{mbuf\+\_\+format}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$$\ast$head, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
 \begin{DoxyCompactList}\small\item\em remove the fragmentation headers and concat the data bits of the complete mbuf chain \end{DoxyCompactList}\item 
 static uint8\+\_\+t \mbox{\hyperlink{fragmenter_8c_ac8a2b026fc0d12d1e7d1dcc09a2bb139}{get\+\_\+header\+\_\+length}} (\mbox{\hyperlink{structschc__mbuf__t}{schc\+\_\+mbuf\+\_\+t}} $\ast$mbuf, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
 \begin{DoxyCompactList}\small\item\em Returns the number of bits the current header exists off. \end{DoxyCompactList}\item 
 static unsigned int \mbox{\hyperlink{fragmenter_8c_ac86ec2c2210d0627256b9493d38dc79f}{mbuf\+\_\+compute\+\_\+mic}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
-\begin{DoxyCompactList}\small\item\em Calculates the Message Integrity Check (M\+IC) over an unformatted mbuf chain which is the 8-\/ 16-\/ or 32-\/ bit Cyclic Redundancy Check (C\+RC) \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Calculates the Message Integrity Check (M\+IC) over an unformatted mbuf chain containing the compressed, unfragmented packet which is the 8-\/ 16-\/ or 32-\/ bit Cyclic Redundancy Check (C\+RC) \end{DoxyCompactList}\item 
 static unsigned int \mbox{\hyperlink{fragmenter_8c_a24b1894bc266588db9e6d796ce056259}{compute\+\_\+mic}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
 \begin{DoxyCompactList}\small\item\em Calculates the Message Integrity Check (M\+IC) which is the 8-\/ 16-\/ or 32-\/ bit Cyclic Redundancy Check (C\+RC) \end{DoxyCompactList}\item 
 static uint8\+\_\+t \mbox{\hyperlink{fragmenter_8c_aaab33166d11e3648fe19a05e95e83808}{get\+\_\+window\+\_\+bit}} (uint8\+\_\+t $\ast$fragment, \mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)
@@ -122,7 +102,7 @@ static uint8\+\_\+t \mbox{\hyperlink{fragmenter_8c_ad674ac82b466e641871af9e10d53
 \begin{DoxyCompactList}\small\item\em the function to call when the state machine is in W\+A\+IT E\+ND state \end{DoxyCompactList}\item 
 int8\+\_\+t \mbox{\hyperlink{fragmenter_8c_a6a248f74b7a8b0ef5f7dbc3f418e05a8}{schc\+\_\+reassemble}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$rx\+\_\+conn)
 \begin{DoxyCompactList}\small\item\em the receiver state machine \end{DoxyCompactList}\item 
-int8\+\_\+t \mbox{\hyperlink{fragmenter_8c_a8d563c2c366a59b52ae25123a38c7603}{schc\+\_\+fragmenter\+\_\+init}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, void($\ast$send)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id), void($\ast$end\+\_\+rx)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn), void($\ast$remove\+\_\+timer\+\_\+entry)(uint32\+\_\+t device\+\_\+id))
+int8\+\_\+t \mbox{\hyperlink{fragmenter_8c_adaabb8a36ff87d9f89d8215b2773c6c7}{schc\+\_\+fragmenter\+\_\+init}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn, uint8\+\_\+t($\ast$send)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id), void($\ast$end\+\_\+rx)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn), void($\ast$remove\+\_\+timer\+\_\+entry)(uint32\+\_\+t device\+\_\+id))
 \begin{DoxyCompactList}\small\item\em Initializes the S\+C\+HC fragmenter. \end{DoxyCompactList}\item 
 static void \mbox{\hyperlink{fragmenter_8c_ad5e5579cd82363858b434d8e06fd8a73}{tx\+\_\+fragment\+\_\+send}} (\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$tx\+\_\+conn)
 \begin{DoxyCompactList}\small\item\em the function to call when the state machine is in S\+E\+ND state \end{DoxyCompactList}\item 
@@ -173,27 +153,6 @@ abort an ongoing transmission because the inactivity timer has expired
 {\em conn} & a pointer to the connection \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_addabd3eb9fa8eed29292c109c78647ac}\label{fragmenter_8c_addabd3eb9fa8eed29292c109c78647ac}} 
-\index{fragmenter.c@{fragmenter.c}!and\_bits@{and\_bits}}
-\index{and\_bits@{and\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{and\_bits()}{and\_bits()}}
-{\footnotesize\ttfamily static void and\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-logical A\+ND two bit arrays 
-
-
-\begin{DoxyParams}{Parameters}
-{\em D\+ST} & the array to save the result in \\
-\hline
-{\em S\+R\+C1} & the array to compare with \\
-\hline
-{\em S\+R\+C2} & the array to compare with \\
-\hline
-{\em len} & the number of consecutive bits to compare \\
-\hline
-\end{DoxyParams}
 \mbox{\Hypertarget{fragmenter_8c_a2e7f5b0c689cf574b273258463b3c558}\label{fragmenter_8c_a2e7f5b0c689cf574b273258463b3c558}} 
 \index{fragmenter.c@{fragmenter.c}!clear\_bitmap@{clear\_bitmap}}
 \index{clear\_bitmap@{clear\_bitmap}!fragmenter.c@{fragmenter.c}}
@@ -209,47 +168,6 @@ clear the received and local bitmap
 {\em conn} & a pointer to the connection \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_ab9591970ee127d9aac1a9be6cb0e341c}\label{fragmenter_8c_ab9591970ee127d9aac1a9be6cb0e341c}} 
-\index{fragmenter.c@{fragmenter.c}!clear\_bits@{clear\_bits}}
-\index{clear\_bits@{clear\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{clear\_bits()}{clear\_bits()}}
-{\footnotesize\ttfamily static void clear\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-clear bits at a certain position in a bit array big endian 
-
-
-\begin{DoxyParams}{Parameters}
-{\em A} & the bit array \\
-\hline
-{\em pos} & which bit to clear \\
-\hline
-{\em len} & the number of consecutive bits to clear \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_ab6badb335854afb2820f3460497f6aef}\label{fragmenter_8c_ab6badb335854afb2820f3460497f6aef}} 
-\index{fragmenter.c@{fragmenter.c}!compare\_bits@{compare\_bits}}
-\index{compare\_bits@{compare\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{compare\_bits()}{compare\_bits()}}
-{\footnotesize\ttfamily static uint8\+\_\+t compare\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-compare two bit arrays 
-
-
-\begin{DoxyParams}{Parameters}
-{\em S\+R\+C1} & the array to compare \\
-\hline
-{\em S\+R\+C2} & the array to compare with \\
-\hline
-{\em len} & the number of consecutive bits to compare\\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-1 both arrays match 0 the arrays differ 
-\end{DoxyReturn}
 \mbox{\Hypertarget{fragmenter_8c_a24b1894bc266588db9e6d796ce056259}\label{fragmenter_8c_a24b1894bc266588db9e6d796ce056259}} 
 \index{fragmenter.c@{fragmenter.c}!compute\_mic@{compute\_mic}}
 \index{compute\_mic@{compute\_mic}!fragmenter.c@{fragmenter.c}}
@@ -268,29 +186,6 @@ Calculates the Message Integrity Check (M\+IC) which is the 8-\/ 16-\/ or 32-\/ 
 \begin{DoxyReturn}{Returns}
 checksum the computed checksum 
 \end{DoxyReturn}
-\mbox{\Hypertarget{fragmenter_8c_afd0b1eb449a1817ced7dc7d5aef364e5}\label{fragmenter_8c_afd0b1eb449a1817ced7dc7d5aef364e5}} 
-\index{fragmenter.c@{fragmenter.c}!copy\_bits@{copy\_bits}}
-\index{copy\_bits@{copy\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{copy\_bits()}{copy\_bits()}}
-{\footnotesize\ttfamily static void copy\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{dst\+\_\+pos,  }\item[{uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{src\+\_\+pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-copy bits to a certain position in a bit array from another array big endian 
-
-
-\begin{DoxyParams}{Parameters}
-{\em D\+ST} & the array to copy to \\
-\hline
-{\em dst\+\_\+pos} & which bit to start from \\
-\hline
-{\em S\+RC} & the array to copy from \\
-\hline
-{\em src\+\_\+pos} & which bit to start from \\
-\hline
-{\em len} & the number of consecutive bits to set \\
-\hline
-\end{DoxyParams}
 \mbox{\Hypertarget{fragmenter_8c_ad72ed26b4fe0b52eebf0278a4d03a3ba}\label{fragmenter_8c_ad72ed26b4fe0b52eebf0278a4d03a3ba}} 
 \index{fragmenter.c@{fragmenter.c}!decode\_bitmap@{decode\_bitmap}}
 \index{decode\_bitmap@{decode\_bitmap}!fragmenter.c@{fragmenter.c}}
@@ -390,28 +285,6 @@ get a bitmap mask for a number of bits
 \begin{DoxyReturn}{Returns}
 padding the bitmask 
 \end{DoxyReturn}
-\mbox{\Hypertarget{fragmenter_8c_ac43ee8f42b947cbf9d5f5634ca25df26}\label{fragmenter_8c_ac43ee8f42b947cbf9d5f5634ca25df26}} 
-\index{fragmenter.c@{fragmenter.c}!get\_bits@{get\_bits}}
-\index{get\_bits@{get\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{get\_bits()}{get\_bits()}}
-{\footnotesize\ttfamily static uint32\+\_\+t get\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint8\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-get bits at a certain position in a bit array 
-
-
-\begin{DoxyParams}{Parameters}
-{\em A} & the bit array \\
-\hline
-{\em pos} & the position to start from \\
-\hline
-{\em len} & the number of consecutive bits to get\\
-\hline
-\end{DoxyParams}
-\begin{DoxyNote}{Note}
-limited to 32 consecutive bits 
-\end{DoxyNote}
 \mbox{\Hypertarget{fragmenter_8c_acc44be1dce0c424c7a0dba4b99049bfc}\label{fragmenter_8c_acc44be1dce0c424c7a0dba4b99049bfc}} 
 \index{fragmenter.c@{fragmenter.c}!get\_fcn\_value@{get\_fcn\_value}}
 \index{get\_fcn\_value@{get\_fcn\_value}!fragmenter.c@{fragmenter.c}}
@@ -670,7 +543,7 @@ delete all fragments chained in an mbuf
 
 
 
-Calculates the Message Integrity Check (M\+IC) over an unformatted mbuf chain which is the 8-\/ 16-\/ or 32-\/ bit Cyclic Redundancy Check (C\+RC) 
+Calculates the Message Integrity Check (M\+IC) over an unformatted mbuf chain containing the compressed, unfragmented packet which is the 8-\/ 16-\/ or 32-\/ bit Cyclic Redundancy Check (C\+RC) 
 
 
 \begin{DoxyParams}{Parameters}
@@ -723,6 +596,14 @@ delete a mbuf from the chain
 
 
 remove the fragmentation headers and concat the data bits of the complete mbuf chain 
+
++-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/---+ +-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/---+ $\vert$ FH $\vert$ D\+A\+TA $\vert$ $<$--- ... $<$--- $\vert$ FH $\vert$ D\+A\+TA $\vert$ +-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/---+ +-\/---+-\/-\/-\/-\/-\/-\/-\/-\/-\/---+
+
+
+\begin{DoxyEnumerate}
+\item remove the fragmentation header (FH), but keep the rule id
+\item shift the D\+A\+TA bits to the left, to overwrite the FH bits 3.
+\end{DoxyEnumerate}
 
 
 \begin{DoxyParams}{Parameters}
@@ -796,7 +677,7 @@ add an item to the end of the mbuf list if head is N\+U\+LL, the first item of t
 
 
 
-sort the complete mbuf chain based on fragment counter 
+sort the complete mbuf chain based on fragment counter (fcn) note\+: some packets will arrive out of order, as they were part of a retransmission, and consequently arrive out of order, but carry the same fcn 
 
 
 \begin{DoxyParams}{Parameters}
@@ -831,23 +712,6 @@ the function to call when the state machine has to continue transmission
 
 \begin{DoxyParams}{Parameters}
 {\em tx\+\_\+conn} & a pointer to the tx connection structure \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_ad1157ac0c35307f917b4050c4ca1f025}\label{fragmenter_8c_ad1157ac0c35307f917b4050c4ca1f025}} 
-\index{fragmenter.c@{fragmenter.c}!print\_bitmap@{print\_bitmap}}
-\index{print\_bitmap@{print\_bitmap}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{print\_bitmap()}{print\_bitmap()}}
-{\footnotesize\ttfamily static void print\+\_\+bitmap (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{bitmap\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-print a bitmap 
-
-
-\begin{DoxyParams}{Parameters}
-{\em bitmap} & the bit array \\
-\hline
-{\em len} & the number of consecutive bits to print \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{fragmenter_8c_abb5688d5a6d4d0f4f955951b6ee130b1}\label{fragmenter_8c_abb5688d5a6d4d0f4f955951b6ee130b1}} 
@@ -911,11 +775,11 @@ This function should be called whenever a fragment is received an open connectio
 \begin{DoxyReturn}{Returns}
 conn the connection 
 \end{DoxyReturn}
-\mbox{\Hypertarget{fragmenter_8c_a8d563c2c366a59b52ae25123a38c7603}\label{fragmenter_8c_a8d563c2c366a59b52ae25123a38c7603}} 
+\mbox{\Hypertarget{fragmenter_8c_adaabb8a36ff87d9f89d8215b2773c6c7}\label{fragmenter_8c_adaabb8a36ff87d9f89d8215b2773c6c7}} 
 \index{fragmenter.c@{fragmenter.c}!schc\_fragmenter\_init@{schc\_fragmenter\_init}}
 \index{schc\_fragmenter\_init@{schc\_fragmenter\_init}!fragmenter.c@{fragmenter.c}}
 \doxysubsubsection{\texorpdfstring{schc\_fragmenter\_init()}{schc\_fragmenter\_init()}}
-{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragmenter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{void($\ast$)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id)}]{send,  }\item[{void($\ast$)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}]{end\+\_\+rx,  }\item[{void($\ast$)(uint32\+\_\+t device\+\_\+id)}]{remove\+\_\+timer\+\_\+entry }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily int8\+\_\+t schc\+\_\+fragmenter\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$}]{tx\+\_\+conn,  }\item[{uint8\+\_\+t($\ast$)(uint8\+\_\+t $\ast$data, uint16\+\_\+t length, uint32\+\_\+t device\+\_\+id)}]{send,  }\item[{void($\ast$)(\mbox{\hyperlink{structschc__fragmentation__t}{schc\+\_\+fragmentation\+\_\+t}} $\ast$conn)}]{end\+\_\+rx,  }\item[{void($\ast$)(uint32\+\_\+t device\+\_\+id)}]{remove\+\_\+timer\+\_\+entry }\end{DoxyParamCaption})}
 
 
 
@@ -1067,26 +931,7 @@ composes an all-\/empty fragment based on the parameters found in the connection
 {\em conn} & a pointer to the connection\\
 \hline
 \end{DoxyParams}
-@ret 0 the packet was not sent 1 the packet was transmitted \mbox{\Hypertarget{fragmenter_8c_a61d48fd21d46c222b24a1afa1d10fa2c}\label{fragmenter_8c_a61d48fd21d46c222b24a1afa1d10fa2c}} 
-\index{fragmenter.c@{fragmenter.c}!set\_bits@{set\_bits}}
-\index{set\_bits@{set\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{set\_bits()}{set\_bits()}}
-{\footnotesize\ttfamily static void set\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-sets bits at a certain position in a bit array big endian 
-
-
-\begin{DoxyParams}{Parameters}
-{\em A} & the bit array \\
-\hline
-{\em pos} & which bit to set \\
-\hline
-{\em len} & the number of consecutive bits to set \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_adba6189ec34adbf6118b6446e4cc79f4}\label{fragmenter_8c_adba6189ec34adbf6118b6446e4cc79f4}} 
+@ret 0 the packet was not sent 1 the packet was transmitted \mbox{\Hypertarget{fragmenter_8c_adba6189ec34adbf6118b6446e4cc79f4}\label{fragmenter_8c_adba6189ec34adbf6118b6446e4cc79f4}} 
 \index{fragmenter.c@{fragmenter.c}!set\_conn\_frag\_cnt@{set\_conn\_frag\_cnt}}
 \index{set\_conn\_frag\_cnt@{set\_conn\_frag\_cnt}!fragmenter.c@{fragmenter.c}}
 \doxysubsubsection{\texorpdfstring{set\_conn\_frag\_cnt()}{set\_conn\_frag\_cnt()}}
@@ -1183,44 +1028,6 @@ sets the retransmission timer to re-\/enter the fragmentation loop and changes t
 {\em conn} & a pointer to the connection \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_a323d4137cff83b04a84277381f6e9d00}\label{fragmenter_8c_a323d4137cff83b04a84277381f6e9d00}} 
-\index{fragmenter.c@{fragmenter.c}!shift\_bits\_left@{shift\_bits\_left}}
-\index{shift\_bits\_left@{shift\_bits\_left}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{shift\_bits\_left()}{shift\_bits\_left()}}
-{\footnotesize\ttfamily static void shift\+\_\+bits\+\_\+left (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{len,  }\item[{uint32\+\_\+t}]{shift }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-shift a number of bits to the left 
-
-
-\begin{DoxyParams}{Parameters}
-{\em S\+RC} & the array to shift \\
-\hline
-{\em len} & the length of the array \\
-\hline
-{\em shift} & the number of consecutive bits to shift \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_ad7c970cd13abace69b7cb14f2952a470}\label{fragmenter_8c_ad7c970cd13abace69b7cb14f2952a470}} 
-\index{fragmenter.c@{fragmenter.c}!shift\_bits\_right@{shift\_bits\_right}}
-\index{shift\_bits\_right@{shift\_bits\_right}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{shift\_bits\_right()}{shift\_bits\_right()}}
-{\footnotesize\ttfamily static void shift\+\_\+bits\+\_\+right (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{len,  }\item[{uint32\+\_\+t}]{shift }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-shift a number of bits to the right 
-
-
-\begin{DoxyParams}{Parameters}
-{\em S\+RC} & the array to shift \\
-\hline
-{\em len} & the length of the array \\
-\hline
-{\em shift} & the number of consecutive bits to shift \\
-\hline
-\end{DoxyParams}
 \mbox{\Hypertarget{fragmenter_8c_a80315bb21fe508740e3b5cb066a376a2}\label{fragmenter_8c_a80315bb21fe508740e3b5cb066a376a2}} 
 \index{fragmenter.c@{fragmenter.c}!tx\_fragment\_resend@{tx\_fragment\_resend}}
 \index{tx\_fragment\_resend@{tx\_fragment\_resend}!fragmenter.c@{fragmenter.c}}
@@ -1264,27 +1071,6 @@ the function to call when the state machine is in W\+A\+IT E\+ND state
 
 \begin{DoxyParams}{Parameters}
 {\em rx\+\_\+conn} & a pointer to the rx connection structure \\
-\hline
-\end{DoxyParams}
-\mbox{\Hypertarget{fragmenter_8c_af5bb874f988764a34f6001a8970569ef}\label{fragmenter_8c_af5bb874f988764a34f6001a8970569ef}} 
-\index{fragmenter.c@{fragmenter.c}!xor\_bits@{xor\_bits}}
-\index{xor\_bits@{xor\_bits}!fragmenter.c@{fragmenter.c}}
-\doxysubsubsection{\texorpdfstring{xor\_bits()}{xor\_bits()}}
-{\footnotesize\ttfamily static void xor\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-
-logical X\+OR two bit arrays 
-
-
-\begin{DoxyParams}{Parameters}
-{\em D\+ST} & the array to save the result in \\
-\hline
-{\em S\+R\+C1} & the array to compare with \\
-\hline
-{\em S\+R\+C2} & the array to compare with \\
-\hline
-{\em len} & the number of consecutive bits to compare \\
 \hline
 \end{DoxyParams}
 

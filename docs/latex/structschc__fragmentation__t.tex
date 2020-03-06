@@ -11,11 +11,11 @@ uint32\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a87361e46e93bdf8d6f9
 \item 
 uint16\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a81a06b0db6f570800959533e1fd2ce58}{packet\+\_\+len}}
 \item 
-uint8\+\_\+t $\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a54c6634755f3b9737e8c61d0fdea3a37}{data\+\_\+ptr}}
+\mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}} $\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a4fa56a7c26f1dcdcaed54367974052cb}{bit\+\_\+arr}}
 \item 
 uint8\+\_\+t $\ast$ \mbox{\hyperlink{structschc__fragmentation__t_a85a9626c3f4d779ed07f3bde3e745143}{tail\+\_\+ptr}}
 \item 
-uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a3d0044911dc3e6c6c5161f85133771ca}{rule\+\_\+id}} \mbox{[}\mbox{\hyperlink{schc__config__example_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}
+uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a3d0044911dc3e6c6c5161f85133771ca}{rule\+\_\+id}} \mbox{[}\mbox{\hyperlink{schc_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}
 \item 
 uint16\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_aacb88301231fdf7ebf596250d3b75201}{mtu}}
 \item 
@@ -78,17 +78,17 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a8a6c636f8d863fc3db68
 \doxysubsubsection{\texorpdfstring{attempts}{attempts}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::attempts}
 
+\mbox{\Hypertarget{structschc__fragmentation__t_a4fa56a7c26f1dcdcaed54367974052cb}\label{structschc__fragmentation__t_a4fa56a7c26f1dcdcaed54367974052cb}} 
+\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!bit\_arr@{bit\_arr}}
+\index{bit\_arr@{bit\_arr}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
+\doxysubsubsection{\texorpdfstring{bit\_arr}{bit\_arr}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}}$\ast$ schc\+\_\+fragmentation\+\_\+t\+::bit\+\_\+arr}
+
 \mbox{\Hypertarget{structschc__fragmentation__t_acf5022a1d397d0501594591d24b6c0bf}\label{structschc__fragmentation__t_acf5022a1d397d0501594591d24b6c0bf}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!bitmap@{bitmap}}
 \index{bitmap@{bitmap}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{bitmap}{bitmap}}
 {\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::bitmap\mbox{[}\mbox{\hyperlink{schc__config__example_8h_a5e6121b65e73cd727a9af2331bf5d897}{B\+I\+T\+M\+A\+P\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}}
-
-\mbox{\Hypertarget{structschc__fragmentation__t_a54c6634755f3b9737e8c61d0fdea3a37}\label{structschc__fragmentation__t_a54c6634755f3b9737e8c61d0fdea3a37}} 
-\index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!data\_ptr@{data\_ptr}}
-\index{data\_ptr@{data\_ptr}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
-\doxysubsubsection{\texorpdfstring{data\_ptr}{data\_ptr}}
-{\footnotesize\ttfamily uint8\+\_\+t$\ast$ schc\+\_\+fragmentation\+\_\+t\+::data\+\_\+ptr}
 
 \mbox{\Hypertarget{structschc__fragmentation__t_ac3fbcae2ee4198df9d04438d63d97361}\label{structschc__fragmentation__t_ac3fbcae2ee4198df9d04438d63d97361}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!dc@{dc}}
@@ -178,7 +178,7 @@ uint8\+\_\+t \mbox{\hyperlink{structschc__fragmentation__t_a8a6c636f8d863fc3db68
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!rule\_id@{rule\_id}}
 \index{rule\_id@{rule\_id}!schc\_fragmentation\_t@{schc\_fragmentation\_t}}
 \doxysubsubsection{\texorpdfstring{rule\_id}{rule\_id}}
-{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::rule\+\_\+id\mbox{[}\mbox{\hyperlink{schc__config__example_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}}
+{\footnotesize\ttfamily uint8\+\_\+t schc\+\_\+fragmentation\+\_\+t\+::rule\+\_\+id\mbox{[}\mbox{\hyperlink{schc_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}\mbox{]}}
 
 \mbox{\Hypertarget{structschc__fragmentation__t_a8a6c636f8d863fc3db680da64ee889c1}\label{structschc__fragmentation__t_a8a6c636f8d863fc3db680da64ee889c1}} 
 \index{schc\_fragmentation\_t@{schc\_fragmentation\_t}!RULE\_SIZE@{RULE\_SIZE}}

@@ -41,6 +41,8 @@ struct \mbox{\hyperlink{structpcoap__payload}{pcoap\+\_\+payload}}
 \#define \mbox{\hyperlink{picocoap_8h_a25528ec74a52f6c3c1c90298e797cae4}{C\+O\+A\+P\+\_\+\+E\+X\+C\+H\+A\+N\+G\+E\+\_\+\+L\+I\+F\+E\+T\+I\+ME}}~247
 \item 
 \#define \mbox{\hyperlink{picocoap_8h_a87fd7d7dd618371cbc930e30bf1c27d9}{C\+O\+A\+P\+\_\+\+N\+O\+N\+\_\+\+L\+I\+F\+E\+T\+I\+ME}}~145
+\item 
+\#define \mbox{\hyperlink{picocoap_8h_a32c693bd3dc87d85f8256028e9f0e0bf}{C\+O\+A\+P\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+E\+N\+G\+TH}}~16
 \end{DoxyCompactItemize}
 \doxysubsection*{Typedefs}
 \begin{DoxyCompactItemize}
@@ -207,7 +209,7 @@ int8\+\_\+t \mbox{\hyperlink{picocoap_8h_ae623c60b0b9c8e994b3fd7687eee0147}{pcoa
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-static struct \mbox{\hyperlink{structpcoap__option__names}{pcoap\+\_\+option\+\_\+names}} \mbox{\hyperlink{picocoap_8h_a25294a87ed5e837d7ed611e767dbdfd3}{coap\+\_\+options}} \mbox{[}16\mbox{]}
+static struct \mbox{\hyperlink{structpcoap__option__names}{pcoap\+\_\+option\+\_\+names}} \mbox{\hyperlink{picocoap_8h_a18cfdd40118563c137b6b911332dde6e}{coap\+\_\+options}} \mbox{[}\mbox{\hyperlink{picocoap_8h_a32c693bd3dc87d85f8256028e9f0e0bf}{C\+O\+A\+P\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}
 \end{DoxyCompactItemize}
 
 
@@ -281,6 +283,12 @@ Co\+AP Defined Parameters.
 \index{COAP\_NSTART@{COAP\_NSTART}!picocoap.h@{picocoap.h}}
 \doxysubsubsection{\texorpdfstring{COAP\_NSTART}{COAP\_NSTART}}
 {\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+N\+S\+T\+A\+RT~1}
+
+\mbox{\Hypertarget{picocoap_8h_a32c693bd3dc87d85f8256028e9f0e0bf}\label{picocoap_8h_a32c693bd3dc87d85f8256028e9f0e0bf}} 
+\index{picocoap.h@{picocoap.h}!COAP\_OPTIONS\_LENGTH@{COAP\_OPTIONS\_LENGTH}}
+\index{COAP\_OPTIONS\_LENGTH@{COAP\_OPTIONS\_LENGTH}!picocoap.h@{picocoap.h}}
+\doxysubsubsection{\texorpdfstring{COAP\_OPTIONS\_LENGTH}{COAP\_OPTIONS\_LENGTH}}
+{\footnotesize\ttfamily \#define C\+O\+A\+P\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+E\+N\+G\+TH~16}
 
 \mbox{\Hypertarget{picocoap_8h_a2ed23e020e732dda3a360191f231da7b}\label{picocoap_8h_a2ed23e020e732dda3a360191f231da7b}} 
 \index{picocoap.h@{picocoap.h}!COAP\_PROBING\_RATE@{COAP\_PROBING\_RATE}}
@@ -1170,11 +1178,11 @@ coap\+\_\+init\+\_\+pdu
 
 
 \doxysubsection{Variable Documentation}
-\mbox{\Hypertarget{picocoap_8h_a25294a87ed5e837d7ed611e767dbdfd3}\label{picocoap_8h_a25294a87ed5e837d7ed611e767dbdfd3}} 
+\mbox{\Hypertarget{picocoap_8h_a18cfdd40118563c137b6b911332dde6e}\label{picocoap_8h_a18cfdd40118563c137b6b911332dde6e}} 
 \index{picocoap.h@{picocoap.h}!coap\_options@{coap\_options}}
 \index{coap\_options@{coap\_options}!picocoap.h@{picocoap.h}}
 \doxysubsubsection{\texorpdfstring{coap\_options}{coap\_options}}
-{\footnotesize\ttfamily struct \mbox{\hyperlink{structpcoap__option__names}{pcoap\+\_\+option\+\_\+names}} coap\+\_\+options\mbox{[}16\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structpcoap__option__names}{pcoap\+\_\+option\+\_\+names}} coap\+\_\+options\mbox{[}\mbox{\hyperlink{picocoap_8h_a32c693bd3dc87d85f8256028e9f0e0bf}{C\+O\+A\+P\+\_\+\+O\+P\+T\+I\+O\+N\+S\+\_\+\+L\+E\+N\+G\+TH}}\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
 
 {\bfseries Initial value\+:}
 \begin{DoxyCode}{0}

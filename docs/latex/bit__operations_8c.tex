@@ -1,0 +1,345 @@
+\hypertarget{bit__operations_8c}{}\doxysection{bit\+\_\+operations.\+c File Reference}
+\label{bit__operations_8c}\index{bit\_operations.c@{bit\_operations.c}}
+{\ttfamily \#include \char`\"{}bit\+\_\+operations.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{bit__operations_8c_a6ca8acc21387487f5a65244eee7657ad}{set\+\_\+bits}} (uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em sets bits at a certain position in a bit array big endian \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{bit__operations_8c_ac145c54c244fb53f1fb266113f483d54}{get\+\_\+bits}} (const uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em get bits at a certain position in a bit array \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_a3821f50623047fb93ed4b820fd4a1b8a}{clear\+\_\+bits}} (uint8\+\_\+t A\mbox{[}$\,$\mbox{]}, uint32\+\_\+t pos, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em clear bits at a certain position in a bit array big endian \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_aa74d3f4edb3fbd2704f24343a2e50813}{copy\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint32\+\_\+t dst\+\_\+pos, const uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint32\+\_\+t src\+\_\+pos, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em copy bits to a certain position in a bit array from another array big endian \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_a9dfca8d34f44271dd48ef2c3be2f0092}{compare\+\_\+bits}} (const uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, const uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em compare two bit arrays \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_a8e148c4d5810b49b365e71a7ef7337e7}{compare\+\_\+bits\+\_\+aligned}} (const uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint16\+\_\+t pos1, const uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint16\+\_\+t pos2, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em compare two bit arrays with starting point \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_a1030a11772d6480c862b47a9a907bd2f}{compare\+\_\+bits\+\_\+\+B\+I\+G\+\_\+\+E\+ND}} (uint8\+\_\+t $\ast$S\+R\+C1, uint8\+\_\+t $\ast$S\+R\+C2, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em compare two bit arrays starting from right to left \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_a6ebd634daa417f0d054b15983d0703af}{shift\+\_\+bits\+\_\+left}} (uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint16\+\_\+t len, uint32\+\_\+t shift)
+\begin{DoxyCompactList}\small\item\em shift a number of bits to the left \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_afadff313aab0bbe2ed79ce72885735c3}{shift\+\_\+bits\+\_\+right}} (uint8\+\_\+t S\+RC\mbox{[}$\,$\mbox{]}, uint16\+\_\+t len, uint32\+\_\+t shift)
+\begin{DoxyCompactList}\small\item\em shift a number of bits to the right \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_a9858cf5fc58daff568ba07a5d264989d}{xor\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em logical X\+OR two bit arrays \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_a5e6bd75bf5871176bb38d7e382372f28}{and\+\_\+bits}} (uint8\+\_\+t D\+ST\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C1\mbox{[}$\,$\mbox{]}, uint8\+\_\+t S\+R\+C2\mbox{[}$\,$\mbox{]}, uint32\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em logical A\+ND two bit arrays \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{bit__operations_8c_a963c3f1e2f40087703e826a454198faa}{print\+\_\+bitmap}} (const uint8\+\_\+t bitmap\mbox{[}$\,$\mbox{]}, uint32\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em print a bitmap \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_a56ab5e62da3e4cde30d216b7e0b53b2a}{get\+\_\+number\+\_\+of\+\_\+bytes\+\_\+from\+\_\+bits}} (uint16\+\_\+t number\+\_\+of\+\_\+bits)
+\begin{DoxyCompactList}\small\item\em get the number of bytes required to store this amount of bits \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{bit__operations_8c_a864e0a0ece6121fcd839313f3e158186}{get\+\_\+required\+\_\+number\+\_\+of\+\_\+bits}} (uint32\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em get the number of bits required to store a value \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_a43ead7431c1b8bd21806927b306fb7fd}{get\+\_\+position\+\_\+in\+\_\+first\+\_\+byte}} (uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em get the starting bit of a value \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{bit__operations_8c_afa77e854f2ae60f5126d75270d28a059}{padded}} (\mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}} $\ast$bit\+\_\+array)
+\begin{DoxyCompactList}\small\item\em remove padding \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{bit__operations_8c_a5e6bd75bf5871176bb38d7e382372f28}\label{bit__operations_8c_a5e6bd75bf5871176bb38d7e382372f28}} 
+\index{bit\_operations.c@{bit\_operations.c}!and\_bits@{and\_bits}}
+\index{and\_bits@{and\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{and\_bits()}{and\_bits()}}
+{\footnotesize\ttfamily void and\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+logical A\+ND two bit arrays 
+
+
+\begin{DoxyParams}{Parameters}
+{\em D\+ST} & the array to save the result in \\
+\hline
+{\em S\+R\+C1} & the array to compare with \\
+\hline
+{\em S\+R\+C2} & the array to compare with \\
+\hline
+{\em len} & the number of consecutive bits to compare \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a3821f50623047fb93ed4b820fd4a1b8a}\label{bit__operations_8c_a3821f50623047fb93ed4b820fd4a1b8a}} 
+\index{bit\_operations.c@{bit\_operations.c}!clear\_bits@{clear\_bits}}
+\index{clear\_bits@{clear\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{clear\_bits()}{clear\_bits()}}
+{\footnotesize\ttfamily void clear\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+clear bits at a certain position in a bit array big endian 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & the bit array \\
+\hline
+{\em pos} & which bit to clear \\
+\hline
+{\em len} & the number of consecutive bits to clear \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a9dfca8d34f44271dd48ef2c3be2f0092}\label{bit__operations_8c_a9dfca8d34f44271dd48ef2c3be2f0092}} 
+\index{bit\_operations.c@{bit\_operations.c}!compare\_bits@{compare\_bits}}
+\index{compare\_bits@{compare\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{compare\_bits()}{compare\_bits()}}
+{\footnotesize\ttfamily uint8\+\_\+t compare\+\_\+bits (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{const uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+compare two bit arrays 
+
+
+\begin{DoxyParams}{Parameters}
+{\em S\+R\+C1} & the array to compare \\
+\hline
+{\em S\+R\+C2} & the array to compare with \\
+\hline
+{\em len} & the number of consecutive bits to compare\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 both arrays match 0 the arrays differ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{bit__operations_8c_a8e148c4d5810b49b365e71a7ef7337e7}\label{bit__operations_8c_a8e148c4d5810b49b365e71a7ef7337e7}} 
+\index{bit\_operations.c@{bit\_operations.c}!compare\_bits\_aligned@{compare\_bits\_aligned}}
+\index{compare\_bits\_aligned@{compare\_bits\_aligned}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{compare\_bits\_aligned()}{compare\_bits\_aligned()}}
+{\footnotesize\ttfamily uint8\+\_\+t compare\+\_\+bits\+\_\+aligned (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{pos1,  }\item[{const uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{pos2,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+compare two bit arrays with starting point 
+
+
+\begin{DoxyParams}{Parameters}
+{\em S\+R\+C1} & the array to compare \\
+\hline
+{\em pos1} & position to start for src1 \\
+\hline
+{\em S\+R\+C2} & the array to compare with \\
+\hline
+{\em pos2} & position to start for src2 \\
+\hline
+{\em len} & the number of consecutive bits to compare\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 both arrays match 0 the arrays differ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{bit__operations_8c_a1030a11772d6480c862b47a9a907bd2f}\label{bit__operations_8c_a1030a11772d6480c862b47a9a907bd2f}} 
+\index{bit\_operations.c@{bit\_operations.c}!compare\_bits\_BIG\_END@{compare\_bits\_BIG\_END}}
+\index{compare\_bits\_BIG\_END@{compare\_bits\_BIG\_END}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{compare\_bits\_BIG\_END()}{compare\_bits\_BIG\_END()}}
+{\footnotesize\ttfamily uint8\+\_\+t compare\+\_\+bits\+\_\+\+B\+I\+G\+\_\+\+E\+ND (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{S\+R\+C1,  }\item[{uint8\+\_\+t $\ast$}]{S\+R\+C2,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+compare two bit arrays starting from right to left 
+
+\begin{DoxyReturn}{Returns}
+1 both arrays match 0 the arrays differ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{bit__operations_8c_aa74d3f4edb3fbd2704f24343a2e50813}\label{bit__operations_8c_aa74d3f4edb3fbd2704f24343a2e50813}} 
+\index{bit\_operations.c@{bit\_operations.c}!copy\_bits@{copy\_bits}}
+\index{copy\_bits@{copy\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{copy\_bits()}{copy\_bits()}}
+{\footnotesize\ttfamily void copy\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{dst\+\_\+pos,  }\item[{const uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{src\+\_\+pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+copy bits to a certain position in a bit array from another array big endian 
+
+
+\begin{DoxyParams}{Parameters}
+{\em D\+ST} & the array to copy to \\
+\hline
+{\em dst\+\_\+pos} & which bit to start from \\
+\hline
+{\em S\+RC} & the array to copy from \\
+\hline
+{\em src\+\_\+pos} & which bit to start from \\
+\hline
+{\em len} & the number of consecutive bits to set \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_ac145c54c244fb53f1fb266113f483d54}\label{bit__operations_8c_ac145c54c244fb53f1fb266113f483d54}} 
+\index{bit\_operations.c@{bit\_operations.c}!get\_bits@{get\_bits}}
+\index{get\_bits@{get\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{get\_bits()}{get\_bits()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+\_\+bits (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint8\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+get bits at a certain position in a bit array 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & the bit array \\
+\hline
+{\em pos} & the position to start from \\
+\hline
+{\em len} & the number of consecutive bits to get\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+limited to 32 consecutive bits 
+\end{DoxyNote}
+\mbox{\Hypertarget{bit__operations_8c_a56ab5e62da3e4cde30d216b7e0b53b2a}\label{bit__operations_8c_a56ab5e62da3e4cde30d216b7e0b53b2a}} 
+\index{bit\_operations.c@{bit\_operations.c}!get\_number\_of\_bytes\_from\_bits@{get\_number\_of\_bytes\_from\_bits}}
+\index{get\_number\_of\_bytes\_from\_bits@{get\_number\_of\_bytes\_from\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{get\_number\_of\_bytes\_from\_bits()}{get\_number\_of\_bytes\_from\_bits()}}
+{\footnotesize\ttfamily uint8\+\_\+t get\+\_\+number\+\_\+of\+\_\+bytes\+\_\+from\+\_\+bits (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{number\+\_\+of\+\_\+bits }\end{DoxyParamCaption})}
+
+
+
+get the number of bytes required to store this amount of bits 
+
+
+\begin{DoxyParams}{Parameters}
+{\em number\+\_\+of\+\_\+bits} & the number of bits to find the number of bytes for \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a43ead7431c1b8bd21806927b306fb7fd}\label{bit__operations_8c_a43ead7431c1b8bd21806927b306fb7fd}} 
+\index{bit\_operations.c@{bit\_operations.c}!get\_position\_in\_first\_byte@{get\_position\_in\_first\_byte}}
+\index{get\_position\_in\_first\_byte@{get\_position\_in\_first\_byte}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{get\_position\_in\_first\_byte()}{get\_position\_in\_first\_byte()}}
+{\footnotesize\ttfamily uint8\+\_\+t get\+\_\+position\+\_\+in\+\_\+first\+\_\+byte (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{value }\end{DoxyParamCaption})}
+
+
+
+get the starting bit of a value 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & the value to count the number of bits for \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a864e0a0ece6121fcd839313f3e158186}\label{bit__operations_8c_a864e0a0ece6121fcd839313f3e158186}} 
+\index{bit\_operations.c@{bit\_operations.c}!get\_required\_number\_of\_bits@{get\_required\_number\_of\_bits}}
+\index{get\_required\_number\_of\_bits@{get\_required\_number\_of\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{get\_required\_number\_of\_bits()}{get\_required\_number\_of\_bits()}}
+{\footnotesize\ttfamily uint32\+\_\+t get\+\_\+required\+\_\+number\+\_\+of\+\_\+bits (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{n }\end{DoxyParamCaption})}
+
+
+
+get the number of bits required to store a value 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & the value to count the number of bits for \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_afa77e854f2ae60f5126d75270d28a059}\label{bit__operations_8c_afa77e854f2ae60f5126d75270d28a059}} 
+\index{bit\_operations.c@{bit\_operations.c}!padded@{padded}}
+\index{padded@{padded}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{padded()}{padded()}}
+{\footnotesize\ttfamily uint8\+\_\+t padded (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structschc__bitarray__t}{schc\+\_\+bitarray\+\_\+t}} $\ast$}]{bit\+\_\+array }\end{DoxyParamCaption})}
+
+
+
+remove padding 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bit\+\_\+arr} & the bit array to remove padding for\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 remove the last byte 0 word aligned 
+\end{DoxyReturn}
+\mbox{\Hypertarget{bit__operations_8c_a963c3f1e2f40087703e826a454198faa}\label{bit__operations_8c_a963c3f1e2f40087703e826a454198faa}} 
+\index{bit\_operations.c@{bit\_operations.c}!print\_bitmap@{print\_bitmap}}
+\index{print\_bitmap@{print\_bitmap}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{print\_bitmap()}{print\_bitmap()}}
+{\footnotesize\ttfamily void print\+\_\+bitmap (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{bitmap\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{length }\end{DoxyParamCaption})}
+
+
+
+print a bitmap 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bitmap} & the bit array \\
+\hline
+{\em len} & the number of consecutive bits to print \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a6ca8acc21387487f5a65244eee7657ad}\label{bit__operations_8c_a6ca8acc21387487f5a65244eee7657ad}} 
+\index{bit\_operations.c@{bit\_operations.c}!set\_bits@{set\_bits}}
+\index{set\_bits@{set\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{set\_bits()}{set\_bits()}}
+{\footnotesize\ttfamily void set\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{A\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{pos,  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+sets bits at a certain position in a bit array big endian 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & the bit array \\
+\hline
+{\em pos} & which bit to set \\
+\hline
+{\em len} & the number of consecutive bits to set \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a6ebd634daa417f0d054b15983d0703af}\label{bit__operations_8c_a6ebd634daa417f0d054b15983d0703af}} 
+\index{bit\_operations.c@{bit\_operations.c}!shift\_bits\_left@{shift\_bits\_left}}
+\index{shift\_bits\_left@{shift\_bits\_left}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{shift\_bits\_left()}{shift\_bits\_left()}}
+{\footnotesize\ttfamily void shift\+\_\+bits\+\_\+left (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{len,  }\item[{uint32\+\_\+t}]{shift }\end{DoxyParamCaption})}
+
+
+
+shift a number of bits to the left 
+
+
+\begin{DoxyParams}{Parameters}
+{\em S\+RC} & the array to shift \\
+\hline
+{\em len} & the length of the array \\
+\hline
+{\em shift} & the number of consecutive bits to shift \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_afadff313aab0bbe2ed79ce72885735c3}\label{bit__operations_8c_afadff313aab0bbe2ed79ce72885735c3}} 
+\index{bit\_operations.c@{bit\_operations.c}!shift\_bits\_right@{shift\_bits\_right}}
+\index{shift\_bits\_right@{shift\_bits\_right}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{shift\_bits\_right()}{shift\_bits\_right()}}
+{\footnotesize\ttfamily void shift\+\_\+bits\+\_\+right (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{S\+RC\mbox{[}$\,$\mbox{]},  }\item[{uint16\+\_\+t}]{len,  }\item[{uint32\+\_\+t}]{shift }\end{DoxyParamCaption})}
+
+
+
+shift a number of bits to the right 
+
+
+\begin{DoxyParams}{Parameters}
+{\em S\+RC} & the array to shift \\
+\hline
+{\em len} & the length of the array \\
+\hline
+{\em shift} & the number of consecutive bits to shift \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{bit__operations_8c_a9858cf5fc58daff568ba07a5d264989d}\label{bit__operations_8c_a9858cf5fc58daff568ba07a5d264989d}} 
+\index{bit\_operations.c@{bit\_operations.c}!xor\_bits@{xor\_bits}}
+\index{xor\_bits@{xor\_bits}!bit\_operations.c@{bit\_operations.c}}
+\doxysubsubsection{\texorpdfstring{xor\_bits()}{xor\_bits()}}
+{\footnotesize\ttfamily void xor\+\_\+bits (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{D\+ST\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C1\mbox{[}$\,$\mbox{]},  }\item[{uint8\+\_\+t}]{S\+R\+C2\mbox{[}$\,$\mbox{]},  }\item[{uint32\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+logical X\+OR two bit arrays 
+
+
+\begin{DoxyParams}{Parameters}
+{\em D\+ST} & the array to save the result in \\
+\hline
+{\em S\+R\+C1} & the array to compare with \\
+\hline
+{\em S\+R\+C2} & the array to compare with \\
+\hline
+{\em len} & the number of consecutive bits to compare \\
+\hline
+\end{DoxyParams}

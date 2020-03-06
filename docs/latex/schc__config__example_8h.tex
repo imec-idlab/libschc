@@ -1,5 +1,6 @@
 \hypertarget{schc__config__example_8h}{}\doxysection{schc\+\_\+config\+\_\+example.\+h File Reference}
 \label{schc__config__example_8h}\index{schc\_config\_example.h@{schc\_config\_example.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
 {\ttfamily \#include $<$unistd.\+h$>$}\newline
 {\ttfamily \#include $<$inttypes.\+h$>$}\newline
 \doxysubsection*{Macros}
@@ -13,7 +14,7 @@
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_ad0b9bf0cc9b61f111c5c12e6d1f931e2}{S\+C\+H\+C\+\_\+\+C\+O\+N\+F\+\_\+\+R\+X\+\_\+\+C\+O\+N\+NS}}~1
 \item 
-\#define \mbox{\hyperlink{schc__config__example_8h_abd7889c187270346009f19c2d0453190}{S\+C\+H\+C\+\_\+\+C\+O\+N\+F\+\_\+\+M\+B\+U\+F\+\_\+\+P\+O\+O\+L\+\_\+\+L\+EN}}~8
+\#define \mbox{\hyperlink{schc__config__example_8h_abd7889c187270346009f19c2d0453190}{S\+C\+H\+C\+\_\+\+C\+O\+N\+F\+\_\+\+M\+B\+U\+F\+\_\+\+P\+O\+O\+L\+\_\+\+L\+EN}}~32
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_af792d439ea0fb7e7d97eb0584e6e6d2d}{U\+S\+E\+\_\+\+C\+O\+AP}}~1
 \item 
@@ -23,17 +24,13 @@
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_a9d2a084ca2cdbae8d804a8786a4d983d}{N\+U\+M\+B\+E\+R\+\_\+\+O\+F\+\_\+\+L\+A\+Y\+E\+RS}}~\mbox{\hyperlink{schc__config__example_8h_af792d439ea0fb7e7d97eb0584e6e6d2d}{U\+S\+E\+\_\+\+C\+O\+AP}} + \mbox{\hyperlink{schc__config__example_8h_a55dabc2b8b295e55081b39b6382caaa8}{U\+S\+E\+\_\+\+U\+DP}} + \mbox{\hyperlink{schc__config__example_8h_a7353ec784d9c3d7aa4b938660e00575e}{U\+S\+E\+\_\+\+I\+Pv6}}
 \item 
+\#define \mbox{\hyperlink{schc__config__example_8h_a7703530242d5d6d3884340f734fad44e}{M\+A\+X\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~32
+\item 
 \#define \mbox{\hyperlink{schc__config__example_8h_ae1b67de7a1c26318d23f1c34e89fb989}{I\+P\+V6\+\_\+\+F\+I\+E\+L\+DS}}~10
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_aed36719a087639bf1875b85276f09e55}{U\+D\+P\+\_\+\+F\+I\+E\+L\+DS}}~4
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_af1690024e8fe24a690d86ec4dd5d3bb6}{C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+DS}}~12
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_a96b977962436620ec037645e3e2e0ee8}{M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~8
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_aac32e96e8faf7ff86aced84537107bca}{M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~2
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_aa6420ecddb30151dd25bc1a2da3aacd1}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH}}~32
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_af199a39319b90015d86f3c3ccccf42bc}{M\+A\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+L\+E\+N\+G\+TH}}~256
 \item 
@@ -43,13 +40,11 @@
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_a5c09f90c937a1ef91c4b87771a5ec06c}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+M\+S\+G\+\_\+\+S\+I\+ZE}}~(\mbox{\hyperlink{schc__config__example_8h_a80b1e044dbe408bae2a894bc67a5e2c9}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+L\+E\+N\+G\+TH}} + \mbox{\hyperlink{schc__config__example_8h_a514a85c5de1504a471911a4beb143cb5}{M\+A\+X\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+L\+E\+N\+G\+TH}})
 \item 
-\#define \mbox{\hyperlink{schc__config__example_8h_ae0c8fc6a4adb1c74c7cb4fd33c181af6}{M\+A\+X\+\_\+\+M\+T\+U\+\_\+\+L\+E\+N\+G\+TH}}~160
+\#define \mbox{\hyperlink{schc__config__example_8h_ae0c8fc6a4adb1c74c7cb4fd33c181af6}{M\+A\+X\+\_\+\+M\+T\+U\+\_\+\+L\+E\+N\+G\+TH}}~242
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_a4e7d67d7aea26c4f57d1098595f90662}{J\+S\+O\+N\+\_\+\+T\+O\+K\+E\+NS}}~16
 \item 
-\#define \mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~8
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_ad591339a01eda0d5ba955b40236a4b0c}{U\+N\+C\+O\+M\+P\+R\+E\+S\+S\+E\+D\+\_\+\+R\+U\+L\+E\+\_\+\+ID}}~0
+\#define \mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~4
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_a5c8ef3c24dad2c469a42784a9a39403b}{D\+E\+B\+U\+G\+\_\+\+P\+R\+I\+N\+TF}}(...)~printf(\+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+)
 \item 
@@ -57,34 +52,11 @@
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_aeed83cfe8fb659c1f816967ab338806d}{F\+C\+N\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~3
 \item 
-\#define \mbox{\hyperlink{schc__config__example_8h_a84ee6c31ace9919dc981bb9b6b8dd18b}{M\+A\+X\+\_\+\+W\+I\+N\+D\+\_\+\+F\+CN}}~6
-\item 
 \#define \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}~0
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_adfbf14de3d8d2907750758406ced72db}{M\+I\+C\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~4
 \item 
 \#define \mbox{\hyperlink{schc__config__example_8h_a5e6121b65e73cd727a9af2331bf5d897}{B\+I\+T\+M\+A\+P\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~2
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_ab264125e090b773a3c62c0587e2311f3}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~(\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} / 8)
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_a3cab569df576271706014d87c13a7845}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1
-\item 
-\#define \mbox{\hyperlink{schc__config__example_8h_afb4b2bf43d4261b6afafc22d4d095092}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES}}~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{config_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1
-\end{DoxyCompactItemize}
-\doxysubsection*{Enumerations}
-\begin{DoxyCompactItemize}
-\item 
-enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}} \{ \newline
-\mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}{A\+C\+K\+\_\+\+A\+L\+W\+A\+YS}} = 1, 
-\mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}{A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR}} = 2, 
-\mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}{N\+O\+\_\+\+A\+CK}} = 3, 
-\mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}{N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED}} = 4, 
-\newline
-\mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}{A\+C\+K\+\_\+\+A\+L\+W\+A\+YS}} = 1, 
-\mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}{A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR}} = 2, 
-\mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}{N\+O\+\_\+\+A\+CK}} = 3, 
-\mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}{N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED}} = 4
- \}
 \end{DoxyCompactItemize}
 
 
@@ -119,12 +91,6 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \doxysubsubsection{\texorpdfstring{DTAG\_SIZE\_BITS}{DTAG\_SIZE\_BITS}}
 {\footnotesize\ttfamily \#define D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS~0}
 
-\mbox{\Hypertarget{schc__config__example_8h_a3cab569df576271706014d87c13a7845}\label{schc__config__example_8h_a3cab569df576271706014d87c13a7845}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!DTAG\_SIZE\_BYTES@{DTAG\_SIZE\_BYTES}}
-\index{DTAG\_SIZE\_BYTES@{DTAG\_SIZE\_BYTES}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{DTAG\_SIZE\_BYTES}{DTAG\_SIZE\_BYTES}}
-{\footnotesize\ttfamily \#define D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1}
-
 \mbox{\Hypertarget{schc__config__example_8h_a65a515400abb0daca1623e7cb09efd1c}\label{schc__config__example_8h_a65a515400abb0daca1623e7cb09efd1c}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!DYNAMIC\_MEMORY@{DYNAMIC\_MEMORY}}
 \index{DYNAMIC\_MEMORY@{DYNAMIC\_MEMORY}!schc\_config\_example.h@{schc\_config\_example.h}}
@@ -155,12 +121,6 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \doxysubsubsection{\texorpdfstring{MAX\_ACK\_REQUESTS}{MAX\_ACK\_REQUESTS}}
 {\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+A\+C\+K\+\_\+\+R\+E\+Q\+U\+E\+S\+TS~3}
 
-\mbox{\Hypertarget{schc__config__example_8h_aa6420ecddb30151dd25bc1a2da3aacd1}\label{schc__config__example_8h_aa6420ecddb30151dd25bc1a2da3aacd1}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_COAP\_FIELD\_LENGTH@{MAX\_COAP\_FIELD\_LENGTH}}
-\index{MAX\_COAP\_FIELD\_LENGTH@{MAX\_COAP\_FIELD\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_COAP\_FIELD\_LENGTH}{MAX\_COAP\_FIELD\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~32}
-
 \mbox{\Hypertarget{schc__config__example_8h_a80b1e044dbe408bae2a894bc67a5e2c9}\label{schc__config__example_8h_a80b1e044dbe408bae2a894bc67a5e2c9}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_COAP\_HEADER\_LENGTH@{MAX\_COAP\_HEADER\_LENGTH}}
 \index{MAX\_COAP\_HEADER\_LENGTH@{MAX\_COAP\_HEADER\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
@@ -173,41 +133,29 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \doxysubsubsection{\texorpdfstring{MAX\_COAP\_MSG\_SIZE}{MAX\_COAP\_MSG\_SIZE}}
 {\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+M\+S\+G\+\_\+\+S\+I\+ZE~(\mbox{\hyperlink{schc__config__example_8h_a80b1e044dbe408bae2a894bc67a5e2c9}{M\+A\+X\+\_\+\+C\+O\+A\+P\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+L\+E\+N\+G\+TH}} + \mbox{\hyperlink{schc__config__example_8h_a514a85c5de1504a471911a4beb143cb5}{M\+A\+X\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+L\+E\+N\+G\+TH}})}
 
+\mbox{\Hypertarget{schc__config__example_8h_a7703530242d5d6d3884340f734fad44e}\label{schc__config__example_8h_a7703530242d5d6d3884340f734fad44e}} 
+\index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_FIELD\_LENGTH@{MAX\_FIELD\_LENGTH}}
+\index{MAX\_FIELD\_LENGTH@{MAX\_FIELD\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
+\doxysubsubsection{\texorpdfstring{MAX\_FIELD\_LENGTH}{MAX\_FIELD\_LENGTH}}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~32}
+
 \mbox{\Hypertarget{schc__config__example_8h_af199a39319b90015d86f3c3ccccf42bc}\label{schc__config__example_8h_af199a39319b90015d86f3c3ccccf42bc}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_HEADER\_LENGTH@{MAX\_HEADER\_LENGTH}}
 \index{MAX\_HEADER\_LENGTH@{MAX\_HEADER\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{MAX\_HEADER\_LENGTH}{MAX\_HEADER\_LENGTH}}
 {\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+H\+E\+A\+D\+E\+R\+\_\+\+L\+E\+N\+G\+TH~256}
 
-\mbox{\Hypertarget{schc__config__example_8h_a96b977962436620ec037645e3e2e0ee8}\label{schc__config__example_8h_a96b977962436620ec037645e3e2e0ee8}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_IPV6\_FIELD\_LENGTH@{MAX\_IPV6\_FIELD\_LENGTH}}
-\index{MAX\_IPV6\_FIELD\_LENGTH@{MAX\_IPV6\_FIELD\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_IPV6\_FIELD\_LENGTH}{MAX\_IPV6\_FIELD\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+I\+P\+V6\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~8}
-
 \mbox{\Hypertarget{schc__config__example_8h_ae0c8fc6a4adb1c74c7cb4fd33c181af6}\label{schc__config__example_8h_ae0c8fc6a4adb1c74c7cb4fd33c181af6}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_MTU\_LENGTH@{MAX\_MTU\_LENGTH}}
 \index{MAX\_MTU\_LENGTH@{MAX\_MTU\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{MAX\_MTU\_LENGTH}{MAX\_MTU\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+M\+T\+U\+\_\+\+L\+E\+N\+G\+TH~160}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+M\+T\+U\+\_\+\+L\+E\+N\+G\+TH~242}
 
 \mbox{\Hypertarget{schc__config__example_8h_a514a85c5de1504a471911a4beb143cb5}\label{schc__config__example_8h_a514a85c5de1504a471911a4beb143cb5}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_PAYLOAD\_LENGTH@{MAX\_PAYLOAD\_LENGTH}}
 \index{MAX\_PAYLOAD\_LENGTH@{MAX\_PAYLOAD\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{MAX\_PAYLOAD\_LENGTH}{MAX\_PAYLOAD\_LENGTH}}
 {\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+P\+A\+Y\+L\+O\+A\+D\+\_\+\+L\+E\+N\+G\+TH~256}
-
-\mbox{\Hypertarget{schc__config__example_8h_aac32e96e8faf7ff86aced84537107bca}\label{schc__config__example_8h_aac32e96e8faf7ff86aced84537107bca}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_UDP\_FIELD\_LENGTH@{MAX\_UDP\_FIELD\_LENGTH}}
-\index{MAX\_UDP\_FIELD\_LENGTH@{MAX\_UDP\_FIELD\_LENGTH}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_UDP\_FIELD\_LENGTH}{MAX\_UDP\_FIELD\_LENGTH}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+U\+D\+P\+\_\+\+F\+I\+E\+L\+D\+\_\+\+L\+E\+N\+G\+TH~2}
-
-\mbox{\Hypertarget{schc__config__example_8h_a84ee6c31ace9919dc981bb9b6b8dd18b}\label{schc__config__example_8h_a84ee6c31ace9919dc981bb9b6b8dd18b}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!MAX\_WIND\_FCN@{MAX\_WIND\_FCN}}
-\index{MAX\_WIND\_FCN@{MAX\_WIND\_FCN}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{MAX\_WIND\_FCN}{MAX\_WIND\_FCN}}
-{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+W\+I\+N\+D\+\_\+\+F\+CN~6}
 
 \mbox{\Hypertarget{schc__config__example_8h_adfbf14de3d8d2907750758406ced72db}\label{schc__config__example_8h_adfbf14de3d8d2907750758406ced72db}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!MIC\_SIZE\_BYTES@{MIC\_SIZE\_BYTES}}
@@ -225,13 +173,7 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \index{schc\_config\_example.h@{schc\_config\_example.h}!RULE\_SIZE\_BITS@{RULE\_SIZE\_BITS}}
 \index{RULE\_SIZE\_BITS@{RULE\_SIZE\_BITS}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{RULE\_SIZE\_BITS}{RULE\_SIZE\_BITS}}
-{\footnotesize\ttfamily \#define R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS~8}
-
-\mbox{\Hypertarget{schc__config__example_8h_ab264125e090b773a3c62c0587e2311f3}\label{schc__config__example_8h_ab264125e090b773a3c62c0587e2311f3}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!RULE\_SIZE\_BYTES@{RULE\_SIZE\_BYTES}}
-\index{RULE\_SIZE\_BYTES@{RULE\_SIZE\_BYTES}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{RULE\_SIZE\_BYTES}{RULE\_SIZE\_BYTES}}
-{\footnotesize\ttfamily \#define R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~(\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} / 8)}
+{\footnotesize\ttfamily \#define R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS~4}
 
 \mbox{\Hypertarget{schc__config__example_8h_a0709fb8e6036919937aef443f7e94c77}\label{schc__config__example_8h_a0709fb8e6036919937aef443f7e94c77}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!SCHC\_BUFSIZE@{SCHC\_BUFSIZE}}
@@ -243,7 +185,7 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \index{schc\_config\_example.h@{schc\_config\_example.h}!SCHC\_CONF\_MBUF\_POOL\_LEN@{SCHC\_CONF\_MBUF\_POOL\_LEN}}
 \index{SCHC\_CONF\_MBUF\_POOL\_LEN@{SCHC\_CONF\_MBUF\_POOL\_LEN}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{SCHC\_CONF\_MBUF\_POOL\_LEN}{SCHC\_CONF\_MBUF\_POOL\_LEN}}
-{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+C\+O\+N\+F\+\_\+\+M\+B\+U\+F\+\_\+\+P\+O\+O\+L\+\_\+\+L\+EN~8}
+{\footnotesize\ttfamily \#define S\+C\+H\+C\+\_\+\+C\+O\+N\+F\+\_\+\+M\+B\+U\+F\+\_\+\+P\+O\+O\+L\+\_\+\+L\+EN~32}
 
 \mbox{\Hypertarget{schc__config__example_8h_ad0b9bf0cc9b61f111c5c12e6d1f931e2}\label{schc__config__example_8h_ad0b9bf0cc9b61f111c5c12e6d1f931e2}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!SCHC\_CONF\_RX\_CONNS@{SCHC\_CONF\_RX\_CONNS}}
@@ -256,12 +198,6 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \index{UDP\_FIELDS@{UDP\_FIELDS}!schc\_config\_example.h@{schc\_config\_example.h}}
 \doxysubsubsection{\texorpdfstring{UDP\_FIELDS}{UDP\_FIELDS}}
 {\footnotesize\ttfamily \#define U\+D\+P\+\_\+\+F\+I\+E\+L\+DS~4}
-
-\mbox{\Hypertarget{schc__config__example_8h_ad591339a01eda0d5ba955b40236a4b0c}\label{schc__config__example_8h_ad591339a01eda0d5ba955b40236a4b0c}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!UNCOMPRESSED\_RULE\_ID@{UNCOMPRESSED\_RULE\_ID}}
-\index{UNCOMPRESSED\_RULE\_ID@{UNCOMPRESSED\_RULE\_ID}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{UNCOMPRESSED\_RULE\_ID}{UNCOMPRESSED\_RULE\_ID}}
-{\footnotesize\ttfamily \#define U\+N\+C\+O\+M\+P\+R\+E\+S\+S\+E\+D\+\_\+\+R\+U\+L\+E\+\_\+\+ID~0}
 
 \mbox{\Hypertarget{schc__config__example_8h_af792d439ea0fb7e7d97eb0584e6e6d2d}\label{schc__config__example_8h_af792d439ea0fb7e7d97eb0584e6e6d2d}} 
 \index{schc\_config\_example.h@{schc\_config\_example.h}!USE\_COAP@{USE\_COAP}}
@@ -281,52 +217,3 @@ enum \mbox{\hyperlink{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34
 \doxysubsubsection{\texorpdfstring{USE\_UDP}{USE\_UDP}}
 {\footnotesize\ttfamily \#define U\+S\+E\+\_\+\+U\+DP~1}
 
-\mbox{\Hypertarget{schc__config__example_8h_afb4b2bf43d4261b6afafc22d4d095092}\label{schc__config__example_8h_afb4b2bf43d4261b6afafc22d4d095092}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!WINDOW\_SIZE\_BYTES@{WINDOW\_SIZE\_BYTES}}
-\index{WINDOW\_SIZE\_BYTES@{WINDOW\_SIZE\_BYTES}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{WINDOW\_SIZE\_BYTES}{WINDOW\_SIZE\_BYTES}}
-{\footnotesize\ttfamily \#define W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+Y\+T\+ES~((\mbox{\hyperlink{schc__config__example_8h_a1560def0a5925468e7ea4e33c1f66203}{R\+U\+L\+E\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{schc__config__example_8h_ac24f6aea575e391494ab29765ee389bf}{D\+T\+A\+G\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}} + \mbox{\hyperlink{config_8h_aee02bb425cd8b2d526378e84db80752f}{W\+I\+N\+D\+O\+W\+\_\+\+S\+I\+Z\+E\+\_\+\+B\+I\+TS}}) / 8) + 1}
-
-
-
-\doxysubsection{Enumeration Type Documentation}
-\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34}} 
-\index{schc\_config\_example.h@{schc\_config\_example.h}!reliability\_mode@{reliability\_mode}}
-\index{reliability\_mode@{reliability\_mode}!schc\_config\_example.h@{schc\_config\_example.h}}
-\doxysubsubsection{\texorpdfstring{reliability\_mode}{reliability\_mode}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{schc__config_8h_a00b61f9b90ab7065eb6a978141d7fd34}{reliability\+\_\+mode}}}
-
-\begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ALWAYS@{ACK\_ALWAYS}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!ACK\_ALWAYS@{ACK\_ALWAYS}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}} 
-A\+C\+K\+\_\+\+A\+L\+W\+A\+YS&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ON\_ERROR@{ACK\_ON\_ERROR}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!ACK\_ON\_ERROR@{ACK\_ON\_ERROR}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}} 
-A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_ACK@{NO\_ACK}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!NO\_ACK@{NO\_ACK}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}} 
-N\+O\+\_\+\+A\+CK&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{NOT\_FRAGMENTED@{NOT\_FRAGMENTED}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!NOT\_FRAGMENTED@{NOT\_FRAGMENTED}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}} 
-N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ALWAYS@{ACK\_ALWAYS}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!ACK\_ALWAYS@{ACK\_ALWAYS}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ada1056992e11c334d2416de8b75543f7}} 
-A\+C\+K\+\_\+\+A\+L\+W\+A\+YS&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ACK\_ON\_ERROR@{ACK\_ON\_ERROR}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!ACK\_ON\_ERROR@{ACK\_ON\_ERROR}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34abb669910db44bb35ca22cfa0987cff5f}} 
-A\+C\+K\+\_\+\+O\+N\+\_\+\+E\+R\+R\+OR&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_ACK@{NO\_ACK}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!NO\_ACK@{NO\_ACK}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34a0344f277cbdd16e3f0ea0ff1d1be1b17}} 
-N\+O\+\_\+\+A\+CK&\\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{NOT\_FRAGMENTED@{NOT\_FRAGMENTED}!schc\_config\_example.h@{schc\_config\_example.h}}\index{schc\_config\_example.h@{schc\_config\_example.h}!NOT\_FRAGMENTED@{NOT\_FRAGMENTED}}}\mbox{\Hypertarget{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}\label{schc__config__example_8h_a00b61f9b90ab7065eb6a978141d7fd34ae3a1895856e19a3160bcf36ea0712e79}} 
-N\+O\+T\+\_\+\+F\+R\+A\+G\+M\+E\+N\+T\+ED&\\
-\hline
-
-\end{DoxyEnumFields}
