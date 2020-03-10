@@ -35,6 +35,26 @@ typedef struct schc_bitarray_t {
 } schc_bitarray_t;
 
 typedef enum {
+	IPv6_V,
+	IPv6_TC,
+	IPv6_FL,
+	IPv6_LEN,
+	IPv6_NH,
+	IPv6_HL,
+	IPv6_SRCPRF,
+	IPv6_SRCIID,
+	IPv6_DSTPRF,
+	IPv6_DSTIID
+} IPv6_fields;
+
+typedef enum {
+	UDP_SRC,
+	UDP_DST,
+	UDP_LEN,
+	UDP_CHK
+} UDP_fields;
+
+typedef enum {
 	UP = 0, DOWN = 1, BI = 2
 } direction;
 
