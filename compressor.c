@@ -413,9 +413,7 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src,
 			} break;
 			case COMPLENGTH:
 			case COMPCHK: {
-				// set to 0, to indicate that it will be calculated after decompression
-				uint8_t len[2] = { 0 };
-				copy_bits(dst->ptr, dst->offset, len, 0, field_length);
+				clear_bits(dst->ptr, dst->offset, field_length); // set to 0, to indicate that it will be calculated after decompression
 			} break;
 			case DEVIID: {
 //				if (!strcmp(rule->content[i].field, "src iid")) {
@@ -974,6 +972,8 @@ static uint16_t compute_length(unsigned char *data, uint16_t data_len) {
 	// if the length fields are set to 0
 	// the length must be calculated
 	uint8_t* packet_ptr = (uint8_t*) data;
+	DEBUG_PRINTF("length fields are %d %d %d %d \n", packet_ptr[4],
+			packet_ptr[5], packet_ptr[44], packet_ptr[45]);
 #if USE_IPv6
 	if(packet_ptr[4] == 0 && packet_ptr[5] == 0) {
 		// ip length
