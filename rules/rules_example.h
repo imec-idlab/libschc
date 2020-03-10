@@ -1,6 +1,3 @@
-#ifndef _RULES_H_
-#define _RULES_H_
-
 #include "../schc_config.h"
 
 #if USE_IPv6
@@ -223,12 +220,3 @@ const struct schc_compression_rule_t compression_rule_4 = {
 		&coap_rule1,
 #endif
 };
-
-// todo #define
-const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
-// todo
-// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
-
-#endif
