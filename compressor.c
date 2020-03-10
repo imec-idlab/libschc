@@ -465,7 +465,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 		schc_bitarray_t* src, uint32_t device_id, schc_layer_t layer, direction DI) {
 	uint8_t i = 0;
 	// set to 0 when a rule doesn't match
-	uint8_t rule_is_found = 1; uint8_t max_layer_fields = 0;
+	uint8_t rule_is_found = 1; uint8_t max_layer_fields = 0; uint32_t prev_offset = src->offset;
 
 	struct schc_device *device = get_device_by_id(device_id);
 	if (device == NULL) {
@@ -509,6 +509,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 					rule_is_found = 0;
 					DEBUG_PRINTF(
 							"schc_find_rule_from_header(): skipped rule %d due to %s \n",curr_rule->rule_id ,curr_rule->content[k].field);
+					src->offset = prev_offset; // reset offset
 					break;
 				} else {
 					rule_is_found = 1;
@@ -972,8 +973,6 @@ static uint16_t compute_length(unsigned char *data, uint16_t data_len) {
 	// if the length fields are set to 0
 	// the length must be calculated
 	uint8_t* packet_ptr = (uint8_t*) data;
-	DEBUG_PRINTF("length fields are %d %d %d %d \n", packet_ptr[4],
-			packet_ptr[5], packet_ptr[44], packet_ptr[45]);
 #if USE_IPv6
 	if(packet_ptr[4] == 0 && packet_ptr[5] == 0) {
 		// ip length
