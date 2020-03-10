@@ -248,7 +248,7 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 
 				// if result is 0,
 				if (json_result == 0) { // formatted as a normal unsigned char array
-					uint8_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
+					uint8_t list_len = get_required_number_of_bits( (rule->content[i].MO_param_length - 1) ); // start from index 0
 					for (j = 0; j < rule->content[i].MO_param_length; j++) {
 						uint8_t src_pos = get_number_of_bytes_from_bits(src->offset);
 
@@ -370,7 +370,7 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src,
 
 				// if result is 0,
 				if (json_result == 0) { // formatted as a normal unsigned uint8_t array
-					uint32_t list_len = get_required_number_of_bits(rule->content[i].MO_param_length);
+					uint32_t list_len = get_required_number_of_bits( (rule->content[i].MO_param_length - 1) ); // start from index 0
 					uint8_t src_pos = get_position_in_first_byte(list_len);
 
 					uint8_t index[1] = { 0 };
@@ -519,7 +519,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 				j++;
 			}
 			k++; // increment to skip other directions
-			if(k > max_layer_fields) {
+			if(k > max_layer_fields) { // todo coap <-> ipv6
 				DEBUG_PRINTF("schc_find_rule_from_header(): more fields present than LAYER_FIELDS \n");
 				return NULL;
 			}
@@ -894,11 +894,11 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 	if(coap_rule != NULL) {
 		coap_rule_id = coap_rule->rule_id;
 	}
-
-	src.offset = 0; coap_src.offset = 0; // reset the bit arrays offset and start compressing
+	coap_src.offset = 0; // reset the bit arrays offset and start compressing
 #endif
 
 	DEBUG_PRINTF("schc_compress(): IPv6 rule: %d, UDP rule: %d, CoAP rule: %d \n", ipv6_rule_id, udp_rule_id, coap_rule_id);
+	src.offset = 0; // reset the bit arrays offset and start compressing
 
 	// find the rule for this device by combining the available id's // todo pointers?
 	uint8_t id_pos = get_position_in_first_byte(RULE_SIZE_BITS);

@@ -514,7 +514,7 @@ static uint8_t get_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) 
 static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
-	/*
+
 	uint32_t crc, crc_mask; uint8_t k = 0;
 	uint8_t byte[1] = { 0 }; uint8_t first = 1;
 
@@ -530,6 +530,8 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 		// to determine whether the mbuf should be moved forward or not
 		// copy_bits(byte, 0, curr->ptr);
 
+		uint8_t byte = 0;
+
 		prev = curr;
 		curr = curr->next;
 
@@ -540,7 +542,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 		}
 		printf("0x%02X ", byte);
 	}
-	*/
+	/*
 
 	int i, j, k;
 	uint32_t offset = 0;
@@ -635,7 +637,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 
 	DEBUG_PRINTF("compute_mic(): MIC is %02X%02X%02X%02X \n", mic[0], mic[1], mic[2],
 			mic[3]);
-
+*/
 	return crc;
 }
 

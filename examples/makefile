@@ -10,7 +10,7 @@ fragment: fragment.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../
 	gcc -g -o fragment fragment.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c timer.c -lm -lpthread
 	
 interop: interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c
-	gcc -g -o interop interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c -lm
+	gcc -g -o interop interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c timer.c -lm -lpthread
 	
 clean:
 	rm compress fragment lwm2m interop
