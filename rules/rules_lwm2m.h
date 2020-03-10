@@ -1,4 +1,4 @@
-#include "../schc_config.h"
+#include "../schc.h"
 
 #if USE_IPv6
 const static struct schc_ipv6_rule_t ipv6_lwm2m = {
