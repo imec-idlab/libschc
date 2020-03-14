@@ -76,7 +76,7 @@ void clear_bits(uint8_t A[], uint32_t pos, uint32_t len) {
  * @param dst_pos		which bit to start from
  * @param SRC			the array to copy from
  * @param src_pos		which bit to start from
- * @param len			the number of consecutive bits to set
+ * @param len			the number of consecutive bits to check
  *
  */
 void copy_bits(uint8_t DST[], uint32_t dst_pos, const uint8_t SRC[], uint32_t src_pos,
@@ -87,7 +87,7 @@ void copy_bits(uint8_t DST[], uint32_t dst_pos, const uint8_t SRC[], uint32_t sr
 	for(i = 0; i < len; i++) { // for each bit
 		uint8_t src_val = ((128 >> ( (k + src_pos) % 8)) & SRC[((k + src_pos) / 8)]);
 		if(src_val) {
-			// DEBUG_PRINTF("set bits for %d at position %d len is %d", DST[i+dst_pos], i+dst_pos, len);
+			// DEBUG_PRINTF("set bits for %d at position %d len is %d \n", DST[i+dst_pos], i+dst_pos, len);
 			set_bits(DST, i + dst_pos, 1);
 		}
 		k++;
@@ -313,15 +313,15 @@ uint8_t get_position_in_first_byte(uint8_t value) {
 /**
  * remove padding
  *
- * @param 	bit_arr		the bit array to remove padding for
+ * @param 	bit_arr		the bit array to return padding for
  *
- * @return 	1			remove the last byte
+ * @return 	padding		number of padded bits
  * 			0			word aligned
  *
  */
 uint8_t padded(schc_bitarray_t* bit_array) {
 	if( (bit_array->offset % 8) ) {
-		return 1;
+		return (8 - (bit_array->offset % 8));
 	}
 
 	return 0;

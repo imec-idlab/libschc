@@ -167,8 +167,8 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		uint32_t device_id);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
 
-uint16_t get_mbuf_len(schc_mbuf_t *head);
-void mbuf_copy(schc_mbuf_t *head, uint8_t* ptr);
+uint16_t get_mbuf_len(schc_fragmentation_t *conn);
+void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr);
 
 #ifdef __cplusplus
 }
