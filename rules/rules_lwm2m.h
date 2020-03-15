@@ -1,10 +1,7 @@
-#ifndef _RULES_H_
-#define _RULES_H_
-
-#include "../schc_config.h"
+#include "../schc.h"
 
 #if USE_IPv6
-const static struct schc_ipv6_rule_t ipv6_rule1 = {
+const static struct schc_ipv6_rule_t ipv6_lwm2m = {
 	//	id, up, down, length
 		1, 10, 10, 10,
 		{
@@ -31,7 +28,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 #endif
 
 #if USE_UDP
-const static struct schc_udp_rule_t udp_rule1 = {
+const static struct schc_udp_rule_t udp_lwm2m = {
 		1, 4, 4, 4,
 		{
 				{ "src port", 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
@@ -63,7 +60,7 @@ const static struct schc_coap_rule_t lwm2m_registration_rule = {
 				{ "uri-path",           0,      80,     1, DOWN,    "ZXV46xgT3I",   &ignore,        VALUESENT },
 				{ "content-format", 	0,		8,		1, UP,		{40}, 			&equal,			NOTSENT }, // LWM2M_CONTENT_LINK
                 { "uri-query",          0,      72,     1, UP,      "lwm2m=1.1",	&equal,         NOTSENT },
-                { "uri-query",          0,      224,    1, UP,      "ep=port-forward-lwm2m-client",
+                { "uri-query",          0,      120,    1, UP,      "ep=lwm2m-client",
                 		&equal,         NOTSENT },
 		        { "uri-query",          0,      24,     1, UP,      "b=U",			&equal,         NOTSENT },
 		        { "uri-query",          0,      48,     1, UP,      "lt=300",		&equal,         NOTSENT },
@@ -162,10 +159,10 @@ const static struct schc_coap_rule_t lwm2m_update_registration_rule_down = {
 
 const struct schc_compression_rule_t registration_rule = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_lwm2m,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_lwm2m,
 #endif
 #if USE_COAP
 		&lwm2m_registration_rule,
@@ -174,10 +171,10 @@ const struct schc_compression_rule_t registration_rule = {
 
 const struct schc_compression_rule_t get_rule = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_lwm2m,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_lwm2m,
 #endif
 #if USE_COAP
 		&lwm2m_get_rule,
@@ -186,10 +183,10 @@ const struct schc_compression_rule_t get_rule = {
 
 const struct schc_compression_rule_t catch_all_rule = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_lwm2m,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_lwm2m,
 #endif
 #if USE_COAP
 		&lwm2m_catch_all_rule,
@@ -198,10 +195,10 @@ const struct schc_compression_rule_t catch_all_rule = {
 
 const struct schc_compression_rule_t not_found_404 = {
 #if USE_IPv6
-		&ipv6_rule1,
+		&ipv6_lwm2m,
 #endif
 #if USE_UDP
-		&udp_rule1,
+		&udp_lwm2m,
 #endif
 #if USE_COAP
 		&lwm2m_404_not_found,
@@ -210,10 +207,10 @@ const struct schc_compression_rule_t not_found_404 = {
 
 const struct schc_compression_rule_t update_registration_up = {
 #if USE_IPv6
-                &ipv6_rule1,
+                &ipv6_lwm2m,
 #endif
 #if USE_UDP
-                &udp_rule1,
+                &udp_lwm2m,
 #endif
 #if USE_COAP
                 &lwm2m_update_registration_rule_up,
@@ -224,58 +221,12 @@ const struct schc_compression_rule_t update_registration_up = {
 
 const struct schc_compression_rule_t update_registration_down = {
 #if USE_IPv6
-                &ipv6_rule1,
+                &ipv6_lwm2m,
 #endif
 #if USE_UDP
-                &udp_rule1,
+                &udp_lwm2m,
 #endif
 #if USE_COAP
                 &lwm2m_update_registration_rule_down,
 #endif
 };
-
-const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
-// todo
-// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
-
-const struct schc_rule_t schc_rule_1 = { 0x01, &registration_rule, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_2 = { 0x02, &registration_rule, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_3 = { 0x03, &registration_rule, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_4 = { 0x04, &registration_rule, ACK_ALWAYS, 3, 6, 1, 0 };
-
-const struct schc_rule_t schc_rule_5 = { 0x05, &get_rule, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_6 = { 0x06, &get_rule, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_7 = { 0x07, &get_rule, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_8 = { 0x08, &get_rule, ACK_ALWAYS, 3, 6, 1, 0 };
-
-const struct schc_rule_t schc_rule_9 	= { 0x09, &catch_all_rule, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_10 	= { 0x0A, &catch_all_rule, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_11 	= { 0x0B, &catch_all_rule, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_12 	= { 0x0C, &catch_all_rule, ACK_ALWAYS, 3, 6, 1, 0 };
-
-const struct schc_rule_t schc_rule_13 	= { 0x0D, &not_found_404, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_14 	= { 0x0E, &not_found_404, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_15 	= { 0x0F, &not_found_404, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_16 	= { 0x10, &not_found_404, ACK_ALWAYS, 3, 6, 1, 0 };
-
-const struct schc_rule_t schc_rule_17   = { 0x11, &update_registration_up, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_18   = { 0x12, &update_registration_down, NOT_FRAGMENTED, 1, 0, 0, 0 };
-
-/* save rules in flash */
-const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
-                &schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
-                &schc_rule_8, &schc_rule_9, &schc_rule_10, &schc_rule_11, &schc_rule_12,
-                &schc_rule_13, &schc_rule_14, &schc_rule_15, &schc_rule_16,
-                &schc_rule_17, &schc_rule_18};
-
-/* rules for a particular device */
-const struct schc_device node1 = { 0x01, 18, &node1_schc_rules };
-
-#define DEVICE_COUNT			1
-
-/* server keeps track of multiple devices: add devices to device list */
-const struct schc_device* devices[DEVICE_COUNT] = { &node1 };
-
-#endif

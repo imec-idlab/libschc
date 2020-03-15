@@ -85,11 +85,11 @@ void end_tx() {
 void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
 
-	uint16_t packetlen = get_mbuf_len(conn->head); // calculate the length of the original packet
+	uint16_t packetlen = get_mbuf_len(conn); // calculate the length of the original packet
 	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen); // todo pass the mbuf chain to the decompressor
 	uint8_t decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 
-	mbuf_copy(conn->head, compressed_packet); // copy the packet from the mbuf list
+	mbuf_copy(conn, compressed_packet); // copy the packet from the mbuf list
 
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
 	schc_bitarray_t bit_arr;
@@ -264,7 +264,7 @@ int main() {
 	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
 			UP, &schc_rule);
 
-	tx_conn.mtu = 121; // network driver MTU
+	tx_conn.mtu = 12; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 

@@ -24,6 +24,13 @@ const struct schc_rule_t schc_rule_8 = { { 0x08 }, &compression_rule_2, ACK_ALWA
 const struct schc_rule_t schc_rule_9 = { { 0x09 }, &compression_rule_3, NOT_FRAGMENTED, 0, 0, 0, 0 };
 const struct schc_rule_t schc_rule_10 = { { 0x0A }, &compression_rule_3, NO_ACK, 1, 0, 0, 0 };
 
+// todo #define
+const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
+// todo
+// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
+
 /* save rules in flash */
 const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
 		&schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,

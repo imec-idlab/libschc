@@ -508,7 +508,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 						(uint8_t*) (src->ptr + src_pos), (src->offset % 8))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
 					DEBUG_PRINTF(
-							"schc_find_rule_from_header(): skipped rule %d due to %s \n",curr_rule->rule_id ,curr_rule->content[k].field);
+							"schc_find_rule_from_header(): skipped rule %d due to %s \n", (*device->context)[i]->id[0], curr_rule->content[k].field);
 					src->offset = prev_offset; // reset offset
 					break;
 				} else {
@@ -938,11 +938,12 @@ int16_t schc_compress(uint8_t *data, uint16_t total_length,
 
 	copy_bits(dst->ptr, dst->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
     uint16_t new_pkt_length = (BITS_TO_BYTES(dst->offset) + payload_len);
+    dst->padding = padded(dst);
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
-			"schc_compress(): compressed header length: %d bits (%dB), payload length: %d (total length: %d) \n",
-			dst->offset, BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length);
+			"schc_compress(): compressed header length: %d bits (%dB), payload length: %d (total length: %d) / %d b\n",
+			dst->offset, BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length, dst->offset + BYTES_TO_BITS(payload_len) + dst->padding);
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");
@@ -1172,7 +1173,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		payload_length--;
 	}
 
-	compute_length(buf, (payload_length + new_header_length));
+	compute_length(buf, (payload_length + new_header_length)); // set udp and ipv6 length
 	compute_checksum(buf);
 
 	DEBUG_PRINTF("schc_decompress(): header length: %d, payload length %d \n", new_header_length, payload_length);
