@@ -3,7 +3,7 @@
 Static Context Header Compression or SCHC defines a mechanism to compress protocol headers by using contexts, which are both known to the sender and the translating gateway.
 The contexts represent possible header configurations, stored in a rule and identifed by an id. This id and possible 'residue' (header leftovers added by a rule configuration to add more flexibility) are exchanged between 2 SCHC-devices.
 The receiver will be able to reconstruct the original header by using the exact same rule.
-As this technique is aimed at technologies with limited bandwidth capbilities possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers and to support the IPv6 1500 bytes MTU requirement.
+As this technique is aimed at technologies with limited bandwidth capbilities possibly limited by a duty cycle, a fragmentation mechanism is also defined to ensure (reliable) larger packet transfers and to support the IPv6 1280 bytes MTU requirement.
 
 #### Table of Contents  
 * [Rules](#rules)

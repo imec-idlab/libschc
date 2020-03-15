@@ -288,9 +288,9 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 		curr = curr->next;
 	}
 
-	total_offset -= conn->RULE_SIZE; // added in front of compressed packet
+	total_len += conn->RULE_SIZE; // added in front of compressed packet
 
-	return ((total_len - total_offset) / 8);
+	return (uint16_t) ( ((total_len - total_offset) + (8 - 1)) / 8 );
 }
 
 /**
@@ -467,7 +467,6 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 		byte = 0x00; // reset byte (which adds padding, if any)
 		if( (prev == NULL) && first) { // first byte(s) of compressed packet contain rule id
 			copy_bits(byte_arr, 0, curr->ptr, 0, conn->RULE_SIZE);
-			byte = byte_arr[0];
 			if(conn->RULE_SIZE <= 8 ) {
 				curr_bit_offset = (8 - conn->RULE_SIZE);
 				copy_bits(byte_arr, conn->RULE_SIZE, curr->ptr,
@@ -477,6 +476,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 			} else {
 				// todo non byte alligned rule id ( > 8 bits )
 			}
+			byte = byte_arr[0];
 		} else {
 			// get next byte from mbuf chain
 			uint32_t temp_offset = curr_bit_offset;
@@ -1070,7 +1070,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 		packet_bit_offset = packet_bits_tx;
 
 		remaining_bits = (BYTES_TO_BITS(conn->packet_len)
-				- conn->bit_arr->padding) - packet_bits_tx;
+				- conn->bit_arr->padding - conn->RULE_SIZE) - packet_bits_tx;
 
 		packet_bits_tx = remaining_bits;
 
@@ -1086,7 +1086,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 			copy_bits(FRAGMENTATION_BUF, header_bits, zerobuf, 0, remaining_bits); // add padding
 		}
 
-		packet_len = (header_bits + remaining_bits) / 8; // last packet length
+		packet_len = ((header_bits + remaining_bits) + (8 - 1)) / 8; // last packet length
 
 		if(packet_len > conn->mtu) {
 			DEBUG_PRINTF("send_fragment(): mtu smaller than last packet length \n");
