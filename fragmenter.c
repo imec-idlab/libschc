@@ -33,7 +33,7 @@ static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
 
 #if !DYNAMIC_MEMORY
 static uint8_t buf_ptr = 0;
-uint8_t schc_buf[SCHC_BUFSIZE] = { 0 };
+uint8_t schc_buf[MAX_MTU_LENGTH] = { 0 };
 #endif
 
 /**
@@ -281,6 +281,9 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
 uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0; uint32_t total_offset = 0;
 
+	if(conn->schc_rule->mode == NOT_FRAGMENTED)
+		return curr->len;
+
 	while (curr != NULL) {
 		total_len += (curr->len * 8);
 		total_offset += get_fragmentation_header_length(curr, conn);
@@ -350,6 +353,12 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 
 	uint8_t index = 0; uint8_t first = 1; uint32_t curr_bit_offset; uint8_t byte;
 
+	if(conn->schc_rule->mode == NOT_FRAGMENTED) {
+		for(int i = 0; i < curr->len; i++) {
+			ptr[i] = curr->ptr[i];
+		}
+		return;
+	}
 	while (curr != NULL) {
 		byte = 0;
 		if ((prev == NULL) && first) { // first byte(s) of compressed packet contain rule id
@@ -497,10 +506,10 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 				crc_mask = -(crc & 1);
 				crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 			}
-			printf("0x%02X ", byte);
+			// printf("0x%02X ", byte);
 		}
 	}
-	printf("\n");
+	// printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24),
