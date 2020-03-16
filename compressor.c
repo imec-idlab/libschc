@@ -1119,9 +1119,11 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 		pcoap_msg.len = 4;
 		memcpy(pcoap_msg.buf, (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), coap_len);
-		coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
+		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
 
-		bit_arr->offset += BYTES_TO_BITS(coap_offset);
+		coap_offset = coap_len;
+
+		bit_arr->offset += BYTES_TO_BITS(coap_len);
 #endif
 	} else { // compressed packet, decompress with residue and rule
 		bit_arr->offset = RULE_SIZE_BITS;
