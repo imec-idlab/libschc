@@ -353,6 +353,7 @@ static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src,
 				// use value stored in context
 				uint8_t src_pos = get_position_in_first_byte(field_length);
 				copy_bits(dst->ptr, dst->offset, rule->content[i].target_value, src_pos, field_length);
+
 			} break;
 			case VALUESENT: {
 				// build from received value
@@ -1136,6 +1137,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 				return 0; // no rule was found
 			}
 		}
+
 #endif
 #if USE_UDP
 		if (udp_rule_id != 0) {
