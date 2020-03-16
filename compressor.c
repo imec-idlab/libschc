@@ -1099,9 +1099,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	uint8_t ret = 0;
 	uint8_t coap_offset = 0;
 
-	// CoAP buffers for parsing
-	uint8_t msg_recv_buf[MAX_COAP_MSG_SIZE];
-	pcoap_pdu pcoap_msg = { msg_recv_buf, 0, MAX_COAP_MSG_SIZE };
+	// CoAP buffer for parsing
+	pcoap_pdu pcoap_msg = { (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), 0,
+			(total_length - IP6_HLEN + UDP_HLEN) };
 
 	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
 #if USE_IPv6
