@@ -1159,7 +1159,6 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 			}
 			coap_offset = ret;
 		}
-		memcpy((unsigned char*) (buf + (IP6_HLEN + UDP_HLEN)), pcoap_msg.buf, coap_offset); // copy the re encoded CoAP header
 #endif
 	}
 
