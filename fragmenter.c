@@ -2205,7 +2205,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 
-	*(conn->schc_rule) = get_schc_rule_by_rule_id(data, device_id);
+	(*conn->schc_rule) = get_schc_rule_by_rule_id(data, device_id);
 
 	// todo
 	// if no rule was found
