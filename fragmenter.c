@@ -1736,7 +1736,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
-		schc_rx_conns[i].schc_rule = malloc(sizeof(struct schc_rule_t*));
+		schc_rx_conns[i].schc_rule = NULL;
 		// in case these parameters were not configured properly
 		schc_rx_conns[i].RULE_SIZE = RULE_SIZE_BITS;
 	}
@@ -2205,7 +2205,9 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		return NULL;
 	}
 
-	(*conn->schc_rule) = get_schc_rule_by_rule_id(data, device_id);
+	if(conn->schc_rule == NULL) {
+		(*conn->schc_rule) = get_schc_rule_by_rule_id(data, device_id);
+	}
 
 	// todo
 	// if no rule was found
