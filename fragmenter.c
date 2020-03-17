@@ -33,7 +33,7 @@ static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
 
 #if !DYNAMIC_MEMORY
 static uint8_t buf_ptr = 0;
-uint8_t schc_buf[MAX_MTU_LENGTH] = { 0 };
+uint8_t schc_buf[STATIC_MEMORY_BUFFER_LENGTH] = { 0 };
 #endif
 
 /**
@@ -1730,14 +1730,13 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	// initializes the schc rx connections
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		schc_reset(&schc_rx_conns[i]);
-		struct schc_rule_t* schc_rule = NULL;
 		schc_rx_conns[i].send = send;
 		schc_rx_conns[i].end_rx = end_rx;
 		schc_rx_conns[i].remove_timer_entry = remove_timer_entry;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
-		schc_rx_conns[i].schc_rule = &schc_rule;
+		schc_rx_conns[i].schc_rule = malloc(sizeof(struct schc_rule_t*));
 		// in case these parameters were not configured properly
 		schc_rx_conns[i].RULE_SIZE = RULE_SIZE_BITS;
 	}
@@ -2207,6 +2206,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	}
 
 	*(conn->schc_rule) = get_schc_rule_by_rule_id(data, device_id);
+
 	// todo
 	// if no rule was found
 	// this is a null pointer -> return function will get confused (checks for rule->mode)
