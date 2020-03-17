@@ -211,11 +211,11 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 
-		if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
+		if ((*conn->schc_rule)->mode == NOT_FRAGMENTED) { // packet was not fragmented
 			end_rx(conn);
 		} else {
 			int ret = schc_reassemble(conn);
-			if(ret && conn->schc_rule->mode == NO_ACK){ // use the connection to reassemble
+			if(ret && (*conn->schc_rule)->mode == NO_ACK){ // use the connection to reassemble
 				end_rx(conn); // final packet arrived
 			}
 		}
@@ -270,38 +270,27 @@ int main() {
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = (uint8_t*) (compressed_packet);
 
-	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
-			UP, &schc_rule);
+	schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP);
 
 	tx_conn.mtu = 51; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
-	if(compressed_len > tx_conn.mtu) { // should fragment, change rule
-		// select a similar rule based on a reliability mode
-		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
-	} else { // do not fragment
-		// todo padding
-		schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
-	}
+	tx_conn.bit_arr = &bit_arr;
+	tx_conn.send = &tx_send_callback;
+	tx_conn.end_tx = &end_tx;
+
+	tx_conn.schc_rule = &schc_rule;
+	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
+	tx_conn.MODE = NO_ACK;
+
+	tx_conn.post_timer_task = &set_tx_timer;
 
 	if (schc_rule == NULL) {
 		cleanup();
 		finalize_timer_thread();
 		return -1;
 	}
-
-	set_rule_id(schc_rule, compressed_packet);
-
-	tx_conn.bit_arr = &bit_arr;
-	tx_conn.packet_len = compressed_len;
-	tx_conn.send = &tx_send_callback;
-	tx_conn.end_tx = &end_tx;
-
-	tx_conn.schc_rule = schc_rule;
-	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
-
-	tx_conn.post_timer_task = &set_tx_timer;
 
 	// start fragmentation loop
 	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);

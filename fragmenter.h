@@ -92,14 +92,10 @@ typedef struct schc_fragmentation_ack_t {
 typedef struct schc_fragmentation_t {
 	/* the device id of the connection */
 	uint32_t device_id;
-	/* the length of the packet */
-	uint16_t packet_len;
 	/* a pointer to the start of the unfragmented, compressed packet in a bit array */
 	schc_bitarray_t* bit_arr;
 	/* the start of the packet + the total length */
 	uint8_t* tail_ptr;
-	/* the rule which will be applied to the header */
-	uint8_t rule_id[RULE_SIZE_BYTES];
 	/* the maximum transfer unit of this connection */
 	uint16_t mtu;
 	/* the duty cycle in ms */
@@ -146,9 +142,11 @@ typedef struct schc_fragmentation_t {
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
 	/* the rule in use */
-	struct schc_rule_t* schc_rule;
+	struct schc_rule_t** schc_rule;
 	/* the rule size in bits */
 	uint8_t RULE_SIZE;
+	/* the desired reliability mode */
+	reliability_mode MODE;
 } schc_fragmentation_t;
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,

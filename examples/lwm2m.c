@@ -49,7 +49,7 @@ int main() {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 	schc_compressor_init(src);
 	
-	uint8_t compressed_buf[MAX_PACKET_LENGTH];
+	uint8_t compressed_buf[MAX_PACKET_LENGTH] = { 0 };
 	uint32_t device_id = 0x01;
 
 	// compress packet
@@ -57,8 +57,7 @@ int main() {
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = (uint8_t*) (compressed_buf);
 
-	int compressed_len = schc_compress(msg, sizeof(msg), &bit_arr, device_id,
-			UP, &schc_rule);
+	schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP);
 
 	// DECOMPRESSION
 	uint8_t new_packet_len = 0;
@@ -66,7 +65,7 @@ int main() {
 	// NOTE: DIRECTION remains UP as this packet is forwarded to the IPv6 network
 	unsigned char decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 	new_packet_len = schc_decompress(&bit_arr, decomp_packet, device_id,
-			compressed_len, UP);
+			bit_arr.len, UP);
 	if(new_packet_len == 0) { // some error occured
 		return 1;
 	}
