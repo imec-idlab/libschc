@@ -142,7 +142,7 @@ typedef struct schc_fragmentation_t {
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
 	/* the rule in use */
-	struct schc_rule_t** schc_rule;
+	struct schc_rule_t* schc_rule;
 	/* the rule size in bits */
 	uint8_t RULE_SIZE;
 	/* the desired reliability mode */

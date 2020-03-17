@@ -211,11 +211,11 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 
-		if ((*conn->schc_rule)->mode == NOT_FRAGMENTED) { // packet was not fragmented
+		if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
 			end_rx(conn);
 		} else {
 			int ret = schc_reassemble(conn);
-			if(ret && (*conn->schc_rule)->mode == NO_ACK){ // use the connection to reassemble
+			if(ret && conn->schc_rule->mode == NO_ACK){ // use the connection to reassemble
 				end_rx(conn); // final packet arrived
 			}
 		}
@@ -280,7 +280,7 @@ int main() {
 	tx_conn.send = &tx_send_callback;
 	tx_conn.end_tx = &end_tx;
 
-	tx_conn.schc_rule = &schc_rule;
+	tx_conn.schc_rule = schc_rule;
 	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
 	tx_conn.MODE = NO_ACK;
 
