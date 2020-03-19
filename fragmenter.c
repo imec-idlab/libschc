@@ -695,8 +695,6 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 
 	conn->window = 0;
 	conn->window_cnt = 0;
-	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES); // clear bitmap
-	conn->fcn = conn->schc_rule->MAX_WND_FCN;
 	conn->frag_cnt = 0;
 	conn->attempts = 0;
 
@@ -723,6 +721,8 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		return 0;
 	}
 
+	conn->fcn = conn->schc_rule->MAX_WND_FCN;
+	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES); // clear bitmap
 	set_rule_id(conn->schc_rule, conn->bit_arr->ptr);
 
 	return 1;

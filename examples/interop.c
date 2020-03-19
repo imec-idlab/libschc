@@ -264,7 +264,7 @@ int main() {
 
 	schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP);
 
-	tx_conn.mtu = 25; // network driver MTU
+	tx_conn.mtu = 12; // network driver MTU
 	tx_conn.dc = 5000; // 5 seconds duty cycle
 	tx_conn.device_id = device_id; // the device id of the connection
 
@@ -274,7 +274,7 @@ int main() {
 
 	tx_conn.schc_rule = schc_rule;
 	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
-	tx_conn.MODE = NO_ACK;
+	tx_conn.MODE = ACK_ON_ERROR;
 
 	tx_conn.post_timer_task = &set_tx_timer;
 
