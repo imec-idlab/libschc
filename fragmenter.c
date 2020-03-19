@@ -25,7 +25,7 @@ uint8_t ATTEMPTS = 0; // for debugging
 
 // keep track of the active connections
 struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
-static uint8_t FRAGMENTATION_BUF[MAX_MTU_LENGTH];
+static uint8_t FRAGMENTATION_BUF[MAX_MTU_LENGTH] = { 0 };
 
 // keep track of the mbuf's
 static uint32_t MBUF_PTR;
@@ -551,7 +551,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t padding) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
-	uint16_t len = (conn->tail_ptr - conn->bit_arr->ptr);
+	uint16_t len = conn->bit_arr->len;
 	if(padding)
 		len++;
 
