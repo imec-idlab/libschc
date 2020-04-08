@@ -854,7 +854,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 
 	dst->offset = RULE_SIZE_BITS;
-	memset(dst->ptr, 0, total_length);
+	memset(dst->ptr, 0, total_length + RULE_SIZE_BYTES); // buf should at least be packet length + RULE_SIZE_BYTES
 	schc_bitarray_t src; src.ptr = data; src.offset = 0; // use bit array for comparison
 
 	/*
