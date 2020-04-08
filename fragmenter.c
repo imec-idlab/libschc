@@ -357,7 +357,8 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 	uint8_t index = 0; uint8_t first = 1; uint32_t curr_bit_offset; uint8_t byte;
 
 	if(conn->schc_rule->mode == NOT_FRAGMENTED) {
-		for(int i = 0; i < curr->len; i++) {
+		int i;
+		for(i = 0; i < curr->len; i++) {
 			ptr[i] = curr->ptr[i];
 		}
 		return;
