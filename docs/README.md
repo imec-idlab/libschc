@@ -131,14 +131,15 @@ First, the compressesor should be initialized with the node it's source IP addre
 uint8_t schc_compressor_init(uint8_t src[16]);
 ```
 
-In order to compress a CoAP/UDP/IP packet, `schc_compress()` should be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet can be returned. The direction can either be `UP` (from LPWA network to IPv6 network) or `DOWN` (from IPv6 network to LPWA network). Also the device type (`NETWORK_GATEWAY` or `DEVICE`) should be set, in order to determine whether the packet is being forwarded from the network gateway, or compressed at an end-point. The new length of the packet is returned.
+In order to compress a CoAP/UDP/IP packet, `schc_compress()` should be called. This requires a buffer (`uint8_t *buf`) to which the compressed packet can be returned. The direction can either be `UP` (from LPWA network to IPv6 network) or `DOWN` (from IPv6 network to LPWA network).
+The schc rule is returned.
 ```C
-int16_t schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id, direction dir, device_type device_type);
+struct schc_rule_t* schc_compress(const uint8_t *data, uint8_t* buf, uint16_t total_length, uint32_t device_id, direction dir);
 ```
 
 The reverse can be done by calling:
 ```C
-uint16_t schc_decompress(const unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length, direction dir, device_type device_type);
+uint16_t schc_decompress(const unsigned char* data, unsigned char *buf, uint32_t device_id, uint16_t total_length, direction dir);
 ```
 Again, a buffer is required to which the decompressed packet can be returned (`uint8_t *buf`), a pointer to the complete original data packet (`uint8_t *data`), the device id, the total length, the direction and device type. The function will return the original, decompressed packet length.
 
@@ -168,29 +169,22 @@ In order to fragment a packet, the parameters of the connection should be set ac
 ```C
 // compress packet
 struct schc_rule_t* schc_rule;
-uint16_t compressed_len = schc_compress(msg, compressed_packet,
-		PACKET_LENGTH, device_id, UP, DEVICE, &schc_rule);
+schc_bitarray_t bit_arr;
+bit_arr.ptr = (uint8_t*) (compressed_packet);
 
-tx_conn.mtu = 25; // network driver MTU
+schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, DOWN);
+
+tx_conn.mtu = 12; // network driver MTU
 tx_conn.dc = 5000; // 5 seconds duty cycle
-tx_conn.device_id = device_id; // the device id of the connection
+tx_conn.device_id = 0x01; // the device id of the connection
 
-if(compressed_len > tx_conn.mtu) { // should fragment, change rule
-	// select a similar rule based on a reliability mode
-	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
-} else { // do not fragment
-	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NOT_FRAGMENTED, device_id);
-}
-
-set_rule_id(schc_rule, compressed_packet);
-
-tx_conn.data_ptr = &compressed_packet;
-tx_conn.packet_len = compressed_len;
-tx_conn.send = &send_callback;
+tx_conn.bit_arr = &bit_arr;
+tx_conn.send = &tx_send_callback;
 tx_conn.end_tx = &end_tx;
 
 tx_conn.schc_rule = schc_rule;
-tx_conn.RULE_SIZE = 8; // todo get from profile
+tx_conn.RULE_SIZE = RULE_SIZE_BITS;
+tx_conn.MODE = ACK_ON_ERROR;
 
 tx_conn.post_timer_task = &set_tx_timer;
 

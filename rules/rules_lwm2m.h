@@ -135,7 +135,7 @@ const static struct schc_coap_rule_t lwm2m_update_registration_rule_up = {
 				{ "message ID",         0,      16,     1, BI,      {0x00, 0x00},   &ignore,        VALUESENT },
 				{ "token",              0,      32,     1, BI,      {0x00, 0x00, 0x00, 0x00},
 						&ignore,        VALUESENT },
-				{ "uri-path",           0,      8,      1, BI,      "rd",           &equal,         NOTSENT },
+				{ "uri-path",           0,      16,      1, BI,      "rd",           &equal,         NOTSENT },
 				{ "uri-path",           0,      80,     1, BI,      "ZXV46xgT3I",   &ignore,        VALUESENT }
 		}
 };

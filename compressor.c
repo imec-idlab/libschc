@@ -1103,7 +1103,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 	// CoAP buffer for parsing
 	pcoap_pdu pcoap_msg = { (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), 0,
-			MAX_COAP_HEADER_LENGTH };
+			MAX_COAP_MSG_SIZE };
 
 	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
 #if USE_IPv6
@@ -1153,13 +1153,12 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 #if USE_COAP
 		if (coap_rule_id != 0) {
-			ret = decompress_coap_rule(
+			coap_offset = decompress_coap_rule(
 							(struct schc_coap_rule_t *) rule->compression_rule->coap_rule,
 							bit_arr, &pcoap_msg, dir);
-			if (ret == 0) {
+			if (coap_offset == 0) {
 				return 0; // no rule was found
 			}
-			coap_offset = ret;
 		}
 #endif
 	}
