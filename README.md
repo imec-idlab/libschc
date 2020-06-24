@@ -7,7 +7,7 @@ tiny low-power microcontrollers to have an end-to-end IPv6 connection.
 This repository contains both the compression as well as the fragmentation mechanism.
 For further information related to SCHC, see <https://datatracker.ietf.org/doc/draft-ietf-lpwan-ipv6-static-context-hc/>.
 
-See the [docs](/docs) for more information on the implemenation and configuration.
+See the [docs](/docs) and [our evaluation paper](http://hdl.handle.net/1854/LU-8613162) for more information on the implemenation and configuration.
 
 ### ACKNOWLEDGEMENT
 
