@@ -940,12 +940,15 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 
 	copy_bits(dst->ptr, dst->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
     uint16_t new_pkt_length = (BITS_TO_BYTES(dst->offset) + payload_len);
-    dst->padding = padded(dst);
+    dst->padding = padded(dst); // set the padding of the compressed packet
+
+    dst->bit_len = BYTES_TO_BITS(payload_len) + dst->offset; // set the total packet length
+    uint16_t total_packet_len_bits = dst->bit_len + dst->padding;
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
-			"schc_compress(): compressed header length: %d bits (%dB), payload length: %d (total length: %d) / %d b\n",
-			dst->offset, BITS_TO_BYTES(dst->offset), payload_len, new_pkt_length, dst->offset + BYTES_TO_BITS(payload_len) + dst->padding);
+			"schc_compress(): %d compressed header bits + %d payload bits + %d padding bits = %d bits (%dB)\n",
+			dst->offset, BYTES_TO_BITS(payload_len), dst->padding, total_packet_len_bits, BITS_TO_BYTES(total_packet_len_bits));
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");

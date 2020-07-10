@@ -510,10 +510,10 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 				crc_mask = -(crc & 1);
 				crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 			}
-			// printf("0x%02X ", byte);
+			printf("0x%02X ", byte);
 		}
 	}
-	// printf("\n");
+	printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24),
@@ -541,7 +541,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
  * @return checksum 	the computed checksum
  *
  */
-static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t padding) {
+static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_padding) {
 	int i, j; uint8_t byte;
 	unsigned int crc, mask;
 
@@ -552,25 +552,27 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t padding) {
 	i = 0;
 	crc = 0xFFFFFFFF;
 
-	uint16_t len = conn->bit_arr->len;
-	if(padding)
-		len++;
+	// the MIC is computed over the complete, compressed packet w/o padding
+	// + padding of the last tile, which could result in a non-byte aligned packet
+	// so, add extra padding for computation of the MIC
+	uint8_t extra_padding = 8 - (( (conn->bit_arr->bit_len - conn->RULE_SIZE) + last_tile_padding ) % 8 );
+	DEBUG_PRINTF(
+			"compute_mic(): original packet length %d bits, last tile padding %d bits, extra padding %d bits \n",
+			(conn->bit_arr->bit_len - conn->RULE_SIZE), last_tile_padding, extra_padding);
 
-	while (i < len) {
-		if(padding && ((i + 1) == len) ) { // padding of last tile
-			byte = 0x00;
-		} else {
-			byte = conn->bit_arr->ptr[i];
-		}
+	uint16_t padded_length = ((conn->bit_arr->bit_len + last_tile_padding + extra_padding) / 8);
+
+	while (i < padded_length) {
+		byte = conn->bit_arr->ptr[i];
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
 		i++;
-		printf("0x%02X ", byte);
+		// printf("0x%02X ", byte);
 	}
-	printf("\n");
+	// printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),
@@ -848,6 +850,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 			padding = ((bit_offset + (MIC_SIZE_BYTES * 8)) % 8); // RCS padding
 		}
 
+		DEBUG_PRINTF("set_fragmentation_header(): padding bits of last tile %d \n", padding);
 		compute_mic(conn, padding); // calculate RCS over compressed, double padded packet
 
 		// shift in RCS

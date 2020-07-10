@@ -34,6 +34,7 @@ typedef struct schc_bitarray_t {
 	uint32_t offset; // in bits
 	uint8_t padding;
 	uint16_t len; // in bytes
+	uint32_t bit_len;
 } schc_bitarray_t;
 
 typedef enum {
