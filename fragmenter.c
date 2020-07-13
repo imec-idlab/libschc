@@ -2156,6 +2156,7 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 	bit_offset += tx_conn->schc_rule->WINDOW_SIZE;
 
 	uint8_t bitmap_len = (tx_conn->schc_rule->MAX_WND_FCN + 1);
+	memset(tx_conn->ack.bitmap, 0, BITMAP_SIZE_BYTES); // clear bitmap from prev reception
 
 	if(has_no_more_fragments(tx_conn)) { // all-1 window
 		uint8_t mic[1] = { 0 };
@@ -2171,7 +2172,6 @@ void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 
 	// ToDo
 	// decode_bitmap(tx_conn);
-	memset(tx_conn->ack.bitmap, 0, 1); // clear bitmap from prev reception
 	copy_bits(tx_conn->ack.bitmap, 0, (uint8_t*) data, bit_offset,
 			bitmap_len);
 
