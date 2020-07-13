@@ -1351,7 +1351,7 @@ static uint8_t wait_end(schc_fragmentation_t* rx_conn, schc_mbuf_t* tail) {
 				}
 				send_ack(rx_conn);
 			}
-		} else { // mic right
+		} else { // mic correct
 			DEBUG_PRINTF("mic correct\n");
 			if (window == rx_conn->window) { // expected window
 				DEBUG_PRINTF("expected window\n");
@@ -1966,7 +1966,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			}
 			if (!compare_bits(resend_window, tx_conn->ack.bitmap,
 					(tx_conn->schc_rule->MAX_WND_FCN + 1))) { //ack.bitmap contains the missing fragments
-				DEBUG_PRINTF("bitmap contains the missing fragments\n");
+				DEBUG_PRINTF("bitmap contains the missing fragments: \n");
 				tx_conn->attempts++;
 				tx_conn->frag_cnt = (tx_conn->window_cnt)
 						* (tx_conn->schc_rule->MAX_WND_FCN + 1);
