@@ -320,24 +320,42 @@ static schc_mbuf_t* get_mbuf_tail(schc_mbuf_t *head) {
 	return curr;
 }
 
-static uint8_t mbuf_get_byte(schc_mbuf_t *mbuf, schc_fragmentation_t* conn, uint32_t* offset) {
-	uint32_t mbuf_bit_len = (mbuf->len * 8);
+static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragmentation_t* conn, uint32_t* offset) {
+	uint32_t mbuf_bit_len = (curr->len * 8);
 	uint8_t byte_arr[1] = { 0 };
-	uint16_t curr_offset = (*offset) + get_fragmentation_header_length(mbuf, conn);
-	uint32_t remaining_offset = mbuf_bit_len - curr_offset;
+	uint8_t start_offset = 0;
 
-	if( remaining_offset > 8 ) {
-		copy_bits(byte_arr, 0, mbuf->ptr, curr_offset, 8);
-		*offset += 8;
-	} else if(mbuf->next != NULL) { // copy remainig bits from next mbuf and set offset accordingly
-		copy_bits(byte_arr, 0, mbuf->ptr, curr_offset, remaining_offset);
-		copy_bits(byte_arr, remaining_offset, mbuf->next->ptr,
-				get_fragmentation_header_length(mbuf->next, conn),
+	if(prev == NULL && (*offset) < conn->RULE_SIZE) { // copy rule id
+		do {
+			copy_bits(byte_arr, (*offset), curr->ptr, (*offset), 1); // copy 1 bit
+			(*offset)++;
+			if(((*offset) % 8) == 0) {
+				return byte_arr[0];
+			}
+		} while ((*offset) < conn->RULE_SIZE);
+	}
+
+	if(prev == NULL && (*offset) == conn->RULE_SIZE) { // cope with rule id, once copied
+		((conn->RULE_SIZE % 8) != 0) ? (start_offset = (conn->RULE_SIZE % 8)) : (start_offset = 0); // set start offset
+		(*offset) = get_fragmentation_header_length(curr, conn);
+	}
+
+	uint32_t remaining_offset = mbuf_bit_len - (*offset);
+
+	if (remaining_offset > 8) {
+		copy_bits(byte_arr, start_offset, curr->ptr, (*offset), (8 - start_offset));
+		*offset += (8 - start_offset);
+	} else if (curr->next != NULL) { // copy remainig bits from next mbuf and set offset accordingly
+		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_offset);
+		copy_bits(byte_arr, remaining_offset, curr->next->ptr,
+				get_fragmentation_header_length(curr->next, conn),
 				(8 - remaining_offset));
-		*offset = (8 - remaining_offset);
+		*offset = (8 - remaining_offset) + get_fragmentation_header_length(curr->next, conn);
+		DEBUG_PRINTF("\nFINAL BYTE of this buf 0x%2X , offset %d, remaining offset %d \n", byte_arr[0], *offset, remaining_offset);
 	} else { // final byte
-		copy_bits(byte_arr, 0, mbuf->ptr, curr_offset, remaining_offset);
+		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_offset);
 		*offset = remaining_offset;
+		DEBUG_PRINTF("\nFINAL BYTE 0x%2X , offset %d, remaining offset %d \n", byte_arr[0], *offset, remaining_offset);
 	}
 
 	return byte_arr[0];
@@ -350,41 +368,27 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *mbuf, schc_fragmentation_t* conn, uint
  * @param  head			the head of the list
  * @param  ptr			the pointer to copy the contents to
  */
+
 void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
 
-	uint8_t index = 0; uint8_t first = 1; uint32_t curr_bit_offset; uint8_t byte;
+	uint8_t index = 0; uint32_t curr_bit_offset = 0;
 
-	if(!conn | conn->schc_rule->mode == NOT_FRAGMENTED) {
+	if (!conn | conn->schc_rule->mode == NOT_FRAGMENTED) {
 		int i;
-		for(i = 0; i < curr->len; i++) {
+		for (i = 0; i < curr->len; i++) {
 			ptr[i] = curr->ptr[i];
 		}
 		return;
 	}
+
 	while (curr != NULL) {
-		byte = 0;
-		if ((prev == NULL) && first) { // first byte(s) of compressed packet contain rule id
-			copy_bits(ptr, 0, curr->ptr, 0, conn->RULE_SIZE);
-			if (conn->RULE_SIZE <= 8) {
-				curr_bit_offset = (8 - conn->RULE_SIZE);
-				copy_bits(ptr, conn->RULE_SIZE, curr->ptr,
-						get_fragmentation_header_length(curr, conn),
-						curr_bit_offset);
-				first = 0;
-			} else {
-				// todo non byte alligned rule id ( > 8 bits )
-			}
-		} else {
-			// get next byte from mbuf chain
-			uint32_t temp_offset = curr_bit_offset;
-			byte = mbuf_get_byte(curr, conn, &curr_bit_offset);
-			ptr[index] = byte;
-			if (curr_bit_offset < temp_offset) { // partially included bits of next mbuf
-				prev = curr;
-				curr = curr->next;
-			}
+		uint32_t temp_offset = curr_bit_offset;
+		ptr[index] = mbuf_get_byte(prev, curr, conn, &curr_bit_offset);
+		if (curr_bit_offset < temp_offset) { // partially included bits of next mbuf
+			prev = curr;
+			curr = curr->next;
 		}
 		index++;
 	}
@@ -476,44 +480,28 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	uint8_t byte = 0; uint8_t byte_arr[RULE_SIZE_BYTES] = { 0 }; uint32_t curr_bit_offset = 0;
 	crc = 0xFFFFFFFF;
 
-	while(curr != NULL) {
-		byte = 0x00; // reset byte (which adds padding, if any)
-		if( (prev == NULL) && first) { // first byte(s) of compressed packet contain rule id
-			copy_bits(byte_arr, 0, curr->ptr, 0, conn->RULE_SIZE);
-			if(conn->RULE_SIZE <= 8 ) {
-				curr_bit_offset = (8 - conn->RULE_SIZE);
-				copy_bits(byte_arr, conn->RULE_SIZE, curr->ptr,
-						get_fragmentation_header_length(curr, conn),
-						curr_bit_offset);
-				first = 0;
-			} else {
-				// todo non byte alligned rule id ( > 8 bits )
-			}
-			byte = byte_arr[0];
-		} else {
-			// get next byte from mbuf chain
-			uint32_t temp_offset = curr_bit_offset;
-			byte = mbuf_get_byte(curr, conn, &curr_bit_offset);
-			do_crc = 1;
-			if(curr_bit_offset < temp_offset) { // partially included bits of next mbuf
-				prev = curr;
-				curr = curr->next;
-				if(byte == 0 && curr == NULL){
-					// remove the padding byte from the second last packet (RCS was sent separately)
-					do_crc = 0;
-				}
+	while (curr != NULL) {
+		uint32_t temp_offset = curr_bit_offset;
+		byte = mbuf_get_byte(prev, curr, conn, &curr_bit_offset);
+		if (curr_bit_offset < temp_offset) { // partially included bits of next mbuf
+			prev = curr;
+			curr = curr->next;
+			if ( (curr == NULL && byte == 0) ) {
+				// remove the padding byte from the second last packet (RCS was sent separately)
+				do_crc = 0;
 			}
 		}
-		if(do_crc) {
+		if (do_crc) {
 			crc = crc ^ byte;
 			for (k = 7; k >= 0; k--) { // do eight times.
 				crc_mask = -(crc & 1);
 				crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 			}
-			printf("0x%02X ", byte);
+			// printf("0x%02X ", byte);
 		}
 	}
-	printf("\n");
+
+	// printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24),
@@ -553,7 +541,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 	crc = 0xFFFFFFFF;
 
 	// the MIC is computed over the complete, compressed packet w/o padding
-	// + padding of the last tile, which could result in a non-byte aligned packet
+	// + padding of the last tile, which may result in a non-byte aligned packet
 	// so, add extra padding for computation of the MIC
 	uint8_t extra_padding = 8 - (( (conn->bit_arr->bit_len - conn->RULE_SIZE) + last_tile_padding ) % 8 );
 	DEBUG_PRINTF(
@@ -570,9 +558,9 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
 		i++;
-		// printf("0x%02X ", byte);
+		printf("0x%02X ", byte);
 	}
-	// printf("\n");
+	printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),

@@ -14,19 +14,19 @@
 #if !(RULE_SIZE_BITS % 8)
 #define RULE_SIZE_BYTES			(RULE_SIZE_BITS / 8)
 #else
-#define RULE_SIZE_BYTES			(RULE_SIZE_BITS / 8) + 1
+#define RULE_SIZE_BYTES			((int) ((RULE_SIZE_BITS / 8) + 1))
 #endif
 
 #if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) % 8)
 #define DTAG_SIZE_BYTES			((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8)
 #else
-#define DTAG_SIZE_BYTES			((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) + 1
+#define DTAG_SIZE_BYTES			((int) (((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) + 1))
 #endif
 
 #if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) % 8)
 #define WINDOW_SIZE_BYTES		1
 #else
-#define WINDOW_SIZE_BYTES		((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) + 1
+#define WINDOW_SIZE_BYTES		((int) (((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) + 1))
 #endif
 
 typedef struct schc_bitarray_t {
