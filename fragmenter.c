@@ -351,11 +351,9 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 				get_fragmentation_header_length(curr->next, conn),
 				(8 - remaining_offset));
 		*offset = (8 - remaining_offset) + get_fragmentation_header_length(curr->next, conn);
-		DEBUG_PRINTF("\nFINAL BYTE of this buf 0x%2X , offset %d, remaining offset %d \n", byte_arr[0], *offset, remaining_offset);
 	} else { // final byte
 		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_offset);
 		*offset = remaining_offset;
-		DEBUG_PRINTF("\nFINAL BYTE 0x%2X , offset %d, remaining offset %d \n", byte_arr[0], *offset, remaining_offset);
 	}
 
 	return byte_arr[0];
