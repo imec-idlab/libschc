@@ -942,7 +942,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
     uint16_t new_pkt_length = (BITS_TO_BYTES(dst->offset) + payload_len);
     dst->padding = padded(dst); // set the padding of the compressed packet
 
-    dst->bit_len = BYTES_TO_BITS(payload_len) + dst->offset; // set the total packet length
+    dst->bit_len = BYTES_TO_BITS(payload_len) + dst->offset; // set the total packet length (w/o padding)
     uint16_t total_packet_len_bits = dst->bit_len + dst->padding;
 
 	DEBUG_PRINTF("\n");
@@ -1167,7 +1167,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	}
 
 	uint8_t new_header_length = IP6_HLEN + UDP_HLEN + coap_offset;
-	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_arr->offset; // the schc header minus the total length is the payload length
+	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_arr->offset - bit_arr->padding; // the schc header minus the total length is the payload length
 
 	copy_bits(buf, BYTES_TO_BITS(new_header_length), bit_arr->ptr, bit_arr->offset, payload_bit_length);
 	uint16_t payload_length = get_number_of_bytes_from_bits(payload_bit_length);

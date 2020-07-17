@@ -279,7 +279,7 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
  * @return len			the total length of the fragment
  */
 uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
-	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0; uint32_t total_offset = 0;
+	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0;
 
 	if(conn->schc_rule == NULL)
 		return curr->len;
@@ -288,15 +288,14 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 		return curr->len;
 
 	while (curr != NULL) {
-		total_len += (curr->len * 8);
-		total_offset += get_fragmentation_header_length(curr, conn);
-
+		total_len += ((curr->len * 8) - get_fragmentation_header_length(curr, conn));
 		curr = curr->next;
 	}
 
 	total_len += conn->RULE_SIZE; // added in front of compressed packet
+	conn->bit_arr->padding = 8 - (total_len % 8); // add extra padding added during reassembly
 
-	return (uint16_t) ( ((total_len - total_offset) + (8 - 1)) / 8 );
+	return (uint16_t) ( ((total_len) + (8 - 1)) / 8 ); // this returns 1 byte extra in case of a padded packet
 }
 
 /**
@@ -340,20 +339,21 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 		(*offset) = get_fragmentation_header_length(curr, conn);
 	}
 
-	uint32_t remaining_offset = mbuf_bit_len - (*offset);
+	int32_t remaining_bits = mbuf_bit_len - (*offset);
+	// DEBUG_PRINTF("total length %d, remaining bits %d, current offset %d: ", mbuf_bit_len, remaining_bits, *offset);
 
-	if (remaining_offset > 8) {
+	if (remaining_bits > 8) {
 		copy_bits(byte_arr, start_offset, curr->ptr, (*offset), (8 - start_offset));
 		*offset += (8 - start_offset);
 	} else if (curr->next != NULL) { // copy remainig bits from next mbuf and set offset accordingly
-		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_offset);
-		copy_bits(byte_arr, remaining_offset, curr->next->ptr,
+		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_bits);
+		copy_bits(byte_arr, remaining_bits, curr->next->ptr,
 				get_fragmentation_header_length(curr->next, conn),
-				(8 - remaining_offset));
-		*offset = (8 - remaining_offset) + get_fragmentation_header_length(curr->next, conn);
+				(8 - remaining_bits));
+		*offset = (8 - remaining_bits) + get_fragmentation_header_length(curr->next, conn);
 	} else { // final byte
-		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_offset);
-		*offset = remaining_offset;
+		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_bits);
+		*offset = remaining_bits;
 	}
 
 	return byte_arr[0];
@@ -473,30 +473,33 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
 
-	uint32_t crc, crc_mask; int8_t k = 0; uint8_t first = 1; uint8_t do_crc = 1;
+	uint32_t crc, crc_mask; int8_t k = 0; uint8_t first = 1;
 
-	uint8_t byte = 0; uint8_t byte_arr[RULE_SIZE_BYTES] = { 0 }; uint32_t curr_bit_offset = 0;
+	uint8_t byte = 0; uint32_t curr_bit_offset = 0;
 	crc = 0xFFFFFFFF;
 
 	while (curr != NULL) {
 		uint32_t temp_offset = curr_bit_offset;
 		byte = mbuf_get_byte(prev, curr, conn, &curr_bit_offset);
-		if (curr_bit_offset < temp_offset) { // partially included bits of next mbuf
+		/*if (curr->next->next == NULL
+				&& curr_bit_offset >= ((curr->next->len * 8) - 8)) { // last byte always contains payload + padding
+			// rare case where
+			curr = curr->next->next;
+		}*/
+		// todo
+		// when mtu is very small (e.g. 6 or 7), final mbuf > second last mbuf
+		// and curr_bit_offset will never be larger than temp_offset
+		// resulting in an endless loop
+		if ( (curr_bit_offset < temp_offset) ) { // partially included bits of next mbuf
 			prev = curr;
 			curr = curr->next;
-			if ( (curr == NULL && byte == 0) ) {
-				// remove the padding byte from the second last packet (RCS was sent separately)
-				do_crc = 0;
-			}
 		}
-		if (do_crc) {
-			crc = crc ^ byte;
-			for (k = 7; k >= 0; k--) { // do eight times.
-				crc_mask = -(crc & 1);
-				crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
-			}
-			// printf("0x%02X ", byte);
+		crc = crc ^ byte;
+		for (k = 7; k >= 0; k--) { // do eight times.
+			crc_mask = -(crc & 1);
+			crc = (crc >> 1) ^ (0xEDB88320 & crc_mask);
 		}
+		// printf("0x%02X \n", byte);
 	}
 
 	// printf("\n");
@@ -540,11 +543,13 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 
 	// the MIC is computed over the complete, compressed packet w/o padding
 	// + padding of the last tile, which may result in a non-byte aligned packet
-	// so, add extra padding for computation of the MIC
-	uint8_t extra_padding = 8 - (( (conn->bit_arr->bit_len - conn->RULE_SIZE) + last_tile_padding ) % 8 );
+	// so, extra padding might be added before computing the MIC
+	uint8_t extra_padding = 8 - ( (conn->bit_arr->bit_len + last_tile_padding ) % 8 );
+	(extra_padding == 8) ? extra_padding = 0 : extra_padding;
+
 	DEBUG_PRINTF(
 			"compute_mic(): original packet length %d bits, last tile padding %d bits, extra padding %d bits \n",
-			(conn->bit_arr->bit_len - conn->RULE_SIZE), last_tile_padding, extra_padding);
+			conn->bit_arr->bit_len, last_tile_padding, extra_padding);
 
 	uint16_t padded_length = ((conn->bit_arr->bit_len + last_tile_padding + extra_padding) / 8);
 
@@ -556,9 +561,9 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 			crc = (crc >> 1) ^ (0xEDB88320 & mask);
 		}
 		i++;
-		printf("0x%02X ", byte);
+		// printf("0x%02X ", byte);
 	}
-	printf("\n");
+	// printf("\n");
 
 	crc = ~crc;
 	uint8_t mic[MIC_SIZE_BYTES] = { ((crc & 0xFF000000) >> 24), ((crc & 0xFF0000) >> 16),
@@ -767,8 +772,7 @@ void schc_reset(schc_fragmentation_t* conn) {
  *
  */
 static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
-	uint32_t total_bits_to_transmit = (BYTES_TO_BITS(conn->bit_arr->len)
-			- conn->bit_arr->padding - conn->RULE_SIZE); // effective packet bits
+	uint32_t total_bits_to_transmit = (conn->bit_arr->bit_len - conn->RULE_SIZE); // effective payload bits
 	uint16_t header_size = (conn->RULE_SIZE + conn->schc_rule->DTAG_SIZE
 			+ conn->schc_rule->WINDOW_SIZE + conn->schc_rule->FCN_SIZE);
 	uint16_t prev_header_bits = header_size * (conn->frag_cnt - 1); // previous fragmentation overhead
@@ -827,17 +831,23 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 
 	uint32_t bits_transmitted = has_no_more_fragments(conn);
 	if (bits_transmitted) { // all-1 fragment
-		uint32_t total_bits_to_transmit = BYTES_TO_BITS(conn->bit_arr->len)
-				- conn->RULE_SIZE - conn->bit_arr->padding; // effective packet bits
+		uint32_t total_bits_to_transmit = conn->bit_arr->bit_len - conn->RULE_SIZE; // effective payload bits
 		// to use for RCS calculation
 		int8_t bits_left_to_transmit = (total_bits_to_transmit
-				- bits_transmitted); uint8_t padding = 0;
-		if( bits_left_to_transmit < 0) { // RCS in separate packet
-			padding = ((bit_offset + (MIC_SIZE_BYTES * 8)) % 8); // RCS padding
+				- bits_transmitted);
+		uint8_t padding = 0;
+		if (bits_left_to_transmit < 0) { // RCS in separate packet
+			uint16_t prev_header_bits = (conn->RULE_SIZE
+					+ conn->schc_rule->WINDOW_SIZE + conn->schc_rule->FCN_SIZE
+					+ conn->schc_rule->DTAG_SIZE) * (conn->frag_cnt - 1);
+			bits_left_to_transmit = (total_bits_to_transmit + prev_header_bits)
+					% 8; // we might need some extra bits from the last byte
 		}
 
+		padding = 8 - ((bit_offset +  (MIC_SIZE_BYTES * 8) + bits_left_to_transmit) % 8);
+
 		DEBUG_PRINTF("set_fragmentation_header(): padding bits of last tile %d \n", padding);
-		compute_mic(conn, padding); // calculate RCS over compressed, double padded packet
+		compute_mic(conn, padding); // calculate RCS over compressed, (possibly double) padded packet
 
 		// shift in RCS
 		copy_bits(fragmentation_buffer, bit_offset, conn->mic, 0, (MIC_SIZE_BYTES * 8));
@@ -1071,12 +1081,9 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 		packet_len = conn->mtu;
 		packet_bits_tx = ((conn->mtu * 8) - header_bits); // set packet bits to number of bits that fit in packet
 		packet_bit_offset = (packet_bits_tx * (conn->frag_cnt - 1)); // offset to start copying from
-		remaining_bits = (BYTES_TO_BITS(conn->bit_arr->len)
-						- conn->bit_arr->padding) - packet_bit_offset;
+		remaining_bits = (conn->bit_arr->bit_len - conn->RULE_SIZE) - packet_bit_offset;
 		if( remaining_bits < (packet_len * 8)  ) { // next packet contains RCS
-			// checked by packet_bits that this is not the last one
-			// padding is added by memsetting the FRAGMENTATION_BUF
-			packet_bits_tx = remaining_bits;
+			packet_bits_tx = remaining_bits - ((remaining_bits + header_bits) % 8); // some bits of last byte are included in next (last) packet
 			packet_len = (remaining_bits + header_bits) / 8;
 		}
 	}
@@ -1087,24 +1094,27 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 
 		packet_bit_offset = packet_bits_tx;
 
-		remaining_bits = (BYTES_TO_BITS(conn->bit_arr->len)
-				- conn->bit_arr->padding - conn->RULE_SIZE) - packet_bits_tx;
+		remaining_bits = (conn->bit_arr->bit_len - conn->RULE_SIZE) - packet_bits_tx;
 
 		packet_bits_tx = remaining_bits;
 
 		if(remaining_bits < 0) { // RCS in separate packet
 			// which also requires padding
 			header_bits = conn->RULE_SIZE + conn->schc_rule->WINDOW_SIZE
-					+ conn->schc_rule->FCN_SIZE + conn->schc_rule->DTAG_SIZE
-					+ (MIC_SIZE_BYTES * 8);
-			packet_bits_tx = 0; // header offset is included in packet bits now
+					+ conn->schc_rule->FCN_SIZE + conn->schc_rule->DTAG_SIZE;
 
-			uint8_t zerobuf[1] = { 0 };
-			remaining_bits = (8 - (header_bits % 8)); // padding variable
-			copy_bits(FRAGMENTATION_BUF, header_bits, zerobuf, 0, remaining_bits); // add padding
+			uint16_t prev_header_bits = header_bits * (conn->frag_cnt - 1);
+			packet_bits_tx = ((conn->bit_arr->bit_len - conn->RULE_SIZE)
+					+ prev_header_bits) % 8; // we might need some extra bits from the last byte
+			packet_bit_offset = conn->bit_arr->bit_len - conn->RULE_SIZE
+					- packet_bits_tx;
+
+			header_bits += (MIC_SIZE_BYTES * 8); // include MIC bytes
 		}
 
-		packet_len = ((header_bits + remaining_bits) + (8 - 1)) / 8; // last packet length
+		remaining_bits = 8 - ((header_bits + packet_bits_tx) % 8); // padding variable (padding is already set by memset(FRAGMENTATION_BUF))
+
+		packet_len = ((header_bits + remaining_bits + packet_bits_tx) + (8 - 1)) / 8; // last packet length
 
 		if(packet_len > conn->mtu) {
 			DEBUG_PRINTF("send_fragment(): mtu smaller than last packet length \n");
