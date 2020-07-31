@@ -280,12 +280,12 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
  */
 uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0;
+	conn->bit_arr->padding = 0;
 
 	if(conn->schc_rule == NULL)
 		return curr->len;
 
 	if(conn->schc_rule->mode == NOT_FRAGMENTED)
-		conn->bit_arr->padding = 0; // can only contain padding from compression
 		return curr->len;
 
 	while (curr != NULL) {
