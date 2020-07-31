@@ -1176,7 +1176,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		swap_ipv6_source_and_destination(buf);
 	}
 
-	if(padded(bit_arr) && payload_length > 0) { // remove padding
+	if(padded(bit_arr)) { // remove padding
 		payload_length--;
 	}
 

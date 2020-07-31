@@ -285,6 +285,7 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 		return curr->len;
 
 	if(conn->schc_rule->mode == NOT_FRAGMENTED)
+		conn->bit_arr->padding = 0; // can only contain padding from compression
 		return curr->len;
 
 	while (curr != NULL) {
