@@ -34,6 +34,6 @@ libschc has dual licenses. The GNU General Public License, Version 3 (the "Licen
 
 See the License for the specific language governing permissions and limitations under the License.
 
-For non-open source licenses, please contact Ilse Bracke <ilse.bracke@imec.be>.
+For non-open source licenses, please visit https://imec.flintbox.com/#technologies/36dfa28f-bf48-4a34-8c29-4439fc41d563
 
 © Copyright 2018-2019, Bart Moons <bamoons.moons@ugent.be>, imec and Ghent University
