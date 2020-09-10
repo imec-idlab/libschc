@@ -157,7 +157,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		struct schc_rule_t* curr_rule = (*device->context)[i];
+		const struct schc_rule_t* curr_rule = (*device->context)[i];
 
 #if USE_IPv6
 		if (curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {
@@ -166,7 +166,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 #if USE_COAP
 				if (curr_rule->compression_rule->coap_rule->rule_id == coap_rule_id) {
 					if (curr_rule->mode == mode) {
-						return curr_rule;
+						return (struct schc_rule_t*) curr_rule;
 					}
 				}
 #else
@@ -727,7 +727,8 @@ uint8_t mo_ignore(__attribute__((unused))  struct schc_field *target_field,
  *         0 if the MSB of the target field doesn't match the MSB of the field value
  *
  */
-uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_MSB(struct schc_field *target_field, unsigned char *field_value,
+		__attribute__((unused))  uint16_t field_offset) {
 	if(compare_bits(target_field->target_value, field_value, target_field->MO_param_length)) {
 		return 1; // left x bits match the target value
 	}
@@ -750,20 +751,19 @@ uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint
  *         0 if no matching value is found in the mapping array
  *
  */
-uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_matchmap(struct schc_field *target_field, unsigned char *field_value,
+		__attribute__((unused))  uint16_t field_offset) {
 	uint8_t i;
 
 	// reset the parser
 	jsmn_init(&json_parser);
 
-	uint8_t result; uint8_t match_counter = 0;
+	uint8_t result;
 	result = 0;// jsmn_parse(&json_parser, target_field->target_value,
 			// strlen(target_field->target_value), json_token, sizeof(json_token) / sizeof(json_token[0]));
 
 	// if result is 0,
 	if (result == 0) {
-		uint16_t list_len = get_required_number_of_bits(
-				target_field->MO_param_length);
 		for (i = 0; i < target_field->MO_param_length; i++) {
 			uint8_t ptr = i;
 			if (! (target_field->field_length % 8) ) // only support byte aligned matchmap
@@ -831,7 +831,7 @@ static void set_node_ip(schc_ipaddr_t *node_ip) {
  */
 uint8_t schc_compressor_init(uint8_t src[16]) {
 	jsmn_init(&json_parser);
-	set_node_ip(src);
+	set_node_ip((schc_ipaddr_t *) src);
 
 	return 1;
 }
@@ -910,7 +910,6 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	src.offset = 0; // reset the bit arrays offset and start compressing
 
 	// find the rule for this device by combining the available id's // todo pointers?
-	uint8_t id_pos = get_position_in_first_byte(RULE_SIZE_BITS);
 	schc_rule = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
@@ -956,7 +955,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF(
 			"schc_compress(): %d compressed header bits + %d payload bits + %d padding bits = %d bits (%dB)\n",
-			dst->offset, BYTES_TO_BITS(payload_len), dst->padding, total_packet_len_bits, BITS_TO_BYTES(total_packet_len_bits));
+			(int) dst->offset, BYTES_TO_BITS(payload_len), dst->padding, total_packet_len_bits, BITS_TO_BYTES(total_packet_len_bits));
 	DEBUG_PRINTF("+---------------------------------+\n");
 	DEBUG_PRINTF("|          SCHC Packet            |\n");
 	DEBUG_PRINTF("+---------------------------------+\n");

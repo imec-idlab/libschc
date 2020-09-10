@@ -130,7 +130,7 @@ struct schc_layer_rule_t {
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
-	struct schc_field content[];
+	const struct schc_field content[];
 };
 
 struct schc_compression_rule_t {
