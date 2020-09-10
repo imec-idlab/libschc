@@ -226,31 +226,6 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 }
 
 /**
- * check if an mbuf with the same fragment number already exists
- * and overwrite if so
- *
- * @param  	head			the head of the list
- * @param  	frag			the fragment number to overwrite
- * @param	mbuf			the fragment to overwrite with
- *
- * @return 	0				no matching fragment found
- * 			1				overwrote a matching packet
- */
-static uint8_t mbuf_overwrite(schc_mbuf_t **head, uint16_t frag, schc_mbuf_t* mbuf) {
-	schc_mbuf_t *curr = *head;
-
-	while (curr->next != NULL) {
-		if(curr->frag_cnt == frag) {
-			mbuf_delete(head, curr);
-			return 1;
-		}
-		curr = curr->next;
-	}
-
-	return 0;
-}
-
-/**
  * Returns the number of bits the current header exists off
  *
  * @param  mbuf 		the mbuf to find the offset for
@@ -432,16 +407,17 @@ static void mbuf_sort(schc_mbuf_t **head) {
 		while (*next != NULL) {
 			if ((*next)->frag_cnt < (*curr)->frag_cnt) { // swap pointers for curr and curr->next
 				schc_mbuf_t **temp;
-				temp = *curr;
+				temp = curr;
 				*curr = *next;
-				*next = temp;
+				*next = (schc_mbuf_t*) temp;
 
-				temp = (*curr)->next;
+				*temp = (*curr)->next;
 				(*curr)->next = (*next)->next;
-				(*next)->next = temp;
+				(*next)->next = (schc_mbuf_t*) temp;
 
 				curr = &(*curr)->next;
 				swapped = 1;
+
 			} else {   // no swap. advance both pointer-pointers
 				curr = next;
 				next = &(*next)->next;
@@ -987,7 +963,7 @@ static void abort_connection(schc_fragmentation_t* conn) {
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms \n", conn->dc * 4);
-	conn->post_timer_task(&schc_fragment, conn->device_id, conn->dc * 4, conn);
+	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc * 4, conn);
 }
 
 /**
@@ -998,7 +974,7 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("set_dc_timer(): for %d ms \n", conn->dc);
-	conn->post_timer_task(&schc_fragment, conn->device_id, conn->dc, conn);
+	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -1011,7 +987,7 @@ static void set_dc_timer(schc_fragmentation_t* conn) {
 static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_inactivity_timer(): for %d ms \n", conn->dc);
-	conn->post_timer_task(&schc_reassemble, conn->device_id, conn->dc, conn);
+	conn->post_timer_task( (void*) schc_reassemble, conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -2120,7 +2096,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 		uint32_t device_id) {
 	if ((tx_conn->TX_STATE == WAIT_BITMAP || tx_conn->TX_STATE == RESEND)
 			&& compare_bits(tx_conn->schc_rule->id, data, tx_conn->RULE_SIZE)) { // acknowledgment
-		schc_ack_input(data, len, tx_conn, device_id);
+		schc_ack_input(data, tx_conn, device_id);
 		return tx_conn;
 	} else {
 		schc_fragmentation_t* rx_conn = schc_fragment_input((uint8_t*) data, len, device_id);
@@ -2137,8 +2113,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
  * @param   device_id		the device id from the rx source
  *
  */
-void schc_ack_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
-		uint32_t device_id) {
+void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn, uint32_t device_id) {
 	uint8_t bit_offset = tx_conn->RULE_SIZE;
 	tx_conn->input = 1;
 

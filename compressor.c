@@ -682,7 +682,7 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
  *         0 if the target field doesn't match the field value
  *
  */
-static uint8_t equal(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset) {
+uint8_t mo_equal(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset) {
 	uint8_t bit_pos = get_position_in_first_byte(target_field->field_length);
 
 	return compare_bits_aligned((uint8_t*) (target_field->target_value), bit_pos,
@@ -698,7 +698,7 @@ static uint8_t equal(struct schc_field* target_field, unsigned char* field_value
  * @return 1
  *
  */
-static uint8_t ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
 	// ignore, always true
 	return 1;
 }
@@ -719,7 +719,7 @@ static uint8_t ignore(struct schc_field* target_field, unsigned char* field_valu
  *         0 if the MSB of the target field doesn't match the MSB of the field value
  *
  */
-static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
 	if(compare_bits(target_field->target_value, field_value, target_field->MO_param_length)) {
 		return 1; // left x bits match the target value
 	}
@@ -742,7 +742,7 @@ static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value, 
  *         0 if no matching value is found in the mapping array
  *
  */
-static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
 	uint8_t i;
 
 	// reset the parser

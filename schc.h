@@ -193,9 +193,9 @@ struct schc_udpip_hdr {
   uint16_t udpchksum;
 };
 
-static uint8_t equal(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
-static uint8_t ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
-static uint8_t MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
-static uint8_t matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+uint8_t mo_equal(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+uint8_t mo_ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 
 #endif
