@@ -206,7 +206,7 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 		struct schc_rule_t* curr_rule = (struct schc_rule_t*) (*device->context)[i];
 		uint8_t curr_rule_pos = get_position_in_first_byte(RULE_SIZE_BITS);
 		if( compare_bits_aligned(curr_rule->id, curr_rule_pos, rule_arr, 0, RULE_SIZE_BITS)) {
-			DEBUG_PRINTF("get_schc_rule(): curr rule %p \n", curr_rule);
+			DEBUG_PRINTF("get_schc_rule(): curr rule %p \n", (void*) curr_rule);
 			return curr_rule;
 		}
 	}

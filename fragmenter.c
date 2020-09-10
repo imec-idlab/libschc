@@ -946,7 +946,7 @@ static void abort_connection(schc_fragmentation_t* conn) {
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms \n", (int) (conn->dc * 4));
-	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc * 4, conn);
+	conn->post_timer_task( (*schc_fragment), conn->device_id, conn->dc * 4, conn);
 }
 
 /**
@@ -957,7 +957,7 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("set_dc_timer(): for %d ms \n", (int) conn->dc);
-	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc, conn);
+	conn->post_timer_task( (*schc_fragment), conn->device_id, conn->dc, conn);
 }
 
 /**
@@ -970,7 +970,7 @@ static void set_dc_timer(schc_fragmentation_t* conn) {
 static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_inactivity_timer(): for %d ms \n", (int) conn->dc);
-	conn->post_timer_task( (void*) schc_reassemble, conn->device_id, conn->dc, conn);
+	conn->post_timer_task( (*schc_reassemble), conn->device_id, conn->dc, conn);
 }
 
 /**

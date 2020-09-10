@@ -1,4 +1,4 @@
-CFLAGS=-std=c11 -pedantic-errors
+CFLAGS=-std=c11
 
 compress: compress.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c
 	gcc -g -o compress compress.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c -lm

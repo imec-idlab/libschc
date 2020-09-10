@@ -125,7 +125,7 @@ typedef struct schc_fragmentation_t {
 	/* the function to call when the fragmenter has something to send */
 	uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id);
 	/* the timer task */
-	void (*post_timer_task)(void (*timer_task)(void* conn), uint32_t device_id,
+	void (*post_timer_task)(int8_t (*timer_task)(struct schc_fragmentation_t* conn), uint32_t device_id,
 			uint32_t time_ms, void *arg);
 	/* this function is called when the last rx timer expires */
 	void (*end_rx)(struct schc_fragmentation_t *conn);
