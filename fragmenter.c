@@ -68,24 +68,6 @@ static uint16_t get_max_fcn_value(schc_fragmentation_t* conn) {
 }
 
 /**
- * get a bitmap mask for a number of bits
- *
- * @param len			the number of bits to set
- *
- * @return padding		the bitmask
- *
- */
-static uint32_t get_bit_mask(uint8_t len) {
-	int mask = 0; int i;
-
-	for (i = 0; i < len; i++) {
-	    mask = (1 << len) - 1;
-	}
-
-	return mask;
-}
-
-/**
  * print the complete mbuf chain
  *
  * @param  head			the head of the list
@@ -870,10 +852,10 @@ static void clear_bitmap(schc_fragmentation_t* conn) {
  * @param conn 			a pointer to the connection
  *
  */
-static void encode_bitmap(schc_fragmentation_t* conn) {
+/*static void encode_bitmap(schc_fragmentation_t* conn) {
 	// ToDo
 	DEBUG_PRINTF("encode_bitmap(): for device %d", (int) conn->device_id);
-}
+}*/
 
 /**
  * reconstruct an encoded bitmap
@@ -881,10 +863,10 @@ static void encode_bitmap(schc_fragmentation_t* conn) {
  * @param conn 			a pointer to the connection
  *
  */
-static void decode_bitmap(schc_fragmentation_t* conn) {
+/*static void decode_bitmap(schc_fragmentation_t* conn) {
 	// ToDo
 	DEBUG_PRINTF("decode_bitmap(): for device %d", (int) conn->device_id);
-}
+}*/
 
 /**
  * loop over a bitmap to check if all bits are set to
