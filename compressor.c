@@ -33,16 +33,6 @@ jsmntok_t json_token[JSON_TOKENS];
 ////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Get the node its IP address as set during initialization
- *
- * @return node_ip_6 the node its IP address
- *
- */
-static void get_node_ip(schc_ipaddr_t *node_ip) {
-	memcpy(node_ip, node_ip_6, sizeof(schc_ipaddr_t));
-}
-
-/**
  * Get a device by it's id
  *
  * @param device_id 	the id of the device
@@ -105,7 +95,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
 
 	if (device == NULL) {
 		DEBUG_PRINTF(
-				"get_schc_rule(): no device was found for the id: %d\n", device_id);
+				"get_schc_rule(): no device was found for the id: %d\n", (int) device_id);
 		return NULL;
 	}
 
