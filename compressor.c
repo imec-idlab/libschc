@@ -145,7 +145,7 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
  *
  */
 static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
-		uint8_t udp_rule_id, uint8_t coap_rule_id, uint32_t device_id,
+		uint8_t udp_rule_id, __attribute__((unused)) uint8_t coap_rule_id, uint32_t device_id,
 		reliability_mode mode) {
 	int i;
 	struct schc_device *device = get_device_by_id(device_id);
@@ -706,7 +706,7 @@ uint8_t mo_equal(struct schc_field* target_field, unsigned char* field_value, ui
  */
 uint8_t mo_ignore(__attribute__((unused))  struct schc_field *target_field,
 		__attribute__((unused)) unsigned char *field_value,
-		__attribute__((unused))  uint16_t field_offset) {
+		__attribute__((unused)) uint16_t field_offset) {
 	// ignore, always true
 	return 1;
 }
@@ -728,7 +728,7 @@ uint8_t mo_ignore(__attribute__((unused))  struct schc_field *target_field,
  *
  */
 uint8_t mo_MSB(struct schc_field *target_field, unsigned char *field_value,
-		__attribute__((unused))  uint16_t field_offset) {
+		__attribute__((unused)) uint16_t field_offset) {
 	if(compare_bits(target_field->target_value, field_value, target_field->MO_param_length)) {
 		return 1; // left x bits match the target value
 	}
@@ -752,7 +752,7 @@ uint8_t mo_MSB(struct schc_field *target_field, unsigned char *field_value,
  *
  */
 uint8_t mo_matchmap(struct schc_field *target_field, unsigned char *field_value,
-		__attribute__((unused))  uint16_t field_offset) {
+		__attribute__((unused)) uint16_t field_offset) {
 	uint8_t i;
 
 	// reset the parser
@@ -1111,9 +1111,11 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	uint8_t ret = 0;
 	uint8_t coap_offset = 0;
 
+#if USE_COAP
 	// CoAP buffer for parsing
 	pcoap_pdu pcoap_msg = { (uint8_t*) (buf + IP6_HLEN + UDP_HLEN), 0,
 			MAX_COAP_MSG_SIZE };
+#endif
 
 	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
 #if USE_IPv6
