@@ -130,7 +130,7 @@ struct schc_layer_rule_t {
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
-	const struct schc_field content[];
+	struct schc_field content[];
 };
 
 struct schc_compression_rule_t {
@@ -171,7 +171,7 @@ struct schc_device {
 	/* the total number of rules for a device */
 	uint8_t rule_count;
 	/* a pointer to the collection of rules for a device */
-	struct schc_rule_t *(*context)[];
+	const struct schc_rule_t *(*context)[];
 };
 
 typedef uint8_t schc_ip6addr_t[16];
