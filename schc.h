@@ -171,7 +171,7 @@ struct schc_device {
 	/* the total number of rules for a device */
 	uint8_t rule_count;
 	/* a pointer to the collection of rules for a device */
-	const struct schc_rule_t *(*context)[];
+	struct schc_rule_t *(*context)[];
 };
 
 typedef uint8_t schc_ip6addr_t[16];

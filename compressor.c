@@ -242,7 +242,6 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 			}
 				break;
 			case VALUESENT: {
-				uint8_t src_pos = get_position_in_first_byte((field_length + src->offset));
 				copy_bits(dst->ptr, dst->offset, src->ptr, src->offset, field_length);
 				dst->offset += field_length;
 			}
@@ -349,7 +348,7 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
  */
 static uint8_t decompress(struct schc_layer_rule_t* rule, schc_bitarray_t* src,
 		schc_bitarray_t* dst, direction DI) {
-	uint8_t i = 0; uint8_t j;
+	uint8_t i = 0;
 	uint8_t field_length; int8_t json_result = -1;
 
 	if(rule == NULL)
@@ -570,9 +569,8 @@ static void swap_ipv6_source_and_destination(uint8_t* ptr) {
  * @return the length of the array, which represents the number of CoAP fields
  *
  */
-static uint8_t generate_coap_header_fields(pcoap_pdu *pdu, schc_bitarray_t* dst,
-		direction DI) {
-	uint8_t i = 0; uint8_t offset = 0;
+static uint8_t generate_coap_header_fields(pcoap_pdu *pdu, schc_bitarray_t* dst) {
+	uint8_t offset = 0;
 
 	if (pcoap_validate_pkt(pdu) != CE_NONE) {
 		DEBUG_PRINTF("schc_find_coap_rule_from_header(): invalid CoAP packet");
@@ -592,8 +590,6 @@ static uint8_t generate_coap_header_fields(pcoap_pdu *pdu, schc_bitarray_t* dst,
 
 		field_length++; offset += pcoap_get_tkl(pdu);
 	}
-
-	uint8_t coap_length = pdu->len;
 
 	pcoap_option option;
 	option = pcoap_get_option(pdu, NULL); // get first option
@@ -708,7 +704,9 @@ uint8_t mo_equal(struct schc_field* target_field, unsigned char* field_value, ui
  * @return 1
  *
  */
-uint8_t mo_ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset){
+uint8_t mo_ignore(__attribute__((unused))  struct schc_field *target_field,
+		__attribute__((unused)) unsigned char *field_value,
+		__attribute__((unused))  uint16_t field_offset) {
 	// ignore, always true
 	return 1;
 }
@@ -899,7 +897,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	// generate a bit array, matchable to the rule
 	schc_bitarray_t coap_src; uint8_t coap_buffer[MAX_COAP_MSG_SIZE];
 	coap_src.ptr = coap_buffer; coap_src.offset = 0;
-	generate_coap_header_fields(&coap_msg, &coap_src, dir);
+	generate_coap_header_fields(&coap_msg, &coap_src);
 
 	coap_rule = (struct schc_coap_rule_t*) schc_find_rule_from_header(&coap_src, device_id, SCHC_COAP, dir);
 	if(coap_rule != NULL) {
