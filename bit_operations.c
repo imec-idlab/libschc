@@ -132,7 +132,7 @@ uint8_t compare_bits(const uint8_t SRC1[], const uint8_t SRC2[], uint32_t len) {
  */
 uint8_t compare_bits_aligned(const uint8_t SRC1[], uint16_t pos1,
 		const uint8_t SRC2[], uint16_t pos2, uint32_t len) {
-	uint32_t i; uint32_t src1_pos, src2_pos; uint8_t shift1, shift2;
+	uint8_t shift1, shift2;
 
 	shift1 = pos1 % 8;
 	shift2 = pos2 % 8;
@@ -286,10 +286,8 @@ uint8_t get_number_of_bytes_from_bits(uint16_t number_of_bits) {
  *
  */
 uint32_t get_required_number_of_bits(uint32_t n) {
-	int count = 0, store = -1;
+	int count = 0;
 	while (n != 0) {
-		if (n & 1 == 1) //if current bit is set
-			store = count; //update store
 		n = n >> 1; //right shift
 		count++; //increase count
 	}
