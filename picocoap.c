@@ -28,16 +28,11 @@ uint8_t pcoap_get_coap_offset(pcoap_pdu *pdu) {
 		return 0;
 	}
 
-	size_t offset = 4 + pcoap_get_tkl(pdu);
+	uint16_t offset = 4 + pcoap_get_tkl(pdu);
 
 	uint8_t last_offset = 0;
 	pcoap_option option;
-	pcoap_payload payload;
 	pcoap_error err;
-
-	// Defaults
-	payload.len = 0;
-	payload.val = NULL;
 
 	// Find Last Option
 	do {
@@ -68,10 +63,10 @@ uint8_t pcoap_get_coap_offset(pcoap_pdu *pdu) {
 	return offset;
 }
 
-pcoap_error pcoap_validate_pkt(pcoap_pdu *pdu) //uint8_t *pkt, size_t pkt_len)
+pcoap_error pcoap_validate_pkt(pcoap_pdu *pdu) //uint8_t *pkt, uint16_t pkt_len)
 {
 	pcoap_error err;
-	size_t ol;
+	uint16_t ol;
 	uint8_t *ov;
 
 	if (pdu->len > pdu->max)
@@ -207,8 +202,8 @@ pcoap_option pcoap_get_option_by_num(pcoap_pdu *pdu, pcoap_option_number num, ui
 // Decoding Functions (Intended for Internal Use)
 //
 
-pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
-	                           uint16_t *option_number, size_t *option_length, uint8_t **value)
+pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, uint16_t pkt_len,
+	                           uint16_t *option_number, uint16_t *option_length, uint8_t **value)
 {
 	uint8_t *ptr = pkt_ptr;
 	uint16_t delta, length;
@@ -270,7 +265,7 @@ pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
 pcoap_payload pcoap_get_payload(pcoap_pdu *pdu)
 {
 	
-	size_t offset = 4 + pcoap_get_tkl(pdu);
+	uint16_t offset = 4 + pcoap_get_tkl(pdu);
 	pcoap_option option;
 	pcoap_payload payload;
 	pcoap_error err;
@@ -416,7 +411,7 @@ pcoap_error pcoap_add_option(pcoap_pdu *pdu, int32_t opt_num, uint8_t* value, ui
 {
 	uint8_t *pkt_ptr, *fopt_val, nopt_hdr_len;
 	uint16_t fopt_num, lopt_num;
-	size_t fopt_len, opts_len;
+	uint16_t fopt_len, opts_len;
 	pcoap_error err;
 
 	// Set pointer to "zeroth option's value" which is really first option header.
@@ -474,10 +469,10 @@ pcoap_error pcoap_add_option(pcoap_pdu *pdu, int32_t opt_num, uint8_t* value, ui
 	return CE_NONE;
 }
 
-pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, size_t payload_len){
+pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, uint16_t payload_len){
 	uint8_t *pkt_ptr, *fopt_val;
 	uint16_t fopt_num;
-	size_t fopt_len;
+	uint16_t fopt_len;
 	pcoap_error err;
 
 	// Set pointer to "zeroth option's value" which is really first option header.
@@ -514,11 +509,11 @@ pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, size_t payload_l
 	return CE_NONE;
 }
 
-pcoap_error pcoap_adjust_option_deltas(uint8_t *opts_start, size_t *opts_len, size_t max_len, int32_t offset)
+pcoap_error pcoap_adjust_option_deltas(uint8_t *opts_start, uint16_t *opts_len, uint16_t max_len, int32_t offset)
 {
 	uint8_t *ptr, *fopt_val;
 	uint16_t fopt_num, nopt_num;
-	size_t fopt_len;
+	uint16_t fopt_len;
 	int8_t nhdr_len, fhdr_len;
 	pcoap_error err;
 
@@ -567,7 +562,7 @@ pcoap_error pcoap_adjust_option_deltas(uint8_t *opts_start, size_t *opts_len, si
 
 }
 
-int8_t pcoap_build_option_header(uint8_t *buf, size_t max_len, int32_t opt_delta, int32_t opt_len)
+int8_t pcoap_build_option_header(uint8_t *buf, uint16_t max_len, int32_t opt_delta, int32_t opt_len)
 {
 	uint8_t *ptr, base_num, base_len;
 

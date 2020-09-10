@@ -181,8 +181,8 @@ typedef enum pcoap_option_number {
 ///
 typedef struct pcoap_pdu {
 	uint8_t *buf;  /// pointer to buffer
-	size_t len;	   /// length of current message
-	size_t max;	   /// size of buffer
+	uint16_t len;	   /// length of current message
+	uint16_t max;	   /// size of buffer
 } pcoap_pdu;
 
 ///
@@ -192,7 +192,7 @@ typedef struct pcoap_pdu {
 ///
 typedef struct pcoap_option {
 	uint16_t num;	/// size of buffer
-	size_t len;	/// length of the value
+	uint16_t len;	/// length of the value
 	uint8_t *val;	/// pointer value
 } pcoap_option;
 
@@ -202,7 +202,7 @@ typedef struct pcoap_option {
 /// Payload container.
 ///
 typedef struct pcoap_payload {
-	size_t len;	/// length of current message
+	uint16_t len;	/// length of current message
 	uint8_t *val;	/// pointer to buffer
 } pcoap_payload;
 
@@ -341,7 +341,7 @@ pcoap_payload pcoap_get_payload(pcoap_pdu *pdu);
 /// Internal Method
 ///
 pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
-	                          uint16_t *option_number, size_t *option_length, uint8_t **value);
+	                          uint16_t *option_number, uint16_t *option_length, uint8_t **value);
 
 //
 // Setters
@@ -432,7 +432,7 @@ pcoap_error pcoap_add_option(pcoap_pdu *pdu, int32_t opt_num, uint8_t* value, ui
 /// @param  [in]      pl   payload container.
 /// @return coap_error (0 == no error)
 ///
-pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, size_t payload_len);
+pcoap_error pcoap_set_payload(pcoap_pdu *pdu, uint8_t *payload, uint16_t payload_len);
 
 ///
 /// Build Message Code from Class and Detail
@@ -451,12 +451,12 @@ static inline uint8_t pcoap_build_code(uint8_t _class, uint8_t detail) { return 
 ///
 /// Internal Method
 ///
-pcoap_error pcoap_adjust_option_deltas(uint8_t *opts, size_t *opts_len, size_t max_len, int32_t offset);
+pcoap_error pcoap_adjust_option_deltas(uint8_t *opts, uint16_t *opts_len, uint16_t max_len, int32_t offset);
 
 ///
 /// Internal Method
 ///
-int8_t pcoap_build_option_header(uint8_t *buf, size_t max_len, int32_t opt_delta, int32_t opt_len);
+int8_t pcoap_build_option_header(uint8_t *buf, uint16_t max_len, int32_t opt_delta, int32_t opt_len);
 
 ///
 /// Internal Method
