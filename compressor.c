@@ -27,6 +27,26 @@ static schc_ipaddr_t node_ip_6;
 jsmn_parser json_parser;
 jsmntok_t json_token[JSON_TOKENS];
 
+// ToDo
+// separate protocol parsers
+pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
+		{ 1, "if-match" },
+		{ 3, "uri-host" },
+		{ 4, "etag" },
+		{ 5, "if-none-match" },
+		{ 7, "uri-port" },
+		{ 8, "location-path" },
+		{ 11, "uri-path"} ,
+		{ 12, "content-format" },
+		{ 14, "max-age" },
+		{ 15, "uri-query" },
+		{ 17, "accept" },
+		{ 20, "location-query" },
+		{ 35, "proxy-uri" },
+		{ 39, "proxy-scheme" },
+		{ 60, "size1" },
+		{ 258, "no-response"}
+};
 
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
@@ -137,7 +157,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 	}
 
 	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->context)[i];
+		struct schc_rule_t* curr_rule = (*device->context)[i];
 
 #if USE_IPv6
 		if (curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {

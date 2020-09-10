@@ -47,29 +47,10 @@ extern "C" {
  * this struct and the corresponding names are added
  * so we can check the fields in the SCHC header
  */
-struct pcoap_option_names {
+typedef struct pcoap_option_names {
 	uint16_t id;
 	char name[16];
-};
-
-struct pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
-		{ 1, "if-match" },
-		{ 3, "uri-host" },
-		{ 4, "etag" },
-		{ 5, "if-none-match" },
-		{ 7, "uri-port" },
-		{ 8, "location-path" },
-		{ 11, "uri-path"} ,
-		{ 12, "content-format" },
-		{ 14, "max-age" },
-		{ 15, "uri-query" },
-		{ 17, "accept" },
-		{ 20, "location-query" },
-		{ 35, "proxy-uri" },
-		{ 39, "proxy-scheme" },
-		{ 60, "size1" },
-		{ 258, "no-response"}
-};
+} pcoap_option_names;
 
 ///
 /// Status Codes
