@@ -132,7 +132,7 @@ static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 		return SCHC_FAILURE;
 	}
 
-	DEBUG_PRINTF("mbuf_push(): selected mbuf slot %d \n", i);
+	DEBUG_PRINTF("mbuf_push(): selected mbuf slot %d \n", (int) i);
 
 	// check if this is a new connection
 	if(*head == NULL) {
@@ -211,7 +211,7 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 		}
 	}
 
-	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool \n", slot);
+	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool \n", (int) slot);
 #if DYNAMIC_MEMORY
 	free(mbuf->ptr);
 #else
@@ -349,7 +349,7 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 
 	uint8_t index = 0; uint32_t curr_bit_offset = 0;
 
-	if (!conn | conn->schc_rule->mode == NOT_FRAGMENTED) {
+	if ( (!conn) | (conn->schc_rule->mode == NOT_FRAGMENTED) ) {
 		int i;
 		for (i = 0; i < curr->len; i++) {
 			ptr[i] = curr->ptr[i];
@@ -450,7 +450,7 @@ static unsigned int mbuf_compute_mic(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head;
 	schc_mbuf_t *prev = NULL;
 
-	uint32_t crc, crc_mask; int8_t k = 0; uint8_t first = 1;
+	uint32_t crc, crc_mask; int8_t k = 0;
 
 	uint8_t byte = 0; uint32_t curr_bit_offset = 0;
 	crc = 0xFFFFFFFF;
@@ -526,7 +526,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 
 	DEBUG_PRINTF(
 			"compute_mic(): original packet length %d bits, last tile padding %d bits, extra padding %d bits \n",
-			conn->bit_arr->bit_len, last_tile_padding, extra_padding);
+			(int) conn->bit_arr->bit_len, last_tile_padding, extra_padding);
 
 	uint16_t padded_length = ((conn->bit_arr->bit_len + last_tile_padding + extra_padding) / 8);
 
@@ -549,7 +549,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 	memcpy((uint8_t *) conn->mic, mic, MIC_SIZE_BYTES);
 
 	DEBUG_PRINTF("compute_mic(): MIC for device %d is %02X%02X%02X%02X \n",
-			conn->device_id, mic[0], mic[1], mic[2], mic[3]);
+			(int) conn->device_id, mic[0], mic[1], mic[2], mic[3]);
 
 	return crc;
 }
@@ -755,7 +755,6 @@ static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
 	uint16_t prev_header_bits = header_size * (conn->frag_cnt - 1); // previous fragmentation overhead
 	uint32_t total_mtu_bits = BYTES_TO_BITS(conn->mtu)
 			* (conn->frag_cnt); // (header + packet) bits already transfered
-	uint32_t mtu_bits = BYTES_TO_BITS(conn->mtu);
 
 	if ((total_bits_to_transmit + prev_header_bits) < total_mtu_bits) { // last fragment
 		uint16_t mic_included_bits = (total_bits_to_transmit + prev_header_bits)
@@ -873,6 +872,7 @@ static void clear_bitmap(schc_fragmentation_t* conn) {
  */
 static void encode_bitmap(schc_fragmentation_t* conn) {
 	// ToDo
+	DEBUG_PRINTF("encode_bitmap(): for device %d", (int) conn->device_id);
 }
 
 /**
@@ -883,6 +883,7 @@ static void encode_bitmap(schc_fragmentation_t* conn) {
  */
 static void decode_bitmap(schc_fragmentation_t* conn) {
 	// ToDo
+	DEBUG_PRINTF("decode_bitmap(): for device %d", (int) conn->device_id);
 }
 
 /**
@@ -962,7 +963,7 @@ static void abort_connection(schc_fragmentation_t* conn) {
  */
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
-	DEBUG_PRINTF("set_retrans_timer(): for %d ms \n", conn->dc * 4);
+	DEBUG_PRINTF("set_retrans_timer(): for %d ms \n", (int) (conn->dc * 4));
 	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc * 4, conn);
 }
 
@@ -973,7 +974,7 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
  *
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
-	DEBUG_PRINTF("set_dc_timer(): for %d ms \n", conn->dc);
+	DEBUG_PRINTF("set_dc_timer(): for %d ms \n", (int) conn->dc);
 	conn->post_timer_task( (void*) schc_fragment, conn->device_id, conn->dc, conn);
 }
 
@@ -986,7 +987,7 @@ static void set_dc_timer(schc_fragmentation_t* conn) {
  */
 static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
-	DEBUG_PRINTF("set_inactivity_timer(): for %d ms \n", conn->dc);
+	DEBUG_PRINTF("set_inactivity_timer(): for %d ms \n", (int) conn->dc);
 	conn->post_timer_task( (void*) schc_reassemble, conn->device_id, conn->dc, conn);
 }
 
@@ -1066,9 +1067,6 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 	}
 
 	if (!packet_len) { // all-1 fragment
-		uint32_t next_total_mtu_bits = BYTES_TO_BITS(conn->mtu)
-					* (conn->frag_cnt);
-
 		packet_bit_offset = packet_bits_tx;
 
 		remaining_bits = (conn->bit_arr->bit_len - conn->RULE_SIZE) - packet_bits_tx;
@@ -1104,7 +1102,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 
 	DEBUG_PRINTF(
 			"send_fragment(): sending fragment %d with length %d to device %d \n",
-			conn->frag_cnt, packet_len, conn->device_id);
+			conn->frag_cnt, packet_len, (int) conn->device_id);
 
 	int j;
 	for (j = 0; j < packet_len; j++) {
@@ -1152,7 +1150,7 @@ static uint8_t send_ack(schc_fragmentation_t* conn) {
 
 	uint8_t packet_len = ((offset - 1) / 8) + 1;
 	DEBUG_PRINTF("send_ack(): sending ack to device %d for fragment %d with length %d (%d b) \n",
-			conn->device_id, conn->frag_cnt + 1, packet_len, offset);
+			(int) conn->device_id, conn->frag_cnt + 1, packet_len, offset);
 
 	int i;
 	for(i = 0; i < packet_len; i++) {
@@ -1189,7 +1187,7 @@ static uint8_t send_empty(schc_fragmentation_t* conn) {
 	uint8_t packet_len = (padding + header_offset) / 8;
 
 	DEBUG_PRINTF("send_empty(): sending all-x empty to device %d with length %d (%d b)\n",
-			conn->device_id, packet_len, header_offset);
+			(int) conn->device_id, packet_len, header_offset);
 
 	return conn->send(FRAGMENTATION_BUF, packet_len, conn->device_id);
 }
@@ -1206,7 +1204,7 @@ static uint8_t send_empty(schc_fragmentation_t* conn) {
  *
  */
 static uint8_t send_tx_empty(schc_fragmentation_t* conn) {
-	DEBUG_PRINTF("send_tx_empty()\n");
+	DEBUG_PRINTF("send_tx_empty() for device %d \n", (int) conn->device_id);
 	return 0;
 }
 
@@ -1248,7 +1246,7 @@ schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
 	}
 
 	if(conn) {
-		DEBUG_PRINTF("schc_get_connection(): selected connection %d for device %d\n", i, device_id);
+		DEBUG_PRINTF("schc_get_connection(): selected connection %d for device %d\n", (int) i, (int) device_id);
 	}
 
 	return conn;
@@ -1358,7 +1356,6 @@ static uint8_t wait_end(schc_fragmentation_t* rx_conn, schc_mbuf_t* tail) {
  *
  */
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
-	uint8_t recv_mic[MIC_SIZE_BYTES] = { 0 };
 	schc_mbuf_t* tail = get_mbuf_tail(rx_conn->head); // get last received fragment
 
 	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, rx_conn->RULE_SIZE); // get the rule id from the fragment
@@ -1539,6 +1536,10 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			}
 			break;
 		}
+		case WAIT_MISSING_FRAG:
+		case ABORT:
+			// not handled this time
+			break;
 		}
 	}
 	/*
@@ -1578,6 +1579,13 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			schc_reset(rx_conn);
 			return 1; // end reception
 		}
+
+		case WAIT_NEXT_WINDOW:
+		case WAIT_MISSING_FRAG:
+		case WAIT_END:
+		case ABORT:
+			// not handled this time
+			break;
 		}
 	}
 	/*
@@ -1678,6 +1686,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			schc_reset(rx_conn);
 			return 1; // end reception
 		}
+
+		case WAIT_NEXT_WINDOW:
+		case ABORT:
+			// not handled this time
+			break;
 		}
 	}
 
@@ -1754,7 +1767,7 @@ static void tx_fragment_send(schc_fragmentation_t *tx_conn) {
 			set_retrans_timer(tx_conn);
 		} else {
 			DEBUG_PRINTF("schc_fragment(): radio occupied retrying in %d ms\n",
-					tx_conn->dc);
+					(int) tx_conn->dc);
 			tx_conn->frag_cnt--;
 			tx_conn->fcn = fcn; // reset fcn and frag_count before retrying
 			set_dc_timer(tx_conn);
@@ -1768,7 +1781,7 @@ static void tx_fragment_send(schc_fragmentation_t *tx_conn) {
 			set_retrans_timer(tx_conn);
 		} else {
 			DEBUG_PRINTF("schc_fragment(): radio occupied retrying in %d ms\n",
-					tx_conn->dc);
+					(int) tx_conn->dc);
 			tx_conn->frag_cnt--;
 			set_dc_timer(tx_conn);
 		}
@@ -1866,9 +1879,6 @@ static void no_missing_fragments_more_to_come(schc_fragmentation_t *tx_conn) {
  *
  */
 int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
-	uint8_t fcn = 0;
-	uint8_t frag_cnt = 0;
-
 	if (tx_conn->TX_STATE == INIT_TX) {
 		DEBUG_PRINTF("INIT_TX\n");
 		int8_t ret = init_tx_connection(tx_conn);
@@ -1969,6 +1979,10 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			DEBUG_PRINTF("ERROR\n");
 			break;
 		}
+		case INIT_TX:
+		case END_TX:
+			// not handled this time
+			break;
 		}
 	}
 	/*
@@ -1992,7 +2006,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			if (!send_fragment(tx_conn)) { // only continue when packet was transmitted
 				DEBUG_PRINTF(
 						"schc_fragment(): radio occupied retrying in %d ms\n",
-						tx_conn->dc);
+						(int) tx_conn->dc);
 				tx_conn->frag_cnt--;
 			}
 			set_dc_timer(tx_conn); // send next fragment in dc ms or end transmission
@@ -2005,6 +2019,13 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 			return SCHC_END;
 			break;
 		}
+
+		case INIT_TX:
+		case RESEND:
+		case WAIT_BITMAP:
+		case ERR:
+			// not handled this time
+			break;
 		}
 	}
 	/*
@@ -2075,6 +2096,12 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				break;
 			}
 		}
+
+		case INIT_TX:
+		case ERR:
+		case END_TX:
+			// not handled this time
+			break;
 		}
 	}
 
@@ -2096,7 +2123,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 		uint32_t device_id) {
 	if ((tx_conn->TX_STATE == WAIT_BITMAP || tx_conn->TX_STATE == RESEND)
 			&& compare_bits(tx_conn->schc_rule->id, data, tx_conn->RULE_SIZE)) { // acknowledgment
-		schc_ack_input(data, tx_conn, device_id);
+		schc_ack_input(data, tx_conn);
 		return tx_conn;
 	} else {
 		schc_fragmentation_t* rx_conn = schc_fragment_input((uint8_t*) data, len, device_id);
@@ -2113,7 +2140,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
  * @param   device_id		the device id from the rx source
  *
  */
-void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn, uint32_t device_id) {
+void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn) {
 	uint8_t bit_offset = tx_conn->RULE_SIZE;
 	tx_conn->input = 1;
 

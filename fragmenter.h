@@ -130,7 +130,7 @@ typedef struct schc_fragmentation_t {
 	/* this function is called when the last rx timer expires */
 	void (*end_rx)(struct schc_fragmentation_t *conn);
 	/* this function is called once the device reaches the END_TX state */
-	void (*end_tx)();
+	void (*end_tx)(void);
 	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(uint32_t device_id);
 	/* indicates whether a timer has expired */
@@ -159,7 +159,7 @@ void schc_reset(schc_fragmentation_t* conn);
 
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len,
 		schc_fragmentation_t* rx_conn, uint32_t device_id);
-void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn, uint32_t device_id);
+void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		uint32_t device_id);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
