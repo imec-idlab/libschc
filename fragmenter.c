@@ -157,7 +157,7 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 	while (curr->next != mbuf) {
 		DEBUG_PRINTF(
 				"head is %p, looking for %p with curr %p, next is %p \n",
-				head, mbuf, curr, curr->next);
+				(void*) head, (void*) mbuf, (void*) curr, (void*) curr->next);
 		curr = curr->next;
 	}
 
