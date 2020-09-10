@@ -52,7 +52,7 @@ struct pcoap_option_names {
 	char name[16];
 };
 
-static struct pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
+struct pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
 		{ 1, "if-match" },
 		{ 3, "uri-host" },
 		{ 4, "etag" },
@@ -340,7 +340,7 @@ pcoap_payload pcoap_get_payload(pcoap_pdu *pdu);
 ///
 /// Internal Method
 ///
-pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, size_t pkt_len,
+pcoap_error pcoap_decode_option(uint8_t *pkt_ptr, uint16_t pkt_len,
 	                          uint16_t *option_number, uint16_t *option_length, uint8_t **value);
 
 //
