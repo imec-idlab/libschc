@@ -1487,6 +1487,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 					if (is_bitmap_full(rx_conn, (rx_conn->schc_rule->MAX_WND_FCN + 1))) { // bitmap is full; the last fragment of a retransmission is received
 						rx_conn->ack.mic = 0; // bitmap will be sent when c = 0
 						send_ack(rx_conn);
+						rx_conn->input = 0;
 					}
 				}
 			}
