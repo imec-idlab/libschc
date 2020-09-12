@@ -1457,6 +1457,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 							rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
 							rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
 							send_ack(rx_conn);
+							rx_conn->input = 0;
 							return 2; // stay alive to answer lost acks
 						}
 						set_local_bitmap(rx_conn);
@@ -1514,6 +1515,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				DEBUG_PRINTF("all-1\n");
 				send_ack(rx_conn);
 				mbuf_sort(&rx_conn->head); // sort the mbuf chain
+				rx_conn->input = 0;
 				return 1; // end reception
 			}
 			break;
@@ -1546,7 +1548,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 					rx_conn->RX_STATE = END_RX;
 					rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
 					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-
+					rx_conn->input = 0;
 					mbuf_sort(&rx_conn->head); // sort the mbuf chain
 
 					return 1;
@@ -1622,6 +1624,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 							rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
 							rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
 							send_ack(rx_conn);
+							rx_conn->input = 0;
 							return 2; // stay alive to answer lost acks
 						}
 					} else {
