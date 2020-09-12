@@ -1409,6 +1409,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 							rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
 							rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
 							send_ack(rx_conn);
+							rx_conn->input = 0;
 							return 2; // stay alive to answer lost acks
 						}
 					} else {
