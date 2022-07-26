@@ -17,10 +17,10 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
-				{ "src iid",		0, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
-						&mo_equal, 	NOTSENT },
+				{ "src iid",		60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+						&mo_MSB, 		LSB },
 				{ "dest prefix",	0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&mo_equal, 	NOTSENT },
+						&mo_equal, 		NOTSENT },
 				{ "dest iid",		60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_MSB, 		LSB }, // match the 60 first bits, send the last 4
 		}
@@ -220,3 +220,46 @@ const struct schc_compression_rule_t compression_rule_4 = {
 		&coap_rule1,
 #endif
 };
+
+const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
+// todo
+// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
+// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
+
+const struct schc_rule_t schc_rule_1 = { 0x01, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
+// const struct schc_rule_t schc_rule_1 = { { 0x00, 0x01} , &registration_rule, NOT_FRAGMENTED, 0, 0, 0, 0 }; // for rule id's > 8 bits
+
+const struct schc_rule_t schc_rule_2 = { 0x02, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_3 = { 0x03, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_4 = { 0x04, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_5 = { 0x05, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_6 = { 0x06, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_7 = { 0x07, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_9 	= { 0x09, &compression_rule_3, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_10 	= { 0x0A, &compression_rule_3, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_11 	= { 0x0B, &compression_rule_3, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_12 	= { 0x0C, &compression_rule_3, ACK_ALWAYS, 3, 6, 1, 0 };
+
+const struct schc_rule_t schc_rule_13 	= { 0x0D, &compression_rule_4, NOT_FRAGMENTED, 0, 0, 0, 0 };
+const struct schc_rule_t schc_rule_14 	= { 0x0E, &compression_rule_4, NO_ACK, 1, 0, 0, 0 };
+const struct schc_rule_t schc_rule_15 	= { 0x0F, &compression_rule_4, ACK_ON_ERROR, 3, 6, 1, 0 };
+const struct schc_rule_t schc_rule_16 	= { 0x10, &compression_rule_4, ACK_ALWAYS, 3, 6, 1, 0 };
+
+/* save rules in flash */
+const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
+                &schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
+                &schc_rule_8, &schc_rule_9, &schc_rule_10, &schc_rule_11, &schc_rule_12,
+                &schc_rule_13, &schc_rule_14, &schc_rule_15, &schc_rule_16 };
+
+/* rules for a particular device */
+const struct schc_device node1 = { 0x06, 16, &node1_schc_rules };
+const struct schc_device node2 = { 0x01, 16, &node1_schc_rules };
+
+#define DEVICE_COUNT			2
+
+/* server keeps track of multiple devices: add devices to device list */
+const struct schc_device* devices[DEVICE_COUNT] = { &node1, &node2 };
