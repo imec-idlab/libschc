@@ -94,7 +94,7 @@ struct schc_field {
 };
 
 // specific protocol layer structure
-#if USE_IPv6
+#if USE_IPv6 == 1
 struct schc_ipv6_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
@@ -104,7 +104,7 @@ struct schc_ipv6_rule_t {
 };
 #endif
 
-#if USE_UDP
+#if USE_UDP == 1
 struct schc_udp_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
@@ -114,7 +114,7 @@ struct schc_udp_rule_t {
 };
 #endif
 
-#if USE_COAP
+#if USE_COAP == 1
 struct schc_coap_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
@@ -134,15 +134,15 @@ struct schc_layer_rule_t {
 };
 
 struct schc_compression_rule_t {
-#if USE_IPv6
+#if USE_IPv6 == 1
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
 #endif
-#if USE_UDP
+#if USE_UDP == 1
 	/* a pointer to the UDP rule */
 	const struct schc_udp_rule_t* udp_rule;
 #endif
-#if USE_COAP
+#if USE_COAP == 1
 	/* a pointer to the CoAP rule */
 	const struct schc_coap_rule_t* coap_rule;
 #endif

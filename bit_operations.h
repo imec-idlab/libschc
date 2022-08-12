@@ -36,7 +36,8 @@ void copy_bits(uint8_t DST[], uint32_t dst_pos, const uint8_t SRC[], uint32_t sr
 // compare two bit arrays
 uint8_t compare_bits(const uint8_t SRC1[], const uint8_t SRC2[], uint32_t len);
 uint8_t compare_bits_aligned(const uint8_t SRC1[], uint16_t pos1, const uint8_t SRC2[], uint16_t pos2, uint32_t len);
-uint8_t compare_bits_BIG_END(uint8_t SRC1[], uint8_t SRC2[], uint32_t len);
+uint8_t compare_bit_sequence(const uint8_t SRC1[], uint16_t pos1, const uint8_t SRC2[], uint16_t pos2, uint32_t len);
+uint8_t compare_bits_little_endian(uint8_t SRC1[], uint8_t SRC2[], uint32_t len);
 
 // shift a number of bits to the left
 void shift_bits_left(uint8_t SRC[], uint16_t len, uint32_t shift);

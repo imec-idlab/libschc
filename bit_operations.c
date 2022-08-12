@@ -7,6 +7,7 @@
  *
  */
 
+#include <limits.h>
 #include "bit_operations.h"
 
 #if CLICK
@@ -146,6 +147,90 @@ uint8_t compare_bits_aligned(const uint8_t SRC1[], uint16_t pos1,
 
 	return compare_bits(SRC1_copy, SRC2_copy, len);
 }
+/* do_compare()
+ *
+ * Does the actual comparison, but has some preconditions on parameters to
+ * simplify things:
+ * https://stackoverflow.com/questions/1575142/comparing-arbitrary-bit-sequences-in-a-byte-array-in-c
+ *
+ *     length > 0
+ *     8 > s1_off >= s2_off
+ */
+int do_compare(const uint8_t s1[], const unsigned s1_off, const uint8_t s2[],
+		const unsigned s2_off, const unsigned length) {
+	const uint8_t mask_lo_bits[] = { 0xff, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f,
+			0x7f, 0xff };
+	const uint8_t mask_hi_bits[] = { 0x00, 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc,
+			0xfe, 0xff };
+	const unsigned msb = (length + s1_off - 1) / 8;
+	const unsigned s2_shl = s1_off - s2_off;
+	const unsigned s2_shr = 8 - s2_shl;
+	unsigned n;
+	uint8_t s1s2_diff, lo_bits = 0;
+
+	for (n = 0; n <= msb; n++) {
+		/* Shift s2 so it is aligned with s1, pulling in low bits from
+		 * the high bits of the previous byte, and store in s1s2_diff */
+		s1s2_diff = lo_bits | (s2[n] << s2_shl);
+
+		/* Save the bits needed to fill in the low-order bits of the next
+		 * byte.  HERE BE DRAGONS - since s2_shr can be 8, this below line
+		 * only works because uint8_t is promoted to int, and we know that
+		 * the width of int is guaranteed to be >= 16.  If you change this
+		 * routine to work with a wider type than uint8_t, you will need
+		 * to special-case this line so that if s2_shr is the width of the
+		 * type, you get lo_bits = 0.  Don't say you weren't warned. */
+		lo_bits = s2[n] >> s2_shr;
+
+		/* XOR with s1[n] to determine bits that differ between s1 and s2 */
+		s1s2_diff ^= s1[n];
+
+		/* Look only at differences in the high bits in the first byte */
+		if (n == 0)
+			s1s2_diff &= mask_hi_bits[8 - s1_off];
+
+		/* Look only at differences in the low bits of the last byte */
+		if (n == msb)
+			s1s2_diff &= mask_lo_bits[(length + s1_off) % 8];
+
+		if (s1s2_diff)
+			return 0;
+	}
+
+	return 1;
+}
+/**
+ * compare two bit arrays with starting point
+ *
+ * @param 	SRC1		the array to compare
+ * @param	pos1		position to start for src1
+ * @param 	SRC2		the array to compare with
+ * @param 	pos2		position to start for src2
+ * @param 	len			the number of consecutive bits to compare
+ *
+ * @return	1			both arrays match
+ * 			0			the arrays differ
+ *
+ */
+uint8_t compare_bit_sequence(const uint8_t s1[], uint16_t s1_off,
+		const uint8_t s2[], uint16_t s2_off, uint32_t length) {
+	/* Handle length zero */
+	if (length == 0)
+		return 1;
+
+	/* Makes sure the offsets are less than 8 bits */
+	s1 += s1_off / 8;
+	s1_off %= 8;
+
+	s2 += s2_off / 8;
+	s2_off %= 8;
+
+	/* Make sure s2 is the sequence with the shorter offset */
+	if (s1_off >= s2_off)
+		return do_compare(s1, s1_off, s2, s2_off, length);
+	else
+		return do_compare(s2, s2_off, s1, s1_off, length);
+}
 
 // remain backward compatible
 
@@ -156,7 +241,7 @@ uint8_t compare_bits_aligned(const uint8_t SRC1[], uint16_t pos1,
 * 			0			the arrays differ
 *
 */
-uint8_t compare_bits_BIG_END(uint8_t* SRC1, uint8_t* SRC2, uint32_t len) {
+uint8_t compare_bits_little_endian(uint8_t* SRC1, uint8_t* SRC2, uint32_t len) {
 	uint32_t i;
 
 	uint8_t pos = get_position_in_first_byte(len);
@@ -272,11 +357,7 @@ void print_bitmap(const uint8_t bitmap[], uint32_t length) {
  *
  */
 uint8_t get_number_of_bytes_from_bits(uint16_t number_of_bits) {
-	if (!(number_of_bits % 8)) { // ceil if needed
-		return (number_of_bits / 8);
-	} else {
-		return (((number_of_bits) / 8) + 1);
-	}
+	return (number_of_bits + CHAR_BIT - 1) / CHAR_BIT;
 }
 
 /**

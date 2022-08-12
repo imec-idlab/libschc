@@ -6,3 +6,4 @@ rules/rule_config.h
 examples/compress
 examples/fragment
 examples/lwm2m
+/.metadata/
