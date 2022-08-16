@@ -1,5 +1,5 @@
 /*
- * (c) 2020 - idlab - UGent - imec
+ * (c) 2020 - 2022  - idlab - UGent - imec
  *
  * Bart Moons
  *

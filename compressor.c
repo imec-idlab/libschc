@@ -1,5 +1,5 @@
 /*
- * (c) 2018 - idlab - UGent - imec
+ * (c) 2018 -2022  - idlab - UGent - imec
  *
  * Bart Moons
  *
@@ -1225,10 +1225,6 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		swap_ipv6_source_and_destination(buf);
 	}
 #endif
-
-	if(padded(bit_arr)) { // remove padding
-		payload_length--;
-	}
 
 	compute_length(buf, (payload_length + new_header_length)); // set udp and ipv6 length
 	compute_checksum(buf);

@@ -1,5 +1,5 @@
 /*
- * (c) 2018 - idlab - UGent - imec
+ * (c) 2018 - 2022  idlab - UGent - imec
  *
  * Bart Moons
  *
@@ -63,8 +63,8 @@ int main() {
 			0xFB, // token = fb (8b)
 			0x01, 0x02, 0x03, 0x04 // payload
 	};
-#else
-	uint8_t compressed_header[8] = {
+#elif USE_COAP == 1
+	uint8_t compressed_header[7] = {
 			0x01, // rule id
 			0x7E, // type = 1 (2b), token = fb (6 bits)
 			0xC0, // token = fb (2 remaining bits) + 6 bits payload (0x01)
@@ -73,6 +73,11 @@ int main() {
 			0xC1, // 2 bits payload (0x03) + 6 bits (0x04)
 			0x00  // 2 bits payload (0x04) + 6 bits padding
 	};
+#else
+	uint8_t compressed_header[5] = {
+	0x01, // rule id
+	0x01, 0x02, 0x03, 0x04 // only payload
+};
 #endif
 
 	/* test the compressed bit array */
@@ -91,7 +96,7 @@ int main() {
 	unsigned char decomp_packet[MAX_PACKET_LENGTH] = { 0 };
 	new_packet_len = schc_decompress(&bit_arr, decomp_packet, device_id,
 			bit_arr.len, DOWN);
-	if(new_packet_len == 0) { // some error occured
+	if(new_packet_len == 0) { // some error occurred
 		return 1;
 	}
 
