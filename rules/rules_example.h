@@ -6,7 +6,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 		1, 10, 10, 10,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
-				{ "version", 		0, 4,	1, BI, 		{6},			&mo_equal, 	NOTSENT },
+				{ "version", 		0, 4,	1, BI, 		{6},			&mo_equal, 		NOTSENT },
 				{ "traffic class", 	0, 8,	1, BI, 		{0},			&mo_ignore, 	NOTSENT },
 				{ "flow label", 	0, 20,	1, BI, 		{0, 0, 0},		&mo_ignore, 	NOTSENT },
 				{ "length", 		0, 16,	1, BI, 		{0, 0},			&mo_ignore, 	COMPLENGTH },
@@ -190,7 +190,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 		&ipv6_rule1,
 #endif
 #if USE_UDP
-		&udp_rule2,
+		NULL, // &udp_rule2,
 #endif
 #if USE_COAP
 		&coap_rule2,

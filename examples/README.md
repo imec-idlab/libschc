@@ -5,7 +5,20 @@ cd examples
 make all
 ```
 ## Compression
-This file shows a basic exmple on compressing a packet.
+This file shows a basic example on compressing a packet.
+First make sure that the rule file is configured correctly.
+```
+cp rules/rule_config_example.h rules/rule_config.h
+nano rules/rule_config.h
+```
+Now set the include directive to use the `rules_example.h` file.
+
+Next, configure the configuration file.
+```
+cp schc_config_example.h schc_config.h
+```
+You can now adjust this file to taste, or leave it untouched to run the examples.
+
 ```
 make compress
 ./compress
