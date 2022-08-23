@@ -7,6 +7,12 @@
 #define UDP_HLEN				8
 #define IP6_HLEN				40
 
+// UDP can only be used in conjunction with IPv6
+#define USE_UDP					USE_IP6_UDP
+#define USE_IP6					USE_IP6_UDP
+
+#define NUMBER_OF_LAYERS		USE_COAP + USE_UDP + USE_IP6
+
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
@@ -94,13 +100,13 @@ struct schc_field {
 };
 
 // specific protocol layer structure
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 struct schc_ipv6_rule_t {
 	uint16_t rule_id;
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
-	struct schc_field content[IPV6_FIELDS];
+	struct schc_field content[IP6_FIELDS];
 };
 #endif
 
@@ -134,7 +140,7 @@ struct schc_layer_rule_t {
 };
 
 struct schc_compression_rule_t {
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
 #endif

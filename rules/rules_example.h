@@ -1,9 +1,9 @@
 #include "../schc.h"
 
-#if USE_IPv6
+#if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
-		1, 10, 10, 10,
+		1, 10, 10, 14,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
 				{ "version", 		0, 4,	1, BI, 		{6},			&mo_equal, 		NOTSENT },
@@ -12,16 +12,27 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 				{ "length", 		0, 16,	1, BI, 		{0, 0},			&mo_ignore, 	COMPLENGTH },
 				{ "next header", 	3, 8, 	1, BI, 		{6, 17, 58},	&mo_matchmap, 	MAPPINGSENT },
 				{ "hop limit", 		0, 8, 	1, BI, 		{64}, 			&mo_ignore, 	NOTSENT },
-				{ "src prefix",		4, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				{ "src prefix",		4, 64,	1, UP,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xBB, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
-				{ "src iid",		60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+				{ "src prefix",		4, 64,	1, DOWN,	{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xBB, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&mo_matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
+				{ "src iid",		60, 64,	1, UP, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
 						&mo_MSB, 		LSB },
-				{ "dest prefix",	0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "src iid",		60, 64,	1, DOWN, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+										&mo_MSB, 		LSB },
+				{ "dest prefix",	0, 64,	1, UP,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_equal, 		NOTSENT },
-				{ "dest iid",		60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ "dest prefix",	0, 64,	1, DOWN,	{0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+						&mo_equal, 		NOTSENT },
+				{ "dest iid",		60, 64,	1, UP, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
+						&mo_MSB, 		LSB }, // match the 60 first bits, send the last 4
+				{ "dest iid",		60, 64,	1, DOWN, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&mo_MSB, 		LSB }, // match the 60 first bits, send the last 4
 		}
 };
@@ -174,7 +185,7 @@ const static struct schc_coap_rule_t coap_rule4 = {
 #endif
 
 const struct schc_compression_rule_t compression_rule_1 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -186,7 +197,7 @@ const struct schc_compression_rule_t compression_rule_1 = {
 };
 
 const struct schc_compression_rule_t compression_rule_2 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -198,7 +209,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 };
 
 const struct schc_compression_rule_t compression_rule_3 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule2,
 #endif
 #if USE_UDP
@@ -210,7 +221,7 @@ const struct schc_compression_rule_t compression_rule_3 = {
 };
 
 const struct schc_compression_rule_t compression_rule_4 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule3,
 #endif
 #if USE_UDP

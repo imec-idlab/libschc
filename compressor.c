@@ -6,9 +6,9 @@
  * This file is part of the SCHC stack implementation
  *
  */
-
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "jsmn.h"
 #include "picocoap.h"
@@ -159,8 +159,8 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 	for (i = 0; i < device->rule_count; i++) {
 		const struct schc_rule_t* curr_rule = (*device->context)[i];
 		/* match layers using bitmask */
-		uint8_t layer_mask = ((USE_IPv6 << 2) | (USE_UDP << 1) | USE_COAP); uint8_t rule_mask = 0x00;
-#if USE_IPv6 == 1
+		uint8_t layer_mask = ((USE_IP6 << 2) | (USE_UDP << 1) | USE_COAP); uint8_t rule_mask = 0x00;
+#if USE_IP6 == 1
 		if (curr_rule->compression_rule->ipv6_rule != NULL &&
 				curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {
 			rule_mask |= 0x04;
@@ -494,9 +494,9 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 
 	for (i = 0; i < device->rule_count; i++) {
 		struct schc_layer_rule_t* curr_rule = NULL;
-#if USE_IPv6 == 1 
+#if USE_IP6 == 1
 		if(layer == SCHC_IPV6) {
-			max_layer_fields = IPV6_FIELDS;
+			max_layer_fields = IP6_FIELDS;
 			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->ipv6_rule;
 		}
 #endif
@@ -556,19 +556,19 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 	return NULL;
 }
 
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 
 /**
- * Swaps the IPv6 source and destination
+ * Swaps the IPv6/UDP source and destination
  *
- * @param ptr	pointer to the ipv6 header
+ * @param src	pointer to the first index of the header
  *
  */
-static void swap_ipv6_source_and_destination(uint8_t* ptr) {
+static void swap_source_and_destination(uint8_t* ptr, uint8_t position, uint8_t length) {
 	schc_ip6addr_t tmp_addr;
-	memcpy(tmp_addr, (uint8_t*) (ptr + 8), 16);
-	memmove((uint8_t*) (ptr + 8), (uint8_t*) (ptr + 24), 16);
-	memcpy((uint8_t*) (ptr + 24), tmp_addr, 16);
+	memcpy(tmp_addr, (uint8_t*) (ptr + position), length);
+	memmove((uint8_t*) (ptr + position), (uint8_t*) (ptr + (position + length)), length);
+	memcpy((uint8_t*) (ptr + (position + length)), tmp_addr, length);
 }
 #endif
 
@@ -881,15 +881,11 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	/* use bit array for comparison */
 	schc_bitarray_t src; src.ptr = data; src.offset = 0;
 
-	/* look for a matching rule */
-
 	DEBUG_PRINTF("schc_compress(): \n");
 
-#if USE_IPv6 == 1
+	/* look for a matching rule */
+#if USE_IP6 == 1
 	struct schc_ipv6_rule_t *ipv6_rule;
-	if(dir == DOWN) {
-		swap_ipv6_source_and_destination(src.ptr);
-	}
 	ipv6_rule = (struct schc_ipv6_rule_t*) schc_find_rule_from_header(&src, device_id, SCHC_IPV6, dir);
 	if(ipv6_rule != NULL) {
 		ipv6_rule_id = ipv6_rule->rule_id;
@@ -907,9 +903,9 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 #if USE_COAP == 1
 	struct schc_coap_rule_t *coap_rule;
 	/* CoAP pdu for CoAP specific actions */
-	uint8_t* coap_ptr = (uint8_t*) (data + (IP6_HLEN * USE_IPv6) + (UDP_HLEN * USE_UDP));
-	pcoap_pdu coap_msg = { coap_ptr, (total_length - (IP6_HLEN * USE_IPv6) - (UDP_HLEN * USE_UDP)),
-			(total_length - (IP6_HLEN * USE_IPv6) - (UDP_HLEN * USE_UDP)) };
+	uint8_t* coap_ptr = (uint8_t*) (data + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP));
+	pcoap_pdu coap_msg = { coap_ptr, (total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * USE_UDP)),
+			(total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * USE_UDP)) };
 
 	/* check the buffer for determining the CoAP header length */
 	coap_length = pcoap_get_coap_offset(&coap_msg);
@@ -943,7 +939,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 		/* if no rule was found and the use of a specific layer is set to 0,
 		 * we expect that these are not present in the original packet
 		 */
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
 		dst->offset += BYTES_TO_BITS(IP6_HLEN);
 #endif
@@ -957,7 +953,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 #endif
 	}
 	else { /* a rule was found - compress */
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule, dir);
 #endif
 #if USE_UDP == 1
@@ -969,9 +965,9 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	}
 
 	/* copy the payload */
-	uint16_t payload_len = (total_length - (IP6_HLEN * USE_IPv6)
+	uint16_t payload_len = (total_length - (IP6_HLEN * USE_IP6)
 			- (UDP_HLEN * USE_UDP) - coap_length);
-	const uint8_t *payload_ptr = (data + (IP6_HLEN * USE_IPv6)
+	const uint8_t *payload_ptr = (data + (IP6_HLEN * USE_IP6)
 			+ (UDP_HLEN * USE_UDP) + coap_length);
 
 	copy_bits(dst->ptr, dst->offset, payload_ptr, 0, BYTES_TO_BITS(payload_len));
@@ -1020,7 +1016,7 @@ static uint16_t compute_length(unsigned char *data, uint16_t data_len) {
 	// if the length fields are set to 0
 	// the length must be calculated
 	uint8_t* packet_ptr = (uint8_t*) data;
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 	if(packet_ptr[4] == 0 && packet_ptr[5] == 0) {
 		// ip length
 		packet_ptr[4] = (((data_len - IP6_HLEN) & 0xFF00) >> 8);
@@ -1125,10 +1121,11 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	// prepare output buffer
 	bit_arr->offset = RULE_SIZE_BITS;
 
-	struct schc_rule_t *rule = get_schc_rule_by_rule_id(bit_arr->ptr, device_id);
 	DEBUG_PRINTF("\n");
-	DEBUG_PRINTF(
-			"schc_decompress(): \n");
+	DEBUG_PRINTF("schc_decompress(): \n");
+
+	struct schc_rule_t *rule = get_schc_rule_by_rule_id(bit_arr->ptr, device_id);
+
 	if(rule != NULL) {
 #if USE_COAP == 1
 		coap_rule_id = rule->compression_rule->coap_rule->rule_id;
@@ -1138,7 +1135,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		udp_rule_id = rule->compression_rule->udp_rule->rule_id;
 		DEBUG_PRINTF("schc_decompress(): UDP rule id=%d \n", udp_rule_id);
 #endif
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 		ipv6_rule_id = rule->compression_rule->ipv6_rule->rule_id;
 		DEBUG_PRINTF("schc_decompress(): IPv6 rule id=%d \n", ipv6_rule_id);
 #endif
@@ -1151,27 +1148,27 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 #if USE_COAP == 1
 	// CoAP buffer for parsing
-	pcoap_pdu pcoap_msg = { (uint8_t*) (buf + (IP6_HLEN * USE_IPv6) + (UDP_HLEN * USE_UDP)), 0,
+	pcoap_pdu pcoap_msg = { (uint8_t*) (buf + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)), 0,
 			MAX_COAP_MSG_SIZE };
 #endif
 
 	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
 		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
 #endif
 #if USE_UDP == 1
-		copy_bits(buf, BYTES_TO_BITS((IP6_HLEN * USE_IPv6)), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
+		copy_bits(buf, BYTES_TO_BITS((IP6_HLEN * USE_IP6)), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
 		bit_arr->offset += BYTES_TO_BITS(UDP_HLEN);
 #endif
 #if USE_COAP == 1
 		/* only include IPv6 and UDP when enabled */
-		uint16_t len = (RULE_SIZE_BITS + (( (IP6_HLEN * USE_IPv6) + (UDP_HLEN * USE_UDP)) * 8));
+		uint16_t len = (RULE_SIZE_BITS + (( (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)) * 8));
 		uint16_t coap_len = (total_length * 8) - len;
 		copy_bits(buf, len, bit_arr->ptr, bit_arr->offset, coap_len);
 
 		pcoap_msg.len = 4;
-		memcpy(pcoap_msg.buf, (uint8_t*) (buf + (IP6_HLEN * USE_IPv6) + (UDP_HLEN * USE_UDP)), coap_len);
+		memcpy(pcoap_msg.buf, (uint8_t*) (buf + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)), coap_len);
 		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
 
 		coap_offset = BITS_TO_BYTES(coap_len);
@@ -1185,7 +1182,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		dst_arr.ptr = buf;
 		dst_arr.offset = 0;
 
-#if USE_IPv6 == 1
+#if USE_IP6 == 1
 		if (ipv6_rule_id != 0) {
 			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr, dir);
 			if (ret == 0) {
@@ -1214,17 +1211,11 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 	}
 
-	uint8_t new_header_length = (IP6_HLEN * USE_IPv6) + (UDP_HLEN * USE_UDP) + coap_offset;
+	uint8_t new_header_length = (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP) + coap_offset;
 	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_arr->offset - bit_arr->padding; // the schc header minus the total length is the payload length
 
 	copy_bits(buf, BYTES_TO_BITS(new_header_length), bit_arr->ptr, bit_arr->offset, payload_bit_length);
 	uint16_t payload_length = get_number_of_bytes_from_bits(payload_bit_length);
-
-#if USE_IPv6 == 1
-	if (dir == DOWN) {
-		swap_ipv6_source_and_destination(buf);
-	}
-#endif
 
 	compute_length(buf, (payload_length + new_header_length)); // set udp and ipv6 length
 	compute_checksum(buf);

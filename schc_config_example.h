@@ -14,17 +14,14 @@
 #define SCHC_CONF_MBUF_POOL_LEN			32
 
 #define USE_COAP						1
-#define USE_UDP							1
-#define USE_IPv6						1
-
-#define NUMBER_OF_LAYERS				USE_COAP + USE_UDP + USE_IPv6
+#define USE_IP6_UDP						1
 
 // the maximum length of a single header field
 // e.g. you can use 4 ipv6 source iid addresses with match-mapping
 #define MAX_FIELD_LENGTH				32
 
 // maximum number of header fields present in a rule (vertical, top to bottom)
-#define IPV6_FIELDS						10
+#define IPV6_FIELDS						14
 #define UDP_FIELDS						4
 #define COAP_FIELDS						16
 

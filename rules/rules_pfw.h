@@ -3,7 +3,7 @@
 
 #include "../schc.h"
 
-#if USE_IPv6
+#if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
 		1, 10, 10, 10,
@@ -160,7 +160,7 @@ const static struct schc_coap_rule_t lwm2m_update_registration_rule_down = {
 #endif
 
 const struct schc_compression_rule_t registration_rule = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -172,7 +172,7 @@ const struct schc_compression_rule_t registration_rule = {
 };
 
 const struct schc_compression_rule_t get_rule = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -184,7 +184,7 @@ const struct schc_compression_rule_t get_rule = {
 };
 
 const struct schc_compression_rule_t catch_all_rule = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -196,7 +196,7 @@ const struct schc_compression_rule_t catch_all_rule = {
 };
 
 const struct schc_compression_rule_t not_found_404 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
@@ -208,7 +208,7 @@ const struct schc_compression_rule_t not_found_404 = {
 };
 
 const struct schc_compression_rule_t update_registration_up = {
-#if USE_IPv6
+#if USE_IP6
                 &ipv6_rule1,
 #endif
 #if USE_UDP
@@ -222,7 +222,7 @@ const struct schc_compression_rule_t update_registration_up = {
 
 
 const struct schc_compression_rule_t update_registration_down = {
-#if USE_IPv6
+#if USE_IP6
                 &ipv6_rule1,
 #endif
 #if USE_UDP

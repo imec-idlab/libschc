@@ -1,6 +1,6 @@
 #include "../schc.h"
 
-#if USE_IPv6
+#if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
 		1, 10, 10, 10,
@@ -66,7 +66,7 @@ const static struct schc_coap_rule_t coap_rule1 = {
 #endif
 
 const struct schc_compression_rule_t compression_rule_1 = {
-#if USE_IPv6
+#if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP

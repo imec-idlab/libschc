@@ -1,24 +1,23 @@
 # EXAMPLES
 *Note: as the examples are executable in a single terminal, some issues arise as the same fragmenter instance is used for two different devices. As I did not have much more time to work on the examples, I did not try to look for a better solution. If you get a segmentation fault at the end of a fragmentation loop, it is as expected. However, the output and the code should be relatively easy to follow in order to deploy the library on 2 devices.*
+
+First make sure that the rule file is configured correctly. Copy the examples file and set the include directive to use the `rules_example.h`.
+```
+cp rules/rule_config_example.h rules/rule_config.h
+nano rules/rule_config.h
+```
+Next, copy the configuration file and configure it to taste, or leave it untouched to run the examples.
+```
+cp schc_config_example.h schc_config.h
+```
+
+Now you can compile and run the examples.
 ```
 cd examples
 make all
 ```
 ## Compression
 This file shows a basic example on compressing a packet.
-First make sure that the rule file is configured correctly.
-```
-cp rules/rule_config_example.h rules/rule_config.h
-nano rules/rule_config.h
-```
-Now set the include directive to use the `rules_example.h` file.
-
-Next, configure the configuration file.
-```
-cp schc_config_example.h schc_config.h
-```
-You can now adjust this file to taste, or leave it untouched to run the examples.
-
 ```
 make compress
 ./compress
