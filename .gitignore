@@ -8,3 +8,5 @@ examples/fragment
 examples/lwm2m
 /.metadata/
 /.externalToolBuilders/
+/.cproject
+/.settings/*
