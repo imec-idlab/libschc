@@ -23,7 +23,7 @@
  * UP 	from device to network gateway
  * DOWN	from network gateway to device
  */
-#define DIRECTION 				1 /* 0 = UP, 1 = DOWN */
+#define DIRECTION 				0 /* 0 = UP, 1 = DOWN */
 
 // the ipv6/udp/coap packet
 uint8_t msg[] = {
@@ -133,7 +133,6 @@ int main() {
 	}
 
 	/* test the result */
-	printf("\n");
 	for (int i = 0; i < sizeof(msg); i++) {
 		if (msg[i] != decomp_packet[i]) {
 			printf(
