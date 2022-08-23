@@ -22,13 +22,12 @@
 #include <click/config.h>
 #endif
 
-static schc_ipaddr_t node_ip_6;
-
 jsmn_parser json_parser;
 jsmntok_t json_token[JSON_TOKENS];
 
 // ToDo
 // separate protocol parsers
+#if USE_COAP == 1
 pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
 		{ 1, "if-match" },
 		{ 3, "uri-host" },
@@ -47,6 +46,7 @@ pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
 		{ 60, "size1" },
 		{ 258, "no-response"}
 };
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
@@ -556,22 +556,6 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 	return NULL;
 }
 
-#if USE_IP6 == 1
-
-/**
- * Swaps the IPv6/UDP source and destination
- *
- * @param src	pointer to the first index of the header
- *
- */
-static void swap_source_and_destination(uint8_t* ptr, uint8_t position, uint8_t length) {
-	schc_ip6addr_t tmp_addr;
-	memcpy(tmp_addr, (uint8_t*) (ptr + position), length);
-	memmove((uint8_t*) (ptr + position), (uint8_t*) (ptr + (position + length)), length);
-	memcpy((uint8_t*) (ptr + (position + length)), tmp_addr, length);
-}
-#endif
-
 #if USE_COAP == 1
 /**
  * Generates an unsigned char array, based on the CoAP header provided
@@ -818,18 +802,6 @@ uint8_t mo_matchmap(struct schc_field *target_field, unsigned char *field_value,
 	return 0;
 }
 
-/**
- * Notifies the compressor about the node its IP address
- *
- * @param node_ip pointer to the ip address array
- *
- * @return 0
- *
- */
-static void set_node_ip(schc_ipaddr_t *node_ip) {
-	memcpy(node_ip_6, node_ip, sizeof(schc_ipaddr_t));
-}
-
 ////////////////////////////////////////////////////////////////////////////////////
 //                               GLOBAL FUNCIONS                                  //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -838,14 +810,11 @@ static void set_node_ip(schc_ipaddr_t *node_ip) {
 /**
  * Initializes the SCHC compressor
  *
- * @param node_ip 		a pointer to the source it's ip address
- *
  * @return error 		error codes on error
  *
  */
-uint8_t schc_compressor_init(uint8_t src[16]) {
+uint8_t schc_compressor_init() {
 	jsmn_init(&json_parser);
-	set_node_ip((schc_ipaddr_t *) src);
 
 	return 1;
 }
@@ -1217,7 +1186,8 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	copy_bits(buf, BYTES_TO_BITS(new_header_length), bit_arr->ptr, bit_arr->offset, payload_bit_length);
 	uint16_t payload_length = get_number_of_bytes_from_bits(payload_bit_length);
 
-	compute_length(buf, (payload_length + new_header_length)); // set udp and ipv6 length
+	/* set UDP and IPv6 length and checksum if the field is set to 0 */
+	compute_length(buf, (payload_length + new_header_length));
 	compute_checksum(buf);
 
 	DEBUG_PRINTF("schc_decompress(): header length: %d, payload length %d \n", new_header_length, payload_length);
