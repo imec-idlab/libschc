@@ -21,7 +21,7 @@
 #define MAX_FIELD_LENGTH				32
 
 // maximum number of header fields present in a rule (vertical, top to bottom)
-#define IPV6_FIELDS						14
+#define IP6_FIELDS						14
 #define UDP_FIELDS						4
 #define COAP_FIELDS						16
 

@@ -43,6 +43,15 @@ typedef struct schc_bitarray_t {
 	uint32_t bit_len;
 } schc_bitarray_t;
 
+#define SCHC_DEFAULT_BIT_ARRAY(_len, _ptr) \
+{ \
+	.ptr = (_ptr), \
+	.offset = 0, \
+	.padding = 0, \
+	.len = (_len), \
+	.bit_len = (_len * 8), \
+}
+
 typedef enum {
 	IPv6_V,
 	IPv6_TC,
@@ -85,7 +94,7 @@ typedef enum {
 } schc_layer_t;
 
 typedef enum {
-	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3, NOT_FRAGMENTED = 4
+	ACK_ALWAYS = 1, ACK_ON_ERROR = 2, NO_ACK = 3, NOT_FRAGMENTED = 4, MAX_RELIABILITY_MODES
 } reliability_mode;
 
 struct schc_field {
@@ -170,6 +179,17 @@ struct schc_rule_t {
 	/* the dtag size in bits */
 	uint8_t DTAG_SIZE;
 };
+
+#define SCHC_NO_COMPRESSION_RULE(_id) \
+{ \
+	.id = (_id), \
+	.compression_rule = NULL, \
+	.mode = MAX_RELIABILITY_MODES, \
+	.FCN_SIZE = 0, \
+	.MAX_WND_FCN = 0, \
+	.WINDOW_SIZE = 0, \
+	.DTAG_SIZE = 0 \
+}
 
 struct schc_device {
 	/* the device id (e.g. EUI) */

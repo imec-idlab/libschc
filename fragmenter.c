@@ -282,9 +282,9 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 	uint8_t byte_arr[1] = { 0 };
 	uint8_t start_offset = 0;
 
-	if(prev == NULL && (*offset) < conn->RULE_SIZE) { // copy rule id
+	if(prev == NULL && (*offset) < conn->RULE_SIZE) { /* copy rule id */
 		do {
-			copy_bits(byte_arr, (*offset), curr->ptr, (*offset), 1); // copy 1 bit
+			copy_bits(byte_arr, (*offset), curr->ptr, (*offset), 1); /* copy 1 bit */
 			(*offset)++;
 			if(((*offset) % 8) == 0) {
 				return byte_arr[0];
@@ -313,6 +313,8 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 		copy_bits(byte_arr, 0, curr->ptr, (*offset), remaining_bits);
 		*offset = remaining_bits;
 	}
+
+	// DEBUG_PRINTF("0x%02x \n", byte_arr[0]);
 
 	return byte_arr[0];
 }
@@ -633,7 +635,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		DEBUG_PRINTF("init_connection(): SCHC rule not specified \n");
 		return 0;
 	}
-	if(!conn->MODE) {
+	if(!conn->MODE || conn->MODE == MAX_RELIABILITY_MODES) {
 		DEBUG_PRINTF("init_connection(): no reliability mode specified \n");
 		return 0;
 	}
@@ -659,9 +661,6 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		conn->schc_rule = get_schc_rule_by_reliability_mode(
 				conn->schc_rule, NOT_FRAGMENTED, conn->device_id);
 	}
-
-	// todo
-	// can not select a rule when uncompressed
 
 	if (conn->schc_rule == NULL) {
 		DEBUG_PRINTF(

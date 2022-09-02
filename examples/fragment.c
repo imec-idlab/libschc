@@ -8,7 +8,7 @@
  * This is a basic example on how to fragment
  * and reassemble a packet
  * The client will send every 10 seconds a fragment
- * to the network gateway, which will reassemble the packet
+ * to the network gateway that will reassemble the packet
  *
  */
 
@@ -20,6 +20,8 @@
 #include "../fragmenter.h"
 
 #include "timer.h"
+
+#define COMPRESS				0 /* indicate to start fragmentation with or without compression first */
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -39,14 +41,17 @@ struct cb_t *head = NULL;
 schc_fragmentation_t tx_conn;
 schc_fragmentation_t tx_conn_ngw;
 
-// the ipv6/udp/coap packet
+// the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
-		/*// IPv6 header
-		0x60, 0x00, 0x00, 0x00, 0x00, 0xD4, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x02,
+#if !COMPRESS
+		0x00, /* todo this should be added by the init_tx_connection */
+#endif
+		// IPv6 header
+		0x60, 0x00, 0x00, 0x00, 0x00, 0xD3, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x01,
 		// UDP header
-		0x33, 0x16, 0x33, 0x17, 0x00, 0xD4, 0x19, 0xEA,
+		0x33, 0x16, 0x33, 0x16, 0x00, 0xD3, 0x19, 0xED,
 		// CoAP header
 		0x54, 0x03, 0x23, 0xBB, 0x21, 0xFA, 0x01, 0xFB, 0xB5, 0x75, 0x73, 0x61, 0x67, 0x65, 0xD1, 0xEA, 0x1A, 0xFF,
 		// Data
@@ -64,18 +69,7 @@ uint8_t msg[] = {
 		0x25,
 		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 
 		0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24,
-		0x25,*/
-		// IPv6
-		0x60, 0x00, 0x00, 0x00, 0x00, 0x7D, 0x11, 0x40, 0x2A, 0x02, 0x18, 0x10, 0x2F, 0x1E, 0xE6, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x2A, 0x02, 0x18, 0x10, 0x2F, 0x1E, 0xE6, 0x00, 0xBA, 0x27, 0xEB, 0xFF,
-		0xFE, 0x5D, 0x14, 0x0A, 0x16, 0x33, 0x16, 0x33, 0x00, 0x7D, 0xAD, 0x2F, 0x44, 0x02, 0x89, 0xC4, 0xC4, 0x89,
-		0x0A, 0x00, 0xB2, 0x72, 0x64, 0x11, 0x28, 0x39, 0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x3D, 0x31, 0x2E, 0x31, 0x0D,
-		0x04, 0x65, 0x70, 0x3D, 0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x2D, 0x63, 0x6C, 0x69, 0x65, 0x6E, 0x74, 0x2D, 0x32,
-		0x03, 0x62, 0x3D, 0x55, 0x07, 0x6C, 0x74, 0x3D, 0x31, 0x32, 0x30, 0x30, 0xFF, 0x3C, 0x2F, 0x3E, 0x3B, 0x72,
-		0x74, 0x3D, 0x22, 0x6F, 0x6D, 0x61, 0x2E, 0x6C, 0x77, 0x6D, 0x32, 0x6D, 0x22, 0x2C, 0x3C, 0x2F, 0x31, 0x2F,
-		0x30, 0x3E, 0x2C, 0x3C, 0x2F, 0x33, 0x2F, 0x30, 0x3E, 0x2C, 0x3C, 0x2F, 0x33, 0x33, 0x30, 0x33, 0x2F, 0x30,
-		0x3E, 0x2C, 0x3C, 0x2F, 0x33, 0x33, 0x30, 0x34, 0x2F, 0x30, 0x3E, 0x2C, 0x3C, 0x2F, 0x33, 0x33, 0x33, 0x36,
-		0x2F, 0x30, 0x3E
+		0x25
 };
 
 void cleanup() {
@@ -88,6 +82,30 @@ void cleanup() {
 		curr = next;
 		next = curr->next;
 		free(prev);
+	}
+}
+
+void compare_decompressed_buffer(uint8_t* decomp_packet, uint16_t new_packet_len) {
+	int err = 0;
+	/* test the result */
+	for (int i = 0; i < sizeof(msg); i++) {
+		if (msg[i] != decomp_packet[i]) {
+			printf(
+					"main(): an error occured while decompressing, byte=%02d, original=0x%02x, decompressed=0x%02x\n",
+					i, msg[i], decomp_packet[i]);
+			err = 1;
+		}
+	}
+
+	if (sizeof(msg) != new_packet_len) {
+		printf(
+				"main(); an error occured while decompressing, original length=%ld, decompressed length=%d\n",
+				sizeof(msg), new_packet_len);
+		err = 1;
+	}
+
+	if (!err) {
+		printf("main(): decompression succeeded\n");
 	}
 }
 
@@ -107,26 +125,37 @@ void end_rx(schc_fragmentation_t *conn) {
 
 	schc_bitarray_t bit_arr;
 
-	conn->bit_arr = &bit_arr;
-	uint16_t packetlen = get_mbuf_len(conn); // calculate the length of the original packet
-	uint8_t* compressed_packet = (uint8_t*) malloc(sizeof(uint8_t) * packetlen); // todo pass the mbuf chain to the decompressor
-	uint8_t decomp_packet[MAX_PACKET_LENGTH] = { 0 };
+	uint16_t new_packet_len;
+	uint16_t packetlen 			= get_mbuf_len(conn); /* calculate the length of the original packet */
+	uint8_t* compressed_packet 	= (uint8_t*) malloc(sizeof(uint8_t) * packetlen); /* todo pass the mbuf chain to the decompressor */
+	uint8_t decomp_packet[MAX_PACKET_LENGTH]
+						  	  	= { 0 };
 
-	mbuf_copy(conn, compressed_packet); // copy the packet from the mbuf list
+	/* copy the packet from the mbuf list */
+	mbuf_copy(conn, compressed_packet);
 
+#if COMPRESS
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
-	uint16_t new_packet_len = schc_decompress(&bit_arr, decomp_packet,
-			conn->device_id, packetlen, UP);
-	if (new_packet_len == 0) { // some error occured
-		exit(0);
+	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device_id, packetlen, UP);
+	if (new_packet_len <= 0) { /* some error occured */
+		exit(1);
 	}
+
+	/* compare decompressed buffer with original packet */
+	compare_decompressed_buffer(decomp_packet, new_packet_len);
+#else
+	/* compare mbuf reconstructed buffer with original packet */
+	compare_decompressed_buffer(compressed_packet, packetlen);
+#endif
 
 	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
 
 	free(compressed_packet);
-
 	schc_reset(conn);
+
+	/* end the program */
+	RUN = 0;
 }
 
 void timer_handler(size_t timer_id, void* user_data) {
@@ -255,49 +284,57 @@ uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 }
 
 void init() {
-	// initialize timer threads
+	/* initialize timer threads */
 	initialize_timer_thread();
 
-	// initialize the client compressor
-	uint8_t src[16] = { 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-	schc_compressor_init(src);
+	/* initialize the client compressor */
+	schc_compressor_init();
 
-	// initialize fragmenter for constrained device
+	/* initialize fragmenter for the constrained device */
 	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
 	
-	// initialize fragmenter for ngw
-	tx_conn_ngw.send = &rx_send_callback;
-	tx_conn_ngw.end_rx = &end_rx;
-	tx_conn_ngw.remove_timer_entry = &remove_timer_entry;
+	/* initialize fragmenter for ngw */
+	tx_conn_ngw.send 				= &rx_send_callback;
+	tx_conn_ngw.end_rx 				= &end_rx;
+	tx_conn_ngw.remove_timer_entry 	= &remove_timer_entry;
 }
 
 int main() {
 	init();
 
-	uint8_t compressed_packet[MAX_PACKET_LENGTH];
 	uint32_t device_id = 0x01;
-
-	// compress packet
 	struct schc_rule_t* schc_rule;
+
+#if COMPRESS
 	schc_bitarray_t bit_arr;
-	bit_arr.ptr = (uint8_t*) (compressed_packet);
+	uint8_t compressed_packet[MAX_PACKET_LENGTH];
+	bit_arr.ptr 			= (uint8_t*) (compressed_packet); /* provide a pointer to the buffer to store the compressed packet */
+	schc_rule 				= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
+#else /* do not compress; provide information that would have been provided by the compressor */
+	uint8_t rule_id[RULE_SIZE_BYTES]
+								= { 0x02 };
+	struct schc_rule_t no_compression_rule // rule equals the rule id memory in the debugger
+							= SCHC_NO_COMPRESSION_RULE(*rule_id); /* set the selected rule manually */
+	schc_rule 				= &no_compression_rule;
+	schc_bitarray_t bit_arr	= SCHC_DEFAULT_BIT_ARRAY(252, &msg);
+#endif
 
-	schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP);
+	/* L2 connection information */
+	tx_conn.mtu 			= 121; /* network driver MTU */
+	tx_conn.dc 				= 1000; /* duty cycle in ms */
+	tx_conn.device_id 		= device_id; /* the device id of the connection */
 
-	tx_conn.mtu = 25; // network driver MTU
-	tx_conn.dc = 5000; // 5 seconds duty cycle
-	tx_conn.device_id = device_id; // the device id of the connection
-
-	tx_conn.bit_arr = &bit_arr;
-	tx_conn.send = &tx_send_callback;
-	tx_conn.end_tx = &end_tx;
-
-	tx_conn.schc_rule = schc_rule;
-	tx_conn.RULE_SIZE = RULE_SIZE_BITS;
-	tx_conn.MODE = NO_ACK;
-
+	/* SCHC callbacks */
+	tx_conn.send 			= &tx_send_callback;
+	tx_conn.end_tx			= &end_tx;
 	tx_conn.post_timer_task = &set_tx_timer;
+
+	/* SCHC connection information */
+	tx_conn.MODE			= NO_ACK;
+	tx_conn.schc_rule 		= schc_rule;
+	tx_conn.RULE_SIZE 		= RULE_SIZE_BITS;
+	tx_conn.bit_arr 		= &bit_arr;
+
 
 	if (schc_rule == NULL) {
 		cleanup();
@@ -305,7 +342,7 @@ int main() {
 		return -1;
 	}
 
-	// start fragmentation loop
+	/* start fragmentation loop */
 	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
 	int ret = schc_fragment(&tx_conn);
 
@@ -314,6 +351,8 @@ int main() {
 
 	cleanup();
 	finalize_timer_thread();
+
+	DEBUG_PRINTF("main(): end program \n");
 
 	return 0;
 }
