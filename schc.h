@@ -180,17 +180,6 @@ struct schc_rule_t {
 	uint8_t DTAG_SIZE;
 };
 
-#define SCHC_NO_COMPRESSION_RULE(_id) \
-{ \
-	.id = (_id), \
-	.compression_rule = NULL, \
-	.mode = MAX_RELIABILITY_MODES, \
-	.FCN_SIZE = 0, \
-	.MAX_WND_FCN = 0, \
-	.WINDOW_SIZE = 0, \
-	.DTAG_SIZE = 0 \
-}
-
 struct schc_device {
 	/* the device id (e.g. EUI) */
 	uint32_t device_id;

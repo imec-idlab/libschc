@@ -688,6 +688,9 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
  */
 void schc_reset(schc_fragmentation_t* conn) {
 	/* reset connection variables */
+	if (conn->remove_timer_entry) {
+		conn->remove_timer_entry(conn);
+	}
 	conn->device_id = 0;
 	conn->tail_ptr = 0;
 	conn->dc = 0;
@@ -702,6 +705,7 @@ void schc_reset(schc_fragmentation_t* conn) {
 	conn->RX_STATE = RECV_WINDOW;
 	conn->window = 0;
 	conn->window_cnt = 0;
+	conn->timer_ctx = NULL;
 	conn->timer_flag = 0;
 	conn->input = 0;
 	memset(conn->mic, 0, MIC_SIZE_BYTES);
@@ -930,9 +934,26 @@ static void discard_fragment(schc_fragmentation_t* conn) {
 static void abort_connection(schc_fragmentation_t* conn) {
 	// todo
 	DEBUG_PRINTF("abort_connection(): inactivity timer expired \n");
-	conn->remove_timer_entry(conn->device_id);
 	schc_reset(conn);
 	return;
+}
+
+/**
+ * callback for schc_fragmentation_t::post_timer_task to time schc_fragment
+ *
+ * @param   arg The argument for the callback
+ */
+static void schc_fragment_timer_cb(void *arg) {
+	schc_fragment(arg);
+}
+
+/**
+ * callback for schc_fragmentation_t::post_timer_task to time schc_reassemble
+ *
+ * @param   arg The argument for the callback
+ */
+static void schc_reassemble_timer_cb(void *arg) {
+	schc_reassemble(arg);
 }
 
 /**
@@ -945,7 +966,7 @@ static void abort_connection(schc_fragmentation_t* conn) {
 static void set_retrans_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_retrans_timer(): for %d ms \n", (int) (conn->dc * 4));
-	conn->post_timer_task( (*schc_fragment), conn->device_id, conn->dc * 4, conn);
+	conn->post_timer_task(conn, schc_fragment_timer_cb, conn->dc * 4, conn);
 }
 
 /**
@@ -956,7 +977,7 @@ static void set_retrans_timer(schc_fragmentation_t* conn) {
  */
 static void set_dc_timer(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("set_dc_timer(): for %d ms \n", (int) conn->dc);
-	conn->post_timer_task( (*schc_fragment), conn->device_id, conn->dc, conn);
+	conn->post_timer_task(conn, schc_fragment_timer_cb, conn->dc, conn);
 }
 
 /**
@@ -969,7 +990,7 @@ static void set_dc_timer(schc_fragmentation_t* conn) {
 static void set_inactivity_timer(schc_fragmentation_t* conn) {
 	conn->timer_flag = 1;
 	DEBUG_PRINTF("set_inactivity_timer(): for %d ms \n", (int) conn->dc);
-	conn->post_timer_task( (*schc_reassemble), conn->device_id, conn->dc, conn);
+	conn->post_timer_task(conn, schc_reassemble_timer_cb, conn->dc, conn);
 }
 
 /**
@@ -1361,6 +1382,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	tail->frag_cnt = rx_conn->frag_cnt; // update tail frag count
 
 	if(rx_conn->input) { // set inactivity timer if the loop was triggered by a fragment input
+		rx_conn->remove_timer_entry(rx_conn); // remove previously set inactivity timer
 		set_inactivity_timer(rx_conn);
 	}
 
@@ -1699,7 +1721,7 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
-		void (*remove_timer_entry)(uint32_t device_id)) {
+		void (*remove_timer_entry)(schc_fragmentation_t *conn)) {
 	uint32_t i;
 
 	// initializes the schc tx connection
@@ -1883,7 +1905,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 	if (tx_conn->TX_STATE == END_TX) {
 		DEBUG_PRINTF("schc_fragment(): end transmission cycle\n");
 		tx_conn->timer_flag = 0;
-		tx_conn->end_tx();
+		tx_conn->end_tx(tx_conn);
 		schc_reset(tx_conn); // todo ??
 		return SCHC_END;
 	}
@@ -2000,7 +2022,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 		}
 		case END_TX: {
 			DEBUG_PRINTF("schc_fragment(): end transmission cycle\n");
-			tx_conn->end_tx();
+			tx_conn->end_tx(tx_conn);
 			schc_reset(tx_conn);
 			return SCHC_END;
 			break;

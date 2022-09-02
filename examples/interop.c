@@ -27,8 +27,8 @@ int RUN = 1;
 int counter = 1;
 
 struct cb_t {
-    schc_fragmentation_t* conn;
-    void (*cb)(schc_fragmentation_t* conn);
+    void* arg;
+    void (*cb)(void* arg);
     struct cb_t *next;
 };
 
@@ -126,7 +126,7 @@ void timer_handler(size_t timer_id, void* user_data) {
 	stop_timer(timer_id);
 
 	struct cb_t* cb_t_ = (struct cb_t*) user_data;
-	schc_fragmentation_t* conn = cb_t_->conn;
+	schc_fragmentation_t* conn = cb_t_->arg;
 
 	cb_t_->cb(conn);
 }
@@ -134,14 +134,14 @@ void timer_handler(size_t timer_id, void* user_data) {
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
-static void set_tx_timer(void (*callback)(schc_fragmentation_t* conn),
-		uint32_t device_id, uint32_t delay, void *arg) {
+static void set_tx_timer(schc_fragmentation_t* conn, void (*callback)(void* arg),
+		uint32_t delay, void *arg) {
 	counter++;
 
 	uint16_t delay_sec = delay / 1000;
 
 	struct cb_t* cb_t_= malloc(sizeof(struct cb_t)); // create on heap
-	cb_t_->conn = arg;
+	cb_t_->arg = arg;
 	cb_t_->cb = callback;
 
 	struct cb_t* curr = head;
@@ -170,12 +170,12 @@ static void set_tx_timer(void (*callback)(schc_fragmentation_t* conn),
  * The timer used by the SCHC library to time out the reception of fragments
  * should have multiple timers for a device
  */
-static void set_rx_timer(void (*callback)(schc_fragmentation_t* conn),
-		uint32_t device_id, uint32_t delay, void *arg) {
+static void set_rx_timer(schc_fragmentation_t* conn, void (*callback)(void* arg),
+		uint32_t delay, void *arg) {
 	uint16_t delay_sec = delay / 1000;
 
 	struct cb_t* cb_t_= malloc(sizeof(struct cb_t)); // create on heap
-	cb_t_->conn = arg;
+	cb_t_->arg = arg;
 	cb_t_->cb = callback;
 
 	struct cb_t* curr = head;
@@ -202,8 +202,8 @@ static void set_rx_timer(void (*callback)(schc_fragmentation_t* conn),
  * Callback to remove a timer entry for a device
  * (required by some timer libraries)
  */
-void remove_timer_entry(uint32_t device_id) {
-	DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", device_id);
+void remove_timer_entry(schc_fragmentation_t* conn) {
+	DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", conn->device_id);
 }
 
 void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {

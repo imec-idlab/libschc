@@ -125,14 +125,16 @@ typedef struct schc_fragmentation_t {
 	/* the function to call when the fragmenter has something to send */
 	uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id);
 	/* the timer task */
-	void (*post_timer_task)(int8_t (*timer_task)(struct schc_fragmentation_t* conn), uint32_t device_id,
-			uint32_t time_ms, void *arg);
+	void (*post_timer_task)(struct schc_fragmentation_t *conn,
+			void (*timer_task)(void* arg), uint32_t time_ms, void *arg);
 	/* this function is called when the last rx timer expires */
 	void (*end_rx)(struct schc_fragmentation_t *conn);
 	/* this function is called once the device reaches the END_TX state */
-	void (*end_tx)(void);
+	void (*end_tx)(struct schc_fragmentation_t *conn);
 	/* this callback may be used to remove a timer entry */
-	void (*remove_timer_entry)(uint32_t device_id);
+	void (*remove_timer_entry)(struct schc_fragmentation_t *conn);
+	/* timer context for the application */
+	void *timer_ctx;
 	/* indicates whether a timer has expired */
 	uint8_t timer_flag;
 	/* indicates if a fragment is received or this is a callback */
@@ -152,7 +154,7 @@ typedef struct schc_fragmentation_t {
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
 		void (*end_rx)(schc_fragmentation_t* conn),
-		void (*remove_timer_entry)(uint32_t device_id));
+		void (*remove_timer_entry)(schc_fragmentation_t* conn));
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
 void schc_reset(schc_fragmentation_t* conn);
