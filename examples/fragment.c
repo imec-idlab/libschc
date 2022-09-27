@@ -21,7 +21,7 @@
 
 #include "timer.h"
 
-#define COMPRESS				0 /* indicate to start fragmentation with or without compression first */
+#define COMPRESS				1 /* indicate to start fragmentation with or without compression first */
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -39,7 +39,7 @@ struct cb_t *head = NULL;
 
 // structure to keep track of the transmission
 schc_fragmentation_t tx_conn;
-schc_fragmentation_t tx_conn_ngw;
+schc_fragmentation_t tx_conn_nwgw;
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
@@ -124,11 +124,12 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
 
 	schc_bitarray_t bit_arr;
+	conn->bit_arr 				= &bit_arr;
 
 	uint16_t new_packet_len;
 	uint16_t packetlen 			= get_mbuf_len(conn); /* calculate the length of the original packet */
 	uint8_t* compressed_packet 	= (uint8_t*) malloc(sizeof(uint8_t) * packetlen); /* todo pass the mbuf chain to the decompressor */
-	uint8_t decomp_packet[MAX_PACKET_LENGTH]
+	uint8_t  decomp_packet[MAX_PACKET_LENGTH]
 						  	  	= { 0 };
 
 	/* copy the packet from the mbuf list */
@@ -137,6 +138,7 @@ void end_rx(schc_fragmentation_t *conn) {
 #if COMPRESS
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
+
 	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device_id, packetlen, UP);
 	if (new_packet_len <= 0) { /* some error occured */
 		exit(1);
@@ -273,7 +275,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	received_packet(data, length, device_id, &tx_conn_ngw); // send packet to network gateway
+	received_packet(data, length, device_id, &tx_conn_nwgw); // send packet to network gateway
 	return 1;
 }
 
@@ -294,9 +296,9 @@ void init() {
 	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
 	
 	/* initialize fragmenter for ngw */
-	tx_conn_ngw.send 				= &rx_send_callback;
-	tx_conn_ngw.end_rx 				= &end_rx;
-	tx_conn_ngw.remove_timer_entry 	= &remove_timer_entry;
+	tx_conn_nwgw.send 					= &rx_send_callback;
+	tx_conn_nwgw.end_rx 				= &end_rx;
+	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
 }
 
 int main() {
