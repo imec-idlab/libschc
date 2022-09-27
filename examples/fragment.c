@@ -20,7 +20,7 @@
 
 #include "timer.h"
 
-#define COMPRESS				1 /* indicate to start fragmentation with or without compression first */
+#define COMPRESS				0 /* indicate to start fragmentation with or without compression first */
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -42,9 +42,6 @@ schc_fragmentation_t tx_conn_nwgw;
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
-#if !COMPRESS
-		0x00, /* todo this should be added by the init_tx_connection */
-#endif
 		// IPv6 header
 		0x60, 0x00, 0x00, 0x00, 0x00, 0xD3, 0x11, 0x40, 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -311,12 +308,7 @@ int main() {
 	uint8_t compressed_packet[MAX_PACKET_LENGTH];
 	bit_arr.ptr 			= (uint8_t*) (compressed_packet); /* provide a pointer to the buffer to store the compressed packet */
 	schc_rule 				= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
-#else /* do not compress; provide information that would have been provided by the compressor */
-	uint8_t rule_id[RULE_SIZE_BYTES]
-								= { 0x02 };
-	// todo
-	// rules need refactoring
-	schc_rule 				= get_schc_rule_by_rule_id(rule_id, device_id);
+#else
 	schc_bitarray_t bit_arr	= SCHC_DEFAULT_BIT_ARRAY(252, &msg);
 #endif
 
