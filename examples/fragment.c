@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../schc.h"
 #include "../compressor.h"
 #include "../fragmenter.h"
 
@@ -255,11 +254,11 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; // retransmission timer: used for timeouts
 
-		if (conn->schc_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
+		if (conn->fragmentation_rule->mode == NOT_FRAGMENTED) { // packet was not fragmented
 			end_rx(conn);
 		} else {
 			int ret = schc_reassemble(conn);
-			if(ret && conn->schc_rule->mode == NO_ACK){ // use the connection to reassemble
+			if(ret && conn->fragmentation_rule->mode == NO_ACK){ // use the connection to reassemble
 				end_rx(conn); // final packet arrived
 			}
 		}
@@ -305,7 +304,7 @@ int main() {
 	init();
 
 	uint32_t device_id = 0x01;
-	struct schc_rule_t* schc_rule;
+	struct schc_compression_rule_t* schc_rule;
 
 #if COMPRESS
 	schc_bitarray_t bit_arr;
@@ -332,8 +331,8 @@ int main() {
 	tx_conn.post_timer_task = &set_tx_timer;
 
 	/* SCHC connection information */
-	tx_conn.MODE			= NO_ACK;
-	tx_conn.schc_rule 		= schc_rule;
+	tx_conn.fragmentation_rule
+							= get_fragmentation_rule_by_reliability_mode(NO_ACK, device_id);
 	tx_conn.RULE_SIZE 		= RULE_SIZE_BITS;
 	tx_conn.bit_arr 		= &bit_arr;
 

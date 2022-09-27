@@ -13,8 +13,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../schc.h"
-#include "../schc_config.h"
 #include "../compressor.h"
 
 #define MAX_PACKET_LENGTH		128
@@ -64,7 +62,7 @@ int main() {
 	uint32_t device_id = 0x06;
 
 	/* compress packet */
-	struct schc_rule_t *schc_rule;
+	struct schc_compression_rule_t *schc_rule;
 	schc_bitarray_t bit_arr;
 	bit_arr.ptr = (uint8_t*) (compressed_buf);
 
