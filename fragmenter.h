@@ -6,15 +6,14 @@
  *
  */
 
-#ifndef __SCHCFRAGMENTER_H__
-#define __SCHCFRAGMENTER_H__
+#ifndef __SCHC_FRAGMENTER_H__
+#define __SCHC_FRAGMENTER_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "schc.h"
-#include "schc_config.h"
 
 /**
  * Return code: Indicator. Generic indication that a fragment was received
@@ -144,11 +143,11 @@ typedef struct schc_fragmentation_t {
 	/* the start of the mbuf chain */
 	schc_mbuf_t *head;
 	/* the rule in use */
-	struct schc_rule_t* schc_rule;
+	struct schc_fragmentation_rule_t* fragmentation_rule;
 	/* the rule size in bits */
 	uint8_t RULE_SIZE;
-	/* the desired reliability mode */
-	reliability_mode MODE;
+	/* the rule id */
+	uint8_t rule_id[4];
 } schc_fragmentation_t;
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
@@ -165,6 +164,9 @@ void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		uint32_t device_id);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
+
+struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode,
+		uint32_t device_id);
 
 uint16_t get_mbuf_len(schc_fragmentation_t *conn);
 void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr);

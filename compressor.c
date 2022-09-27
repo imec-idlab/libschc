@@ -14,9 +14,7 @@
 #include "picocoap.h"
 
 #include "compressor.h"
-#include "schc_config.h"
-
-#include "rules/rule_config.h"
+#include "bit_operations.h"
 
 #if CLICK
 #include <click/config.h>
@@ -29,27 +27,6 @@ jsmntok_t json_token[JSON_TOKENS];
 //                                LOCAL FUNCIONS                                  //
 ////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * Get a device by it's id
- *
- * @param device_id 	the id of the device
- *
- * @return schc_device 	the device which is found
- *         NULL			if no device was found
- *
- */
-static struct schc_device* get_device_by_id(uint32_t device_id) {
-	int i = 0;
-
-	for (i = 0; i < DEVICE_COUNT; i++) {
-		if (devices[i]->device_id == device_id) {
-			return (struct schc_device*) devices[i];
-		}
-	}
-
-	return NULL;
-}
-
 /*
  * Set the rule id of the compressed packet
  *
@@ -60,52 +37,21 @@ static struct schc_device* get_device_by_id(uint32_t device_id) {
  * 			1				SUCCESS
  *
  */
-int8_t set_rule_id(struct schc_rule_t* schc_rule, uint8_t* data) {
+int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint8_t* data) {
 	// copy rule id in front of the buffer
 	uint8_t pos = get_position_in_first_byte(RULE_SIZE_BITS);
 	clear_bits(data, 0, RULE_SIZE_BITS); // clear bits before setting
+	uint8_t rule_id[4] = { 0 };
 
 	if(schc_rule != NULL) {
-		copy_bits(data, 0, schc_rule->id, pos, RULE_SIZE_BITS);
+		little_end_uint8_from_uint32(rule_id, schc_rule->rule_id); /* copy the uint32_t to a uint8_t array */
 	} else {
-		copy_bits(data, 0, UNCOMPRESSED_ID, pos, RULE_SIZE_BITS);
+		little_end_uint8_from_uint32(rule_id, UNCOMPRESSED_ID); /* copy the uint32_t to a uint8_t array */
 	}
+
+	copy_bits(data, 0, rule_id, pos, RULE_SIZE_BITS); /* set the rule id */
 
 	return 1;
-}
-
-/*
- * Find a replacement rule with the correct reliability mode
- *
- * @param 	schc_rule 		the schc rule to find a replacement rule for
- * @param 	mode			the mode for which a rule should be found
- * @param 	device_id		the device to find a rule for
- *
- * @return 	schc_rule		the rule that was found
- * 			NULL			if no rule was found
- *
- */
-struct schc_rule_t* get_schc_rule_by_reliability_mode(
-		struct schc_rule_t* schc_rule, reliability_mode mode,
-		uint32_t device_id) {
-	struct schc_device *device = get_device_by_id(device_id);
-
-	if (device == NULL) {
-		DEBUG_PRINTF(
-				"get_schc_rule(): no device was found for the id: %d\n", (int) device_id);
-		return NULL;
-	}
-
-	int i;
-	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->context)[i];
-		if ((schc_rule->compression_rule == curr_rule->compression_rule)
-				&& (curr_rule->mode == mode)) {
-			return (struct schc_rule_t*) (curr_rule);
-		}
-	}
-
-	return NULL;
 }
 
 /*
@@ -121,9 +67,8 @@ struct schc_rule_t* get_schc_rule_by_reliability_mode(
  * 			NULL			if no rule was found
  *
  */
-static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
-		uint8_t udp_rule_id, __attribute__((unused)) uint8_t coap_rule_id, uint32_t device_id,
-		reliability_mode mode) {
+static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
+		uint8_t udp_rule_id, __attribute__((unused)) uint8_t coap_rule_id, uint32_t device_id) {
 	int i;
 	struct schc_device *device = get_device_by_id(device_id);
 
@@ -133,30 +78,30 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
 		return NULL;
 	}
 
-	for (i = 0; i < device->rule_count; i++) {
-		const struct schc_rule_t* curr_rule = (*device->context)[i];
+	for (i = 0; i < device->compression_rule_count; i++) {
+		const struct schc_compression_rule_t* curr_rule = (*device->compression_context)[i];
 		/* match layers using bitmask */
 		uint8_t layer_mask = ((USE_IP6 << 2) | (USE_UDP << 1) | USE_COAP); uint8_t rule_mask = 0x00;
 #if USE_IP6 == 1
-		if (curr_rule->compression_rule->ipv6_rule != NULL &&
-				curr_rule->compression_rule->ipv6_rule->rule_id == ip_rule_id) {
+		if (curr_rule->ipv6_rule != NULL &&
+				curr_rule->ipv6_rule->rule_id == ip_rule_id) {
 			rule_mask |= 0x04;
 		}
 #endif
 #if USE_UDP == 1
-		if (curr_rule->compression_rule->udp_rule != NULL &&
-				curr_rule->compression_rule->udp_rule->rule_id == udp_rule_id) {
+		if (curr_rule->udp_rule != NULL &&
+				curr_rule->udp_rule->rule_id == udp_rule_id) {
 			rule_mask |= 0x02;
 		}
 #endif
 #if USE_COAP == 1
-		if (curr_rule->compression_rule->coap_rule != NULL &&
-				curr_rule->compression_rule->coap_rule->rule_id == coap_rule_id) {
+		if (curr_rule->coap_rule != NULL &&
+				curr_rule->coap_rule->rule_id == coap_rule_id) {
 			rule_mask |= 0x01;
 		}
 #endif
-		if (rule_mask == layer_mask && curr_rule->mode == mode) {
-			return (struct schc_rule_t*) (curr_rule);
+		if (rule_mask == layer_mask) {
+			return (struct schc_compression_rule_t*) (curr_rule);
 		}
 	}
 
@@ -173,7 +118,7 @@ static struct schc_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rule_id,
  * 			NULL			if no rule was found
  *
  */
-struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_id) {
+static struct schc_compression_rule_t* get_compression_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_id) {
 	int i;
 	struct schc_device *device = get_device_by_id(device_id);
 
@@ -182,11 +127,13 @@ struct schc_rule_t* get_schc_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_
 		return NULL;
 	}
 
-	for (i = 0; i < device->rule_count; i++) {
-		struct schc_rule_t* curr_rule = (struct schc_rule_t*) (*device->context)[i];
+	for (i = 0; i < device->compression_rule_count; i++) {
+		struct schc_compression_rule_t* curr_rule = (struct schc_compression_rule_t*) (*device->compression_context)[i];
 		uint8_t curr_rule_pos = get_position_in_first_byte(RULE_SIZE_BITS);
-		if( compare_bits_aligned(curr_rule->id, curr_rule_pos, rule_arr, 0, RULE_SIZE_BITS)) {
-			DEBUG_PRINTF("get_schc_rule(): curr rule %p \n", (void*) curr_rule);
+		uint8_t rule_id[4] = { 0 };
+		little_end_uint8_from_uint32(rule_id, curr_rule->rule_id); /* copy the uint32_t to a uint8_t array */
+		if( compare_bits_aligned(rule_id, curr_rule_pos, rule_arr, 0, RULE_SIZE_BITS)) {
+			DEBUG_PRINTF("get_compression_rule(): curr rule %p \n", (void*) curr_rule);
 			return curr_rule;
 		}
 	}
@@ -469,30 +416,30 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 		return 0;
 	}
 
-	for (i = 0; i < device->rule_count; i++) {
+	for (i = 0; i < device->compression_rule_count; i++) {
 		struct schc_layer_rule_t* curr_rule = NULL;
 #if USE_IP6 == 1
 		if(layer == SCHC_IPV6) {
 			max_layer_fields = IP6_FIELDS;
-			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->ipv6_rule;
+			curr_rule = (struct schc_layer_rule_t*) (*device->compression_context)[i]->ipv6_rule;
 		}
 #endif
 #if USE_UDP == 1 
 		else if(layer == SCHC_UDP) {
 			max_layer_fields = UDP_FIELDS;
-			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->udp_rule;
+			curr_rule = (struct schc_layer_rule_t*) (*device->compression_context)[i]->udp_rule;
 		}
 #endif
 #if USE_COAP == 1
 		else if (layer == SCHC_COAP) {
 			max_layer_fields = COAP_FIELDS;
-			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->coap_rule;
+			curr_rule = (struct schc_layer_rule_t*) (*device->compression_context)[i]->coap_rule;
 		}
 #endif
 
 		/* rule for layer can be set to NULL */
 		if(curr_rule == NULL) {
-			DEBUG_PRINTF("schc_find_rule_from_header(): skipped rule %02d, layer set to NULL \n", (*device->context)[i]->id[0]);
+			DEBUG_PRINTF("schc_find_rule_from_header(): skipped rule %02d, layer set to NULL \n", (*device->compression_context)[i]->rule_id);
 			continue;
 		}
 
@@ -509,7 +456,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 						(uint8_t*) (src->ptr + src_pos), (src->offset % 8))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
 					DEBUG_PRINTF(
-							"schc_find_rule_from_header(): skipped rule %02d, %s does not match\n", (*device->context)[i]->id[0], schc_header_field_names[curr_rule->content[k].field]);
+							"schc_find_rule_from_header(): skipped rule %02d, %s does not match\n", (*device->compression_context)[i]->rule_id, schc_header_field_names[curr_rule->content[k].field]);
 					src->offset = prev_offset; // reset offset
 					break;
 				} else {
@@ -816,9 +763,9 @@ uint8_t schc_compressor_init() {
  * 			NOT_FRAGMENTED reliability mode
  */
 
-struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
+struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 		schc_bitarray_t* dst, uint32_t device_id, direction dir) {
-	struct schc_rule_t* schc_rule;
+	struct schc_compression_rule_t* schc_rule;
 	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 
 	/* buf must at least packet length + RULE_SIZE_BYTES */
@@ -875,7 +822,7 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	/* find the rule for this device by combining the available id's */ 
 	// todo pointers?
 	schc_rule = get_schc_rule_by_layer_ids(ipv6_rule_id,
-			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
+			udp_rule_id, coap_rule_id, device_id);
 
 	set_rule_id(schc_rule, dst->ptr);
 	dst->offset = RULE_SIZE_BITS;
@@ -1070,19 +1017,19 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("schc_decompress(): \n");
 
-	struct schc_rule_t *rule = get_schc_rule_by_rule_id(bit_arr->ptr, device_id);
+	struct schc_compression_rule_t *rule = get_compression_rule_by_rule_id(bit_arr->ptr, device_id);
 
 	if(rule != NULL) {
 #if USE_COAP == 1
-		coap_rule_id = rule->compression_rule->coap_rule->rule_id;
+		coap_rule_id = rule->coap_rule->rule_id;
 		DEBUG_PRINTF("schc_decompress(): CoAP rule id=%d \n", coap_rule_id);
 #endif
 #if USE_UDP == 1
-		udp_rule_id = rule->compression_rule->udp_rule->rule_id;
+		udp_rule_id = rule->udp_rule->rule_id;
 		DEBUG_PRINTF("schc_decompress(): UDP rule id=%d \n", udp_rule_id);
 #endif
 #if USE_IP6 == 1
-		ipv6_rule_id = rule->compression_rule->ipv6_rule->rule_id;
+		ipv6_rule_id = rule->ipv6_rule->rule_id;
 		DEBUG_PRINTF("schc_decompress(): IPv6 rule id=%d \n", ipv6_rule_id);
 #endif
 	} else {
@@ -1098,7 +1045,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 			MAX_COAP_MSG_SIZE };
 #endif
 
-	if (compare_bits(bit_arr->ptr, UNCOMPRESSED_ID, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
+	uint8_t compressed_id[4] = { 0 };
+	little_end_uint8_from_uint32(compressed_id, UNCOMPRESSED_ID); /* copy the uint32_t to a uint8_t array */
+	if (compare_bits(bit_arr->ptr, compressed_id, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
 #if USE_IP6 == 1
 		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
 		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
@@ -1130,7 +1079,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 #if USE_IP6 == 1
 		if (ipv6_rule_id != 0) {
-			ret = decompress((struct schc_layer_rule_t *) rule->compression_rule->ipv6_rule, bit_arr, &dst_arr, dir);
+			ret = decompress((struct schc_layer_rule_t *) rule->ipv6_rule, bit_arr, &dst_arr, dir);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1139,7 +1088,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 #if USE_UDP == 1
 		if (udp_rule_id != 0) {
-			ret = decompress((struct schc_layer_rule_t *) (rule->compression_rule->udp_rule), bit_arr, &dst_arr, dir);
+			ret = decompress((struct schc_layer_rule_t *) (rule->udp_rule), bit_arr, &dst_arr, dir);
 			if (ret == 0) {
 				return 0; // no rule was found
 			}
@@ -1147,7 +1096,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 #if USE_COAP == 1
 		if (coap_rule_id != 0) {
-			coap_offset = decompress_coap_rule((struct schc_coap_rule_t *) rule->compression_rule->coap_rule, bit_arr, &pcoap_msg, dir);
+			coap_offset = decompress_coap_rule((struct schc_coap_rule_t *) rule->coap_rule, bit_arr, &pcoap_msg, dir);
 			if (coap_offset == 0) {
 				return 0; // no rule was found
 			}

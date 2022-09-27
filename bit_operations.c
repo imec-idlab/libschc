@@ -14,6 +14,20 @@
 #include <click/config.h>
 #endif
 
+/*
+ * copy the contents of a uint32_t to a uint8_t array
+ * with little endianess
+ *
+ * @param A				the bit array
+ * @param u32			the uint32
+ */
+void little_end_uint8_from_uint32 (uint8_t A[4], uint32_t u32) {
+    A[0] = (uint8_t)(u32);
+    A[1] = (uint8_t)(u32>>=8);
+    A[2] = (uint8_t)(u32>>=8);
+    A[3] = (uint8_t)(u32>>=8);
+}
+
 /**
  * sets bits at a certain position in a bit array
  * big endian

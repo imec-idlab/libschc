@@ -1,5 +1,7 @@
 #include "../schc.h"
+#include "../picocoap.h"
 
+/* first build the compression rules separately per layer */
 #if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
@@ -179,7 +181,9 @@ const static struct schc_coap_rule_t coap_rule4 = {
 };
 #endif
 
+/* next build the compression rules from the rules that make up a single layer */
 const struct schc_compression_rule_t compression_rule_1 = {
+		0x01,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
@@ -192,6 +196,7 @@ const struct schc_compression_rule_t compression_rule_1 = {
 };
 
 const struct schc_compression_rule_t compression_rule_2 = {
+		0x02,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
@@ -204,6 +209,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 };
 
 const struct schc_compression_rule_t compression_rule_3 = {
+		0x03,
 #if USE_IP6
 		&ipv6_rule2,
 #endif
@@ -216,6 +222,7 @@ const struct schc_compression_rule_t compression_rule_3 = {
 };
 
 const struct schc_compression_rule_t compression_rule_4 = {
+		0x04,
 #if USE_IP6
 		&ipv6_rule3,
 #endif
@@ -227,43 +234,60 @@ const struct schc_compression_rule_t compression_rule_4 = {
 #endif
 };
 
-const uint8_t UNCOMPRESSED_ID[RULE_SIZE_BYTES] = { 0x00 }; // the rule id for an uncompressed packet
-// todo
-// const uint8_t UNCOMPRESSED_NO_ACK_ID[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ON_ERR[RULE_SIZE_BYTES] = { 0 };
-// const uint8_t UNCOMPRESSED_ACK_ALWAYS[RULE_SIZE_BYTES] = { 0 };
+/* now build the fragmentation rules */
+const struct schc_fragmentation_rule_t fragmentation_rule_1 = {
+		0x01,
+		NOT_FRAGMENTED,
+		BI,
+		0, 	/* FCN size */
+		0, 	/* maximum fragments per window */
+		0, 	/* window size */
+		0 	/* DTAG size */
+};
 
-const struct schc_rule_t schc_rule_1 = { 0x01, &compression_rule_1, NOT_FRAGMENTED, 0, 0, 0, 0 };
-// const struct schc_rule_t schc_rule_1 = { { 0x00, 0x01} , &registration_rule, NOT_FRAGMENTED, 0, 0, 0, 0 }; // for rule id's > 8 bits
+const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
+		0x02,
+		NO_ACK,
+		BI,
+		1, 	/* FCN size */
+		0, 	/* maximum fragments per window */
+		0, 	/* window size */
+		0 	/* DTAG size */
+};
 
-const struct schc_rule_t schc_rule_2 = { 0x02, &compression_rule_1, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_3 = { 0x03, &compression_rule_1, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_4 = { 0x04, &compression_rule_1, ACK_ALWAYS, 3, 6, 1, 0 };
+const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
+		0x03,
+		ACK_ON_ERROR,
+		BI,
+		3, 	/* FCN size */
+		6, 	/* maximum fragments per window */
+		1, 	/* window size */
+		0 	/* DTAG size */
+};
 
-const struct schc_rule_t schc_rule_5 = { 0x05, &compression_rule_2, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_6 = { 0x06, &compression_rule_2, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_7 = { 0x07, &compression_rule_2, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_8 = { 0x08, &compression_rule_2, ACK_ALWAYS, 3, 6, 1, 0 };
+const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
+		0x04,
+		ACK_ALWAYS,
+		BI,
+		3, 	/* FCN size */
+		6, 	/* maximum fragments per window */
+		1, 	/* window size */
+		0 	/* DTAG size */
+};
 
-const struct schc_rule_t schc_rule_9 	= { 0x09, &compression_rule_3, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_10 	= { 0x0A, &compression_rule_3, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_11 	= { 0x0B, &compression_rule_3, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_12 	= { 0x0C, &compression_rule_3, ACK_ALWAYS, 3, 6, 1, 0 };
+/* save compression rules in flash */
+const struct schc_compression_rule_t* node1_compression_rules[] = {
+		&compression_rule_1, &compression_rule_2, &compression_rule_3, &compression_rule_4
+};
 
-const struct schc_rule_t schc_rule_13 	= { 0x0D, &compression_rule_4, NOT_FRAGMENTED, 0, 0, 0, 0 };
-const struct schc_rule_t schc_rule_14 	= { 0x0E, &compression_rule_4, NO_ACK, 1, 0, 0, 0 };
-const struct schc_rule_t schc_rule_15 	= { 0x0F, &compression_rule_4, ACK_ON_ERROR, 3, 6, 1, 0 };
-const struct schc_rule_t schc_rule_16 	= { 0x10, &compression_rule_4, ACK_ALWAYS, 3, 6, 1, 0 };
+/* save fragmentation rules in flash */
+const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
+		&fragmentation_rule_1, &fragmentation_rule_2, &fragmentation_rule_3, &fragmentation_rule_4
+};
 
-/* save rules in flash */
-const struct schc_rule_t* node1_schc_rules[] = { &schc_rule_1, &schc_rule_2,
-                &schc_rule_3, &schc_rule_4, &schc_rule_5, &schc_rule_6, &schc_rule_7,
-                &schc_rule_8, &schc_rule_9, &schc_rule_10, &schc_rule_11, &schc_rule_12,
-                &schc_rule_13, &schc_rule_14, &schc_rule_15, &schc_rule_16 };
-
-/* rules for a particular device */
-const struct schc_device node1 = { 0x06, 16, &node1_schc_rules };
-const struct schc_device node2 = { 0x01, 16, &node1_schc_rules };
+/* now build the context for a particular device */
+const struct schc_device node1 = { 0x06, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
+const struct schc_device node2 = { 0x01, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
 
 #define DEVICE_COUNT			2
 

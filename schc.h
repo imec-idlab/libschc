@@ -1,5 +1,5 @@
-#ifndef COMPRESSOR_CONFIG_H_
-#define COMPRESSOR_CONFIG_H_
+#ifndef __SCHC_H__
+#define __SCHC_H__
 
 #include "schc_config.h"
 
@@ -197,6 +197,7 @@ struct schc_layer_rule_t {
 };
 
 struct schc_compression_rule_t {
+	uint32_t rule_id;
 #if USE_IP6 == 1
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
@@ -213,7 +214,7 @@ struct schc_compression_rule_t {
 
 struct schc_fragmentation_rule_t {
 	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
-	uint32_t id;
+	uint32_t rule_id;
 	/* the reliability mode */
 	reliability_mode mode;
 	/* the direction */
@@ -228,23 +229,17 @@ struct schc_fragmentation_rule_t {
 	uint8_t DTAG_SIZE;
 };
 
-struct schc_rule_t { // backward compatibility
-	uint8_t id[RULE_SIZE_BYTES];
-	struct schc_compression_rule_t* compression_rule;
-	reliability_mode mode;
-	uint8_t FCN_SIZE;
-	uint8_t MAX_WND_FCN;
-	uint8_t WINDOW_SIZE;
-	uint8_t DTAG_SIZE;
-};
-
 struct schc_device {
 	/* the device id (e.g. EUI) */
 	uint32_t device_id;
-	/* the total number of rules for a device */
-	uint8_t rule_count;
-	/* a pointer to the collection of rules for a device */
-	const struct schc_rule_t *(*context)[];
+	/* the total number of compression rules for a device */
+	uint8_t compression_rule_count;
+	/* a pointer to the collection of compression rules for a device */
+	const struct schc_compression_rule_t *(*compression_context)[];
+	/* the total number of fragmentation rules for a device */
+	uint8_t fragmentation_rule_count;
+	/* a pointer to the collection of compression rules for a device */
+	const struct schc_fragmentation_rule_t *(*fragmentation_context)[];
 };
 
 typedef uint8_t schc_ip6addr_t[16];
@@ -270,5 +265,7 @@ uint8_t mo_equal(struct schc_field* target_field, unsigned char* field_value, ui
 uint8_t mo_ignore(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
+
+struct schc_device* get_device_by_id(uint32_t device_id);
 
 #endif

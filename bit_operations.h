@@ -20,6 +20,8 @@ extern "C" {
 #define BYTES_TO_BITS(x)	(x * 8)
 #define BITS_TO_BYTES(x)	(((x) == 0) ? 0 : (((x) - 1) / 8 + 1)) // bytes required for a number of bits
 
+void little_end_uint8_from_uint32 (uint8_t A[4], uint32_t u32);
+
 // sets bits at a certain position in a bit array
 void set_bits(uint8_t A[], uint32_t pos, uint32_t len);
 
