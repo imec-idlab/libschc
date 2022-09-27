@@ -40,18 +40,6 @@ extern "C" {
 #define COAP_EXCHANGE_LIFETIME  247
 #define COAP_NON_LIFETIME       145
 
-// total number of CoAP options available
-#define COAP_OPTIONS_LENGTH		16
-
-/*
- * this struct and the corresponding names are added
- * so we can check the fields in the SCHC header
- */
-typedef struct pcoap_option_names {
-	uint16_t id;
-	char name[16];
-} pcoap_option_names;
-
 ///
 /// Status Codes
 ///

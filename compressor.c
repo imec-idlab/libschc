@@ -25,29 +25,6 @@
 jsmn_parser json_parser;
 jsmntok_t json_token[JSON_TOKENS];
 
-// ToDo
-// separate protocol parsers
-#if USE_COAP == 1
-pcoap_option_names coap_options[COAP_OPTIONS_LENGTH] = {
-		{ 1, "if-match" },
-		{ 3, "uri-host" },
-		{ 4, "etag" },
-		{ 5, "if-none-match" },
-		{ 7, "uri-port" },
-		{ 8, "location-path" },
-		{ 11, "uri-path"} ,
-		{ 12, "content-format" },
-		{ 14, "max-age" },
-		{ 15, "uri-query" },
-		{ 17, "accept" },
-		{ 20, "location-query" },
-		{ 35, "proxy-uri" },
-		{ 39, "proxy-scheme" },
-		{ 60, "size1" },
-		{ 258, "no-response"}
-};
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////
 //                                LOCAL FUNCIONS                                  //
 ////////////////////////////////////////////////////////////////////////////////////
@@ -501,13 +478,13 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 		}
 #endif
 #if USE_UDP == 1 
-		if(layer == SCHC_UDP) {
+		else if(layer == SCHC_UDP) {
 			max_layer_fields = UDP_FIELDS;
 			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->udp_rule;
 		}
 #endif
 #if USE_COAP == 1
-		if (layer == SCHC_COAP) {
+		else if (layer == SCHC_COAP) {
 			max_layer_fields = COAP_FIELDS;
 			curr_rule = (struct schc_layer_rule_t*) (*device->context)[i]->compression_rule->coap_rule;
 		}
@@ -532,7 +509,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 						(uint8_t*) (src->ptr + src_pos), (src->offset % 8))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
 					DEBUG_PRINTF(
-							"schc_find_rule_from_header(): skipped rule %02d, %s does not match\n", (*device->context)[i]->id[0], curr_rule->content[k].field);
+							"schc_find_rule_from_header(): skipped rule %02d, %s does not match\n", (*device->context)[i]->id[0], schc_header_field_names[curr_rule->content[k].field]);
 					src->offset = prev_offset; // reset offset
 					break;
 				} else {
@@ -646,12 +623,12 @@ static uint8_t decompress_coap_rule(struct schc_coap_rule_t* rule,
 
 		for(i = 0; i < rule->length; i++) { // now the options
 			if( ( (rule->content[i].dir) == BI) || ( (rule->content[i].dir) == DI)) {
-				uint8_t j;
+				COAPO_fields option;
 				// check which options are included in the rule
-				for(j = 0; j < COAP_OPTIONS_LENGTH; j++) {
-					if( !strcmp(rule->content[i].field, coap_options[j].name) ) {
+				for(option = COAP_IFMATCH; option < COAP_OPTIONS_MAX; option++) { // todo should not take COAP_OPTIONS_MAX iterations
+					if( rule->content[i].field == option ) {
 						// for each matching value, create a new option in the message
-						pcoap_add_option(msg, coap_options[j].id,
+						pcoap_add_option(msg, option,
 								(uint8_t*) (dst.ptr + field_length),
  								(rule->content[i].field_length / 8));
 						field_length += (rule->content[i].field_length / 8); // increased length matches option length
@@ -844,7 +821,6 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 	struct schc_rule_t* schc_rule;
 	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 
-	dst->offset = RULE_SIZE_BITS;
 	/* buf must at least packet length + RULE_SIZE_BYTES */
 	memset(dst->ptr, 0, total_length + RULE_SIZE_BYTES);
 	/* use bit array for comparison */
@@ -902,11 +878,12 @@ struct schc_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 			udp_rule_id, coap_rule_id, device_id, NOT_FRAGMENTED);
 
 	set_rule_id(schc_rule, dst->ptr);
+	dst->offset = RULE_SIZE_BITS;
 
 	if(schc_rule == NULL) {
 		DEBUG_PRINTF("schc_compress(): no rule was found \n");
 		/* if no rule was found and the use of a specific layer is set to 0,
-		 * we expect that these are not present in the original packet
+		 * we expect that headers from these layers are not present in the original packet
 		 */
 #if USE_IP6 == 1
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
@@ -1170,9 +1147,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 #if USE_COAP == 1
 		if (coap_rule_id != 0) {
-			coap_offset = decompress_coap_rule(
-							(struct schc_coap_rule_t *) rule->compression_rule->coap_rule,
-							bit_arr, &pcoap_msg, dir);
+			coap_offset = decompress_coap_rule((struct schc_coap_rule_t *) rule->compression_rule->coap_rule, bit_arr, &pcoap_msg, dir);
 			if (coap_offset == 0) {
 				return 0; // no rule was found
 			}

@@ -53,24 +53,72 @@ typedef struct schc_bitarray_t {
 }
 
 typedef enum {
-	IPv6_V,
-	IPv6_TC,
-	IPv6_FL,
-	IPv6_LEN,
-	IPv6_NH,
-	IPv6_HL,
-	IPv6_SRCPRF,
-	IPv6_SRCIID,
-	IPv6_DSTPRF,
-	IPv6_DSTIID
-} IPv6_fields;
+	COAP_IFMATCH = 1,
+	COAP_URIHOST = 3,
+	COAP_ETAG = 4,
+	COAP_IFNOMATCH = 5,
+	COAP_URIPORT = 7,
+	COAP_LOCPATH = 8,
+	COAP_URIPATH = 11,
+	COAP_CONTENTF = 12,
+	COAP_MAXAGE = 14,
+	COAP_URIQUERY = 15,
+	COAP_ACCEPT = 17,
+	COAP_LOCQUERY = 20,
+	COAP_PROXYURI = 35,
+	COAP_PROXYSCH = 39,
+	COAP_SIZE1 = 60,
+	COAP_NORESP = 258,
+	COAP_OPTIONS_MAX = 259 /* set this to the largest CoAP option value + 1 */
+} COAPO_fields;
 
 typedef enum {
+	IP6_V = 1024, /* this must be larger than the largest CoAP Option Value in order not to interfere with it */
+	IP6_TC,
+	IP6_FL,
+	IP6_LEN,
+	IP6_NH,
+	IP6_HL,
+	IP6_SRCPRE,
+	IP6_SRCIID,
+	IP6_DSTPRE,
+	IP6_DSTIID,
 	UDP_SRC,
 	UDP_DST,
 	UDP_LEN,
-	UDP_CHK
-} UDP_fields;
+	UDP_CHK,
+	COAP_V,
+	COAP_T,
+	COAP_TKL,
+	COAP_C,
+	COAP_MID,
+	COAP_TKN,
+	COAP_PAYLOAD
+} schc_header_fields;
+
+static const char * const schc_header_field_names[] = {
+	[IP6_V] = "IPv6 Version",
+	[IP6_TC] = "IPv6 Traffic Class",
+	[IP6_FL] = "IPv6 Field Length",
+	[IP6_LEN] = "IPv6 Length",
+	[IP6_NH] = "IPv6 Next Header",
+	[IP6_HL] = "IPv6 Hop Limit",
+	[IP6_SRCPRE] = "IPv6 Source Prefix",
+	[IP6_SRCIID] = "IPv6 Source IID",
+	[IP6_DSTPRE] = "IPv6 Destination Prefix",
+	[IP6_DSTIID] = "IPv6 Destination IID",
+	[UDP_SRC] = "UDP Source Port",
+	[UDP_DST] = "UDP Destination Port",
+	[UDP_LEN] = "UDP Length",
+	[UDP_CHK] = "UDP Checksum",
+	[COAP_V] = "CoAP Version",
+	[COAP_T] = "CoAP Type",
+	[COAP_TKL] = "CoAP Token Length",
+	[COAP_C] = "CoAP Code",
+	[COAP_MID] = "CoAP Message ID",
+	[COAP_TKN] = "CoAP Token",
+	[COAP_PAYLOAD] = "CoAP Payload Marker"
+};
 
 typedef enum {
 	UP = 0, DOWN = 1, BI = 2
@@ -98,7 +146,7 @@ typedef enum {
 } reliability_mode;
 
 struct schc_field {
-	char field[32];
+	uint16_t field;
 	uint8_t MO_param_length; // indicate number of bits for MSB and LSB or list length for MATCH-MAP
 	uint8_t field_length; // in bits
 	uint8_t field_pos;
@@ -111,7 +159,7 @@ struct schc_field {
 // specific protocol layer structure
 #if USE_IP6 == 1
 struct schc_ipv6_rule_t {
-	uint16_t rule_id;
+	uint32_t rule_id; /*pcoap_option_names the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -121,7 +169,7 @@ struct schc_ipv6_rule_t {
 
 #if USE_UDP == 1
 struct schc_udp_rule_t {
-	uint16_t rule_id;
+	uint32_t rule_id; /* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -131,7 +179,7 @@ struct schc_udp_rule_t {
 
 #if USE_COAP == 1
 struct schc_coap_rule_t {
-	uint16_t rule_id;
+	uint32_t rule_id; /* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -141,7 +189,7 @@ struct schc_coap_rule_t {
 
 // structure to allow generic compression of each layer
 struct schc_layer_rule_t {
-	uint16_t rule_id;
+	uint32_t rule_id;
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -163,13 +211,13 @@ struct schc_compression_rule_t {
 #endif
 };
 
-struct schc_rule_t {
-	/* the rule id */
-	uint8_t id[RULE_SIZE_BYTES];
-	/* a pointer to the SCHC rule */
-	const struct schc_compression_rule_t *compression_rule;
+struct schc_fragmentation_rule_t {
+	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
+	uint32_t id;
 	/* the reliability mode */
 	reliability_mode mode;
+	/* the direction */
+	direction dir;
 	/* the fcn size in bits */
 	uint8_t FCN_SIZE;
 	/* the maximum number of fragments per window */
@@ -177,6 +225,16 @@ struct schc_rule_t {
 	/* the window size in bits */
 	uint8_t WINDOW_SIZE;
 	/* the dtag size in bits */
+	uint8_t DTAG_SIZE;
+};
+
+struct schc_rule_t { // backward compatibility
+	uint8_t id[RULE_SIZE_BYTES];
+	struct schc_compression_rule_t* compression_rule;
+	reliability_mode mode;
+	uint8_t FCN_SIZE;
+	uint8_t MAX_WND_FCN;
+	uint8_t WINDOW_SIZE;
 	uint8_t DTAG_SIZE;
 };
 
