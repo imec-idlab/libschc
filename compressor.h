@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint8_t* data);
+int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint32_t device_id, uint8_t* data);
 
 uint8_t schc_compressor_init();
 struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
