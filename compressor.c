@@ -829,7 +829,9 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 	schc_rule = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id);
 
-	set_rule_id(schc_rule, device_id, dst->ptr);
+	if (set_rule_id(schc_rule, device_id, dst->ptr) != 1) {
+		return NULL;
+	}
 	dst->offset = RULE_SIZE_BITS;
 
 	if(schc_rule == NULL) {
