@@ -31,13 +31,14 @@ jsmntok_t json_token[JSON_TOKENS];
  * Set the rule id of the compressed packet
  *
  * @param 	schc_rule 		the schc rule to use
+ * @param	device_id		the ID of the device @p data will be sent over
  * @param 	data			the compressed packet buffer
  *
  * @return 	err				error codes
  * 			1				SUCCESS
  *
  */
-int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint8_t* data) {
+int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint32_t device_id, uint8_t* data) {
 	// copy rule id in front of the buffer
 	uint8_t pos = get_position_in_first_byte(RULE_SIZE_BITS);
 	clear_bits(data, 0, RULE_SIZE_BITS); // clear bits before setting
@@ -46,7 +47,12 @@ int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, uint8_t* data) {
 	if(schc_rule != NULL) {
 		little_end_uint8_from_uint32(rule_id, schc_rule->rule_id); /* copy the uint32_t to a uint8_t array */
 	} else {
-		little_end_uint8_from_uint32(rule_id, UNCOMPRESSED_ID); /* copy the uint32_t to a uint8_t array */
+		struct schc_device *device = get_device_by_id(device_id);
+		if (!device) {
+			return 0;
+		}
+		/* copy the uint32_t to a uint8_t array */
+		little_end_uint8_from_uint32(rule_id, device->uncomp_rule_id);
 	}
 
 	copy_bits(data, 0, rule_id, pos, RULE_SIZE_BITS); /* set the rule id */
@@ -118,9 +124,8 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(uint8_t ip_rul
  * 			NULL			if no rule was found
  *
  */
-static struct schc_compression_rule_t* get_compression_rule_by_rule_id(uint8_t* rule_arr, uint32_t device_id) {
+static struct schc_compression_rule_t* get_compression_rule_by_rule_id(uint8_t* rule_arr, struct schc_device *device) {
 	int i;
-	struct schc_device *device = get_device_by_id(device_id);
 
 	if (device == NULL) {
 		DEBUG_PRINTF("get_schc_rule(): no device was found for this id \n");
@@ -824,7 +829,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 	schc_rule = get_schc_rule_by_layer_ids(ipv6_rule_id,
 			udp_rule_id, coap_rule_id, device_id);
 
-	set_rule_id(schc_rule, dst->ptr);
+	set_rule_id(schc_rule, device_id, dst->ptr);
 	dst->offset = RULE_SIZE_BITS;
 
 	if(schc_rule == NULL) {
@@ -1010,6 +1015,7 @@ uint16_t compute_checksum(unsigned char *data) {
 uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir) {
 	uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
+	struct schc_device *device = get_device_by_id(device_id);
 
 	// prepare output buffer
 	bit_arr->offset = RULE_SIZE_BITS;
@@ -1017,7 +1023,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("schc_decompress(): \n");
 
-	struct schc_compression_rule_t *rule = get_compression_rule_by_rule_id(bit_arr->ptr, device_id);
+	struct schc_compression_rule_t *rule = get_compression_rule_by_rule_id(bit_arr->ptr, device);
 
 	if(rule != NULL) {
 #if USE_COAP == 1
@@ -1046,7 +1052,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 #endif
 
 	uint8_t compressed_id[4] = { 0 };
-	little_end_uint8_from_uint32(compressed_id, UNCOMPRESSED_ID); /* copy the uint32_t to a uint8_t array */
+	little_end_uint8_from_uint32(compressed_id, device->uncomp_rule_id); /* copy the uint32_t to a uint8_t array */
 	if (compare_bits(bit_arr->ptr, compressed_id, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
 #if USE_IP6 == 1
 		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));

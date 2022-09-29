@@ -286,8 +286,8 @@ const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
 };
 
 /* now build the context for a particular device */
-const struct schc_device node1 = { 0x06, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
-const struct schc_device node2 = { 0x01, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
+const struct schc_device node1 = { 0x06, 0, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
+const struct schc_device node2 = { 0x01, 0, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
 
 #define DEVICE_COUNT			2
 
