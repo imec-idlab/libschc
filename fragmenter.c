@@ -234,7 +234,10 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
  */
 uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0;
-	conn->bit_arr->padding = 0;
+	if (conn->bit_arr) {
+		/* we return a bit array without padding from the fragmenter */
+		conn->bit_arr->padding = 0;
+	}
 
 	if(conn->fragmentation_rule == NULL)
 		return curr->len;
@@ -247,9 +250,7 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 		curr = curr->next;
 	}
 
-	conn->bit_arr->padding = 8 - (total_len % 8); // add extra padding added during reassembly
-
-	return (uint16_t) ( ((total_len) + (8 - 1)) / 8 ); // this returns 1 byte extra in case of a padded packet
+	return (uint16_t) ( (total_len) / 8 );
 }
 
 /**
@@ -283,7 +284,7 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 	}
 
 	int32_t remaining_bits = mbuf_bit_len - (*offset);
-	DEBUG_PRINTF("total length %d, remaining bits %d, current offset %d: ", mbuf_bit_len, remaining_bits, *offset);
+	// DEBUG_PRINTF("total length %d, remaining bits %d, current offset %d: ", mbuf_bit_len, remaining_bits, *offset);
 
 	if (remaining_bits > 8) {
 		copy_bits(byte_arr, start_offset, curr->ptr, (*offset), (8 - start_offset));
@@ -299,7 +300,7 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 		*offset = remaining_bits;
 	}
 
-	DEBUG_PRINTF("0x%02X \n", byte_arr[0]);
+	// DEBUG_PRINTF("0x%02X \n", byte_arr[0]);
 
 	return byte_arr[0];
 }
@@ -318,7 +319,8 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 
 	uint8_t index = 0; uint32_t curr_bit_offset = 0;
 
-	if ( (!conn) | (conn->fragmentation_rule->mode == NOT_FRAGMENTED) ) {
+	if ( (!conn) || (!conn->fragmentation_rule) ||
+         (conn->fragmentation_rule->mode == NOT_FRAGMENTED) ) {
 		int i;
 		for (i = 0; i < curr->len; i++) {
 			ptr[i] = curr->ptr[i];
@@ -326,8 +328,6 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 		return;
 	}
 
-	/* todo non byte-aligned L2 words
-	 * if we have a byte aligned L2 word, we know that the last tile with less than 8 bits offset is padding */
 	while (curr != NULL) {
 		uint32_t temp_offset = curr_bit_offset;
 		ptr[index] = mbuf_get_byte(prev, curr, conn, &curr_bit_offset);

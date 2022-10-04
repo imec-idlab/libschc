@@ -1005,7 +1005,7 @@ uint16_t compute_checksum(unsigned char *data) {
 /**
  * Construct the header from the layered set of rules
  *
- * @param 	data 				pointer to the received data
+ * @param 	bit_arr				pointer to the received data
  * @param 	buf	 				pointer where to save the decompressed packet
  * @param 	device_id 			the device its id
  * @param 	total_length 		the total length of the received data
@@ -1018,9 +1018,6 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir) {
 	uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
 	struct schc_device *device = get_device_by_id(device_id);
-
-	// prepare output buffer
-	bit_arr->offset = RULE_SIZE_BITS;
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("schc_decompress(): \n");
@@ -1053,9 +1050,14 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 			MAX_COAP_MSG_SIZE };
 #endif
 
+	/* indicate initial offset in the source array */
+	bit_arr->offset = RULE_SIZE_BITS;
+
+	/* copy rule id */
 	uint8_t compressed_id[4] = { 0 };
 	little_end_uint8_from_uint32(compressed_id, device->uncomp_rule_id); /* copy the uint32_t to a uint8_t array */
-	if (compare_bits(bit_arr->ptr, compressed_id, RULE_SIZE_BITS)) { // uncompressed packet, copy uncompressed headers
+
+	if (compare_bits(bit_arr->ptr, compressed_id, RULE_SIZE_BITS)) { /* uncompressed packet, copy uncompressed headers */
 #if USE_IP6 == 1
 		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
 		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
@@ -1079,11 +1081,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		bit_arr->offset += coap_len;
 #endif
 	} else { // compressed packet, decompress with residue and rule
-		bit_arr->offset = RULE_SIZE_BITS;
-
 		schc_bitarray_t dst_arr;
 		dst_arr.ptr = buf;
-		dst_arr.offset = 0;
+		dst_arr.offset = 0; /* there is no offset (yet) in the destination array */
 
 #if USE_IP6 == 1
 		if (ipv6_rule_id != 0) {
@@ -1111,6 +1111,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		}
 #endif
 	}
+
+	/* calculate padding */
+	bit_arr->padding = padded(bit_arr);
 
 	uint8_t new_header_length = (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP) + coap_offset;
 	uint16_t payload_bit_length = BYTES_TO_BITS(total_length) - bit_arr->offset - bit_arr->padding; // the schc header minus the total length is the payload length

@@ -131,6 +131,8 @@ void end_rx(schc_fragmentation_t *conn) {
 	/* copy the packet from the mbuf list */
 	mbuf_copy(conn, compressed_packet);
 
+	DEBUG_PRINTF("\n\n");
+
 #if COMPRESS
 	DEBUG_PRINTF("end_rx(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
