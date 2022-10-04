@@ -226,7 +226,7 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
 }
 
 /**
- * returns the total length of the mbuf
+ * returns the total length of the mbuf without padding
  *
  * @param  head			the head of the list
  *
@@ -247,7 +247,6 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 		curr = curr->next;
 	}
 
-	total_len += conn->RULE_SIZE; // added in front of compressed packet
 	conn->bit_arr->padding = 8 - (total_len % 8); // add extra padding added during reassembly
 
 	return (uint16_t) ( ((total_len) + (8 - 1)) / 8 ); // this returns 1 byte extra in case of a padded packet
@@ -284,7 +283,7 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 	}
 
 	int32_t remaining_bits = mbuf_bit_len - (*offset);
-	// DEBUG_PRINTF("total length %d, remaining bits %d, current offset %d: ", mbuf_bit_len, remaining_bits, *offset);
+	DEBUG_PRINTF("total length %d, remaining bits %d, current offset %d: ", mbuf_bit_len, remaining_bits, *offset);
 
 	if (remaining_bits > 8) {
 		copy_bits(byte_arr, start_offset, curr->ptr, (*offset), (8 - start_offset));
@@ -300,7 +299,7 @@ static uint8_t mbuf_get_byte(schc_mbuf_t *prev, schc_mbuf_t *curr, schc_fragment
 		*offset = remaining_bits;
 	}
 
-	// DEBUG_PRINTF("0x%02X \n", byte_arr[0]);
+	DEBUG_PRINTF("0x%02X \n", byte_arr[0]);
 
 	return byte_arr[0];
 }
@@ -327,6 +326,8 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 		return;
 	}
 
+	/* todo non byte-aligned L2 words
+	 * if we have a byte aligned L2 word, we know that the last tile with less than 8 bits offset is padding */
 	while (curr != NULL) {
 		uint32_t temp_offset = curr_bit_offset;
 		ptr[index] = mbuf_get_byte(prev, curr, conn, &curr_bit_offset);
@@ -605,6 +606,7 @@ struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(rel
 	return NULL;
 }
 
+// todo move to schc.c generic function for both this method and get_compression_rule_by_rule_id
 
 /*
  * Find a SCHC rule entry for a device
@@ -713,6 +715,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		}
 	}
 
+	// todo make generic function in schc.c
 	uint8_t rule_id[4] = { 0 };
 	uint8_t pos = get_position_in_first_byte(conn->RULE_SIZE);
 	little_end_uint8_from_uint32(rule_id, conn->fragmentation_rule->rule_id); /* copy the uint32_t to a uint8_t array */
@@ -846,15 +849,13 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 	if (bits_transmitted) { // all-1 fragment
 		uint32_t total_bits_to_transmit = conn->bit_arr->bit_len; // effective payload bits
 		// to use for RCS calculation
-		int8_t bits_left_to_transmit = (total_bits_to_transmit
-				- bits_transmitted);
+		int8_t bits_left_to_transmit = (total_bits_to_transmit - bits_transmitted);
 		uint8_t padding = 0;
 		if (bits_left_to_transmit < 0) { // RCS in separate packet
 			uint16_t prev_header_bits = (conn->RULE_SIZE
 					+ conn->fragmentation_rule->WINDOW_SIZE + conn->fragmentation_rule->FCN_SIZE
 					+ conn->fragmentation_rule->DTAG_SIZE) * (conn->frag_cnt - 1);
-			bits_left_to_transmit = (total_bits_to_transmit + prev_header_bits)
-					% 8; // we might need some extra bits from the last byte
+			bits_left_to_transmit = (total_bits_to_transmit + prev_header_bits) % 8; // we might need some extra bits from the last byte
 		}
 
 		padding = 8 - ((bit_offset +  (MIC_SIZE_BYTES * 8) + bits_left_to_transmit) % 8);

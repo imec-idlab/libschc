@@ -232,6 +232,7 @@ struct schc_fragmentation_rule_t {
 struct schc_device {
 	/* the device id (e.g. EUI) */
 	uint32_t device_id;
+	/* the rule id to use when a packet remains uncompressed */
 	uint32_t uncomp_rule_id;
 	/* the total number of compression rules for a device */
 	uint8_t compression_rule_count;

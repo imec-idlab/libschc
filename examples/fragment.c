@@ -20,7 +20,7 @@
 
 #include "timer.h"
 
-#define COMPRESS				0 /* indicate to start fragmentation with or without compression first */
+#define COMPRESS				1 /* indicate to start fragmentation with or without compression first */
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -306,27 +306,27 @@ int main() {
 #if COMPRESS
 	schc_bitarray_t bit_arr;
 	uint8_t compressed_packet[MAX_PACKET_LENGTH];
-	bit_arr.ptr 			= (uint8_t*) (compressed_packet); /* provide a pointer to the buffer to store the compressed packet */
-	schc_rule 				= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
+	bit_arr.ptr 				= (uint8_t*) (compressed_packet); /* provide a pointer to the buffer to store the compressed packet */
+	schc_rule 					= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
 #else
-	schc_bitarray_t bit_arr	= SCHC_DEFAULT_BIT_ARRAY(252, &msg);
+	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(252, &msg);
 #endif
 
 	/* L2 connection information */
-	tx_conn.mtu 			= 121; /* network driver MTU */
-	tx_conn.dc 				= 1000; /* duty cycle in ms */
-	tx_conn.device_id 		= device_id; /* the device id of the connection */
+	tx_conn.mtu 				= 121; /* network driver MTU */
+	tx_conn.dc 					= 1000; /* duty cycle in ms */
+	tx_conn.device_id 			= device_id; /* the device id of the connection */
 
 	/* SCHC callbacks */
-	tx_conn.send 			= &tx_send_callback;
-	tx_conn.end_tx			= &end_tx;
-	tx_conn.post_timer_task = &set_tx_timer;
+	tx_conn.send 				= &tx_send_callback;
+	tx_conn.end_tx				= &end_tx;
+	tx_conn.post_timer_task 	= &set_tx_timer;
 
 	/* SCHC connection information */
-	tx_conn.fragmentation_rule
-							= get_fragmentation_rule_by_reliability_mode(NO_ACK, device_id);
-	tx_conn.RULE_SIZE 		= RULE_SIZE_BITS;
-	tx_conn.bit_arr 		= &bit_arr;
+	tx_conn.fragmentation_rule 	= get_fragmentation_rule_by_reliability_mode(
+			NO_ACK, device_id);
+	tx_conn.RULE_SIZE 			= RULE_SIZE_BITS;
+	tx_conn.bit_arr 			= &bit_arr;
 
 
 	if (schc_rule == NULL) {

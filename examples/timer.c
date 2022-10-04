@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <poll.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "timer.h"
 
