@@ -234,7 +234,9 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
  */
 uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 	schc_mbuf_t *curr = conn->head; uint32_t total_len = 0;
-	conn->bit_arr->padding = 0;
+	if (conn->bit_arr) {
+		conn->bit_arr->padding = 0;
+	}
 
 	if(conn->fragmentation_rule == NULL)
 		return curr->len;
@@ -248,7 +250,9 @@ uint16_t get_mbuf_len(schc_fragmentation_t *conn) {
 	}
 
 	total_len += conn->RULE_SIZE; // added in front of compressed packet
-	conn->bit_arr->padding = 8 - (total_len % 8); // add extra padding added during reassembly
+	if (conn->bit_arr) {
+		conn->bit_arr->padding = 8 - (total_len % 8); // add extra padding added during reassembly
+	}
 
 	return (uint16_t) ( ((total_len) + (8 - 1)) / 8 ); // this returns 1 byte extra in case of a padded packet
 }
@@ -319,7 +323,8 @@ void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr) {
 
 	uint8_t index = 0; uint32_t curr_bit_offset = 0;
 
-	if ( (!conn) | (conn->fragmentation_rule->mode == NOT_FRAGMENTED) ) {
+	if ( (!conn) || (!conn->fragmentation_rule) ||
+         (conn->fragmentation_rule->mode == NOT_FRAGMENTED) ) {
 		int i;
 		for (i = 0; i < curr->len; i++) {
 			ptr[i] = curr->ptr[i];
