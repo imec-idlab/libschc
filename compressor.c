@@ -1082,37 +1082,35 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 	uint8_t new_header_length = 0;
 
+	/* todo
+	 * we have no way of knowing which layers were selected at the compression side
+	 * e.g. using ICMPv6 packets and CoAP packets
+	 */
 	if (compare_bits(bit_arr->ptr, compressed_id, RULE_SIZE_BITS)) { /* uncompressed packet, copy uncompressed headers */
 #if USE_IP6 == 1
-		if(rule->ipv6_rule != NULL) {
-			copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
-			bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
-			new_header_length += IP6_HLEN;
-		}
+		copy_bits(buf, 0, bit_arr->ptr, RULE_SIZE_BITS, BYTES_TO_BITS(IP6_HLEN));
+		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
+		new_header_length += IP6_HLEN;
 #endif
 #if USE_UDP == 1
-		if(rule->udp_rule != NULL) {
-			copy_bits(buf, BYTES_TO_BITS((IP6_HLEN * USE_IP6)), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
-			bit_arr->offset += BYTES_TO_BITS(UDP_HLEN);
-			new_header_length += UDP_HLEN;
-		}
+		copy_bits(buf, BYTES_TO_BITS((IP6_HLEN * USE_IP6)), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
+		bit_arr->offset += BYTES_TO_BITS(UDP_HLEN);
+		new_header_length += UDP_HLEN;
 #endif
 #if USE_COAP == 1
-		if(rule->coap_rule != NULL) {
-			/* only include IPv6 and UDP when enabled */
-			uint16_t len = (RULE_SIZE_BITS + (( (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)) * 8));
-			uint16_t coap_len = (total_length * 8) - len;
-			copy_bits(buf, len, bit_arr->ptr, bit_arr->offset, coap_len);
+		/* only include IPv6 and UDP when enabled */
+		uint16_t len = (RULE_SIZE_BITS + (( (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)) * 8));
+		uint16_t coap_len = (total_length * 8) - len;
+		copy_bits(buf, len, bit_arr->ptr, bit_arr->offset, coap_len);
 
-			pcoap_msg.len = 4;
-			memcpy(pcoap_msg.buf, (uint8_t*) (buf + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)), coap_len);
-			// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
+		pcoap_msg.len = 4;
+		memcpy(pcoap_msg.buf, (uint8_t*) (buf + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)), coap_len);
+		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
 
-			coap_offset = BITS_TO_BYTES(coap_len);
+		coap_offset = BITS_TO_BYTES(coap_len);
 
-			bit_arr->offset += coap_len;
-			new_header_length += coap_len;
-		}
+		bit_arr->offset += coap_len;
+		new_header_length += coap_len;
 #endif
 	} else { // compressed packet, decompress with residue and rule
 		schc_bitarray_t dst_arr;
