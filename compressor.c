@@ -450,7 +450,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 
 		/* rule for layer can be set to NULL */
 		if(curr_rule == NULL) {
-			DEBUG_PRINTF("schc_find_rule_from_header(): skipped rule %02d, layer set to NULL \n", (*device->compression_context)[i]->rule_id);
+			DEBUG_PRINTF("schc_find_rule_from_header(): skipped rule %02" PRIu32 ", layer set to NULL \n", (*device->compression_context)[i]->rule_id);
 			continue;
 		}
 
@@ -467,7 +467,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 						(uint8_t*) (src->ptr + src_pos), (src->offset % 8))) { // compare header field and rule field using the matching operator
 					rule_is_found = 0;
 					DEBUG_PRINTF(
-							"schc_find_rule_from_header(): skipped rule %02d, %s does not match\n", (*device->compression_context)[i]->rule_id, schc_header_field_names[curr_rule->content[k].field]);
+							"schc_find_rule_from_header(): skipped rule %02" PRIu32 ", %s does not match\n", (*device->compression_context)[i]->rule_id, schc_header_field_names[curr_rule->content[k].field]);
 					src->offset = prev_offset; // reset offset
 					break;
 				} else {
