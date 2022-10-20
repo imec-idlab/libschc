@@ -727,6 +727,13 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		return 0;
 	}
 
+	if (get_number_of_bytes_from_bits(conn->fragmentation_rule->MAX_WND_FCN) > BITMAP_SIZE_BYTES) {
+		DEBUG_PRINTF(
+				"init_connection(): BITMAP_SIZE_BYTES must match MAX_WND_FCN \n");
+		return 0;
+	}
+
+
 	conn->fcn = conn->fragmentation_rule->MAX_WND_FCN;
 	memset(conn->bitmap, 0, BITMAP_SIZE_BYTES); // clear bitmap
 

@@ -1000,8 +1000,8 @@ uint16_t compute_checksum(unsigned char *data) {
 
 			result = (~sum);
 
-			data[44] = (uint8_t) ((result & 0xFF00) >> 8);
-			data[45] = (uint8_t) (result & 0xFF);
+			data[46] = (uint8_t) ((result & 0xFF00) >> 8);
+			data[47] = (uint8_t) (result & 0xFF);
 
 			return 1;
 		}
