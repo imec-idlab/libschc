@@ -603,6 +603,8 @@ struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(rel
 		}
 	}
 
+	DEBUG_PRINTF("get_schc_rule(): no fragmentation rule was found for device with id=%d\n",
+				(int ) device_id);
 	return NULL;
 }
 

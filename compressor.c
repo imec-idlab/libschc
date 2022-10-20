@@ -80,7 +80,7 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(struct schc_la
 
 	if (device == NULL) {
 		DEBUG_PRINTF(
-				"get_schc_rule(): no device was found for this id \n");
+				"get_schc_rule(): no device was found for id=%02" PRIu32 "\n", device_id);
 		return NULL;
 	}
 
@@ -91,6 +91,10 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(struct schc_la
 	uint8_t layer_mask = (ipv6_rule == NULL) ? 0x00 : 0x04;
 	layer_mask |= (udp_rule == NULL) ? 0x00 : 0x02;
 	layer_mask |= (coap_rule == NULL) ? 0x00 : 0x01;
+
+	if(layer_mask == 0x00) {
+		return NULL; /* all layers are set to NULL, return */
+	}
 
 	for (i = 0; i < device->compression_rule_count; i++) {
 		const struct schc_compression_rule_t* curr_rule = (*device->compression_context)[i];
@@ -169,6 +173,10 @@ static uint8_t compress(schc_bitarray_t* dst, schc_bitarray_t* src,
 	uint8_t j = 0;
 	uint8_t field_length;
 	uint8_t json_result;
+
+	if(rule == NULL) {
+		return 0;
+	}
 
 	for (i = 0; i < rule->length; i++) {
 		// exclude fields in other direction
@@ -423,7 +431,7 @@ static struct schc_layer_rule_t* schc_find_rule_from_header(
 	struct schc_device *device = get_device_by_id(device_id);
 	if (device == NULL) {
 		DEBUG_PRINTF(
-				"schc_find_rule_from_header(): no device was found for this id\n");
+				"schc_find_rule_from_header(): no device was found for this id=%02" PRIu32 "\n", device_id);
 		return 0;
 	}
 
@@ -777,7 +785,7 @@ uint8_t schc_compressor_init() {
 struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_length,
 		schc_bitarray_t* dst, uint32_t device_id, direction dir) {
 	struct schc_compression_rule_t* schc_rule;
-	uint16_t coap_length = 0; uint8_t coap_rule_id = 0; uint8_t udp_rule_id = 0; uint8_t ipv6_rule_id = 0;
+	uint16_t coap_length = 0;
 
 	/* buf must at least packet length + RULE_SIZE_BYTES */
 	memset(dst->ptr, 0, total_length + RULE_SIZE_BYTES);
@@ -1021,11 +1029,15 @@ uint16_t compute_checksum(unsigned char *data) {
  * @param 	direction			the direction of the flow (UP: LPWAN to IPv6, DOWN: IPv6 to LPWAN)
  *
  * @return 	length 				length of the newly constructed packet
- * 			0 					the rule was not found
+ * 			0 					the rule or device was not found
  */
 uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		uint32_t device_id, uint16_t total_length, direction dir) {
 	struct schc_device *device = get_device_by_id(device_id);
+	if(device == NULL) {
+		DEBUG_PRINTF("schc_decompress(): No device found with id=%d\n", device_id);
+		return 0;
+	}
 
 	DEBUG_PRINTF("\n");
 	DEBUG_PRINTF("schc_decompress(): \n");

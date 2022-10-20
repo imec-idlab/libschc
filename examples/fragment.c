@@ -331,8 +331,8 @@ int main() {
 	tx_conn.bit_arr 			= &bit_arr;
 
 
-	if (schc_rule == NULL) {
-		cleanup();
+	if (tx_conn.fragmentation_rule == NULL) {
+		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
 		finalize_timer_thread();
 		return -1;
 	}

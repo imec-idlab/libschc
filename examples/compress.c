@@ -103,13 +103,17 @@ int main() {
 	/* test the compressed bit array */
 	int err = 0;
 	printf("\n");
-	for (int i = 0; i < bit_arr.len; i++) {
-		if (compressed_header[i] != bit_arr.ptr[i]) {
-			printf(
-					"main(): an error occured while compressing, byte=%02d, original=0x%02x, compressed=0x%02x\n",
-					i, compressed_header[i], bit_arr.ptr[i]);
-			err = 1;
+	if(schc_rule != NULL) {
+		for (int i = 0; i < bit_arr.len; i++) {
+			if (compressed_header[i] != bit_arr.ptr[i]) {
+				printf(
+						"main(): an error occured while compressing, byte=%02d, original=0x%02x, compressed=0x%02x\n",
+						i, compressed_header[i], bit_arr.ptr[i]);
+				err = 1;
+			}
 		}
+	} else {
+		err = 1;
 	}
 
 	if (!err) {
