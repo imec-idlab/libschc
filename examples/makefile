@@ -1,10 +1,10 @@
 CFLAGS=-std=c11
 
-compress: compress.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o compress compress.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c -lm
+compress: compress.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c
+	gcc -g -o compress compress.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
 
-icmpv6: icmpv6.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o icmpv6 icmpv6.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c -lm
+icmpv6: icmpv6.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c
+	gcc -g -o icmpv6 icmpv6.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
 	
 lwm2m: lwm2m.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c
 	gcc -g -o lwm2m lwm2m.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c -lm

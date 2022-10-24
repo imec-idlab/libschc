@@ -8,6 +8,7 @@
  */
 
 #include "schc.h"
+#include "bit_operations.h"
 #include "rules/rule_config.h"
 
 /**
@@ -29,4 +30,21 @@ struct schc_device* get_device_by_id(uint32_t device_id) {
 	}
 
 	return NULL;
+}
+
+/**
+ * Copy the uint32_t rule id to a uint8_t buffer
+ *
+ * @param rule_id 	the rule id
+ * @param out		the buffer to copy the rule id to
+ * @param len		the length in bits
+ *
+ */
+void uint32_rule_id_to_uint8_buf(uint32_t rule_id, uint8_t* out, uint8_t len) {
+	uint8_t rule_arr[4] = { 0 };
+	uint8_t pos = get_position_in_first_byte(len);
+	clear_bits(out, 0, len); // clear bits before setting
+	little_end_uint8_from_uint32(rule_arr, rule_id); /* copy the uint32_t to a uint8_t array */
+
+	copy_bits(out, 0, rule_arr, pos, len); /* set the rule id */
 }

@@ -31,7 +31,7 @@ extern "C" {
 #if USE_IP6
 /* ICMPv6 headers */
 static const struct schc_ipv6_rule_t ipv6_rule1 = {
-    .rule_id = 1, .up = 10, .down = 10, .length = 10,
+    .up = 10, .down = 10, .length = 10,
     {
         /* field,       ML, len, pos, dir,  val,                MO,             CDA         */
         { IP6_V,         0,   4,   1, BI,   {6},                &mo_equal,      NOTSENT     },
@@ -62,7 +62,7 @@ static const struct schc_ipv6_rule_t ipv6_rule1 = {
 #if USE_UDP
 /* TODO fit for udp command */
 static const struct schc_udp_rule_t udp_rule1 = {
-    .rule_id = 1, .up = 4, .down = 4, .length = 4,
+    .up = 4, .down = 4, .length = 4,
     {
         /* field,       ML, len, pos, dir,  val,                MO,             CDA         */
         /* set field length to 16 to indicate 16 bit values
@@ -82,7 +82,8 @@ static const struct schc_udp_rule_t udp_rule1 = {
 #endif
 
 static const struct schc_compression_rule_t comp_rule_1 = {
-    0x01,
+	.rule_id = 0x01,
+	.rule_id_size_bits = 8,
 #if USE_IP6
     &ipv6_rule1,
 #endif
@@ -95,7 +96,8 @@ static const struct schc_compression_rule_t comp_rule_1 = {
 };
 
 static const struct schc_compression_rule_t comp_rule_2 = {
-    0x02,
+    .rule_id = 0x02,
+	.rule_id_size_bits = 8,
 #if USE_IP6
     &ipv6_rule1,    /* TODO: needs dedicated rule */
 #endif
@@ -109,6 +111,7 @@ static const struct schc_compression_rule_t comp_rule_2 = {
 
 static const struct schc_fragmentation_rule_t frag_rule_20 = {
     .rule_id = 20,
+	.rule_id_size_bits = 8,
     .mode = ACK_ON_ERROR,
     .dir = UP,
     .FCN_SIZE = 6,      /* FCN size */
@@ -119,6 +122,7 @@ static const struct schc_fragmentation_rule_t frag_rule_20 = {
 
 static const struct schc_fragmentation_rule_t frag_rule_21 = {
     .rule_id = 21,
+	.rule_id_size_bits = 8,
     .mode = ACK_ALWAYS,
     .dir = DOWN,
     .FCN_SIZE = 1,      /* FCN size */
@@ -141,6 +145,7 @@ static const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
 static const struct schc_device node1 = {
     .device_id = 1,
     .uncomp_rule_id = 0,
+	.uncomp_rule_id_size_bits = 8,
     .compression_rule_count = 2,
     .compression_context = &node1_compression_rules,
     .fragmentation_rule_count = 2,

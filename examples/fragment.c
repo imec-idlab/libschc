@@ -327,15 +327,14 @@ int main() {
 	/* SCHC connection information */
 	tx_conn.fragmentation_rule 	= get_fragmentation_rule_by_reliability_mode(
 			NO_ACK, device_id);
-	tx_conn.RULE_SIZE 			= RULE_SIZE_BITS;
 	tx_conn.bit_arr 			= &bit_arr;
-
 
 	if (tx_conn.fragmentation_rule == NULL) {
 		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
 		finalize_timer_thread();
 		return -1;
 	}
+
 
 	/* start fragmentation loop */
 	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);

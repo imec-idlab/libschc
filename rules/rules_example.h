@@ -5,7 +5,7 @@
 #if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
-		1, 10, 10, 14,
+		10, 10, 14,
 		{
 			//	field, 			   			MO, len,	 pos,dir, 	val,			MO,			CDA
 				{ IP6_V,	 	0, 4,	1, BI, 		{6},			&mo_equal, 		NOTSENT },
@@ -40,7 +40,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 };
 
 const static struct schc_ipv6_rule_t ipv6_rule2 = {
-		2, 10, 10, 10,
+		10, 10, 10,
 		{
 				{ IP6_V,		0,  4,	 1, BI, 	{6},			&mo_equal, 	NOTSENT },
 				{ IP6_TC, 		0,  8,	 1, BI, 	{0},			&mo_equal, 	NOTSENT },
@@ -61,7 +61,7 @@ const static struct schc_ipv6_rule_t ipv6_rule2 = {
 
 const static struct schc_ipv6_rule_t ipv6_rule3 = {
 	//	id, up, down, length
-		3, 10, 10, 10,
+		10, 10, 10,
 		{
 			//	field, 			   MO, len,	 pos,dir, 	val,			MO,			CDA
 				{ IP6_V, 		0, 4,	 1, BI, 	{6},			&mo_equal, 	VALUESENT },
@@ -84,7 +84,7 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 
 #if USE_UDP
 const static struct schc_udp_rule_t udp_rule1 = {
-		1, 4, 4, 4,
+		4, 4, 4,
 		{
 				{ UDP_SRC, 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
 						&mo_matchmap,	MAPPINGSENT }, // 5683 or 5684
@@ -98,7 +98,7 @@ const static struct schc_udp_rule_t udp_rule1 = {
 };
 
 const static struct schc_udp_rule_t udp_rule2 = {
-		2, 4, 4, 4,
+		4, 4, 4,
 		{
 				{ UDP_SRC, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
 				{ UDP_DST, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
@@ -108,7 +108,7 @@ const static struct schc_udp_rule_t udp_rule2 = {
 };
 
 const static struct schc_udp_rule_t udp_rule3 = {
-		3, 4, 4, 4,
+		4, 4, 4,
 		{
 				{ UDP_SRC, 		0,	16,	 1, BI, 	{0x13, 0x89}, 		&mo_equal,		NOTSENT },
 				{ UDP_DST, 		0, 	16,	 1, BI, 	{0x13, 0x88}, 		&mo_equal,		NOTSENT },
@@ -120,7 +120,7 @@ const static struct schc_udp_rule_t udp_rule3 = {
 
 #if USE_COAP
 const static struct schc_coap_rule_t coap_rule1 = { /* GET /usage */
-		1, 9, 7, 9,
+		9, 7, 9,
 		{
 				{ COAP_V,		0,	2,	 1, BI,		{COAP_V1},		&mo_equal,			NOTSENT },
 				{ COAP_T,		4,	2,	 1, BI,		{CT_CON, CT_NON, CT_ACK, CT_RST},
@@ -138,7 +138,7 @@ const static struct schc_coap_rule_t coap_rule1 = { /* GET /usage */
 };
 
 const static struct schc_coap_rule_t coap_rule2 = { /* POST /temp= */
-		2, 8, 8, 10,
+		8, 8, 10,
 		{
 				{ COAP_V,		0,	2,	 1, BI,		{COAP_V1},		&mo_equal,		NOTSENT },
 				{ COAP_T,		3,	2,	 1, BI,		{CT_CON, CT_ACK, CT_NON},
@@ -158,7 +158,7 @@ const static struct schc_coap_rule_t coap_rule2 = { /* POST /temp= */
 };
 
 const static struct schc_coap_rule_t coap_rule4 = {
-		4, 12, 12, 12,
+		12, 12, 12,
 		{
 				{ COAP_V,       0,	2,	1, BI,      {COAP_V1},		&mo_equal,         NOTSENT },
 				{ COAP_T,       0,  2,	1, BI,      {CT_CON},		&mo_equal,         NOTSENT },
@@ -183,7 +183,8 @@ const static struct schc_coap_rule_t coap_rule4 = {
 
 /* next build the compression rules from the rules that make up a single layer */
 const struct schc_compression_rule_t compression_rule_1 = {
-		0x01,
+		.rule_id = 0x01,
+		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
@@ -196,12 +197,13 @@ const struct schc_compression_rule_t compression_rule_1 = {
 };
 
 const struct schc_compression_rule_t compression_rule_2 = {
-		0x02,
+		.rule_id = 0x02,
+		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
 #if USE_UDP
-		NULL, // &udp_rule2,
+		&udp_rule2,
 #endif
 #if USE_COAP
 		&coap_rule2,
@@ -210,6 +212,7 @@ const struct schc_compression_rule_t compression_rule_2 = {
 
 const struct schc_compression_rule_t compression_rule_3 = {
 		0x03,
+		8, /* rule id size bits */
 #if USE_IP6
 		&ipv6_rule2,
 #endif
@@ -223,6 +226,7 @@ const struct schc_compression_rule_t compression_rule_3 = {
 
 const struct schc_compression_rule_t compression_rule_4 = {
 		0x04,
+		8, /* rule id size bits */
 #if USE_IP6
 		&ipv6_rule3,
 #endif
@@ -236,43 +240,47 @@ const struct schc_compression_rule_t compression_rule_4 = {
 
 /* now build the fragmentation rules */
 const struct schc_fragmentation_rule_t fragmentation_rule_1 = {
-		0x01,
-		NOT_FRAGMENTED,
-		BI,
-		0, 	/* FCN size */
-		0, 	/* maximum fragments per window */
-		0, 	/* window size */
-		0 	/* DTAG size */
+		.rule_id = 0x01,
+		.rule_id_size_bits = 8,
+		.mode = NOT_FRAGMENTED,
+		.dir = BI,
+		.FCN_SIZE = 0,
+		.MAX_WND_FCN = 0, 	/* maximum fragments per window */
+		.WINDOW_SIZE = 0,
+		.DTAG_SIZE = 0
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
-		0x02,
-		NO_ACK,
-		BI,
-		1, 	/* FCN size */
-		0, 	/* maximum fragments per window */
-		0, 	/* window size */
-		0 	/* DTAG size */
+		.rule_id = 0x02,
+		.rule_id_size_bits = 8,
+		.mode = NO_ACK,
+		.dir = BI,
+		.FCN_SIZE = 1,
+		.MAX_WND_FCN = 0,
+		.WINDOW_SIZE = 0,
+		.DTAG_SIZE = 0
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
-		0x03,
-		ACK_ON_ERROR,
-		BI,
-		3, 	/* FCN size */
-		6, 	/* maximum fragments per window */
-		1, 	/* window size */
-		0 	/* DTAG size */
+		.rule_id = 0x03,
+		.rule_id_size_bits = 8,
+		.mode = ACK_ON_ERROR,
+		.dir = BI,
+		.FCN_SIZE = 3,
+		.MAX_WND_FCN = 6,
+		.WINDOW_SIZE = 1,
+		.DTAG_SIZE = 0
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
-		0x04,
-		ACK_ALWAYS,
-		BI,
-		3, 	/* FCN size */
-		6, 	/* maximum fragments per window */
-		1, 	/* window size */
-		0 	/* DTAG size */
+		.rule_id = 0x04,
+		.rule_id_size_bits = 8,
+		.mode = ACK_ALWAYS,
+		.dir = BI,
+		.FCN_SIZE = 3,
+		.MAX_WND_FCN = 6,
+		.WINDOW_SIZE = 1,
+		.DTAG_SIZE = 0
 };
 
 /* save compression rules in flash */
@@ -286,8 +294,24 @@ const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
 };
 
 /* now build the context for a particular device */
-const struct schc_device node1 = { 0x06, 0, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
-const struct schc_device node2 = { 0x01, 0, 4, &node1_compression_rules, 4, &node1_fragmentation_rules };
+const struct schc_device node1 = {
+		.device_id = 0x06,
+		.uncomp_rule_id = 0,
+		.uncomp_rule_id_size_bits = 8,
+		.compression_rule_count = 4,
+		.compression_context = &node1_compression_rules,
+		.fragmentation_rule_count = 4,
+		.fragmentation_context = &node1_fragmentation_rules
+};
+const struct schc_device node2 = {
+		.device_id = 0x01,
+		.uncomp_rule_id = 0,
+		.uncomp_rule_id_size_bits = 8,
+		.compression_rule_count = 4,
+		.compression_context = &node1_compression_rules,
+		.fragmentation_rule_count = 4,
+		.fragmentation_context = &node1_fragmentation_rules
+};
 
 #define DEVICE_COUNT			2
 

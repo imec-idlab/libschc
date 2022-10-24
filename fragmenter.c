@@ -44,7 +44,7 @@ uint8_t schc_buf[STATIC_MEMORY_BUFFER_LENGTH] = { 0 };
  *
  */
 static uint16_t get_fcn_value(uint8_t* fragment, schc_fragmentation_t* conn) {
-	uint8_t offset = conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE;
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE;
 
 	return (uint16_t) get_bits(fragment, offset, conn->fragmentation_rule->FCN_SIZE);
 }
@@ -213,7 +213,7 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
  *
  */
 static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmentation_t* conn) {
-	uint32_t offset = conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE
+	uint32_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE
 			+ conn->fragmentation_rule->FCN_SIZE;
 
 	uint8_t fcn = get_fcn_value(mbuf->ptr, conn);
@@ -534,7 +534,7 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
  *
  */
 static uint8_t get_window_bit(uint8_t* fragment, schc_fragmentation_t* conn) {
-	uint8_t offset = conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE;
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE;
 
 	return (uint8_t) get_bits(fragment, offset, conn->fragmentation_rule->WINDOW_SIZE);
 }
@@ -548,7 +548,7 @@ static uint8_t get_window_bit(uint8_t* fragment, schc_fragmentation_t* conn) {
  */
 static void get_received_mic(uint8_t* fragment, uint8_t mic[],
 		schc_fragmentation_t* conn) {
-	uint8_t offset = conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE
 			+ conn->fragmentation_rule->WINDOW_SIZE + conn->fragmentation_rule->FCN_SIZE;
 
 	copy_bits(mic, 0, fragment, offset, (MIC_SIZE_BYTES * 8));
@@ -631,10 +631,10 @@ static struct schc_fragmentation_rule_t* get_fragmentation_rule_by_rule_id(uint8
 
 	for (i = 0; i < device->fragmentation_rule_count; i++) {
 		struct schc_fragmentation_rule_t* curr_rule = (struct schc_fragmentation_rule_t*) (*device->fragmentation_context)[i];
-		uint8_t curr_rule_pos = get_position_in_first_byte(RULE_SIZE_BITS);
+		uint8_t curr_rule_pos = get_position_in_first_byte(curr_rule->rule_id_size_bits);
 		uint8_t rule_id[4] = { 0 };
 		little_end_uint8_from_uint32(rule_id, curr_rule->rule_id); /* copy the uint32_t to a uint8_t array */
-		if( compare_bits_aligned(rule_id, curr_rule_pos, rule_arr, 0, RULE_SIZE_BITS)) {
+		if( compare_bits_aligned(rule_id, curr_rule_pos, rule_arr, 0, curr_rule->rule_id_size_bits)) {
 			DEBUG_PRINTF("get_fragmentation_rule(): curr rule %p \n", (void*) curr_rule);
 			return curr_rule;
 		}
@@ -690,7 +690,7 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		DEBUG_PRINTF("init_connection(): SCHC fragmentation rule not specified \n");
 		return 0;
 	}
-	if((conn->mtu * 8) < (conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE
+	if((conn->mtu * 8) < (conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE
 			+ conn->fragmentation_rule->FCN_SIZE + (MIC_SIZE_BYTES * 8)) ) {
 		DEBUG_PRINTF(
 				"init_connection(): conn->mtu should be larger than last tile's header length \n");
@@ -719,10 +719,10 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 
 	// todo make generic function in schc.c
 	uint8_t rule_id[4] = { 0 };
-	uint8_t pos = get_position_in_first_byte(conn->RULE_SIZE);
+	uint8_t pos = get_position_in_first_byte(conn->fragmentation_rule->rule_id_size_bits);
 	little_end_uint8_from_uint32(rule_id, conn->fragmentation_rule->rule_id); /* copy the uint32_t to a uint8_t array */
 
-	copy_bits(conn->rule_id, 0, rule_id, pos, conn->RULE_SIZE); /* set the rule id */
+	copy_bits(conn->rule_id, 0, rule_id, pos, conn->fragmentation_rule->rule_id_size_bits); /* set the rule id */
 
 	if(conn->fragmentation_rule->MAX_WND_FCN >= get_max_fcn_value(conn)) {
 		DEBUG_PRINTF("init_connection(): MAX_WIND_FCN must be smaller than all-1 \n");
@@ -796,8 +796,8 @@ void schc_reset(schc_fragmentation_t* conn) {
  *
  */
 static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
-	uint32_t total_bits_to_transmit = (conn->bit_arr->bit_len - conn->RULE_SIZE); // effective payload bits
-	uint16_t header_size = (conn->RULE_SIZE + conn->fragmentation_rule->DTAG_SIZE
+	uint32_t total_bits_to_transmit = (conn->bit_arr->bit_len - conn->fragmentation_rule->rule_id_size_bits); // effective payload bits
+	uint16_t header_size = (conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE
 			+ conn->fragmentation_rule->WINDOW_SIZE + conn->fragmentation_rule->FCN_SIZE);
 	uint16_t prev_header_bits = header_size * (conn->frag_cnt - 1); // previous fragmentation overhead
 	uint32_t total_mtu_bits = BYTES_TO_BITS(conn->mtu)
@@ -828,10 +828,10 @@ static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
  */
 static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 		uint8_t* fragmentation_buffer) {
-	uint8_t bit_offset = conn->RULE_SIZE;
+	uint8_t bit_offset = conn->fragmentation_rule->rule_id_size_bits;
 
 	 // set rule id
-	uint8_t src_pos = get_position_in_first_byte(conn->RULE_SIZE);
+	uint8_t src_pos = get_position_in_first_byte(conn->fragmentation_rule->rule_id_size_bits);
 	uint8_t fragmenter_id[4] = { 0 };
 	little_end_uint8_from_uint32(fragmenter_id, conn->fragmentation_rule->rule_id); /* copy the uint32_t to a uint8_t array */
 	copy_bits(fragmentation_buffer, 0, fragmenter_id, src_pos, bit_offset);
@@ -861,7 +861,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 		int8_t bits_left_to_transmit = (total_bits_to_transmit - bits_transmitted);
 		uint8_t padding = 0;
 		if (bits_left_to_transmit < 0) { // RCS in separate packet
-			uint16_t prev_header_bits = (conn->RULE_SIZE
+			uint16_t prev_header_bits = (conn->fragmentation_rule->rule_id_size_bits
 					+ conn->fragmentation_rule->WINDOW_SIZE + conn->fragmentation_rule->FCN_SIZE
 					+ conn->fragmentation_rule->DTAG_SIZE) * (conn->frag_cnt - 1);
 			bits_left_to_transmit = (total_bits_to_transmit + prev_header_bits) % 8; // we might need some extra bits from the last byte
@@ -1066,7 +1066,7 @@ static void set_inactivity_timer(schc_fragmentation_t* conn) {
  *
  */
 static uint8_t empty_all_0(schc_mbuf_t* mbuf, schc_fragmentation_t* conn) {
-	uint8_t offset = conn->RULE_SIZE + conn->fragmentation_rule->FCN_SIZE
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->FCN_SIZE
 			+ conn->fragmentation_rule->DTAG_SIZE + conn->fragmentation_rule->WINDOW_SIZE;
 	uint8_t len = (mbuf->len * 8);
 
@@ -1087,7 +1087,7 @@ static uint8_t empty_all_0(schc_mbuf_t* mbuf, schc_fragmentation_t* conn) {
  *
  */
 static uint8_t empty_all_1(schc_mbuf_t* mbuf, schc_fragmentation_t* conn) {
-	uint8_t offset = conn->RULE_SIZE + conn->fragmentation_rule->FCN_SIZE + conn->fragmentation_rule->DTAG_SIZE
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->FCN_SIZE + conn->fragmentation_rule->DTAG_SIZE
 			+ conn->fragmentation_rule->WINDOW_SIZE + (MIC_SIZE_BYTES * 8);
 	uint8_t len = (mbuf->len * 8);
 
@@ -1139,7 +1139,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
 
 		if(remaining_bits < 0) { // RCS in separate packet
 			// which also requires padding
-			header_bits = conn->RULE_SIZE + conn->fragmentation_rule->WINDOW_SIZE
+			header_bits = conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->WINDOW_SIZE
 					+ conn->fragmentation_rule->FCN_SIZE + conn->fragmentation_rule->DTAG_SIZE;
 
 			uint16_t prev_header_bits = header_bits * (conn->frag_cnt - 1);
@@ -1186,7 +1186,7 @@ static uint8_t send_fragment(schc_fragmentation_t* conn) {
  */
 static uint8_t send_ack(schc_fragmentation_t* conn) {
 	uint8_t ack[RULE_SIZE_BYTES + DTAG_SIZE_BYTES + BITMAP_SIZE_BYTES] = { 0 };
-	uint8_t offset = conn->RULE_SIZE;
+	uint8_t offset = conn->fragmentation_rule->rule_id_size_bits;
 
 	copy_bits(ack, 0, conn->ack.rule_id, 0, offset); // set rule id
 	copy_bits(ack, offset, conn->ack.dtag, 0, conn->fragmentation_rule->DTAG_SIZE); // set dtag
@@ -1419,7 +1419,7 @@ static uint8_t wait_end(schc_fragmentation_t* rx_conn, schc_mbuf_t* tail) {
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	schc_mbuf_t* tail = get_mbuf_tail(rx_conn->head); // get last received fragment
 
-	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, rx_conn->RULE_SIZE); // get the rule id from the fragment
+	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, rx_conn->fragmentation_rule->rule_id_size_bits); // get the rule id from the fragment
 	uint8_t window = get_window_bit(tail->ptr, rx_conn); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr, rx_conn); // the fcn value from the fragment
 
@@ -1797,8 +1797,6 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
 		schc_rx_conns[i].fragmentation_rule = NULL;
-		// in case these parameters were not configured properly
-		schc_rx_conns[i].RULE_SIZE = RULE_SIZE_BITS;
 	}
 
 	// initializes the mbuf pool
@@ -2189,7 +2187,7 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* tx_conn,
 		uint32_t device_id) {
 	if ((tx_conn->TX_STATE == WAIT_BITMAP || tx_conn->TX_STATE == RESEND)
-			&& compare_bits(tx_conn->rule_id, data, tx_conn->RULE_SIZE)) { // acknowledgment
+			&& compare_bits(tx_conn->rule_id, data, tx_conn->fragmentation_rule->rule_id_size_bits)) { // acknowledgment
 		schc_ack_input(data, tx_conn);
 		return tx_conn;
 	} else {
@@ -2208,7 +2206,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
  *
  */
 void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn) {
-	uint8_t bit_offset = tx_conn->RULE_SIZE;
+	uint8_t bit_offset = tx_conn->fragmentation_rule->rule_id_size_bits;
 	tx_conn->input = 1;
 
 	memset(tx_conn->ack.dtag, 0, 1); // clear dtag from prev reception

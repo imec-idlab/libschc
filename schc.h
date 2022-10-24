@@ -16,24 +16,12 @@
 // fixed fragmentation definitions
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
-
-#if !(RULE_SIZE_BITS % 8)
-#define RULE_SIZE_BYTES			(RULE_SIZE_BITS / 8)
-#else
-#define RULE_SIZE_BYTES			((int) ((RULE_SIZE_BITS / 8) + 1))
-#endif
-
-#if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) % 8)
-#define DTAG_SIZE_BYTES			((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8)
-#else
-#define DTAG_SIZE_BYTES			((int) (((RULE_SIZE_BITS + DTAG_SIZE_BITS) / 8) + 1))
-#endif
-
-#if !(((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) % 8)
+/* maximum number of bytes a rule id can take */
+#define RULE_SIZE_BYTES			4
+/* maximum number of bytes the ACK DTAG field can be */
+#define DTAG_SIZE_BYTES			1
+/* maximum number of bytes the ACK W field can be */
 #define WINDOW_SIZE_BYTES		1
-#else
-#define WINDOW_SIZE_BYTES		((int) (((RULE_SIZE_BITS + DTAG_SIZE_BITS + WINDOW_SIZE_BITS) / 8) + 1))
-#endif
 
 typedef struct schc_bitarray_t {
 	uint8_t* ptr;
@@ -159,7 +147,6 @@ struct schc_field {
 // specific protocol layer structure
 #if USE_IP6 == 1
 struct schc_ipv6_rule_t {
-	uint32_t rule_id; /*pcoap_option_names the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -169,7 +156,6 @@ struct schc_ipv6_rule_t {
 
 #if USE_UDP == 1
 struct schc_udp_rule_t {
-	uint32_t rule_id; /* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -179,7 +165,6 @@ struct schc_udp_rule_t {
 
 #if USE_COAP == 1
 struct schc_coap_rule_t {
-	uint32_t rule_id; /* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -189,7 +174,6 @@ struct schc_coap_rule_t {
 
 // structure to allow generic compression of each layer
 struct schc_layer_rule_t {
-	uint32_t rule_id;
 	uint8_t up;
 	uint8_t down;
 	uint8_t length;
@@ -197,7 +181,10 @@ struct schc_layer_rule_t {
 };
 
 struct schc_compression_rule_t {
+	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint32_t rule_id;
+	/* the rule id size in bits */
+	uint8_t rule_id_size_bits;
 #if USE_IP6 == 1
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
@@ -215,6 +202,8 @@ struct schc_compression_rule_t {
 struct schc_fragmentation_rule_t {
 	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint32_t rule_id;
+	/* the rule id size in bits */
+	uint8_t rule_id_size_bits;
 	/* the reliability mode */
 	reliability_mode mode;
 	/* the direction */
@@ -234,6 +223,8 @@ struct schc_device {
 	uint32_t device_id;
 	/* the rule id to use when a packet remains uncompressed */
 	uint32_t uncomp_rule_id;
+	/* the rule id size when a packet remains uncompressed in bits */
+	uint8_t uncomp_rule_id_size_bits;
 	/* the total number of compression rules for a device */
 	uint8_t compression_rule_count;
 	/* a pointer to the collection of compression rules for a device */
@@ -269,5 +260,6 @@ uint8_t mo_MSB(struct schc_field* target_field, unsigned char* field_value, uint
 uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value, uint16_t field_offset);
 
 struct schc_device* get_device_by_id(uint32_t device_id);
+void uint32_rule_id_to_uint8_buf(uint32_t rule_id, uint8_t* out, uint8_t len);
 
 #endif

@@ -144,8 +144,6 @@ typedef struct schc_fragmentation_t {
 	schc_mbuf_t *head;
 	/* the rule in use */
 	struct schc_fragmentation_rule_t* fragmentation_rule;
-	/* the rule size in bits */
-	uint8_t RULE_SIZE;
 	/* the rule id */
 	uint8_t rule_id[4];
 } schc_fragmentation_t;
