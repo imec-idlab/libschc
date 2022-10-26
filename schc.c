@@ -33,6 +33,30 @@ struct schc_device* get_device_by_id(uint32_t device_id) {
 }
 
 /**
+ * Revise the rules for all devices
+ * Uncompressed rule ids should not be used for other rules
+ *
+ * @return 0 			the rules are not setup correctly
+ *         1			the rules are setup correctly
+ *
+ */
+uint8_t rm_revise_rule_context(void) {
+	/* compare uncompressed rule ids and rule entries for possible duplicates */
+	for (int i = 0; i < DEVICE_COUNT; i++) {
+		for (int j = 0; j < devices[i]->compression_rule_count; j++) {
+			const struct schc_compression_rule_t *curr_rule =
+					(*devices[i]->compression_context)[i];
+			if (devices[i]->uncomp_rule_id == curr_rule->rule_id) {
+				DEBUG_PRINTF("rm_revise_rule_context(): rule=%p uses device with id=%02" PRIu32 " uncompressed rule id=%d\n", (void*) curr_rule, devices[i]->device_id, devices[i]->uncomp_rule_id);
+				return 0;
+			}
+		}
+	}
+
+	return 1;
+}
+
+/**
  * Copy the uint32_t rule id to a uint8_t buffer
  *
  * @param rule_id 	the rule id

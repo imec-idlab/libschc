@@ -47,15 +47,16 @@ uint8_t msg[] = {
 int main() {
 	/* COMPRESSION */
 	/* initialize the client compressor */
-	schc_compressor_init();
+	if(!schc_compressor_init()) {
+		return 1;
+	}
 
 	uint8_t compressed_buf[MAX_PACKET_LENGTH] = { 0 };
 	uint32_t device_id = 0x01;
 
 	/* compress packet */
 	struct schc_compression_rule_t *schc_rule;
-	schc_bitarray_t bit_arr;
-	bit_arr.ptr = (uint8_t*) (compressed_buf);
+	schc_bitarray_t bit_arr = SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_buf);
 
 	schc_rule = schc_compress(msg, sizeof(msg), &bit_arr, device_id, DIRECTION);
 #if PACKET_TYPE == 1

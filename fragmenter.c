@@ -717,12 +717,8 @@ static int8_t init_tx_connection(schc_fragmentation_t* conn) {
 		}
 	}
 
-	// todo make generic function in schc.c
-	uint8_t rule_id[4] = { 0 };
-	uint8_t pos = get_position_in_first_byte(conn->fragmentation_rule->rule_id_size_bits);
-	little_end_uint8_from_uint32(rule_id, conn->fragmentation_rule->rule_id); /* copy the uint32_t to a uint8_t array */
-
-	copy_bits(conn->rule_id, 0, rule_id, pos, conn->fragmentation_rule->rule_id_size_bits); /* set the rule id */
+	uint32_rule_id_to_uint8_buf(conn->fragmentation_rule->rule_id,
+			conn->rule_id, conn->fragmentation_rule->rule_id_size_bits);
 
 	if(conn->fragmentation_rule->MAX_WND_FCN >= get_max_fcn_value(conn)) {
 		DEBUG_PRINTF("init_connection(): MAX_WIND_FCN must be smaller than all-1 \n");
@@ -773,7 +769,7 @@ void schc_reset(schc_fragmentation_t* conn) {
 	memset(conn->mic, 0, MIC_SIZE_BYTES);
 
 	/* reset ack structure */
-	memset(conn->ack.rule_id, 0, RULE_SIZE_BYTES);
+	memset(conn->ack.rule_id, 0, 4); /* rule id can be maximum of 4 bytes */
 	memset(conn->ack.bitmap, 0, BITMAP_SIZE_BYTES);
 	memset(conn->ack.window, 0, 1);
 	memset(conn->ack.dtag, 0, 1);
@@ -1342,6 +1338,7 @@ static int8_t mic_correct(schc_fragmentation_t* rx_conn) {
 	mbuf_compute_mic(rx_conn); // compute the mic over the mbuf chain
 
 	if (!compare_bits(rx_conn->mic, recv_mic, (MIC_SIZE_BYTES * 8))) { // mic wrong
+		DEBUG_PRINTF("mic_correct(): message integrity check failed! \n");
 		return 0;
 	}
 

@@ -261,5 +261,6 @@ uint8_t mo_matchmap(struct schc_field* target_field, unsigned char* field_value,
 
 struct schc_device* get_device_by_id(uint32_t device_id);
 void uint32_rule_id_to_uint8_buf(uint32_t rule_id, uint8_t* out, uint8_t len);
+uint8_t rm_revise_rule_context(void);
 
 #endif

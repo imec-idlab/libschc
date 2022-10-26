@@ -733,8 +733,11 @@ uint8_t mo_matchmap(struct schc_field *target_field, unsigned char *field_value,
  * @return error 		error codes on error
  *
  */
-uint8_t schc_compressor_init() {
+uint8_t schc_compressor_init(struct schc_device* devices) {
 	jsmn_init(&json_parser);
+	if(!rm_revise_rule_context()) {
+		return 0;
+	}
 
 	return 1;
 }
@@ -766,8 +769,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 		return 0;
 	}
 
-	/* buf must at least packet length + RULE_SIZE_BYTES */
-	memset(dst->ptr, 0, total_length + RULE_SIZE_BYTES);
+	memset(dst->ptr, 0, dst->len);
 	/* use bit array for comparison */
 	schc_bitarray_t src; src.ptr = data; src.offset = 0; uint8_t icmp6_packet = 0; uint8_t use_udp = 1;
 
@@ -1098,7 +1100,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		dst_arr.offset = 0; /* there is no offset (yet) in the destination array */
 
 #if USE_IP6 == 1
-		if (rule->ipv6_rule != NULL != 0) {
+		if (rule->ipv6_rule != NULL) {
 			ret = decompress((struct schc_layer_rule_t *) rule->ipv6_rule, bit_arr, &dst_arr, dir);
 			if (ret == 0) {
 				return 0; // no rule was found
@@ -1108,7 +1110,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 #endif
 #if USE_UDP == 1
-		if (rule->udp_rule != NULL != 0) {
+		if (rule->udp_rule != NULL) {
 			ret = decompress((struct schc_layer_rule_t *) (rule->udp_rule), bit_arr, &dst_arr, dir);
 			if (ret == 0) {
 				return 0; // no rule was found
@@ -1117,7 +1119,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		}
 #endif
 #if USE_COAP == 1
-		if (rule->coap_rule != NULL != 0) {
+		if (rule->coap_rule != NULL) {
 			coap_offset = decompress_coap_rule((struct schc_coap_rule_t *) rule->coap_rule, bit_arr, &pcoap_msg, dir);
 			if (coap_offset == 0) {
 				return 0; // no rule was found

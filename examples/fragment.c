@@ -288,7 +288,9 @@ void init() {
 	initialize_timer_thread();
 
 	/* initialize the client compressor */
-	schc_compressor_init();
+	if(!schc_compressor_init()) {
+		exit(1);
+	}
 
 	/* initialize fragmenter for the constrained device */
 	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
@@ -306,12 +308,11 @@ int main() {
 	struct schc_compression_rule_t* schc_rule;
 
 #if COMPRESS
-	schc_bitarray_t bit_arr;
 	uint8_t compressed_packet[MAX_PACKET_LENGTH];
-	bit_arr.ptr 				= (uint8_t*) (compressed_packet); /* provide a pointer to the buffer to store the compressed packet */
+	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_packet);
 	schc_rule 					= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
-#else
-	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(252, &msg);
+#else /* do not compress */
+	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
 #endif
 
 	/* L2 connection information */

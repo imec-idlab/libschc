@@ -7,7 +7,7 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
 		10, 10, 14,
 		{
-			//	field, 			   			MO, len,	 pos,dir, 	val,			MO,			CDA
+			//	field, 			MO, len, pos,dir, 	val,			MO,				CDA
 				{ IP6_V,	 	0, 4,	1, BI, 		{6},			&mo_equal, 		NOTSENT },
 				{ IP6_TC, 		0, 8,	1, BI, 		{0},			&mo_ignore, 	NOTSENT },
 				{ IP6_FL, 		0, 20,	1, BI, 		{0, 0, 0},		&mo_ignore, 	NOTSENT },
