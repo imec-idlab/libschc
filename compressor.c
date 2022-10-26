@@ -776,7 +776,9 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 	DEBUG_PRINTF("schc_compress(): \n");
 
 	/* look for a matching rule */
-	struct schc_layer_rule_t *ipv6_rule; struct schc_layer_rule_t *udp_rule; struct schc_layer_rule_t *coap_rule;
+	struct schc_layer_rule_t *ipv6_rule = NULL;
+	struct schc_layer_rule_t *udp_rule = NULL;
+	struct schc_layer_rule_t *coap_rule = NULL;
 #if USE_IP6 == 1
 	ipv6_rule = schc_find_rule_from_header(&src, device, SCHC_IPV6, dir);
 	if(ipv6_rule != NULL) {
