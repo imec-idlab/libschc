@@ -782,7 +782,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 #if USE_IP6 == 1
 	ipv6_rule = schc_find_rule_from_header(&src, device, SCHC_IPV6, dir);
 	if(ipv6_rule != NULL) {
-		DEBUG_PRINTF("schc_compress(): IPv6 rule ptr=%p \n", ipv6_rule);
+		DEBUG_PRINTF("schc_compress(): IPv6 rule ptr=%p \n", (void*)ipv6_rule);
 		if(data[6] == 0x3A) { // icmpv6 packet
 			icmp6_packet 	= 1;
 			use_udp 		= 0;
@@ -793,7 +793,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 		if(use_udp) {
 			udp_rule = schc_find_rule_from_header(&src, device, SCHC_UDP, dir);
 			if(udp_rule != NULL) {
-				DEBUG_PRINTF("schc_compress(): UDP rule ptr=%p \n", udp_rule);
+				DEBUG_PRINTF("schc_compress(): UDP rule ptr=%p \n", (void*)udp_rule);
 			}
 		}
 #endif
@@ -813,7 +813,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 
 		coap_rule = schc_find_rule_from_header(&coap_src, device, SCHC_COAP, dir);
 		if(coap_rule != NULL) {
-			DEBUG_PRINTF("schc_compress(): CoAP rule ptr=%p \n", coap_rule);
+			DEBUG_PRINTF("schc_compress(): CoAP rule ptr=%p \n", (void*)coap_rule);
 		}
 		/* reset the bit arrays offset and start compressing */
 		coap_src.offset = 0;
@@ -1030,17 +1030,17 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	if(rule != NULL) {
 #if USE_COAP == 1
 		if(rule->coap_rule != NULL) {
-			DEBUG_PRINTF("schc_decompress(): CoAP rule ptr=%p \n", rule->coap_rule);
+			DEBUG_PRINTF("schc_decompress(): CoAP rule ptr=%p \n", (void*)rule->coap_rule);
 		}
 #endif
 #if USE_UDP == 1
 		if(rule->udp_rule != NULL) {
-			DEBUG_PRINTF("schc_decompress(): UDP rule ptr=%p \n", rule->udp_rule);
+			DEBUG_PRINTF("schc_decompress(): UDP rule ptr=%p \n", (void*)rule->udp_rule);
 		}
 #endif
 #if USE_IP6 == 1
 		if(rule->ipv6_rule != NULL) {
-			DEBUG_PRINTF("schc_decompress(): IPv6 rule ptr=%p \n", rule->ipv6_rule);
+			DEBUG_PRINTF("schc_decompress(): IPv6 rule ptr=%p \n", (void*)rule->ipv6_rule);
 		}
 #endif
 		/* indicate initial offset in the source array */
