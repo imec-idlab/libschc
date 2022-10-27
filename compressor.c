@@ -68,7 +68,7 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(struct schc_la
 		struct schc_layer_rule_t *udp_rule, struct schc_layer_rule_t *coap_rule, struct schc_device* device) {
 	int i;
 
-	uint8_t rule_mask = 0x00;
+	uint8_t rule_mask;
 
 	/* the rule selection is independent from the compiler flags.
 	 * The decompressor's rules MUST match the one selected at the compressor side. */
@@ -82,6 +82,7 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(struct schc_la
 
 	for (i = 0; i < device->compression_rule_count; i++) {
 		const struct schc_compression_rule_t* curr_rule = (*device->compression_context)[i];
+        rule_mask = 0x00;
 #if USE_IP6 == 1
 		if (curr_rule->ipv6_rule != NULL &&
 				curr_rule->ipv6_rule == (struct schc_ipv6_rule_t*) ipv6_rule) {
