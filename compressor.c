@@ -73,8 +73,12 @@ static struct schc_compression_rule_t* get_schc_rule_by_layer_ids(struct schc_la
 	/* the rule selection is independent from the compiler flags.
 	 * The decompressor's rules MUST match the one selected at the compressor side. */
 	uint8_t layer_mask = (ipv6_rule == NULL) ? 0x00 : 0x04;
-	layer_mask |= (udp_rule == NULL) ? 0x00 : 0x02;
-	layer_mask |= (coap_rule == NULL) ? 0x00 : 0x01;
+	if (layer_mask != 0x00) {
+		layer_mask |= (udp_rule == NULL) ? 0x00 : 0x02;
+		if (layer_mask & 0x02) {
+			layer_mask |= (coap_rule == NULL) ? 0x00 : 0x01;
+		}
+	}
 
 	if(layer_mask == 0x00) {
 		return NULL; /* all layers are set to NULL, return */
