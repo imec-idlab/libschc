@@ -1,0 +1,39 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+        - compress
+        - fragment
+        - icmpv6
+    steps:
+    - uses: actions/checkout@main
+    - name: Prepare config and rules
+      run: |
+        mv schc_config_example.h schc_config.h
+        mv rules/rule_config_example.h rules/rule_config.h
+        if [ "${{ matrix.app }}" = "icmpv6" ]; then
+          rules="rules_icmpv6.h"
+        else
+          rules="rules_example.h"
+        fi
+        sed -i "s/rules\.h/${rules}/" rules/rule_config.h
+        cat rules/rule_config.h
+    - name: Build ${{ matrix.app }}
+      run: make -C examples/ -B ${{ matrix.app }}
+    - name: Run ${{ matrix.app }}
+      run: ./examples/${{ matrix.app }}

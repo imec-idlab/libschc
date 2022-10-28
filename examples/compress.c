@@ -155,5 +155,5 @@ int main() {
 		printf("main(): decompression succeeded\n");
 	}
 
-	return 0;
+	return err;
 }
