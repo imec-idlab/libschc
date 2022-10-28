@@ -73,13 +73,13 @@ int main() {
 			0x01, /* rule id */
 #if DIRECTION == 0
 			/* direction UP */
-			0x62, /* next header mapping index = 1 (2b), src prefix mapping index = 2 (2b), src iid LSB = 2 (4b) */
-			0x11, /* dst iid LSB = 1 (4b), src port mapping index = 0 (1b), dst port mapping index = 0 (1b), type mapping index = 1 (2b) */
+			0x62, /* next header mapping index = 1 (2b), dev prefix mapping index = 2 (2b), dev iid LSB = 2 (4b) */
+			0x11, /* app iid LSB = 1 (4b), dev port mapping index = 0 (1b), app port mapping index = 0 (1b), type mapping index = 1 (2b) */
 			0xFB, /* token LSB = fb (8b) */
 #else
 			/* direction DOWN */
-			0x41, /* next header mapping index = 1 (2b), src prefix mapping index = 0 (2b), src iid LSB = 1 (4b) */
-			0x21, /* dst iid LSB = 2 (4b), src port = 0 mapping index (1b), dst port mapping index = 0 (1b), type mapping index = 1 (2b) */
+			0x46, /* next header mapping index = 1 (2b), app iid LSB = 1 (4b), dev prefix mapping index = 2 (2b), */
+			0x21, /* dev iid LSB = 2 (4b), app iid LSB = 2 (4b), dev port = 0 mapping index (1b), app port mapping index = 0 (1b), type mapping index = 1 (2b) */
 			0xFB, /* token LSB = fb (8b) */
 #endif
 			0x01, 0x02, 0x03, 0x04 /* payload */

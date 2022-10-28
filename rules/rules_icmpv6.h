@@ -40,19 +40,21 @@ static const struct schc_ipv6_rule_t ipv6_rule1 = {
         { IP6_LEN,       0,  16,   1, BI,   {0, 0},             &mo_ignore,     COMPLENGTH  },
         { IP6_NH,        0,   8,   1, BI,   {58},               &mo_ignore,     NOTSENT     },
         { IP6_HL,        2,   8,   1, BI,   {64, 255},          &mo_matchmap,   MAPPINGSENT },
-        { IP6_SRCPRE,    2,  64,   1, BI,   {
+        { IP6_DEVPRE,    2,  64,   1, BI,   {
                 0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             },                                                  &mo_matchmap,   MAPPINGSENT },
         /* TODO use DEVIID once it is implemented in libSCHC */
-        { IP6_SRCIID,    0,  64,   1, BI,   {
+        { IP6_DEVIID,    0,  64,   1, BI,   {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
             },                                                  &mo_ignore,     VALUESENT   },
-        { IP6_DSTPRE,    2,  64,   1, BI,   {
+        { IP6_APPPRE,    2,  64,   1, BI,   {
                 0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             },                                                  &mo_matchmap,   MAPPINGSENT },
-        { IP6_DSTIID,    0,  64,   1, BI,   {
+        { IP6_APPIID,    0,  64,   1, BI,   {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
             },                                                  &mo_ignore,     VALUESENT   },
     }
@@ -67,11 +69,11 @@ static const struct schc_udp_rule_t udp_rule1 = {
         /* field,       ML, len, pos, dir,  val,                MO,             CDA         */
         /* set field length to 16 to indicate 16 bit values
          *  MO param length to 2 to indicate 2 indices */
-        { UDP_SRC,       2,  16,   1,  BI,  {
+        { UDP_DEV,       2,  16,   1,  BI,  {
                 0x33, 0x16, /* 5683 or */
                 0x33, 0x17  /* 5684 */
             },                                                  &mo_matchmap,   MAPPINGSENT },
-        { UDP_DST,       2,  16,   1,  BI,  {
+        { UDP_APP,       2,  16,   1,  BI,  {
                 0x33, 0x16, /* 5683 or */
                 0x33, 0x17  /* 5684 */
             },                                                  &mo_matchmap,   MAPPINGSENT },

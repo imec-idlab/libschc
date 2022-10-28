@@ -5,7 +5,7 @@
 #if USE_IP6
 const static struct schc_ipv6_rule_t ipv6_rule1 = {
 	//	id, up, down, length
-		10, 10, 14,
+		10, 10, 10,
 		{
 			//	field, 			MO, len, pos,dir, 	val,			MO,				CDA
 				{ IP6_V,	 	0, 4,	1, BI, 		{6},			&mo_equal, 		NOTSENT },
@@ -14,27 +14,16 @@ const static struct schc_ipv6_rule_t ipv6_rule1 = {
 				{ IP6_LEN, 		0, 16,	1, BI, 		{0, 0},			&mo_ignore, 	COMPLENGTH },
 				{ IP6_NH, 		3, 8, 	1, BI, 		{6, 17, 58},	&mo_matchmap, 	MAPPINGSENT },
 				{ IP6_HL, 		0, 8, 	1, BI, 		{64}, 			&mo_ignore, 	NOTSENT },
-				{ IP6_SRCPRE,	4, 64,	1, UP,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				{ IP6_DEVPRE,	4, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xBB, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
-				{ IP6_SRCPRE,	4, 64,	1, DOWN,	{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-														 0xBB, 0xBB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-														 0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-														 0xDD, 0xDD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&mo_matchmap, 	MAPPINGSENT }, // you can store as many IP's as (MAX_FIELD_LENGTH / 8)
-				{ IP6_SRCIID,	60, 64,	1, UP, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
+				{ IP6_DEVIID,	60, 64,	1, BI, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
 						&mo_MSB, 		LSB },
-				{ IP6_SRCIID,	60, 64,	1, DOWN, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
-										&mo_MSB, 		LSB },
-				{ IP6_DSTPRE,	0, 64,	1, UP,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ IP6_APPPRE,	0, 64,	1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_equal, 		NOTSENT },
-				{ IP6_DSTPRE,	0, 64,	1, DOWN,	{0xCC, 0xCC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-						&mo_equal, 		NOTSENT },
-				{ IP6_DSTIID,	60, 64,	1, UP, 		{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02},
-						&mo_MSB, 		LSB }, // match the 60 first bits, send the last 4
-				{ IP6_DSTIID,	60, 64,	1, DOWN, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+				{ IP6_APPIID,	60, 64,	1, BI, 	    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&mo_MSB, 		LSB }, // match the 60 first bits, send the last 4
 		}
 };
@@ -48,13 +37,13 @@ const static struct schc_ipv6_rule_t ipv6_rule2 = {
 				{ IP6_LEN, 		0,  16,	 1, BI, 	{0, 0},			&mo_ignore, 	COMPLENGTH },
 				{ IP6_NH, 		0,  8, 	 1, BI, 	{17}, 			&mo_equal, 	NOTSENT },
 				{ IP6_HL, 		0,  8, 	 1, BI, 	{64}, 			&mo_ignore, 	NOTSENT },
-				{ IP6_SRCPRE,	0,  64,	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
+				{ IP6_DEVPRE,	0,  64,	 1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&mo_equal, 	NOTSENT },
-				{ IP6_SRCIID,	16, 64,  1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
+				{ IP6_DEVIID,	16, 64,  1, BI, 	{0x02, 0x30, 0x48, 0xFF, 0xFE, 0x5A, 0x00, 0x00},
 						&mo_MSB, 	LSB }, // match the 16 first bits, send the last 48
-				{ IP6_DSTPRE,	0,  64,  1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
+				{ IP6_APPPRE,	0,  64,  1, BI, 	{0x20, 0x01, 0x06, 0xA8, 0x1D, 0x80, 0x20, 0x21},
 						&mo_equal, 	NOTSENT },
-				{ IP6_DSTIID,	16, 64,  1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
+				{ IP6_APPIID,	16, 64,  1, BI, 	{0x50, 0x74, 0xF2, 0xFF, 0xFE, 0xB1, 0x00, 0x00},
 						&mo_MSB, 	LSB },
 		}
 };
@@ -70,13 +59,13 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 				{ IP6_LEN, 		0, 16,	 1, BI, 	{0, 0},			&mo_ignore, 	COMPLENGTH },
 				{ IP6_NH, 		0, 8, 	 1, BI, 	{17},			&mo_equal, 	NOTSENT },
 				{ IP6_HL, 		0, 8, 	 1, BI, 	{64}, 			&mo_ignore, 	NOTSENT },
-				{ IP6_SRCPRE,	0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ IP6_DEVPRE,	0, 64,	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_equal, 	NOTSENT },
-				{ IP6_SRCIID,	0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
+				{ IP6_DEVIID,	0, 64, 	 1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01},
 						&mo_equal, 	NOTSENT },
-				{ IP6_DSTPRE,	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ IP6_APPPRE,	0, 64, 	 1, BI,		{0xAA, 0xAA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_equal, 	NOTSENT },
-				{ IP6_DSTIID,	60, 64,  1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+				{ IP6_APPIID,	60, 64,  1, BI, 	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 						&mo_MSB, 		LSB},
 		}
 };
@@ -86,9 +75,9 @@ const static struct schc_ipv6_rule_t ipv6_rule3 = {
 const static struct schc_udp_rule_t udp_rule1 = {
 		4, 4, 4,
 		{
-				{ UDP_SRC, 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
+				{ UDP_DEV, 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
 						&mo_matchmap,	MAPPINGSENT }, // 5683 or 5684
-				{ UDP_DST, 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
+				{ UDP_APP, 		2,	16, 	 1, BI, 	{0x33, 0x16, 0x33, 0x17},
 						&mo_matchmap,	MAPPINGSENT },
 						// set field length to 16 to indicate 16 bit values
 						// MO param to 2 to indicate 2 indices
@@ -100,8 +89,8 @@ const static struct schc_udp_rule_t udp_rule1 = {
 const static struct schc_udp_rule_t udp_rule2 = {
 		4, 4, 4,
 		{
-				{ UDP_SRC, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
-				{ UDP_DST, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
+				{ UDP_DEV, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
+				{ UDP_APP, 		12,	16,	 1, BI, 	{0x33, 0x16},		&mo_MSB,		LSB },
 				{ UDP_LEN, 		0,  16,	 1, BI, 	{0, 0},				&mo_ignore,	COMPLENGTH },
 				{ UDP_CHK, 		0,  16,	 1, BI, 	{0, 0},				&mo_ignore,	COMPCHK },
 		}
@@ -110,8 +99,8 @@ const static struct schc_udp_rule_t udp_rule2 = {
 const static struct schc_udp_rule_t udp_rule3 = {
 		4, 4, 4,
 		{
-				{ UDP_SRC, 		0,	16,	 1, BI, 	{0x13, 0x89}, 		&mo_equal,		NOTSENT },
-				{ UDP_DST, 		0, 	16,	 1, BI, 	{0x13, 0x88}, 		&mo_equal,		NOTSENT },
+				{ UDP_DEV, 		0,	16,	 1, BI, 	{0x13, 0x89}, 		&mo_equal,		NOTSENT },
+				{ UDP_APP, 		0, 	16,	 1, BI, 	{0x13, 0x88}, 		&mo_equal,		NOTSENT },
 				{ UDP_LEN, 		0, 	16,	 1, BI, 	{0, 0},				&mo_ignore,	COMPLENGTH },
 				{ UDP_CHK, 		0, 	16,	 1, BI, 	{0, 0},				&mo_ignore,	COMPCHK },
 		}
