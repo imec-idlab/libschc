@@ -1086,13 +1086,13 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		copy_bits(buf, len, bit_arr->ptr, bit_arr->offset, coap_len);
 
 		pcoap_msg.len = 4;
-		memcpy(pcoap_msg.buf, (uint8_t*) (buf + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)), coap_len);
-		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
-
 		coap_offset = BITS_TO_BYTES(coap_len);
 
+		memcpy(pcoap_msg.buf, (uint8_t*) (buf + BITS_TO_BYTES(len)), coap_offset);
+		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
+
 		bit_arr->offset += coap_len;
-		new_header_length += coap_len;
+		new_header_length += coap_offset;
 #endif
 	} else { // compressed packet, decompress with residue and rule
 		schc_bitarray_t dst_arr;
