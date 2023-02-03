@@ -45,7 +45,7 @@ uint8_t rm_revise_rule_context(void) {
 	for (int i = 0; i < DEVICE_COUNT; i++) {
 		for (int j = 0; j < devices[i]->compression_rule_count; j++) {
 			const struct schc_compression_rule_t *curr_rule =
-					(*devices[i]->compression_context)[i];
+					(*devices[i]->compression_context)[j];
 			if (devices[i]->uncomp_rule_id == curr_rule->rule_id) {
 				DEBUG_PRINTF("rm_revise_rule_context(): rule=%p uses device with id=%02" PRIu32 " uncompressed rule id=%d\n", (void*) curr_rule, devices[i]->device_id, devices[i]->uncomp_rule_id);
 				return 0;
