@@ -1415,6 +1415,12 @@ static uint8_t wait_end(schc_fragmentation_t* rx_conn, schc_mbuf_t* tail) {
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	schc_mbuf_t* tail = get_mbuf_tail(rx_conn->head); // get last received fragment
 
+	if (!tail) {
+		// e.g. called without calling schc_input first
+		DEBUG_PRINTF("connection %p contains no fragments\n", (void *)rx_conn);
+		return 1;
+	}
+
 	copy_bits(rx_conn->ack.rule_id, 0, tail->ptr, 0, rx_conn->fragmentation_rule->rule_id_size_bits); // get the rule id from the fragment
 	uint8_t window = get_window_bit(tail->ptr, rx_conn); // the window bit from the fragment
 	uint8_t fcn = get_fcn_value(tail->ptr, rx_conn); // the fcn value from the fragment
