@@ -1210,7 +1210,7 @@ static uint8_t send_ack(schc_fragmentation_t* conn) {
 
 	int i;
 	for(i = 0; i < packet_len; i++) {
-		printf("%02X ", ack[i]);
+		DEBUG_PRINTF("%02X ", ack[i]);
 	}
 
 	DEBUG_PRINTF("\n");
