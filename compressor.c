@@ -794,7 +794,7 @@ uint8_t mo_matchmap(struct schc_field *target_field, unsigned char *field_value,
  * @return error 		error codes on error
  *
  */
-uint8_t schc_compressor_init(struct schc_device* devices) {
+uint8_t schc_compressor_init() {
 	jsmn_init(&json_parser);
 	if(!rm_revise_rule_context()) {
 		return 0;
