@@ -57,8 +57,6 @@ typedef enum {
 } rx_state;
 
 typedef struct schc_mbuf_t {
-	/* the selected slot */
-	uint32_t slot;
 	/* start of memory block */
 	uint8_t* ptr;
 	/* length of the fragment */
@@ -88,7 +86,12 @@ typedef struct schc_fragmentation_ack_t {
 
 } schc_fragmentation_ack_t;
 
-typedef struct schc_fragmentation_t {
+typedef struct schc_fragmentation_t schc_fragmentation_t;
+
+struct schc_fragmentation_t {
+#if DYNAMIC_MEMORY
+	schc_fragmentation_t *next;
+#endif
 	/* the device id of the connection */
 	uint32_t device_id;
 	/* a pointer to the start of the unfragmented, compressed packet in a bit array */
@@ -146,7 +149,7 @@ typedef struct schc_fragmentation_t {
 	struct schc_fragmentation_rule_t* fragmentation_rule;
 	/* the rule id */
 	uint8_t rule_id[4];
-} schc_fragmentation_t;
+};
 
 int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),

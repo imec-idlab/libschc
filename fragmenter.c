@@ -22,15 +22,18 @@ uint8_t ATTEMPTS = 0; // for debugging
 #endif
 
 // keep track of the active connections
-struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
 static uint8_t FRAGMENTATION_BUF[MAX_MTU_LENGTH] = { 0 };
 
-static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
-
-#if !DYNAMIC_MEMORY
+#if DYNAMIC_MEMORY
+struct schc_fragmentation_t *schc_rx_conns;
+#else
+struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
 static uint8_t buf_ptr = 0;
 uint8_t schc_buf[STATIC_MEMORY_BUFFER_LENGTH] = { 0 };
+static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
 #endif
+
+static void schc_free_connection(schc_fragmentation_t *conn);
 
 /**
  * get the FCN value
@@ -84,6 +87,26 @@ static void mbuf_print(schc_mbuf_t *head) {
 	}
 }
 
+static schc_mbuf_t *mbuf_alloc(void)
+{
+#if !DYNAMIC_MEMORY
+	uint32_t i;
+
+	for(i = 0; i < SCHC_CONF_MBUF_POOL_LEN; i++) {
+		if(MBUF_POOL[i].len == 0 && MBUF_POOL[i].ptr == NULL) {
+			DEBUG_PRINTF("mbuf_push(): selected mbuf slot %d \n", (int) i);
+			return &MBUF_POOL[i];
+		}
+	}
+	return NULL;
+#else
+	schc_mbuf_t *res = malloc(sizeof(schc_mbuf_t));
+
+	*res = (schc_mbuf_t){ .len = 0, .ptr = NULL };
+	return res;
+#endif
+}
+
 /**
  * add an item to the end of the mbuf list
  * if head is NULL, the first item of the list
@@ -98,34 +121,25 @@ static void mbuf_print(schc_mbuf_t *head) {
  */
 static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 	// scroll to next free mbuf slot
-	uint32_t i;
-	for(i = 0; i < SCHC_CONF_MBUF_POOL_LEN; i++) {
-		if(MBUF_POOL[i].len == 0 && MBUF_POOL[i].ptr == NULL) {
-			break;
-		}
-	}
+	schc_mbuf_t *mbuf = mbuf_alloc();
 
-	if(i == SCHC_CONF_MBUF_POOL_LEN) {
+	if(mbuf == NULL) {
 		DEBUG_PRINTF("mbuf_push(): no free mbuf slots found \n");
 		return SCHC_FAILURE;
 	}
 
-	DEBUG_PRINTF("mbuf_push(): selected mbuf slot %d \n", (int) i);
-
 	// check if this is a new connection
 	if(*head == NULL) {
-		*head = &MBUF_POOL[i];
+		*head = mbuf;
 		(*head)->len = len;
 		(*head)->ptr = (uint8_t*) (data);
 		(*head)->next = NULL;
-		(*head)->slot = i;
 		return SCHC_SUCCESS;
 	}
 
-	MBUF_POOL[i].slot = i;
-	MBUF_POOL[i].next = NULL;
-	MBUF_POOL[i].len = len;
-	MBUF_POOL[i].ptr = (uint8_t*) (data);
+	mbuf->next = NULL;
+	mbuf->len = len;
+	mbuf->ptr = (uint8_t*) (data);
 
 	// find the last mbuf in the chain
 	schc_mbuf_t *curr = *head;
@@ -134,7 +148,7 @@ static int8_t mbuf_push(schc_mbuf_t **head, uint8_t* data, uint16_t len) {
 	}
 
 	// set next in chain
-	curr->next = (schc_mbuf_t*) (MBUF_POOL + i);
+	curr->next = mbuf;
 
 	return SCHC_SUCCESS;
 }
@@ -168,9 +182,6 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
  *
  */
 static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
-	uint32_t slot = 0;
-
-	slot = mbuf->slot;
 	schc_mbuf_t *prev = NULL;
 
 	if(mbuf->next != NULL) {
@@ -189,18 +200,18 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 		}
 	}
 
-	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool \n", (int) slot);
 #if DYNAMIC_MEMORY
+	DEBUG_PRINTF("mbuf_delete(): free %p \n", (void *)mbuf);
 	free(mbuf->ptr);
+	free(mbuf);
 #else
+	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool \n", mbuf - MBUF_POOL);
 	memset(mbuf->ptr, 0, mbuf->len);
+	mbuf->next = NULL;
+	mbuf->frag_cnt = 0;
+	mbuf->len = 0;
+	mbuf->ptr = NULL;
 #endif
-
-	// clear slot in mbuf pool
-	MBUF_POOL[slot].next = NULL;
-	MBUF_POOL[slot].frag_cnt = 0;
-	MBUF_POOL[slot].len = 0;
-	MBUF_POOL[slot].ptr = NULL;
 }
 
 /**
@@ -756,6 +767,9 @@ void schc_reset(schc_fragmentation_t* conn) {
 	if (conn->remove_timer_entry) {
 		conn->remove_timer_entry(conn);
 	}
+#if DYNAMIC_MEMORY
+	conn->next = NULL;
+#endif
 	conn->device_id = 0;
 	conn->tail_ptr = 0;
 	conn->dc = 0;
@@ -787,6 +801,7 @@ void schc_reset(schc_fragmentation_t* conn) {
 		mbuf_clean(&conn->head);
 	}
 	conn->head = NULL;
+	schc_free_connection(conn);
 }
 
 /**
@@ -1291,6 +1306,41 @@ schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
 	uint32_t i; schc_fragmentation_t *conn;
 	conn = 0;
 
+#if DYNAMIC_MEMORY
+	schc_fragmentation_t *ptr = schc_rx_conns;
+	while (ptr) {
+		if (ptr->device_id == device_id) {
+			conn = ptr;
+			break;
+		}
+		ptr = ptr->next;
+	}
+	if (!conn) {
+		conn = malloc(sizeof(schc_fragmentation_t));
+
+		if (conn == NULL) {
+			return NULL;
+		}
+		DEBUG_PRINTF("schc_get_connection(): malloc'd %p\n", (void *)conn);
+		*conn = (schc_fragmentation_t){ 0 };
+		conn->device_id = device_id;
+
+		/* append to list of connections */
+		ptr = schc_rx_conns;
+		while (ptr && ptr->next) {
+			ptr = ptr->next;
+		}
+		if (ptr) {
+			ptr->next = conn;
+		}
+		else {
+			schc_rx_conns = conn;
+		}
+	}
+	if(conn) {
+		DEBUG_PRINTF("schc_get_connection(): selected connection %p for device %d\n", (void *) conn, (int) device_id);
+	}
+#else
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		// first look for the the old connection
 		if (schc_rx_conns[i].device_id == device_id) {
@@ -1312,10 +1362,37 @@ schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
 	if(conn) {
 		DEBUG_PRINTF("schc_get_connection(): selected connection %d for device %d\n", (int) i, (int) device_id);
 	}
+#endif
 
 	return conn;
 }
 
+static void schc_free_connection(schc_fragmentation_t *conn)
+{
+#if DYNAMIC_MEMORY
+	schc_fragmentation_t *ptr = schc_rx_conns, *last = NULL;
+
+	DEBUG_PRINTF("schc_free_connection(): trying to free %p\n", (void *)conn);
+	while (ptr) {
+		if (ptr == conn) {
+			if (last == NULL) {
+				schc_rx_conns = ptr->next;
+			}
+			else {
+				last->next = ptr->next;
+			}
+			ptr->next = NULL;
+			DEBUG_PRINTF("schc_free_connection(): free'd %p\n", (void *)ptr);
+			free(ptr);
+			break;
+		}
+		last = ptr;
+		ptr = ptr->next;
+	}
+#else
+	(void)conn;
+#endif
+}
 
 /**
  * sort the mbuf chain, find the MIC inside the last received fragment
@@ -1799,6 +1876,9 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	tx_conn->head = NULL;
 	schc_reset(tx_conn);
 
+#if DYNAMIC_MEMORY
+	schc_rx_conns = NULL;
+#else
 	// initializes the schc rx connections
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		schc_reset(&schc_rx_conns[i]);
@@ -1810,7 +1890,9 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		schc_rx_conns[i].input = 0;
 		schc_rx_conns[i].fragmentation_rule = NULL;
 	}
+#endif
 
+#if !DYNAMIC_MEMORY
 	// initializes the mbuf pool
 	for(i = 0; i < SCHC_CONF_MBUF_POOL_LEN; i++) {
 		MBUF_POOL[i].ptr = NULL;
@@ -1818,6 +1900,7 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 		MBUF_POOL[i].next = NULL;
 		MBUF_POOL[i].offset = 0;
 	}
+#endif
 
 	return 1;
 }
@@ -2308,6 +2391,7 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	mbuf_print(conn->head);
 
 	if(err != SCHC_SUCCESS) {
+		schc_free_connection(conn);
 		return NULL;
 	}
 
