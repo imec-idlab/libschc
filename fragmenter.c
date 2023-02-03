@@ -1610,12 +1610,14 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 	else if (rx_conn->fragmentation_rule->mode == NO_ACK) {
 		switch (rx_conn->RX_STATE) {
 		case RECV_WINDOW: {
+			DEBUG_PRINTF("RECV WINDOW\n");
 			if (rx_conn->timer_flag && !rx_conn->input) { // inactivity timer expired
 				abort_connection(rx_conn);
 				// todo send abort
 				break;
 			}
 			if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+				DEBUG_PRINTF("all-1\n");
 				// clear inactivity timer
 				rx_conn->timer_flag = 0;
 				if(!mic_correct(rx_conn)) { // mic wrong
