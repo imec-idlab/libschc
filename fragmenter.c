@@ -502,7 +502,12 @@ static unsigned int compute_mic(schc_fragmentation_t *conn, uint8_t last_tile_pa
 	uint16_t padded_length = ((conn->bit_arr->bit_len + last_tile_padding + extra_padding) / 8);
 
 	while (i < padded_length) {
-		byte = conn->bit_arr->ptr[i];
+		if (i < conn->bit_arr->len) {
+			byte = conn->bit_arr->ptr[i];
+		}
+		else {
+			byte = 0U;
+		}
 		crc = crc ^ byte;
 		for (j = 7; j >= 0; j--) {    // do eight times.
 			mask = -(crc & 1);
