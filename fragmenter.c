@@ -25,8 +25,6 @@ uint8_t ATTEMPTS = 0; // for debugging
 struct schc_fragmentation_t schc_rx_conns[SCHC_CONF_RX_CONNS];
 static uint8_t FRAGMENTATION_BUF[MAX_MTU_LENGTH] = { 0 };
 
-// keep track of the mbuf's
-static uint32_t MBUF_PTR;
 static struct schc_mbuf_t MBUF_POOL[SCHC_CONF_MBUF_POOL_LEN];
 
 #if !DYNAMIC_MEMORY
@@ -1798,7 +1796,6 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	}
 
 	// initializes the mbuf pool
-	MBUF_PTR = 0;
 	for(i = 0; i < SCHC_CONF_MBUF_POOL_LEN; i++) {
 		MBUF_POOL[i].ptr = NULL;
 		MBUF_POOL[i].len = 0;
