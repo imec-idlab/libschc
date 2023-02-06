@@ -454,6 +454,9 @@ static int _do_mo(schc_bitarray_t *src, uint32_t prev_offset, struct schc_field 
 
 	if(src_offset >= 8)
 		src_pos = get_number_of_bytes_from_bits(src_offset);
+	if (src_pos > src->len) {
+		return 0;
+	}
 	if (field->MO(field,
 			(uint8_t*) (src->ptr + src_pos), (src_offset % 8))) { // compare header field and rule field using the matching operator
 		src->offset += field->field_length;
@@ -832,7 +835,8 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 
 	memset(dst->ptr, 0, dst->len);
 	/* use bit array for comparison */
-	schc_bitarray_t src; src.ptr = data; src.offset = 0; uint8_t icmp6_packet = 0; uint8_t use_udp = 1;
+	schc_bitarray_t src; src.ptr = data; src.offset = 0; src.len = total_length;
+	uint8_t icmp6_packet = 0; uint8_t use_udp = USE_UDP;
 
 	DEBUG_PRINTF("schc_compress(): \n");
 
@@ -844,10 +848,13 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 	ipv6_rule = schc_find_rule_from_header(&src, device, SCHC_IPV6, dir);
 	if(ipv6_rule != NULL) {
 		DEBUG_PRINTF("schc_compress(): IPv6 rule ptr=%p \n", (void*)ipv6_rule);
-		if(data[6] == 0x3A) { // icmpv6 packet
-			icmp6_packet 	= 1;
-			use_udp 		= 0;
-		}
+	}
+	if(data[6] == 0x3A) { // icmpv6 packet
+		icmp6_packet = 1;
+		use_udp      = 0;
+	}
+	if(data[6] != 0x11 || total_length < (IP6_HLEN + UDP_HLEN)) { // not a udp packet
+		use_udp      = 0;
 	}
 #endif
 #if USE_UDP == 1
@@ -859,25 +866,35 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 		}
 #endif
 #if USE_COAP == 1
-		/* CoAP pdu for CoAP specific actions */
-		uint8_t* coap_ptr = (uint8_t*) (data + (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP));
-		pcoap_pdu coap_msg = { coap_ptr, (total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * USE_UDP)),
-				(total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * USE_UDP)) };
+		schc_bitarray_t coap_src = { .ptr = 0 };
+		uint8_t* coap_ptr = NULL;
+		if (!icmp6_packet &&
+			(total_length >= (IP6_HLEN * USE_IP6) + (UDP_HLEN * use_udp))) {
+			/* CoAP pdu for CoAP specific actions */
+			coap_ptr = (uint8_t*) (data + (IP6_HLEN * USE_IP6) + (UDP_HLEN * use_udp));
+			pcoap_pdu coap_msg = { coap_ptr, (total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * use_udp)),
+					(total_length - (IP6_HLEN * USE_IP6) - (UDP_HLEN * use_udp)) };
 
-		/* check the buffer for determining the CoAP header length */
-		coap_length = pcoap_get_coap_offset(&coap_msg);
+			/* check the buffer for determining the CoAP header length */
+			coap_length = pcoap_get_coap_offset(&coap_msg);
 
-		/* generate a bit array, matchable to the rule */
-		schc_bitarray_t coap_src; uint8_t coap_buffer[MAX_COAP_MSG_SIZE];
-		coap_src.ptr = coap_buffer; coap_src.offset = 0;
-		generate_coap_header_fields(&coap_msg, &coap_src);
-
-		coap_rule = schc_find_rule_from_header(&coap_src, device, SCHC_COAP, dir);
-		if(coap_rule != NULL) {
-			DEBUG_PRINTF("schc_compress(): CoAP rule ptr=%p \n", (void*)coap_rule);
+			/* generate a bit array, matchable to the rule */
+			uint8_t coap_buffer[MAX_COAP_MSG_SIZE] = { 0 };
+			coap_src.ptr = coap_buffer; coap_src.offset = 0;
+			if (generate_coap_header_fields(&coap_msg, &coap_src) > 0) {
+				coap_src.len = coap_length;
+				coap_rule = schc_find_rule_from_header(&coap_src, device, SCHC_COAP, dir);
+				if(coap_rule != NULL) {
+					DEBUG_PRINTF("schc_compress(): CoAP rule ptr=%p \n", (void*)coap_rule);
+				}
+				/* reset the bit arrays offset and start compressing */
+				coap_src.offset = 0;
+			}
+			else {
+				coap_ptr = NULL;
+				coap_src.ptr = NULL;
+			}
 		}
-		/* reset the bit arrays offset and start compressing */
-		coap_src.offset = 0;
 #endif
 	/* reset the offset and start compressing */
 	src.offset = 0;
@@ -900,12 +917,16 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 #endif
 		if(!icmp6_packet) {
 #if USE_UDP == 1
-			copy_bits(dst->ptr, dst->offset, data, BYTES_TO_BITS(IP6_HLEN), BYTES_TO_BITS(UDP_HLEN));
-			dst->offset += BYTES_TO_BITS(UDP_HLEN);
+			if (use_udp) {
+				copy_bits(dst->ptr, dst->offset, data, BYTES_TO_BITS(IP6_HLEN), BYTES_TO_BITS(UDP_HLEN));
+				dst->offset += BYTES_TO_BITS(UDP_HLEN);
+			}
 #endif
 #if USE_COAP == 1
-			copy_bits(dst->ptr, dst->offset, coap_ptr, 0, BYTES_TO_BITS(coap_length));
-			dst->offset += BYTES_TO_BITS(coap_length);
+			if (coap_ptr) {
+				copy_bits(dst->ptr, dst->offset, coap_ptr, 0, BYTES_TO_BITS(coap_length));
+				dst->offset += BYTES_TO_BITS(coap_length);
+			}
 #endif
 		}
 	}
@@ -916,10 +937,14 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 #endif
 		if(!icmp6_packet) {
 #if USE_UDP == 1
-		compress(dst, &src, (const struct schc_layer_rule_t*) udp_rule, dir);
+			if (use_udp) {
+				compress(dst, &src, (const struct schc_layer_rule_t*) udp_rule, dir);
+			}
 #endif
 #if USE_COAP == 1
-		compress(dst, &coap_src, (const struct schc_layer_rule_t*) coap_rule, dir);
+			if (coap_src.ptr) {
+				compress(dst, &coap_src, (const struct schc_layer_rule_t*) coap_rule, dir);
+			}
 #endif
 		}
 	}
@@ -1114,6 +1139,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 	uint8_t ret = 0;
 	uint8_t coap_offset = 0;
+	uint8_t use_udp = USE_UDP, icmp6_packet = 0;
 
 #if USE_COAP == 1
 	// CoAP buffer for parsing
@@ -1132,31 +1158,8 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	 * e.g. using ICMPv6 packets and CoAP packets
 	 */
 	if (compare_bits(bit_arr->ptr, compressed_id, device->uncomp_rule_id_size_bits)) { /* uncompressed packet, copy uncompressed headers */
-#if USE_IP6 == 1
-		copy_bits(buf, 0, bit_arr->ptr, device->uncomp_rule_id_size_bits, BYTES_TO_BITS(IP6_HLEN));
-		bit_arr->offset += BYTES_TO_BITS(IP6_HLEN);
-		new_header_length += IP6_HLEN;
-#endif
-#if USE_UDP == 1
-		copy_bits(buf, BYTES_TO_BITS((IP6_HLEN * USE_IP6)), bit_arr->ptr, bit_arr->offset, BYTES_TO_BITS(UDP_HLEN));
-		bit_arr->offset += BYTES_TO_BITS(UDP_HLEN);
-		new_header_length += UDP_HLEN;
-#endif
-#if USE_COAP == 1
-		/* only include IPv6 and UDP when enabled */
-		uint16_t len = (device->uncomp_rule_id_size_bits + (( (IP6_HLEN * USE_IP6) + (UDP_HLEN * USE_UDP)) * 8));
-		uint16_t coap_len = (total_length * 8) - len;
-		copy_bits(buf, len, bit_arr->ptr, bit_arr->offset, coap_len);
-
-		pcoap_msg.len = 4;
-		coap_offset = BITS_TO_BYTES(coap_len);
-
-		memcpy(pcoap_msg.buf, (uint8_t*) (buf + BITS_TO_BYTES(len)), coap_offset);
-		// coap_offset = pcoap_get_coap_offset(&pcoap_msg); // use CoAP lib to calculate CoAP offset
-
-		bit_arr->offset += coap_len;
-		new_header_length += coap_offset;
-#endif
+		copy_bits(buf, 0, bit_arr->ptr, device->uncomp_rule_id_size_bits,
+				  bit_arr->bit_len - device->uncomp_rule_id_size_bits);
 	} else { // compressed packet, decompress with residue and rule
 		schc_bitarray_t dst_arr;
 		dst_arr.ptr = buf;
@@ -1169,11 +1172,17 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 				return 0; // no rule was found
 			}
 			new_header_length += IP6_HLEN;
+			if(buf[6] == 0x3A) {  // icmpv6 packet
+				icmp6_packet	= 1;
+				use_udp			= 0;
+			}
+			if(buf[6] != 0x11) { // not a udp packet
+				use_udp			= 0;
+			}
 		}
-
 #endif
 #if USE_UDP == 1
-		if (rule->udp_rule != NULL) {
+		if (use_udp && (rule->udp_rule != NULL)) {
 			ret = decompress((struct schc_layer_rule_t *) (rule->udp_rule), bit_arr, &dst_arr, dir);
 			if (ret == 0) {
 				return 0; // no rule was found
@@ -1182,7 +1191,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		}
 #endif
 #if USE_COAP == 1
-		if (rule->coap_rule != NULL) {
+		if (!icmp6_packet && (rule->coap_rule != NULL)) {
 			coap_offset = decompress_coap_rule((struct schc_coap_rule_t *) rule->coap_rule, bit_arr, &pcoap_msg, dir);
 			if (coap_offset == 0) {
 				return 0; // no rule was found
