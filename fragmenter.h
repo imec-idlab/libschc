@@ -151,10 +151,7 @@ struct schc_fragmentation_t {
 	uint8_t rule_id[4];
 };
 
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
-		void (*end_rx)(schc_fragmentation_t* conn),
-		void (*remove_timer_entry)(schc_fragmentation_t* conn));
+int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn);
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
 void schc_reset(schc_fragmentation_t* conn);
@@ -163,7 +160,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len,
 		schc_fragmentation_t* rx_conn, uint32_t device_id);
 void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
-		uint32_t device_id);
+		schc_fragmentation_t *tx_conn, uint32_t device_id);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
 
 struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode,

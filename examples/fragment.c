@@ -293,7 +293,7 @@ void init() {
 	}
 
 	/* initialize fragmenter for the constrained device */
-	schc_fragmenter_init(&tx_conn, &tx_send_callback, &end_rx, &remove_timer_entry);
+	schc_fragmenter_init(&tx_conn);
 	
 	/* initialize fragmenter for ngw */
 	tx_conn_nwgw.send 					= &rx_send_callback;

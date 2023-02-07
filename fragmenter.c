@@ -1857,19 +1857,11 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
  * Initializes the SCHC fragmenter
  *
  * @param tx_conn				a pointer to the tx initialization structure
- * @param send					a pointer to the send callback
- * @param end_rx				this function is called to indicate that
- * 								the last rx timer has expired
- * @param remove_timer_entry	some scheduler implementations need a callback
- * 								to remove a timer entry for a certain device
  *
  * @return error codes on error
  *
  */
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
-		uint8_t (*send)(uint8_t* data, uint16_t length, uint32_t device_id),
-		void (*end_rx)(schc_fragmentation_t* conn),
-		void (*remove_timer_entry)(schc_fragmentation_t *conn)) {
+int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn) {
 	uint32_t i;
 
 	// initializes the schc tx connection
@@ -1882,9 +1874,6 @@ int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn,
 	// initializes the schc rx connections
 	for (i = 0; i < SCHC_CONF_RX_CONNS; i++) {
 		schc_reset(&schc_rx_conns[i]);
-		schc_rx_conns[i].send = send;
-		schc_rx_conns[i].end_rx = end_rx;
-		schc_rx_conns[i].remove_timer_entry = remove_timer_entry;
 		schc_rx_conns[i].frag_cnt = 0;
 		schc_rx_conns[i].window_cnt = 0;
 		schc_rx_conns[i].input = 0;
@@ -2285,7 +2274,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 		schc_ack_input(data, tx_conn);
 		return tx_conn;
 	} else {
-		schc_fragmentation_t* rx_conn = schc_fragment_input((uint8_t*) data, len, device_id);
+		schc_fragmentation_t* rx_conn = schc_fragment_input((uint8_t*) data, len, tx_conn, device_id);
 		return rx_conn;
 	}
 }
@@ -2360,7 +2349,7 @@ void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn) {
  *
  */
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
-		uint32_t device_id) {
+		schc_fragmentation_t *tx_conn, uint32_t device_id) {
 	schc_fragmentation_t *conn;
 
 	// get a connection for the device
@@ -2369,6 +2358,9 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		DEBUG_PRINTF("schc_fragment_input(): no free connections found!\n");
 		return NULL;
 	}
+	conn->send = tx_conn->send;
+	conn->end_rx = tx_conn->end_rx;
+	conn->remove_timer_entry = tx_conn->remove_timer_entry;
 
 	conn->fragmentation_rule = get_fragmentation_rule_by_rule_id(data, device_id);
 
