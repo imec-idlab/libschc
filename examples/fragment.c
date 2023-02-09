@@ -303,7 +303,9 @@ void init() {
 	tx_conn_nwgw.send 					= &rx_send_callback;
 	tx_conn_nwgw.end_rx 				= &end_rx;
 	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
+#if DYNAMIC_MEMORY
 	tx_conn_nwgw.free_conn_cb			= &free_callback;
+#endif
 }
 
 int main() {

@@ -1369,10 +1369,10 @@ schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
 
 static void schc_free_connection(schc_fragmentation_t *conn)
 {
+#if DYNAMIC_MEMORY
 	if(conn->free_conn_cb) {
 		conn->free_conn_cb(conn);
 	}
-#if DYNAMIC_MEMORY
 	schc_fragmentation_t *ptr = schc_rx_conns, *last = NULL;
 
 	DEBUG_PRINTF("schc_free_connection(): trying to free %p\n", (void *)conn);

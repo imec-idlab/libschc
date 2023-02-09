@@ -91,6 +91,8 @@ typedef struct schc_fragmentation_t schc_fragmentation_t;
 struct schc_fragmentation_t {
 #if DYNAMIC_MEMORY
 	schc_fragmentation_t *next;
+	/* this callback is called upon freeing the connections that were allocated */
+	void (*free_conn_cb)(struct schc_fragmentation_t *conn);
 #endif
 	/* the device id of the connection */
 	uint32_t device_id;
@@ -135,8 +137,6 @@ struct schc_fragmentation_t {
 	void (*end_tx)(struct schc_fragmentation_t *conn);
 	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(struct schc_fragmentation_t *conn);
-	/* this callback is called upon freeing the connection */
-	void (*free_conn_cb)(struct schc_fragmentation_t *conn);
 	/* timer context for the application */
 	void *timer_ctx;
 	/* indicates whether a timer has expired */
