@@ -2364,7 +2364,9 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 	conn->send 					= tx_conn->send;
 	conn->end_rx 				= tx_conn->end_rx;
 	conn->remove_timer_entry 	= tx_conn->remove_timer_entry;
+#if DYNAMIC_MEMORY
 	conn->free_conn_cb 			= tx_conn->free_conn_cb;
+#endif
 
 	conn->fragmentation_rule 	= get_fragmentation_rule_by_rule_id(data, device_id);
 
