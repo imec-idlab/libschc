@@ -135,6 +135,8 @@ struct schc_fragmentation_t {
 	void (*end_tx)(struct schc_fragmentation_t *conn);
 	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(struct schc_fragmentation_t *conn);
+	/* this callback is called upon freeing the connection */
+	void (*free_conn_cb)(struct schc_fragmentation_t *conn);
 	/* timer context for the application */
 	void *timer_ctx;
 	/* indicates whether a timer has expired */

@@ -205,7 +205,7 @@ static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 	free(mbuf->ptr);
 	free(mbuf);
 #else
-	DEBUG_PRINTF("mbuf_delete(): clear slot %d in mbuf pool \n", mbuf - MBUF_POOL);
+	DEBUG_PRINTF("mbuf_delete(): clear slot %li in mbuf pool \n", mbuf - MBUF_POOL);
 	memset(mbuf->ptr, 0, mbuf->len);
 	mbuf->next = NULL;
 	mbuf->frag_cnt = 0;
@@ -1369,6 +1369,9 @@ schc_fragmentation_t* schc_get_connection(uint32_t device_id) {
 
 static void schc_free_connection(schc_fragmentation_t *conn)
 {
+	if(conn->free_conn_cb) {
+		conn->free_conn_cb(conn);
+	}
 #if DYNAMIC_MEMORY
 	schc_fragmentation_t *ptr = schc_rx_conns, *last = NULL;
 
@@ -2358,11 +2361,12 @@ schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
 		DEBUG_PRINTF("schc_fragment_input(): no free connections found!\n");
 		return NULL;
 	}
-	conn->send = tx_conn->send;
-	conn->end_rx = tx_conn->end_rx;
-	conn->remove_timer_entry = tx_conn->remove_timer_entry;
+	conn->send 					= tx_conn->send;
+	conn->end_rx 				= tx_conn->end_rx;
+	conn->remove_timer_entry 	= tx_conn->remove_timer_entry;
+	conn->free_conn_cb 			= tx_conn->free_conn_cb;
 
-	conn->fragmentation_rule = get_fragmentation_rule_by_rule_id(data, device_id);
+	conn->fragmentation_rule 	= get_fragmentation_rule_by_rule_id(data, device_id);
 
 	// todo
 	// if no rule was found
