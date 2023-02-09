@@ -1,19 +1,17 @@
-CFLAGS=-std=c11
-
 compress: compress.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o compress compress.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
+	gcc -g $(CFLAGS) -o compress compress.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
 
 icmpv6: icmpv6.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o icmpv6 icmpv6.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
+	gcc -g $(CFLAGS) -o icmpv6 icmpv6.c ../compressor.c ../jsmn.c ../picocoap.c ../bit_operations.c ../schc.c -lm
 	
 lwm2m: lwm2m.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o lwm2m lwm2m.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c -lm
+	gcc -g $(CFLAGS) -o lwm2m lwm2m.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c -lm
 
 fragment: fragment.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c timer.c
-	gcc -g -o fragment fragment.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c timer.c -lm -lpthread
+	gcc -g $(CFLAGS) -o fragment fragment.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c timer.c -lm -lpthread
 	
 interop: interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c
-	gcc -g -o interop interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c timer.c -lm -lpthread
+	gcc -g $(CFLAGS) -o interop interop.c ../compressor.c ../jsmn.c ../fragmenter.c ../picocoap.c ../bit_operations.c ../schc.c timer.c -lm -lpthread
 	
 clean:
 	rm compress fragment lwm2m interop
