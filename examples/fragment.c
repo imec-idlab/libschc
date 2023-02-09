@@ -283,6 +283,10 @@ uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	return 1;
 }
 
+void free_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("free_callback(): freeing connections for device %d\n", conn->device_id);
+}
+
 void init() {
 	/* initialize timer threads */
 	initialize_timer_thread();
@@ -299,6 +303,7 @@ void init() {
 	tx_conn_nwgw.send 					= &rx_send_callback;
 	tx_conn_nwgw.end_rx 				= &end_rx;
 	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
+	tx_conn_nwgw.free_conn_cb			= &free_callback;
 }
 
 int main() {
