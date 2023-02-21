@@ -184,6 +184,9 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 	schc_mbuf_t *prev = NULL;
 
+	if (!(*head) || !mbuf) {
+		return;
+	}
 	if(mbuf->next != NULL) {
 		if(mbuf == *head) {
 			DEBUG_PRINTF("mbuf_delete(): set head \n");
