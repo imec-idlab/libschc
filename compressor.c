@@ -1160,6 +1160,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	if (compare_bits(bit_arr->ptr, compressed_id, device->uncomp_rule_id_size_bits)) { /* uncompressed packet, copy uncompressed headers */
 		copy_bits(buf, 0, bit_arr->ptr, device->uncomp_rule_id_size_bits,
 				  bit_arr->bit_len - device->uncomp_rule_id_size_bits);
+	} else if (rule == NULL) {
+		// did not find any matching rule but uncompressed rule does not fit either.
+		return 0;
 	} else { // compressed packet, decompress with residue and rule
 		schc_bitarray_t dst_arr;
 		dst_arr.ptr = buf;
