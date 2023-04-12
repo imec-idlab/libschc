@@ -194,6 +194,9 @@ static schc_mbuf_t* get_prev_mbuf(schc_mbuf_t *head, schc_mbuf_t *mbuf) {
 static void mbuf_delete(schc_mbuf_t **head, schc_mbuf_t *mbuf) {
 	schc_mbuf_t *prev = NULL;
 
+	if (!(*head) || !mbuf) {
+		return;
+	}
 	if(mbuf->next != NULL) {
 		if(mbuf == *head) {
 			DEBUG_PRINTF("mbuf_delete(): set head \n");
@@ -810,7 +813,6 @@ void schc_reset(schc_fragmentation_t* conn) {
 	conn->RX_STATE = RECV_WINDOW;
 	conn->window = 0;
 	conn->window_cnt = 0;
-	conn->timer_ctx = NULL;
 	conn->timer_flag = 0;
 	conn->input = 0;
 	memset(conn->mic, 0, MIC_SIZE_BYTES);
@@ -1448,6 +1450,7 @@ static void schc_free_connection(schc_fragmentation_t *conn)
 	}
 	schc_fragmentation_t *ptr = schc_rx_conns, *last = NULL;
 
+	conn->timer_ctx = NULL;
 	DEBUG_PRINTF("schc_free_connection(): trying to free %p\n", (void *)conn);
 	while (ptr) {
 		if (ptr == conn) {
@@ -1466,7 +1469,7 @@ static void schc_free_connection(schc_fragmentation_t *conn)
 		ptr = ptr->next;
 	}
 #else
-	(void)conn;
+	conn->timer_ctx = NULL;
 #endif
 }
 
