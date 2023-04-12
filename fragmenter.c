@@ -1995,7 +1995,7 @@ int8_t schc_set_tile_size(schc_fragmentation_t* conn, uint16_t tile_size) {
 	if(conn->fragmentation_rule == NULL) {
 		return SCHC_FAILURE;
 	}
-	if(conn->fragmentation_rule->mode != ACK_ON_ERROR) {
+	if(conn->fragmentation_rule->mode != ACK_ON_ERROR && conn->TX_STATE == SEND) {
 		conn->tile_size = tile_size;
 		DEBUG_PRINTF("schc_set_tile_size(): changed tile size to %d\n", conn->tile_size);
 		return SCHC_SUCCESS;
