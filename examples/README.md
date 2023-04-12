@@ -1,6 +1,4 @@
 # EXAMPLES
-*Note: as the examples are executable in a single terminal, some issues arise as the same fragmenter instance is used for two different devices. As I did not have much more time to work on the examples, I did not try to look for a better solution. If you get a segmentation fault at the end of a fragmentation loop, it is as expected. However, the output and the code should be relatively easy to follow in order to deploy the library on 2 devices.*
-
 First make sure that the rule file is configured correctly. Copy the examples file and set the include directive to use the `rules_example.h`.
 ```
 cp rules/rule_config_example.h rules/rule_config.h
@@ -24,26 +22,23 @@ make compress
 ```
 
 ## Fragmentation
-Because the fragmenter of the network gateway will search for an mbuf collection based on the id of the constrained device when calling fragment_input(), `ACK_ALWAYS` and `ACK_ON_ERROR` won't work properly in this example.
-As the device id will be the same for an incoming fragment or an outgoing acknowledgement, the fragmenter will get confused and will use the same mbuf collection for both devices.
-However, with the example provided, it is easy to deploy two physically separated devices.
-
 ### No-Ack
 The fragmentation examples make use of a timer library and implements the `timer_handler` as an API between the library and the application and is platform specific.
 
-`fragment.c` presents an example where the different fragmentation modes can be tested. In order to test the different fragmentation modes, change the following line to the desired reliability mode.
-```C
-if(compressed_len > tx_conn.mtu) { // should fragment, change rule
-	// select a similar rule based on a reliability mode
-	schc_rule = get_schc_rule_by_reliability_mode(schc_rule, NO_ACK, device_id); // <-- change this line
-}
-```
-Then build and execute
+`fragment.c` presents an example where the `NO_ACK` mode can be tested.
+
 ```
 make fragment
 ./fragment
 ```
+
 ### Ack-on-Error
+In order to test the different fragmentation modes, an example is provided with two terminals that communicate over a UDP socket. In order for this example to work, you will have to build both `gateway.c` and `client.c` using the respective `make` commands `make gateway` and `make client`. Change the following line to the desired reliability mode.
+```C
+tx_conn.fragmentation_rule = get_fragmentation_rule_by_reliability_mode(schc_rule, NO_ACK, device_id);
+```
+Then build and execute.
+
 By changing the reliability mode to `ACK_ON_ERROR`, the receiver will acknowledge each erroneous window.
 
 ### Ack-Always

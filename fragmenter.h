@@ -137,6 +137,8 @@ struct schc_fragmentation_t {
 	void (*end_tx)(struct schc_fragmentation_t *conn);
 	/* this callback may be used to remove a timer entry */
 	void (*remove_timer_entry)(struct schc_fragmentation_t *conn);
+	/* callback function when the duty cycle timer expires */
+	void (*duty_cycle_cb)(struct schc_fragmentation_t *conn);
 	/* timer context for the application */
 	void *timer_ctx;
 	/* indicates whether a timer has expired */
@@ -151,22 +153,26 @@ struct schc_fragmentation_t {
 	struct schc_fragmentation_rule_t* fragmentation_rule;
 	/* the rule id */
 	uint8_t rule_id[4];
+	/* the tile size in bytes */
+	uint16_t tile_size;
+	/* keep track of the tiles per window */
+	uint16_t window_tiles[MAX_WINDOW_SIZE];
+	/* total bits transmitted */
+	uint32_t total_tx_bits;
 };
 
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn);
+void schc_reset(schc_fragmentation_t* conn);
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
-void schc_reset(schc_fragmentation_t* conn);
+int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn);
 
-schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len,
-		schc_fragmentation_t* rx_conn, uint32_t device_id);
 void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
-schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len,
-		schc_fragmentation_t *tx_conn, uint32_t device_id);
-schc_fragmentation_t* schc_get_connection(uint32_t device_id);
+schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn, uint32_t device_id);
+schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len, schc_fragmentation_t *tx_conn, uint32_t device_id);
 
-struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode,
-		uint32_t device_id);
+int8_t schc_set_tile_size(schc_fragmentation_t* conn, uint16_t tile_size);
+schc_fragmentation_t* schc_get_connection(uint32_t device_id);
+struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode, uint32_t device_id);
 
 uint16_t get_mbuf_len(schc_fragmentation_t *conn);
 void mbuf_copy(schc_fragmentation_t *conn, uint8_t* ptr);

@@ -17,6 +17,7 @@
 
 #include "../compressor.h"
 #include "../fragmenter.h"
+#include "socket/socket_server.h"
 
 #include "timer.h"
 
@@ -34,11 +35,9 @@ struct cb_t {
     struct cb_t *next;
 };
 
-struct cb_t *head = NULL;
-
-// structure to keep track of the transmission
-schc_fragmentation_t tx_conn;
-schc_fragmentation_t tx_conn_nwgw;
+struct cb_t* head = NULL;
+udp_server* serv;
+schc_fragmentation_t tx_conn_nwgw; /* structure to keep track of the transmission */
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
@@ -110,7 +109,7 @@ void compare_decompressed_buffer(uint8_t* decomp_packet, uint16_t new_packet_len
  * can be used for e.g. setting the tile size
  */
 void duty_cycle_callback(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("duty_cycle_callback() callback \n");
+	DEBUG_PRINTF("duty_cycle_callback() callback\n");
 	// schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
 	schc_fragment(conn);
 }
@@ -267,7 +266,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 		} else {
 			int ret = schc_reassemble(conn);
 			if(ret && conn->fragmentation_rule->mode == NO_ACK){ /* use the connection to reassemble */
-				end_rx(conn); /* final packet arrived */
+				end_rx(conn); /* final packet arrived, for other reliability modes called by callback timers */
 			}
 		}
 	} else { /* ack received; do nothing */
@@ -284,7 +283,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	received_packet(data, length, device_id, &tx_conn_nwgw); // loopback; send packet straight to network gateway
+	socket_server_send(serv, data, length);
 	return 1;
 }
 
@@ -298,7 +297,12 @@ void free_callback(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("free_callback(): freeing connections for device %d\n", conn->device_id);
 }
 
-void init() {
+void socket_receive_callback(char * data, int len) {
+	int device_id = 1; /* this is usually linked to a MAC address */
+	received_packet(data, len, device_id, &tx_conn_nwgw);
+}
+
+int main() {
 	/* initialize timer threads */
 	initialize_timer_thread();
 
@@ -307,65 +311,27 @@ void init() {
 		exit(1);
 	}
 
-	/* initialize fragmenter for the constrained device */
-	schc_fragmenter_init(&tx_conn);
-	
-	/* initialize fragmenter for ngw */
-	tx_conn_nwgw.send 					= &rx_send_callback;
+	/* initialize fragmenter callbacks for network gw */
+	tx_conn_nwgw.send 					= &tx_send_callback;
 	tx_conn_nwgw.end_rx 				= &end_rx;
 	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
 #if DYNAMIC_MEMORY
 	tx_conn_nwgw.free_conn_cb			= &free_callback;
 #endif
-}
 
-int main() {
-	init();
+    udp_server* serv = malloc(sizeof(udp_server));
+    serv->socket_cb = &socket_receive_callback;
 
-	uint32_t device_id = 0x01;
-	struct schc_compression_rule_t* schc_rule;
-
-#if COMPRESS
-	uint8_t compressed_packet[MAX_PACKET_LENGTH];
-	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_packet);
-	schc_rule 					= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
-#else /* do not compress */
-	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
-#endif
-
-	/* L2 connection information */
-	tx_conn.mtu 				= 121; /* network driver MTU */
-	tx_conn.tile_size 			= 121; /* initial tile size */
-	tx_conn.dc 					= 1000; /* duty cycle in ms */
-	tx_conn.device_id 			= device_id; /* the device id of the connection */
-
-	/* SCHC callbacks */
-	tx_conn.send 				= &tx_send_callback;
-	tx_conn.end_tx				= &end_tx;
-	tx_conn.post_timer_task 	= &set_tx_timer;
-	tx_conn.duty_cycle_cb 		= &duty_cycle_callback;
-
-	/* SCHC connection information */
-	tx_conn.fragmentation_rule 	= get_fragmentation_rule_by_reliability_mode(
-			NO_ACK, device_id);
-	tx_conn.bit_arr 			= &bit_arr;
-
-	if (tx_conn.fragmentation_rule == NULL) {
-		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
-		finalize_timer_thread();
-		return -1;
-	}
-
-
-	/* start fragmentation loop */
-	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
-	int ret = schc_fragment(&tx_conn);
-
+    /* start udp server */
+    int rc = socket_server_start("127.0.0.1", 8000, serv);
 	while(RUN) {
+		rc = socket_server_loop(serv);
 	}
 
 	cleanup();
+	socket_server_stop(serv);
 	finalize_timer_thread();
+	free(serv);
 
 	DEBUG_PRINTF("main(): end program \n");
 

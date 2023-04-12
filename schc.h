@@ -216,6 +216,8 @@ struct schc_fragmentation_rule_t {
 	uint8_t WINDOW_SIZE;
 	/* the dtag size in bits */
 	uint8_t DTAG_SIZE;
+	/* the tile size in bytes; required when using ACK_ON_ERR */
+	uint16_t tile_size;
 };
 
 struct schc_device {

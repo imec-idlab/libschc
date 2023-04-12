@@ -17,10 +17,14 @@
 
 #include "../compressor.h"
 #include "../fragmenter.h"
+#include "socket/socket_client.h"
 
 #include "timer.h"
 
 #define COMPRESS				1 /* start fragmentation with or without compression first */
+#define TRIGGER_PACKET_LOST		1
+#define TRIGGER_MIC_CHECK		0
+#define TRIGGER_CHANGE_MTU		1
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -35,10 +39,8 @@ struct cb_t {
 };
 
 struct cb_t *head = NULL;
-
-// structure to keep track of the transmission
-schc_fragmentation_t tx_conn;
-schc_fragmentation_t tx_conn_nwgw;
+udp_client *udp;
+schc_fragmentation_t tx_conn; /* structure to keep track of the transmission */
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
@@ -110,8 +112,11 @@ void compare_decompressed_buffer(uint8_t* decomp_packet, uint16_t new_packet_len
  * can be used for e.g. setting the tile size
  */
 void duty_cycle_callback(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("duty_cycle_callback() callback \n");
-	// schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
+	DEBUG_PRINTF("duty_cycle_callback() callback\n");
+	int ret = SCHC_SUCCESS;
+#if TRIGGER_CHANGE_MTU
+	ret = schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
+#endif
 	schc_fragment(conn);
 }
 
@@ -284,21 +289,37 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	received_packet(data, length, device_id, &tx_conn_nwgw); // loopback; send packet straight to network gateway
-	return 1;
+	if(tx_conn.fcn == 5 && tx_conn.TX_STATE == SEND) {
+#if TRIGGER_PACKET_LOST
+		/* do not send to udp server */
+		DEBUG_PRINTF("tx_send_callback(): dropping packet\n");
+    	return 1;
+#elif TRIGGER_MIC_CHECK
+	 /* change byte 2 to mimic bit fault during transmission and transmit */
+		DEBUG_PRINTF("tx_send_callback(): bit fault\n");
+		data[2] = data[2] + 1; 
+#endif
+	}
+    int rc = socket_client_send(udp, data, length); /* send to udp server */
+    return 1;
 }
 
 uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	// received_packet(data, length, device_id, &tx_conn); // send packet to constrained device
+	// received_packet(data, length, device_id, &tx_conn);
 	return 1;
 }
 
 void free_callback(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("free_callback(): freeing connections for device %d\n", conn->device_id);
 }
+ 
+static void socket_receive_callback(char* message, int len) {
+    int device_id = 1; /* this is the SCHC device id; can be linked to various MAC addresses */
+    received_packet(message, len, device_id, &tx_conn);
+}
 
-void init() {
+int main() {
 	/* initialize timer threads */
 	initialize_timer_thread();
 
@@ -309,46 +330,40 @@ void init() {
 
 	/* initialize fragmenter for the constrained device */
 	schc_fragmenter_init(&tx_conn);
-	
-	/* initialize fragmenter for ngw */
-	tx_conn_nwgw.send 					= &rx_send_callback;
-	tx_conn_nwgw.end_rx 				= &end_rx;
-	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
-#if DYNAMIC_MEMORY
-	tx_conn_nwgw.free_conn_cb			= &free_callback;
-#endif
-}
 
-int main() {
-	init();
+	/* setup connection with udp server */
+    udp = malloc(sizeof(udp_client));
+    udp->socket_cb = &socket_receive_callback;
+    socket_client_start("127.0.0.1", 8000, udp);
 
+    /* libschc configuration */
 	uint32_t device_id = 0x01;
 	struct schc_compression_rule_t* schc_rule;
 
 #if COMPRESS
 	uint8_t compressed_packet[MAX_PACKET_LENGTH];
-	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_packet);
-	schc_rule 					= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
+	schc_bitarray_t bit_arr				= SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_packet);
+	schc_rule 							= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
 #else /* do not compress */
-	schc_bitarray_t bit_arr		= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
+	schc_bitarray_t bit_arr				= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
 #endif
 
 	/* L2 connection information */
-	tx_conn.mtu 				= 121; /* network driver MTU */
-	tx_conn.tile_size 			= 121; /* initial tile size */
-	tx_conn.dc 					= 1000; /* duty cycle in ms */
-	tx_conn.device_id 			= device_id; /* the device id of the connection */
+	tx_conn.mtu 						= 25; /* network driver MTU */
+	tx_conn.tile_size					= 25; /* network driver MTU */
+	tx_conn.dc 							= 1000; /* duty cycle in ms */
+	tx_conn.device_id 					= device_id; /* the device id of the connection */
 
 	/* SCHC callbacks */
-	tx_conn.send 				= &tx_send_callback;
-	tx_conn.end_tx				= &end_tx;
-	tx_conn.post_timer_task 	= &set_tx_timer;
-	tx_conn.duty_cycle_cb 		= &duty_cycle_callback;
+	tx_conn.send 						= &tx_send_callback;
+	tx_conn.end_tx						= &end_tx;
+	tx_conn.post_timer_task 			= &set_tx_timer;
+	tx_conn.duty_cycle_cb 				= &duty_cycle_callback;
 
 	/* SCHC connection information */
-	tx_conn.fragmentation_rule 	= get_fragmentation_rule_by_reliability_mode(
-			NO_ACK, device_id);
-	tx_conn.bit_arr 			= &bit_arr;
+	tx_conn.fragmentation_rule 			= get_fragmentation_rule_by_reliability_mode(
+			ACK_ALWAYS, device_id);
+	tx_conn.bit_arr 					= &bit_arr;
 
 	if (tx_conn.fragmentation_rule == NULL) {
 		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
@@ -356,16 +371,21 @@ int main() {
 		return -1;
 	}
 
-
 	/* start fragmentation loop */
 	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
 	int ret = schc_fragment(&tx_conn);
 
 	while(RUN) {
+		int rc = socket_client_loop(udp);
+		if(rc < 0) {
+			RUN = 0;
+		}
 	}
 
 	cleanup();
 	finalize_timer_thread();
+    socket_client_stop(udp);
+    free(udp);
 
 	DEBUG_PRINTF("main(): end program \n");
 

@@ -51,7 +51,10 @@
 /* the number of bytes the MIC consists of */
 #define MIC_SIZE_BYTES					4
 
-// the length of the bitmap
+/* the length of the bitmap */
 #define BITMAP_SIZE_BYTES				2 // pow(2, FCN_SIZE_BITS) / 8
+
+/* the maximum window size */
+#define MAX_WINDOW_SIZE                 64
 
 #endif

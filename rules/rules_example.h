@@ -200,8 +200,8 @@ const struct schc_compression_rule_t compression_rule_2 = {
 };
 
 const struct schc_compression_rule_t compression_rule_3 = {
-		0x03,
-		8, /* rule id size bits */
+		.rule_id = 0x03,
+		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule2,
 #endif
@@ -214,8 +214,8 @@ const struct schc_compression_rule_t compression_rule_3 = {
 };
 
 const struct schc_compression_rule_t compression_rule_4 = {
-		0x04,
-		8, /* rule id size bits */
+		.rule_id = 0x04,
+		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule3,
 #endif
@@ -258,7 +258,8 @@ const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
 		.FCN_SIZE = 3,
 		.MAX_WND_FCN = 6,
 		.WINDOW_SIZE = 1,
-		.DTAG_SIZE = 0
+		.DTAG_SIZE = 0,
+		.tile_size = 25 /* only required when using ACK ON ERROR */
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
