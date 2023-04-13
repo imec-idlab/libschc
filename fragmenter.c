@@ -1244,14 +1244,8 @@ static uint8_t send_fragment(schc_fragmentation_t* conn, bool retransmission) {
 	DEBUG_PRINTF("\n");
 	
 	if(!retransmission) {
+		/* store the tile sizes of the current window */
 		conn->window_tiles[conn->frag_cnt - 1] = packet_len;
-		DEBUG_PRINTF("send_fragment(): window tiles: ");
-
-		for (j = 0; j < MAX_WINDOW_SIZE; j++) {
-			DEBUG_PRINTF("%d ", conn->window_tiles[j]);
-		}
-		DEBUG_PRINTF("\n");
-
 		conn->total_tx_bits += packet_bits_tx;
 	}
 
@@ -1885,11 +1879,17 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 			DEBUG_PRINTF("WAIT MISSING FRAGMENTS\n");
 			if (window == rx_conn->window) { // expected window
 				DEBUG_PRINTF("w == window\n");
-				if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)
-						&& is_bitmap_full(rx_conn, rx_conn->fragmentation_rule->MAX_WND_FCN)) { // not all-x and bitmap not full
-					set_local_bitmap(rx_conn);
-					rx_conn->window = !rx_conn->window;
-					rx_conn->RX_STATE = RECV_WINDOW;
+				set_local_bitmap(rx_conn);
+				if (fcn != 0 && fcn != get_max_fcn_value(rx_conn)) {
+					if(is_bitmap_full(rx_conn, (rx_conn->fragmentation_rule->MAX_WND_FCN + 1))) { // not all-x and bitmap full
+						clear_bitmap(rx_conn);
+						rx_conn->window = !rx_conn->window;
+						rx_conn->window_cnt++;
+						rx_conn->RX_STATE = RECV_WINDOW;
+					}
+					else {
+						
+					}
 				}
 				if (empty_all_0(tail, rx_conn)) {
 					rx_conn->RX_STATE = WAIT_MISSING_FRAG;

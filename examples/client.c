@@ -24,7 +24,7 @@
 #define COMPRESS				1 /* start fragmentation with or without compression first */
 #define TRIGGER_PACKET_LOST		1
 #define TRIGGER_MIC_CHECK		0
-#define TRIGGER_CHANGE_MTU		1
+#define TRIGGER_CHANGE_MTU		0
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -362,7 +362,7 @@ int main() {
 
 	/* SCHC connection information */
 	tx_conn.fragmentation_rule 			= get_fragmentation_rule_by_reliability_mode(
-			ACK_ALWAYS, device_id);
+			ACK_ON_ERROR, device_id);
 	tx_conn.bit_arr 					= &bit_arr;
 
 	if (tx_conn.fragmentation_rule == NULL) {
