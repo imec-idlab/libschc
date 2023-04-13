@@ -1058,21 +1058,12 @@ static void abort_connection(schc_fragmentation_t* conn) {
 
 /**
  * callback for schc_fragmentation_t::post_timer_task to time schc_fragment
+ * this function is called by the retransmission timer and the duty cycle timer
+ * to re-enter the fragmentation loop.
  *
  * @param   arg The argument for the callback
  */
 static void schc_fragment_timer_cb(void *arg) {
-	/* this function is called by the retransmission timer and the duty cycle timer
-	 * to re-enter the fragmentation loop. However, since the tile size can vary for both 
-	 * No-Ack and ACK-Always, two things must be changed:
-	 * - the fragmentation loop can no longer be stateless; the retransmission of fragments
-	 *   requires the fragmenter to know the original size of the transmitted fragment
-	 * - (ok) when the duty cycle timer expires, a user callback should be called. The user should
-	 *   then select the size of the packet it wants to transmit. Might be useful when using LoRa ADR.
-	 * (ok) When using Ack-On-Error, the tile size cannot change and thus the state of the window 
-	 * should not be saved. However, in order to maintain a generic approach, the above will be used
-	 * for all reliability modes.
-	*/
 	schc_fragmentation_t* conn = (schc_fragmentation_t*)(arg);
 	if(conn->duty_cycle_cb) {
 		conn->duty_cycle_cb(conn);
@@ -2198,10 +2189,16 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 					no_missing_fragments_more_to_come(tx_conn);
 					schc_fragment(tx_conn);
 				}
-				if (has_no_more_fragments(tx_conn) && tx_conn->ack.mic) { // mic and bitmap check succeeded
-					DEBUG_PRINTF("no more fragments, MIC ok\n");
+				if (has_no_more_fragments(tx_conn)) {
+					if(tx_conn->ack.mic) { // mic and bitmap check succeeded
+						DEBUG_PRINTF("no more fragments, MIC ok\n");
+						tx_conn->TX_STATE = END_TX;
+					} else {
+						DEBUG_PRINTF("no more fragments, MIC check failed: send abort\n");
+						tx_conn->TX_STATE = ERR;
+						// send_abort();
+					}
 					tx_conn->timer_flag = 0; // stop retransmission timer
-					tx_conn->TX_STATE = END_TX;
 					schc_fragment(tx_conn);
 					break;
 				}
@@ -2342,10 +2339,17 @@ int8_t schc_fragment(schc_fragmentation_t *tx_conn) {
 				break;
 			} else if (compare_bits(resend_window, tx_conn->ack.bitmap,
 					(tx_conn->fragmentation_rule->MAX_WND_FCN + 1))) {
-				DEBUG_PRINTF("received bitmap == local bitmap, MIC contained in ack=%d\n", tx_conn->ack.mic);
-				// todo MIC check failed
+				DEBUG_PRINTF("received bitmap == local bitmap, ");
+				if(!tx_conn->ack.mic) {
+					DEBUG_PRINTF("MIC check failed; send abort\n");
+					tx_conn->TX_STATE = ERR;
+					// send_abort();
+				}
+				else {
+					DEBUG_PRINTF("MIC check ok\n");
+					tx_conn->TX_STATE = END_TX;
+				}
 				tx_conn->timer_flag = 0; // stop retransmission timer
-				tx_conn->TX_STATE = END_TX;
 				schc_fragment(tx_conn); // end
 				break;
 			}
