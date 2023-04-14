@@ -11,6 +11,7 @@
 #define STATIC_MEMORY_BUFFER_LENGTH		1024
 
 #define SCHC_CONF_RX_CONNS				1
+#define SCHC_CONF_TX_CONNS              1
 #define SCHC_CONF_MBUF_POOL_LEN			128
 
 #define USE_COAP						1
@@ -47,9 +48,6 @@
 
 /* the number of DTAG bits */
 #define DTAG_SIZE_BITS					0
-
-/* the number of bytes the MIC consists of */
-#define MIC_SIZE_BYTES					4
 
 /* the length of the bitmap */
 #define BITMAP_SIZE_BYTES				2 // pow(2, FCN_SIZE_BITS) / 8

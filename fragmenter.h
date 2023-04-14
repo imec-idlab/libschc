@@ -104,8 +104,10 @@ struct schc_fragmentation_t {
 	uint16_t mtu;
 	/* the duty cycle in ms */
 	uint32_t dc;
-	/* the message integrity check over the full, compressed packet */
-	uint8_t mic[MIC_SIZE_BYTES];
+	/* the reassembly check sequence over the full, compressed packet */
+	uint8_t rcs[MAX_RCS_SIZE_BYTES];
+	/* the RCS algorithm */
+	uint32_t (*reassembly_check_sequence)(struct schc_fragmentation_t *conn);
 	/* the fragment counter in the current window
 	 * ToDo: we only support fixed FCN length
 	 * */
@@ -115,7 +117,7 @@ struct schc_fragmentation_t {
 	/* the total number of windows transmitted */
 	uint8_t window_cnt;
 	/* the current DTAG */
-	uint8_t dtag;
+	int16_t dtag;
 	/* the total number of fragments sent */
 	uint8_t frag_cnt;
 	/* the bitmap of the fragments sent */
@@ -161,10 +163,13 @@ struct schc_fragmentation_t {
 	uint32_t total_tx_bits;
 };
 
+schc_fragmentation_t* schc_get_tx_connection(uint32_t device_id);
+void schc_free_connection(schc_fragmentation_t *conn);
+
 void schc_reset(schc_fragmentation_t* conn);
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
-int8_t schc_fragmenter_init(schc_fragmentation_t* tx_conn);
+int8_t schc_fragmenter_init();
 
 void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
 schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn, uint32_t device_id);

@@ -13,7 +13,7 @@
 
 #define NUMBER_OF_LAYERS		USE_COAP + USE_UDP + USE_IP6
 
-// fixed fragmentation definitions
+/* fixed fragmentation definitions */
 #define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
 /* maximum number of bytes a rule id can take */
@@ -22,6 +22,8 @@
 #define DTAG_SIZE_BYTES			1
 /* maximum number of bytes the ACK W field can be */
 #define WINDOW_SIZE_BYTES		1
+/* maximum number of bytes the RCS field can be */
+#define MAX_RCS_SIZE_BYTES  4
 
 typedef struct schc_bitarray_t {
 	uint8_t* ptr;
@@ -218,6 +220,10 @@ struct schc_fragmentation_rule_t {
 	uint8_t DTAG_SIZE;
 	/* the tile size in bytes; required when using ACK_ON_ERR */
 	uint16_t tile_size;
+	/* the inactivity timer expiration time in ms */
+	uint32_t inactivity_timer_ms;
+	/* the RCS size in bytes */
+	uint8_t RCS_SIZE_BYTES;
 };
 
 struct schc_device {

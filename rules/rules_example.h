@@ -236,7 +236,9 @@ const struct schc_fragmentation_rule_t fragmentation_rule_1 = {
 		.FCN_SIZE = 0,
 		.MAX_WND_FCN = 0, 	/* maximum fragments per window */
 		.WINDOW_SIZE = 0,
-		.DTAG_SIZE = 0
+		.DTAG_SIZE = 0,
+		.inactivity_timer_ms = 10000,
+		.RCS_SIZE_BYTES = 4
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
@@ -247,7 +249,9 @@ const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
 		.FCN_SIZE = 1,
 		.MAX_WND_FCN = 0,
 		.WINDOW_SIZE = 0,
-		.DTAG_SIZE = 0
+		.DTAG_SIZE = 1,
+		.inactivity_timer_ms = 10000,
+		.RCS_SIZE_BYTES = 4
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
@@ -259,7 +263,9 @@ const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
 		.MAX_WND_FCN = 6,
 		.WINDOW_SIZE = 1,
 		.DTAG_SIZE = 0,
-		.tile_size = 25 /* only required when using ACK ON ERROR */
+		.inactivity_timer_ms = 10000,
+		.RCS_SIZE_BYTES = 4,
+		.tile_size = 51 /* only required when using ACK ON ERROR */
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
@@ -270,7 +276,9 @@ const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
 		.FCN_SIZE = 3,
 		.MAX_WND_FCN = 6,
 		.WINDOW_SIZE = 1,
-		.DTAG_SIZE = 0
+		.DTAG_SIZE = 0,
+		.inactivity_timer_ms = 10000,
+		.RCS_SIZE_BYTES = 4
 };
 
 /* save compression rules in flash */
