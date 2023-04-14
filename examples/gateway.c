@@ -162,9 +162,6 @@ void end_rx(schc_fragmentation_t *conn) {
 
 	free(compressed_packet);
 	schc_reset(conn);
-
-	/* end the program */
-	RUN = 0;
 }
 
 void timer_handler(size_t timer_id, void* user_data) {
@@ -252,10 +249,11 @@ void remove_timer_entry(schc_fragmentation_t *conn) {
 }
 
 void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
-	DEBUG_PRINTF("\n+-------- RX  %02d --------+\n", counter);
+	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, receiving_conn, device_id); /* get active connection */
 
-	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			receiving_conn, device_id); /* get active connection */
+	if(!conn) { /* error occured; shutdown */
+		exit(1);
+	}
 
 	if (conn != receiving_conn) { /* fragment received; reassemble */
 		conn->post_timer_task = &set_rx_timer;

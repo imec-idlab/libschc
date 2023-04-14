@@ -15,19 +15,21 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "../rcs.h"
 #include "../compressor.h"
 #include "../fragmenter.h"
 #include "socket/socket_client.h"
 
 #include "timer.h"
 
-#define COMPRESS				1 /* start fragmentation with or without compression first */
-#define TRIGGER_PACKET_LOST		1
-#define TRIGGER_MIC_CHECK		0
-#define TRIGGER_CHANGE_MTU		0
+#define COMPRESS					1 /* start fragmentation with or without compression first */
+#define TRIGGER_PACKET_LOST			0
+#define TRIGGER_MIC_CHECK			0
+#define TRIGGER_CHANGE_MTU			1
+#define CONCURRENT_TRANSMISSIONS	1
 
-#define MAX_PACKET_LENGTH		256
-#define MAX_TIMERS				256
+#define MAX_PACKET_LENGTH			256
+#define MAX_TIMERS					256
 
 int RUN = 1;
 int counter = 1;
@@ -40,7 +42,7 @@ struct cb_t {
 
 struct cb_t *head = NULL;
 udp_client *udp;
-schc_fragmentation_t tx_conn; /* structure to keep track of the transmission */
+schc_fragmentation_t * tx_conn; /* structure to keep track of the transmission */
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
@@ -289,14 +291,14 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	if(tx_conn.fcn == 5 && tx_conn.TX_STATE == SEND) {
+	if( (tx_conn->frag_cnt == 1 && tx_conn->TX_STATE == SEND)) {
 #if TRIGGER_PACKET_LOST
 		/* do not send to udp server */
 		DEBUG_PRINTF("tx_send_callback(): dropping packet\n");
     	return 1;
 #elif TRIGGER_MIC_CHECK
 	 /* change byte 2 to mimic bit fault during transmission and transmit */
-		DEBUG_PRINTF("tx_send_callback(): bit fault\n");
+		DEBUG_PRINTF("tx_send_callback(): invoking bit fault\n");
 		data[2] = data[2] + 1; 
 #endif
 	}
@@ -316,27 +318,50 @@ void free_callback(schc_fragmentation_t *conn) {
  
 static void socket_receive_callback(char* message, int len) {
     int device_id = 1; /* this is the SCHC device id; can be linked to various MAC addresses */
-    received_packet(message, len, device_id, &tx_conn);
+    received_packet(message, len, device_id, tx_conn);
+}
+
+static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit_arr, uint32_t device_id) {
+	/* L2 connection information */
+	conn->mtu 						= 51; /* network driver MTU */
+	conn->tile_size					= 51; /* network driver MTU */
+	conn->dc 						= 1000; /* duty cycle in ms */
+
+	/* SCHC callbacks */
+	conn->send 						= &tx_send_callback;
+	conn->end_tx					= &end_tx;
+	conn->post_timer_task 			= &set_tx_timer;
+	conn->duty_cycle_cb 			= &duty_cycle_callback;
+
+	/* SCHC connection information */
+	conn->fragmentation_rule 		= get_fragmentation_rule_by_reliability_mode(NO_ACK, device_id);
+	conn->bit_arr 					= bit_arr;
+
+	/* currently only the default CRC32 is supported */
+	// conn.reassembly_check_sequence	= &schc_crc32; // todo
+
+	if (conn->fragmentation_rule == NULL) {
+		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
+		finalize_timer_thread();
+		exit(1);
+	}
 }
 
 int main() {
 	/* initialize timer threads */
 	initialize_timer_thread();
 
-	/* initialize the client compressor */
-	if(!schc_compressor_init()) {
-		exit(1);
-	}
-
-	/* initialize fragmenter for the constrained device */
-	schc_fragmenter_init(&tx_conn);
-
 	/* setup connection with udp server */
     udp = malloc(sizeof(udp_client));
     udp->socket_cb = &socket_receive_callback;
     socket_client_start("127.0.0.1", 8000, udp);
 
-    /* libschc configuration */
+	/* initialize the client compressor */
+	if(!schc_compressor_init()) {
+		exit(1);
+	}
+
+	/* compress */
 	uint32_t device_id = 0x01;
 	struct schc_compression_rule_t* schc_rule;
 
@@ -348,32 +373,37 @@ int main() {
 	schc_bitarray_t bit_arr				= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
 #endif
 
-	/* L2 connection information */
-	tx_conn.mtu 						= 25; /* network driver MTU */
-	tx_conn.tile_size					= 25; /* network driver MTU */
-	tx_conn.dc 							= 1000; /* duty cycle in ms */
-	tx_conn.device_id 					= device_id; /* the device id of the connection */
+	/* initialize fragmenter once for the constrained device */
+	schc_fragmenter_init();
 
-	/* SCHC callbacks */
-	tx_conn.send 						= &tx_send_callback;
-	tx_conn.end_tx						= &end_tx;
-	tx_conn.post_timer_task 			= &set_tx_timer;
-	tx_conn.duty_cycle_cb 				= &duty_cycle_callback;
-
-	/* SCHC connection information */
-	tx_conn.fragmentation_rule 			= get_fragmentation_rule_by_reliability_mode(
-			ACK_ON_ERROR, device_id);
-	tx_conn.bit_arr 					= &bit_arr;
-
-	if (tx_conn.fragmentation_rule == NULL) {
-		DEBUG_PRINTF("main(): no fragmentation rule was found. Exiting. \n");
-		finalize_timer_thread();
+	/* select a tx connection from the list of connections */
+	tx_conn = schc_get_tx_connection(device_id);
+	if(!tx_conn) {
+		DEBUG_PRINTF("main(): no free tx connection was found. Exiting. \n");
 		return -1;
 	}
 
-	/* start fragmentation loop */
-	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
-	int ret = schc_fragment(&tx_conn);
+    /* libschc configuration */
+	set_connection_info(tx_conn, &bit_arr, device_id);
+
+#if CONCURRENT_TRANSMISSIONS
+	/* a new dtag will be initiated when using the same rule id simultaneously; can be invoked with a second tx connection */
+	schc_fragmentation_t* tx_conn2 = schc_get_tx_connection(device_id);
+	if(!tx_conn2) {
+    	schc_free_connection(tx_conn);
+		DEBUG_PRINTF("main(): no free tx connection was found. Exiting. \n");
+		return -1;
+	}
+
+    /* libschc configuration */
+	set_connection_info(tx_conn2, &bit_arr, device_id);
+#endif
+
+	/* start fragmentation loop for first tx connection */
+	int ret = schc_fragment(tx_conn);
+#if CONCURRENT_TRANSMISSIONS
+	ret = schc_fragment(tx_conn2);
+#endif
 
 	while(RUN) {
 		int rc = socket_client_loop(udp);
@@ -386,6 +416,10 @@ int main() {
 	finalize_timer_thread();
     socket_client_stop(udp);
     free(udp);
+    schc_free_connection(tx_conn);
+#if CONCURRENT_TRANSMISSIONS
+    schc_free_connection(tx_conn2);
+#endif
 
 	DEBUG_PRINTF("main(): end program \n");
 

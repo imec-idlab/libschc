@@ -27,6 +27,7 @@ int socket_client_loop(udp_client* cl) {
         return len;
     }
     
+    printf("received %d bytes on socket\n", len);
     (*cl->socket_cb)(cl->buf, len);
 
     return len;
