@@ -19,8 +19,6 @@ jobs:
         app:
         - compress
         - icmpv6
-        - client
-        - gateway
     steps:
     - uses: actions/checkout@main
     - name: Prepare config and rules
