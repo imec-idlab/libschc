@@ -125,8 +125,8 @@ void end_tx(schc_fragmentation_t *conn) {
  * Callback to handle the end of a fragmentation sequence
  * may be used to forward packet to IP network
  */
-void end_rx(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
+void end_rx_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("end_rx_callback(): copy mbuf contents to message buffer \n");
 
 	schc_bitarray_t bit_arr;
 	conn->bit_arr 				= &bit_arr;
@@ -143,7 +143,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("\n\n");
 
 #if COMPRESS
-	DEBUG_PRINTF("end_rx(): decompress packet \n");
+	DEBUG_PRINTF("end_rx_callback(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
 
 	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device_id, packetlen, UP);
@@ -158,7 +158,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	compare_decompressed_buffer(compressed_packet, packetlen);
 #endif
 
-	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
+	DEBUG_PRINTF("end_rx_callback(): forward packet to IP network \n");
 
 	free(compressed_packet);
 	schc_reset(conn);
@@ -244,8 +244,8 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
  * Callback to remove a timer entry for a device
  * (required by some timer libraries)
  */
-void remove_timer_entry(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", conn->device_id);
+void remove_timer_entry_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("remove_timer_entry_callback(): remove timer entry for device with id %d \n", conn->device_id);
 }
 
 void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
@@ -259,12 +259,12 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; /* retransmission timer: used for timeouts */
 
-		if (conn->fragmentation_rule->mode == NOT_FRAGMENTED) { /* packet was not fragmented */
-			end_rx(conn);
+		if (conn->fragmentation_rule->mode == NOT_FRAGMENTED) { /* packet was not fragmented; do not reassemble */
+			end_rx_callback(conn);
 		} else {
 			int ret = schc_reassemble(conn);
 			if(ret && conn->fragmentation_rule->mode == NO_ACK){ /* use the connection to reassemble */
-				end_rx(conn); /* final packet arrived, for other reliability modes called by callback timers */
+				end_rx_callback(conn); /* final packet arrived, for other reliability modes called by callback timers */
 			}
 		}
 	} else { /* ack received; do nothing */
@@ -291,8 +291,8 @@ uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	return 1;
 }
 
-void free_callback(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("free_callback(): freeing connections for device %d\n", conn->device_id);
+void free_connection_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("free_connection_callback(): freeing connections for device %d\n", conn->device_id);
 }
 
 void socket_receive_callback(char * data, int len) {
@@ -311,10 +311,10 @@ int main() {
 
 	/* initialize fragmenter callbacks for network gw */
 	tx_conn_nwgw.send 					= &tx_send_callback;
-	tx_conn_nwgw.end_rx 				= &end_rx;
-	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry;
+	tx_conn_nwgw.end_rx 				= &end_rx_callback;
+	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry_callback;
 #if DYNAMIC_MEMORY
-	tx_conn_nwgw.free_conn_cb			= &free_callback;
+	tx_conn_nwgw.free_conn_cb			= &free_connection_callback;
 #endif
 
     udp_server* serv = malloc(sizeof(udp_server));

@@ -72,10 +72,9 @@ static uint16_t get_max_fcn_value(schc_fragmentation_t* conn) {
  * get the DTag value
  *
  * @param  fragment		a pointer to the fragment to retrieve the DTag from
- *
  * @return DTag			the DTag as indicated by the fragment
- *
- * @note   only DTag values up to 8 bits are currently supported
+ * 
+ * @note   				only DTag values up to 8 bits are currently supported
  *
  */
 static int16_t get_dtag_value(uint8_t* fragment, schc_fragmentation_t* conn) {
@@ -88,6 +87,17 @@ static int16_t get_dtag_value(uint8_t* fragment, schc_fragmentation_t* conn) {
 	}
 }
 
+/**
+ * get the Sender-Abort tile size
+ *
+ * @param  conn			a pointer to the connection
+ * @return 				Sender-Abort size
+ *
+ */
+static uint8_t get_sender_abort_size(schc_fragmentation_t* conn) {
+	return (BITS_TO_BYTES(conn->fragmentation_rule->rule_id_size_bits + conn->fragmentation_rule->DTAG_SIZE + 
+		conn->fragmentation_rule->WINDOW_SIZE + conn->fragmentation_rule->FCN_SIZE));
+}
 
 /**
  * print the complete mbuf chain
@@ -931,17 +941,7 @@ static uint32_t has_no_more_fragments(schc_fragmentation_t* conn) {
 	return 0;
 }
 
-/**
- * set the fragmentation header
- *
- * @param conn 			a pointer to the connection
- * @param buffer		a pointer to the buffer to set the header
- *
- * @return bit_offset	the number of bits added to the front of the fragment
- *
- */
-static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
-		uint8_t* fragmentation_buffer) {
+static uint8_t set_bare_fragmentation_header(schc_fragmentation_t* conn, uint8_t* fragmentation_buffer) {
 	uint8_t bit_offset = conn->fragmentation_rule->rule_id_size_bits;
 
 	 // set rule id
@@ -968,8 +968,24 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 
 	bit_offset += conn->fragmentation_rule->FCN_SIZE;
 
+	return bit_offset;
+}
+
+/**
+ * set the fragmentation header and compute RCS if this is the final fragment
+ *
+ * @param conn 			a pointer to the connection
+ * @param buffer		a pointer to the buffer to set the header
+ *
+ * @return bit_offset	the number of bits added to the front of the fragment
+ *
+ */
+static uint16_t set_complete_fragmentation_header(schc_fragmentation_t* conn,
+		uint8_t* fragmentation_buffer) {
+	uint8_t bit_offset = set_bare_fragmentation_header(conn, fragmentation_buffer);
+
 	uint32_t bits_transmitted = has_no_more_fragments(conn);
-	if (bits_transmitted) { // all-1 fragment todo test with has no more fragments
+	if (bits_transmitted) { // all-1 fragment
 		uint32_t total_bits_to_transmit = conn->bit_arr->len * 8; // effective payload bits
 		// to use for RCS calculation
 		int8_t bits_left_to_transmit = (total_bits_to_transmit - bits_transmitted);
@@ -983,7 +999,7 @@ static uint16_t set_fragmentation_header(schc_fragmentation_t* conn,
 
 		padding = calculate_byte_padding(bit_offset + (conn->fragmentation_rule->RCS_SIZE_BYTES * 8) + bits_left_to_transmit);
 
-		DEBUG_PRINTF("set_fragmentation_header(): padding bits of last tile %d \n", padding);
+		DEBUG_PRINTF("set_complete_fragmentation_header(): padding bits of last tile %d \n", padding);
 		compute_rcs(conn, padding); // calculate RCS over compressed, (possibly double) padded packet
 
 		// shift in RCS
@@ -1238,7 +1254,7 @@ static uint8_t empty_all_1(schc_mbuf_t* mbuf, schc_fragmentation_t* conn) {
 static uint8_t send_fragment(schc_fragmentation_t* conn, bool retransmission) {
 	memset(FRAGMENTATION_BUF, 0, MAX_MTU_LENGTH); /* set and reset buffer */
 
-	uint16_t header_bits = set_fragmentation_header(conn, FRAGMENTATION_BUF); /* set fragmentation header */
+	uint16_t header_bits = set_complete_fragmentation_header(conn, FRAGMENTATION_BUF); /* set fragmentation header */
 	uint32_t packet_bits_tx = has_no_more_fragments(conn); /* the number of bits already transmitted */
 	uint16_t packet_len = 0; int32_t remaining_bits; uint32_t packet_bit_offset = 0;
 
@@ -1380,7 +1396,7 @@ static uint8_t send_empty(schc_fragmentation_t* conn) {
 	memset(FRAGMENTATION_BUF, 0, MAX_MTU_LENGTH);
 
 	// set fragmentation header
-	uint16_t header_offset = set_fragmentation_header(conn, FRAGMENTATION_BUF);
+	uint16_t header_offset = set_complete_fragmentation_header(conn, FRAGMENTATION_BUF);
 
 	uint8_t padding = header_offset % 8;
 	uint8_t zerobuf[1] = { 0 };
@@ -1408,6 +1424,32 @@ static uint8_t send_empty(schc_fragmentation_t* conn) {
 static uint8_t send_tx_empty(schc_fragmentation_t* conn) {
 	DEBUG_PRINTF("send_tx_empty() for device %d \n", (int) conn->device_id);
 	return 0;
+}
+
+
+/**
+ * abort the current fragmentation sequence and transmit Send-Abort
+ *
+ * @param 	conn		a pointer to the tx connection structure
+ *
+ */
+int8_t schc_send_abort(schc_fragmentation_t* conn) {
+	/* set and reset buffer */
+	memset(FRAGMENTATION_BUF, 0, MAX_MTU_LENGTH);
+	
+	conn->fcn = get_max_fcn_value(conn);
+	conn->TX_STATE = ERR;
+	uint8_t header_offset = set_bare_fragmentation_header(conn, FRAGMENTATION_BUF);
+
+	/* padding is already set by memsetting the buffer */
+	uint8_t padding = header_offset % 8;
+	uint8_t packet_len = BITS_TO_BYTES(padding + header_offset);
+
+	DEBUG_PRINTF("schc_send_abort(): sending Send-Abort to device %d with length %d (%d b)\n",
+			(int) conn->device_id, packet_len, header_offset);
+
+	return conn->send(FRAGMENTATION_BUF, packet_len, conn->device_id);
+
 }
 
 #if DYNAMIC_MEMORY
@@ -1894,20 +1936,25 @@ int8_t schc_reassemble(schc_fragmentation_t* rx_conn) {
 				rx_conn->RX_STATE = ABORT;
 				break;
 			}
-			if (fcn == get_max_fcn_value(rx_conn)) { // all-1
+			if (fcn == get_max_fcn_value(rx_conn)) { /* all-1 */
 				DEBUG_PRINTF("all-1\n");
 				rx_conn->timer_flag = 0; /* clear inactivity timer */
-				if(!rcs_correct(rx_conn)) { /* rcs check failed */
+				if(tail->len > get_sender_abort_size(rx_conn)) { /* received final fragment */
+					if(!rcs_correct(rx_conn)) { /* rcs check failed */
+						rx_conn->RX_STATE = ABORT;
+						rx_conn->input = 0; /* no input from rx connection, just re-enter reassmebly state machine */
+						break;
+					} else { // mic correct
+						rx_conn->RX_STATE = END_RX;
+						rx_conn->ack.fcn = get_max_fcn_value(rx_conn); /* c bit is set when ack.fcn is max */
+						rx_conn->ack.mic = 1; /* bitmap is not sent when mic correct */
+						rx_conn->input = 0; /* no input from rx connection, just re-enter reassmebly state machine */
+						return 1;
+					}
+				} else {  /* received sender-abort */
+					DEBUG_PRINTF("Received Sender-Abort, will clean up in next phase\n");
 					rx_conn->RX_STATE = ABORT;
 					rx_conn->input = 0; /* no input from rx connection, just re-enter reassmebly state machine */
-					break;
-				} else { // mic correct
-					rx_conn->RX_STATE = END_RX;
-					rx_conn->ack.fcn = get_max_fcn_value(rx_conn); // c bit is set when ack.fcn is max
-					rx_conn->ack.mic = 1; // bitmap is not sent when mic correct
-					rx_conn->input = 0; /* no input from rx connection, just re-enter reassmebly state machine */
-
-					return 1;
 				}
 			}
 			break;
@@ -2519,6 +2566,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 		} else {
 			if( (rx_conn->fragmentation_rule->mode == ACK_ON_ERROR && rx_conn->fragmentation_rule->tile_size != len)) { 
 				/* ACK on Error always uses same tile size */
+				schc_ack_input(data, tx_conn);
 				return tx_conn;
 			} else {
 				return rx_conn;

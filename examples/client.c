@@ -25,8 +25,9 @@
 #define COMPRESS					1 /* start fragmentation with or without compression first */
 #define TRIGGER_PACKET_LOST			0
 #define TRIGGER_MIC_CHECK			0
-#define TRIGGER_CHANGE_MTU			1
-#define CONCURRENT_TRANSMISSIONS	1
+#define TRIGGER_CHANGE_MTU			0
+#define CONCURRENT_TRANSMISSIONS	0
+#define TEST_SEND_ABORT 			1
 
 #define MAX_PACKET_LENGTH			256
 #define MAX_TIMERS					256
@@ -125,16 +126,16 @@ void duty_cycle_callback(schc_fragmentation_t *conn) {
 /*
  * Callback to handle the end of a fragmentation sequence
  */
-void end_tx(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("end_tx() callback \n");
+void end_tx_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("end_tx_callback() callback \n");
 }
 
 /*
  * Callback to handle the end of a fragmentation sequence
  * may be used to forward packet to IP network
  */
-void end_rx(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("end_rx(): copy mbuf contents to message buffer \n");
+void end_rx_callback(schc_fragmentation_t *conn) {
+	DEBUG_PRINTF("end_rx_callback(): copy mbuf contents to message buffer \n");
 
 	schc_bitarray_t bit_arr;
 	conn->bit_arr 				= &bit_arr;
@@ -151,7 +152,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("\n\n");
 
 #if COMPRESS
-	DEBUG_PRINTF("end_rx(): decompress packet \n");
+	DEBUG_PRINTF("end_rx_callback(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
 
 	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device_id, packetlen, UP);
@@ -166,7 +167,7 @@ void end_rx(schc_fragmentation_t *conn) {
 	compare_decompressed_buffer(compressed_packet, packetlen);
 #endif
 
-	DEBUG_PRINTF("end_rx(): forward packet to IP network \n");
+	DEBUG_PRINTF("end_rx_callback(): forward packet to IP network \n");
 
 	free(compressed_packet);
 	schc_reset(conn);
@@ -187,7 +188,7 @@ void timer_handler(size_t timer_id, void* user_data) {
 /*
  * The timer used by the SCHC library to schedule the transmission of fragments
  */
-static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg),
+static void set_tx_timer_callback(schc_fragmentation_t *conn, void (*callback)(void* arg),
 		uint32_t delay, void *arg) {
 	counter++;
 
@@ -211,11 +212,11 @@ static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 
 	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
-		DEBUG_PRINTF("set_tx_timer(): could not allocate memory for timer \n");
+		DEBUG_PRINTF("set_tx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
 		DEBUG_PRINTF(
-				"set_tx_timer(): schedule next tx state check in %d s \n\n", delay_sec);
+				"set_tx_timer_callback(): schedule next tx state check in %d s \n\n", delay_sec);
 	}
 }
 
@@ -223,7 +224,7 @@ static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
  * The timer used by the SCHC library to time out the reception of fragments
  * should have multiple timers for a device
  */
-static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg),
+static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(void* arg),
 		uint32_t delay, void *arg) {
 	uint16_t delay_sec = delay / 1000;
 
@@ -243,11 +244,11 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 
 	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
-		DEBUG_PRINTF("set_rx_timer(): could not allocate memory for timer \n");
+		DEBUG_PRINTF("set_rx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
 		DEBUG_PRINTF(
-				"set_rx_timer(): schedule rx callback in %d s \n", delay_sec);
+				"set_rx_timer_callback(): schedule rx callback in %d s \n", delay_sec);
 	}
 }
 
@@ -266,15 +267,15 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 			receiving_conn, device_id); /* get active connection */
 
 	if (conn != receiving_conn) { /* fragment received; reassemble */
-		conn->post_timer_task = &set_rx_timer;
+		conn->post_timer_task = &set_rx_timer_callback;
 		conn->dc = 20000; /* retransmission timer: used for timeouts */
 
 		if (conn->fragmentation_rule->mode == NOT_FRAGMENTED) { /* packet was not fragmented */
-			end_rx(conn);
+			end_rx_callback(conn);
 		} else {
 			int ret = schc_reassemble(conn);
 			if(ret && conn->fragmentation_rule->mode == NO_ACK){ /* use the connection to reassemble */
-				end_rx(conn); /* final packet arrived */
+				end_rx_callback(conn); /* final packet arrived */
 			}
 		}
 	} else { /* ack received; do nothing */
@@ -290,7 +291,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  *
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
-	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+	/* test cases for client */
 	if( (tx_conn->frag_cnt == 1 && tx_conn->TX_STATE == SEND)) {
 #if TRIGGER_PACKET_LOST
 		/* do not send to udp server */
@@ -302,6 +303,17 @@ uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 		data[2] = data[2] + 1; 
 #endif
 	}
+#if TEST_SEND_ABORT
+	if( (tx_conn->frag_cnt == 2 && tx_conn->TX_STATE == SEND) ) {
+		DEBUG_PRINTF("tx_send_callback(): sending abort\n");
+		schc_send_abort(tx_conn);
+		RUN = 0;
+		return 1;
+	}
+#endif
+
+	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+
     int rc = socket_client_send(udp, data, length); /* send to udp server */
     return 1;
 }
@@ -329,8 +341,8 @@ static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit
 
 	/* SCHC callbacks */
 	conn->send 						= &tx_send_callback;
-	conn->end_tx					= &end_tx;
-	conn->post_timer_task 			= &set_tx_timer;
+	conn->end_tx					= &end_tx_callback;
+	conn->post_timer_task 			= &set_tx_timer_callback;
 	conn->duty_cycle_cb 			= &duty_cycle_callback;
 
 	/* SCHC connection information */

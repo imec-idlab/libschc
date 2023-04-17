@@ -176,6 +176,7 @@ schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len, schc_fragmentation_t *tx_conn, uint32_t device_id);
 
 int8_t schc_set_tile_size(schc_fragmentation_t* conn, uint16_t tile_size);
+int8_t schc_send_abort(schc_fragmentation_t* conn);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
 struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode, uint32_t device_id);
 
