@@ -20,16 +20,6 @@
 
 #define MAX_TIMER_COUNT 1000
 
-struct timer_node
-{
-    int                 fd;
-    time_handler        callback;
-    void *              user_data;
-    unsigned int        interval;
-    t_timer             type;
-    struct timer_node * next;
-};
-
 static void * _timer_thread(void * data);
 static pthread_t g_thread_id;
 static struct timer_node *g_head = NULL;
@@ -45,7 +35,7 @@ int initialize_timer_thread()
     return 1;
 }
 
-size_t start_timer(unsigned int interval, time_handler handler, t_timer type, void * user_data)
+struct timer_node * start_timer(unsigned int interval, time_handler handler, t_timer type, void * user_data)
 {
     struct timer_node * new_node = NULL;
     struct itimerspec new_value;
@@ -87,10 +77,10 @@ size_t start_timer(unsigned int interval, time_handler handler, t_timer type, vo
     new_node->next = g_head;
     g_head = new_node;
 
-    return (size_t)new_node;
+    return new_node;
 }
 
-void stop_timer(size_t timer_id)
+void stop_timer(struct timer_node * timer_id)
 {
     struct timer_node * tmp = NULL;
     struct timer_node * node = (struct timer_node *)timer_id;
@@ -102,6 +92,7 @@ void stop_timer(size_t timer_id)
     if(node == g_head)
     {
         g_head = g_head->next;
+        if(node) free(node);
     } else {
 
         tmp = g_head;
@@ -112,14 +103,14 @@ void stop_timer(size_t timer_id)
         {
             /*tmp->next can not be NULL here.*/
             tmp->next = tmp->next->next;
+            if(node) free(node);
         }
     }
-    if(node) free(node);
 }
 
 void finalize_timer_thread()
 {
-    while(g_head) stop_timer((size_t)g_head);
+    while(g_head) stop_timer(g_head);
 
     pthread_cancel(g_thread_id);
     pthread_join(g_thread_id, NULL);
@@ -178,7 +169,7 @@ void * _timer_thread(void * data)
 
                 tmp = _get_timer_from_fd(ufds[i].fd);
 
-                if(tmp && tmp->callback) tmp->callback((size_t)tmp, tmp->user_data);
+                if(tmp && tmp->callback) tmp->callback(tmp, tmp->user_data);
             }
         }
     }

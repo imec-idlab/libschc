@@ -48,6 +48,12 @@ extern "C" {
 #define SCHC_NO_FRAGMENTATION	-2
 
 
+/**
+ * Return code: Error. Generic indication that connection is in initialization state
+ */
+#define SCHC_INIT  				-3
+
+
 typedef enum {
 	INIT_TX = 0, SEND = 1, RESEND = 2, WAIT_BITMAP = 3, END_TX = 4, ERR = 5
 } tx_state;
@@ -100,8 +106,6 @@ struct schc_fragmentation_t {
 	schc_bitarray_t* bit_arr;
 	/* the start of the packet + the total length */
 	uint8_t* tail_ptr;
-	/* the maximum transfer unit of this connection */
-	uint16_t mtu;
 	/* the duty cycle in ms */
 	uint32_t dc;
 	/* the reassembly check sequence over the full, compressed packet */
@@ -114,11 +118,9 @@ struct schc_fragmentation_t {
 	uint8_t fcn;
 	/* the current window */
 	uint8_t window;
-	/* the total number of windows transmitted */
-	uint8_t window_cnt;
 	/* the current DTAG */
 	int16_t dtag;
-	/* the total number of fragments sent */
+	/* fragment index counter */
 	uint8_t frag_cnt;
 	/* the bitmap of the fragments sent */
 	uint8_t bitmap[BITMAP_SIZE_BYTES];
@@ -159,21 +161,24 @@ struct schc_fragmentation_t {
 	uint16_t tile_size;
 	/* keep track of the tiles per window */
 	uint16_t window_tiles[MAX_WINDOW_SIZE];
-	/* total bits transmitted */
-	uint32_t total_tx_bits;
+	/* the total number of fragments sent */
+	uint8_t total_fragments;
+	struct schc_device* device;
 };
 
-schc_fragmentation_t* schc_get_tx_connection(uint32_t device_id);
+schc_fragmentation_t* schc_get_tx_connection(struct schc_device* device, int16_t dtag);
+schc_fragmentation_t* schc_set_tx_connection(struct schc_device* device, int16_t dtag);
+schc_fragmentation_t* schc_alloc_tx_connection(struct schc_device* device);
 void schc_free_connection(schc_fragmentation_t *conn);
 
 void schc_reset(schc_fragmentation_t* conn);
 int8_t schc_fragment(schc_fragmentation_t *tx_conn);
 int8_t schc_reassemble(schc_fragmentation_t* rx_conn);
-int8_t schc_fragmenter_init();
+int8_t schc_fragmenter_init(struct schc_fragmentation_t* cb_conn);
 
+schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, struct schc_device* device);
 void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
-schc_fragmentation_t* schc_input(uint8_t* data, uint16_t len, schc_fragmentation_t* rx_conn, uint32_t device_id);
-schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len, schc_fragmentation_t *tx_conn, uint32_t device_id);
+schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len, struct schc_device* device);
 
 int8_t schc_set_tile_size(schc_fragmentation_t* conn, uint16_t tile_size);
 int8_t schc_send_abort(schc_fragmentation_t* conn);

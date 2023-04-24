@@ -14,7 +14,6 @@
 #define NUMBER_OF_LAYERS		USE_COAP + USE_UDP + USE_IP6
 
 /* fixed fragmentation definitions */
-#define WINDOW_SIZE_BITS		1
 #define MIC_C_SIZE_BITS			1
 /* maximum number of bytes a rule id can take */
 #define RULE_SIZE_BYTES			4
@@ -204,8 +203,6 @@ struct schc_compression_rule_t {
 struct schc_fragmentation_rule_t {
 	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint32_t rule_id;
-	/* the rule id size in bits */
-	uint8_t rule_id_size_bits;
 	/* the reliability mode */
 	reliability_mode mode;
 	/* the direction */
@@ -216,14 +213,19 @@ struct schc_fragmentation_rule_t {
 	uint8_t MAX_WND_FCN;
 	/* the window size in bits */
 	uint8_t WINDOW_SIZE;
-	/* the dtag size in bits */
-	uint8_t DTAG_SIZE;
 	/* the tile size in bytes; required when using ACK_ON_ERR */
 	uint16_t tile_size;
 	/* the inactivity timer expiration time in ms */
 	uint32_t inactivity_timer_ms;
 	/* the RCS size in bytes */
 	uint8_t RCS_SIZE_BYTES;
+};
+
+struct schc_profile_t {
+	/* the rule id size in bits */
+	uint8_t RULE_ID_SIZE;
+	/* the dtag size in bits */
+	uint8_t DTAG_SIZE;
 };
 
 struct schc_device {
@@ -241,6 +243,8 @@ struct schc_device {
 	uint8_t fragmentation_rule_count;
 	/* a pointer to the collection of compression rules for a device */
 	const struct schc_fragmentation_rule_t *(*fragmentation_context)[];
+	/* a pointer to the device profile */
+	const struct schc_profile_t* profile;
 };
 
 typedef uint8_t schc_ip6addr_t[16];

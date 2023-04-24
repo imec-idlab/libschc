@@ -21,7 +21,9 @@
 
 #include "timer.h"
 
+#define CLIENT_DEVICE_ID  		1
 #define COMPRESS				1 /* start fragmentation with or without compression first */
+#define TEST_LOST_ACK  			0
 
 #define MAX_PACKET_LENGTH		256
 #define MAX_TIMERS				256
@@ -37,7 +39,7 @@ struct cb_t {
 
 struct cb_t* head = NULL;
 udp_server* serv;
-schc_fragmentation_t tx_conn_nwgw; /* structure to keep track of the transmission */
+schc_fragmentation_t* tx_conn; /* structure to keep track of the transmission */
 
 // the ipv6/udp/coap packet: length 251
 uint8_t msg[] = {
@@ -164,7 +166,7 @@ void end_rx_callback(schc_fragmentation_t *conn) {
 	schc_reset(conn);
 }
 
-void timer_handler(size_t timer_id, void* user_data) {
+void timer_handler(struct timer_node * timer_id, void* user_data) {
 	stop_timer(timer_id);
 
 	struct cb_t* cb_t_ = (struct cb_t*) user_data;
@@ -196,9 +198,7 @@ static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 		curr->next = cb_t_;
 	}
 
-	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
-
-	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
+	struct timer_node * timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
 		DEBUG_PRINTF("set_tx_timer(): could not allocate memory for timer \n");
 		exit(0);
@@ -230,13 +230,14 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 		curr->next = cb_t_;
 	}
 
-	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
+	struct timer_node * timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
 		DEBUG_PRINTF("set_rx_timer(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
+		conn->timer_ctx = timer_tx;
 		DEBUG_PRINTF(
-				"set_rx_timer(): schedule rx callback in %d s \n", delay_sec);
+				"set_rx_timer(): schedule rx callback in %d s\n", delay_sec);
 	}
 }
 
@@ -245,17 +246,20 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
  * (required by some timer libraries)
  */
 void remove_timer_entry_callback(schc_fragmentation_t *conn) {
+	struct timer_node * timer_id = (struct timer_node *) conn->timer_ctx;
+	stop_timer(timer_id);
 	DEBUG_PRINTF("remove_timer_entry_callback(): remove timer entry for device with id %d \n", conn->device_id);
 }
 
-void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
-	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, receiving_conn, device_id); /* get active connection */
+void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
+	struct schc_device *device = get_device_by_id(device_id); /* get the device based on the id */
+	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, device); /* get active connection based on device */
 
 	if(!conn) { /* error occured; shutdown */
 		exit(1);
 	}
 
-	if (conn != receiving_conn) { /* fragment received; reassemble */
+	if (conn) { /* fragment received; reassemble */
 		conn->post_timer_task = &set_rx_timer;
 		conn->dc = 20000; /* retransmission timer: used for timeouts */
 
@@ -267,8 +271,6 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 				end_rx_callback(conn); /* final packet arrived, for other reliability modes called by callback timers */
 			}
 		}
-	} else { /* ack received; do nothing */
-		return;
 	}
 }
 
@@ -280,13 +282,15 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  *
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
-	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d to device %d \n", length, device_id);
+#if !TEST_LOST_ACK
 	socket_server_send(serv, data, length);
+#endif
 	return 1;
 }
 
 uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
-	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
+	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d to device %d \n", length, device_id);
 	// received_packet(data, length, device_id, &tx_conn); // send packet to constrained device
 	return 1;
 }
@@ -296,8 +300,7 @@ void free_connection_callback(schc_fragmentation_t *conn) {
 }
 
 void socket_receive_callback(char * data, int len) {
-	int device_id = 1; /* this is usually linked to a MAC address */
-	received_packet(data, len, device_id, &tx_conn_nwgw);
+	received_packet(data, len, CLIENT_DEVICE_ID);
 }
 
 int main() {
@@ -309,19 +312,26 @@ int main() {
 		exit(1);
 	}
 
-	/* initialize fragmenter callbacks for network gw */
-	tx_conn_nwgw.send 					= &tx_send_callback;
-	tx_conn_nwgw.end_rx 				= &end_rx_callback;
-	tx_conn_nwgw.remove_timer_entry 	= &remove_timer_entry_callback;
-#if DYNAMIC_MEMORY
-	tx_conn_nwgw.free_conn_cb			= &free_connection_callback;
-#endif
-
     udp_server* serv = malloc(sizeof(udp_server));
     serv->socket_cb = &socket_receive_callback;
 
     /* start udp server */
     int rc = socket_server_start("127.0.0.1", 8000, serv);
+	
+// 	struct schc_device* device = get_device_by_id(CLIENT_DEVICE_ID);
+// 	tx_conn = schc_set_tx_connection(device, SCHC_INIT);
+
+	/* initialize default fragmenter callbacks */
+	struct schc_fragmentation_t cb_conn;
+	cb_conn.send 				= &tx_send_callback;
+	cb_conn.end_rx 				= &end_rx_callback;
+	cb_conn.remove_timer_entry 	= &remove_timer_entry_callback;
+#if DYNAMIC_MEMORY
+	cb_conn.free_conn_cb		= &free_connection_callback;
+#endif
+
+	schc_fragmenter_init(&cb_conn);
+
 	while(RUN) {
 		rc = socket_server_loop(serv);
 	}

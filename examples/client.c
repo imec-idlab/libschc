@@ -22,12 +22,14 @@
 
 #include "timer.h"
 
+#define CLIENT_DEVICE_ID  			1 /* this will usually be linked to a MAC address in the rule configuration */
+
 #define COMPRESS					1 /* start fragmentation with or without compression first */
-#define TRIGGER_PACKET_LOST			0
+#define TRIGGER_PACKET_LOST			1
 #define TRIGGER_MIC_CHECK			0
-#define TRIGGER_CHANGE_MTU			0
-#define CONCURRENT_TRANSMISSIONS	0
-#define TEST_SEND_ABORT 			1
+#define TRIGGER_CHANGE_MTU			1
+#define CONCURRENT_TRANSMISSIONS	1
+#define TEST_SEND_ABORT 			0
 
 #define MAX_PACKET_LENGTH			256
 #define MAX_TIMERS					256
@@ -176,7 +178,7 @@ void end_rx_callback(schc_fragmentation_t *conn) {
 	RUN = 0;
 }
 
-void timer_handler(size_t timer_id, void* user_data) {
+void timer_handler(struct timer_node * timer_id, void* user_data) {
 	stop_timer(timer_id);
 
 	struct cb_t* cb_t_ = (struct cb_t*) user_data;
@@ -208,9 +210,7 @@ static void set_tx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
 		curr->next = cb_t_;
 	}
 
-	DEBUG_PRINTF("\n+-------- TX  %02d --------+\n", counter);
-
-	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
+	struct timer_node * timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
 		DEBUG_PRINTF("set_tx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
@@ -242,7 +242,7 @@ static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
 		curr->next = cb_t_;
 	}
 
-	size_t timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
+	struct timer_node * timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
 		DEBUG_PRINTF("set_rx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
@@ -257,16 +257,24 @@ static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
  * (required by some timer libraries)
  */
 void remove_timer_entry(schc_fragmentation_t *conn) {
+	struct timer_node * timer_id = (struct timer_node *) conn->timer_ctx;
+	stop_timer(timer_id);
 	DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", conn->device_id);
 }
 
-void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fragmentation_t* receiving_conn) {
-	DEBUG_PRINTF("\n+-------- RX  %02d --------+\n", counter);
+void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
+	struct schc_device* device = get_device_by_id(device_id);
+	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, device);
 
-	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length,
-			receiving_conn, device_id); /* get active connection */
+	/* todo 
+	- remove receiving_conn 
+	- in schc_input: get_tx_connection() based on device_id, dtag and rule id
+	- determine if that connection was expecting an ack or not
+	- if yes: ack_input()
+	- if no: frag_input and run the code below
+	- how to set timer_task and duty cycle per new rx connection? */
 
-	if (conn != receiving_conn) { /* fragment received; reassemble */
+	if (conn) { /* fragment received; reassemble */
 		conn->post_timer_task = &set_rx_timer_callback;
 		conn->dc = 20000; /* retransmission timer: used for timeouts */
 
@@ -278,8 +286,6 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
 				end_rx_callback(conn); /* final packet arrived */
 			}
 		}
-	} else { /* ack received; do nothing */
-		return;
 	}
 }
 
@@ -292,7 +298,7 @@ void received_packet(uint8_t* data, uint16_t length, uint32_t device_id, schc_fr
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	/* test cases for client */
-	if( (tx_conn->frag_cnt == 1 && tx_conn->TX_STATE == SEND)) {
+	if( (tx_conn->frag_cnt == 3 && tx_conn->TX_STATE == SEND)) {
 #if TRIGGER_PACKET_LOST
 		/* do not send to udp server */
 		DEBUG_PRINTF("tx_send_callback(): dropping packet\n");
@@ -320,7 +326,7 @@ uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 
 uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	DEBUG_PRINTF("rx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
-	// received_packet(data, length, device_id, &tx_conn);
+	// received_packet(data, length, device_id);
 	return 1;
 }
 
@@ -330,13 +336,12 @@ void free_callback(schc_fragmentation_t *conn) {
  
 static void socket_receive_callback(char* message, int len) {
     int device_id = 1; /* this is the SCHC device id; can be linked to various MAC addresses */
-    received_packet(message, len, device_id, tx_conn);
+    received_packet(message, len, device_id);
 }
 
 static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit_arr, uint32_t device_id) {
 	/* L2 connection information */
-	conn->mtu 						= 51; /* network driver MTU */
-	conn->tile_size					= 51; /* network driver MTU */
+	conn->tile_size					= 12; /* network driver MTU */
 	conn->dc 						= 1000; /* duty cycle in ms */
 
 	/* SCHC callbacks */
@@ -346,7 +351,7 @@ static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit
 	conn->duty_cycle_cb 			= &duty_cycle_callback;
 
 	/* SCHC connection information */
-	conn->fragmentation_rule 		= get_fragmentation_rule_by_reliability_mode(NO_ACK, device_id);
+	conn->fragmentation_rule 		= get_fragmentation_rule_by_reliability_mode(ACK_ALWAYS, device_id);
 	conn->bit_arr 					= bit_arr;
 
 	/* currently only the default CRC32 is supported */
@@ -374,33 +379,41 @@ int main() {
 	}
 
 	/* compress */
-	uint32_t device_id = 0x01;
+	struct schc_device* device = get_device_by_id(CLIENT_DEVICE_ID);
 	struct schc_compression_rule_t* schc_rule;
 
 #if COMPRESS
 	uint8_t compressed_packet[MAX_PACKET_LENGTH];
 	schc_bitarray_t bit_arr				= SCHC_DEFAULT_BIT_ARRAY(MAX_PACKET_LENGTH, compressed_packet);
-	schc_rule 							= schc_compress(msg, sizeof(msg), &bit_arr, device_id, UP); /* first compress the packet */
+	schc_rule 							= schc_compress(msg, sizeof(msg), &bit_arr, CLIENT_DEVICE_ID, UP); /* first compress the packet */
 #else /* do not compress */
 	schc_bitarray_t bit_arr				= SCHC_DEFAULT_BIT_ARRAY(252, &msg); /* use the original message as a pointer in the bit array */
 #endif
 
-	/* initialize fragmenter once for the constrained device */
-	schc_fragmenter_init();
+	/* initialize default fragmenter callbacks once for the constrained device */
+	struct schc_fragmentation_t cb_conn;
+	cb_conn.send 				= &tx_send_callback;
+	cb_conn.end_rx 				= &end_rx_callback;
+	cb_conn.remove_timer_entry 	= &remove_timer_entry;
+#if DYNAMIC_MEMORY
+	cb_conn.free_conn_cb		= &free_connection_callback;
+#endif
+
+	schc_fragmenter_init(&cb_conn);
 
 	/* select a tx connection from the list of connections */
-	tx_conn = schc_get_tx_connection(device_id);
+	tx_conn = schc_set_tx_connection(device, SCHC_INIT);
 	if(!tx_conn) {
 		DEBUG_PRINTF("main(): no free tx connection was found. Exiting. \n");
 		return -1;
 	}
 
     /* libschc configuration */
-	set_connection_info(tx_conn, &bit_arr, device_id);
+	set_connection_info(tx_conn, &bit_arr, CLIENT_DEVICE_ID);
 
 #if CONCURRENT_TRANSMISSIONS
 	/* a new dtag will be initiated when using the same rule id simultaneously; can be invoked with a second tx connection */
-	schc_fragmentation_t* tx_conn2 = schc_get_tx_connection(device_id);
+	schc_fragmentation_t* tx_conn2 = schc_set_tx_connection(device, SCHC_INIT);
 	if(!tx_conn2) {
     	schc_free_connection(tx_conn);
 		DEBUG_PRINTF("main(): no free tx connection was found. Exiting. \n");
@@ -408,7 +421,7 @@ int main() {
 	}
 
     /* libschc configuration */
-	set_connection_info(tx_conn2, &bit_arr, device_id);
+	set_connection_info(tx_conn2, &bit_arr, CLIENT_DEVICE_ID);
 #endif
 
 	/* start fragmentation loop for first tx connection */

@@ -230,55 +230,57 @@ const struct schc_compression_rule_t compression_rule_4 = {
 /* now build the fragmentation rules */
 const struct schc_fragmentation_rule_t fragmentation_rule_1 = {
 		.rule_id = 0x01,
-		.rule_id_size_bits = 8,
 		.mode = NOT_FRAGMENTED,
 		.dir = BI,
 		.FCN_SIZE = 0,
 		.MAX_WND_FCN = 0, 	/* maximum fragments per window */
 		.WINDOW_SIZE = 0,
-		.DTAG_SIZE = 0,
 		.inactivity_timer_ms = 10000,
 		.RCS_SIZE_BYTES = 4
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
 		.rule_id = 0x02,
-		.rule_id_size_bits = 8,
 		.mode = NO_ACK,
 		.dir = BI,
 		.FCN_SIZE = 1,
 		.MAX_WND_FCN = 0,
 		.WINDOW_SIZE = 0,
-		.DTAG_SIZE = 1,
 		.inactivity_timer_ms = 10000,
 		.RCS_SIZE_BYTES = 4
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
 		.rule_id = 0x03,
-		.rule_id_size_bits = 8,
 		.mode = ACK_ON_ERROR,
 		.dir = BI,
 		.FCN_SIZE = 3,
 		.MAX_WND_FCN = 6,
-		.WINDOW_SIZE = 1,
-		.DTAG_SIZE = 0,
+		.WINDOW_SIZE = 3,
 		.inactivity_timer_ms = 10000,
 		.RCS_SIZE_BYTES = 4,
-		.tile_size = 51 /* only required when using ACK ON ERROR */
+		.tile_size = 12 /* only required when using ACK ON ERROR */
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
 		.rule_id = 0x04,
-		.rule_id_size_bits = 8,
 		.mode = ACK_ALWAYS,
 		.dir = BI,
 		.FCN_SIZE = 3,
 		.MAX_WND_FCN = 6,
-		.WINDOW_SIZE = 1,
-		.DTAG_SIZE = 0,
+		.WINDOW_SIZE = 3,
 		.inactivity_timer_ms = 10000,
 		.RCS_SIZE_BYTES = 4
+};
+
+const struct schc_profile_t profile_lorawan = {
+	.RULE_ID_SIZE = 8,
+	.DTAG_SIZE = 0
+};
+
+const struct schc_profile_t profile_dtag = {
+	.RULE_ID_SIZE = 8,
+	.DTAG_SIZE = 1
 };
 
 /* save compression rules in flash */
@@ -299,7 +301,8 @@ const struct schc_device node1 = {
 		.compression_rule_count = 4,
 		.compression_context = &node1_compression_rules,
 		.fragmentation_rule_count = 4,
-		.fragmentation_context = &node1_fragmentation_rules
+		.fragmentation_context = &node1_fragmentation_rules,
+		.profile = &profile_lorawan
 };
 const struct schc_device node2 = {
 		.device_id = 0x01,
@@ -308,7 +311,8 @@ const struct schc_device node2 = {
 		.compression_rule_count = 4,
 		.compression_context = &node1_compression_rules,
 		.fragmentation_rule_count = 4,
-		.fragmentation_context = &node1_fragmentation_rules
+		.fragmentation_context = &node1_fragmentation_rules,
+		.profile = &profile_dtag
 };
 
 #define DEVICE_COUNT			2
