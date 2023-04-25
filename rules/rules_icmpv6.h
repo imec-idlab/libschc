@@ -85,7 +85,6 @@ static const struct schc_udp_rule_t udp_rule1 = {
 
 static const struct schc_compression_rule_t comp_rule_1 = {
 	.rule_id = 0x01,
-	.rule_id_size_bits = 8,
 #if USE_IP6
     &ipv6_rule1,
 #endif
@@ -99,7 +98,6 @@ static const struct schc_compression_rule_t comp_rule_1 = {
 
 static const struct schc_compression_rule_t comp_rule_2 = {
     .rule_id = 0x02,
-	.rule_id_size_bits = 8,
 #if USE_IP6
     &ipv6_rule1,    /* TODO: needs dedicated rule */
 #endif
@@ -111,26 +109,28 @@ static const struct schc_compression_rule_t comp_rule_2 = {
 #endif
 };
 
+const struct schc_profile_t profile_lorawan = {
+    .RULE_ID_SIZE = 8,
+    .UNCOMPRESSED_RULE_ID = 22,
+    .DTAG_SIZE = 0
+};
+
 static const struct schc_fragmentation_rule_t frag_rule_20 = {
     .rule_id = 20,
-	.rule_id_size_bits = 8,
     .mode = ACK_ON_ERROR,
     .dir = UP,
     .FCN_SIZE = 6,      /* FCN size */
     .MAX_WND_FCN = 62,  /* Maximum fragments per window */
     .WINDOW_SIZE = 2,   /* Window size */
-    .DTAG_SIZE = 0,     /* DTAG size */
 };
 
 static const struct schc_fragmentation_rule_t frag_rule_21 = {
     .rule_id = 21,
-	.rule_id_size_bits = 8,
     .mode = ACK_ALWAYS,
     .dir = DOWN,
     .FCN_SIZE = 1,      /* FCN size */
     .MAX_WND_FCN = 1,   /* Maximum fragments per window */
     .WINDOW_SIZE = 1,   /* Window size */
-    .DTAG_SIZE = 0,     /* DTAG size */
 };
 
 /* save compression rules in flash */
@@ -146,12 +146,11 @@ static const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
 /* rules for a particular device */
 static const struct schc_device node1 = {
     .device_id = 1,
-    .uncomp_rule_id = 0,
-	.uncomp_rule_id_size_bits = 8,
     .compression_rule_count = 2,
     .compression_context = &node1_compression_rules,
     .fragmentation_rule_count = 2,
-    .fragmentation_context = &node1_fragmentation_rules
+    .fragmentation_context = &node1_fragmentation_rules,
+    .profile = &profile_lorawan
 };
 
 /* server keeps track of multiple devices: add devices to device list */

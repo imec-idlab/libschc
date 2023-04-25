@@ -173,7 +173,6 @@ const static struct schc_coap_rule_t coap_rule4 = {
 /* next build the compression rules from the rules that make up a single layer */
 const struct schc_compression_rule_t compression_rule_1 = {
 		.rule_id = 0x01,
-		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
@@ -187,7 +186,6 @@ const struct schc_compression_rule_t compression_rule_1 = {
 
 const struct schc_compression_rule_t compression_rule_2 = {
 		.rule_id = 0x02,
-		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule1,
 #endif
@@ -201,7 +199,6 @@ const struct schc_compression_rule_t compression_rule_2 = {
 
 const struct schc_compression_rule_t compression_rule_3 = {
 		.rule_id = 0x03,
-		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule2,
 #endif
@@ -215,7 +212,6 @@ const struct schc_compression_rule_t compression_rule_3 = {
 
 const struct schc_compression_rule_t compression_rule_4 = {
 		.rule_id = 0x04,
-		.rule_id_size_bits = 8,
 #if USE_IP6
 		&ipv6_rule3,
 #endif
@@ -279,11 +275,13 @@ const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
 
 const struct schc_profile_t profile_lorawan = {
 	.RULE_ID_SIZE = 8,
+	.UNCOMPRESSED_RULE_ID = 22,
 	.DTAG_SIZE = 0
 };
 
 const struct schc_profile_t profile_dtag = {
 	.RULE_ID_SIZE = 8,
+	.UNCOMPRESSED_RULE_ID = 0,
 	.DTAG_SIZE = 1
 };
 
@@ -300,8 +298,6 @@ const struct schc_fragmentation_rule_t* node1_fragmentation_rules[] = {
 /* now build the context for a particular device */
 const struct schc_device node1 = {
 		.device_id = 0x06,
-		.uncomp_rule_id = 0,
-		.uncomp_rule_id_size_bits = 8,
 		.compression_rule_count = 4,
 		.compression_context = &node1_compression_rules,
 		.fragmentation_rule_count = 4,
@@ -310,8 +306,6 @@ const struct schc_device node1 = {
 };
 const struct schc_device node2 = {
 		.device_id = 0x01,
-		.uncomp_rule_id = 0,
-		.uncomp_rule_id_size_bits = 8,
 		.compression_rule_count = 4,
 		.compression_context = &node1_compression_rules,
 		.fragmentation_rule_count = 4,

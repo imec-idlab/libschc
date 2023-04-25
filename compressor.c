@@ -40,12 +40,12 @@ jsmntok_t json_token[JSON_TOKENS];
  */
 int8_t set_rule_id(struct schc_compression_rule_t* schc_rule, struct schc_device* device, uint8_t* data) {
 	if(schc_rule != NULL) {
-		uint32_rule_id_to_uint8_buf(schc_rule->rule_id, data, schc_rule->rule_id_size_bits);
+		uint32_rule_id_to_uint8_buf(schc_rule->rule_id, data, device->profile->RULE_ID_SIZE);
 	} else {
 		if (!device) {
 			return 0;
 		}
-		uint32_rule_id_to_uint8_buf(device->uncomp_rule_id, data, device->uncomp_rule_id_size_bits);
+		uint32_rule_id_to_uint8_buf(device->profile->UNCOMPRESSED_RULE_ID, data, device->profile->RULE_ID_SIZE);
 	}
 
 	return 1;
@@ -133,10 +133,10 @@ static struct schc_compression_rule_t* get_compression_rule_by_rule_id(uint8_t* 
 
 	for (i = 0; i < device->compression_rule_count; i++) {
 		struct schc_compression_rule_t* curr_rule = (struct schc_compression_rule_t*) (*device->compression_context)[i];
-		uint8_t curr_rule_pos = get_position_in_first_byte(curr_rule->rule_id_size_bits);
+		uint8_t curr_rule_pos = get_position_in_first_byte(device->profile->RULE_ID_SIZE);
 		uint8_t rule_id[4] = { 0 };
 		little_end_uint8_from_uint32(rule_id, curr_rule->rule_id); /* copy the uint32_t to a uint8_t array */
-		if( compare_bits_aligned(rule_id, curr_rule_pos, rule_arr, 0, curr_rule->rule_id_size_bits)) {
+		if( compare_bits_aligned(rule_id, curr_rule_pos, rule_arr, 0, device->profile->RULE_ID_SIZE)) {
 			DEBUG_PRINTF("get_compression_rule(): curr rule %p \n", (void*) curr_rule);
 			return curr_rule;
 		}
@@ -910,7 +910,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 		/* if no rule was found and the use of a specific layer is set to 0,
 		 * we expect that headers from these layers are not present in the original packet
 		 */
-		dst->offset = device->uncomp_rule_id_size_bits;
+		dst->offset = device->profile->RULE_ID_SIZE;
 #if USE_IP6 == 1
 		copy_bits(dst->ptr, dst->offset, data, 0, BYTES_TO_BITS(IP6_HLEN));
 		dst->offset += BYTES_TO_BITS(IP6_HLEN);
@@ -931,7 +931,7 @@ struct schc_compression_rule_t* schc_compress(uint8_t *data, uint16_t total_leng
 		}
 	}
 	else { /* a rule was found - compress */
-		dst->offset = schc_rule->rule_id_size_bits;
+		dst->offset = device->profile->RULE_ID_SIZE;
 #if USE_IP6 == 1
 		compress(dst, &src, (const struct schc_layer_rule_t*) ipv6_rule, dir);
 #endif
@@ -1130,10 +1130,10 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 		}
 #endif
 		/* indicate initial offset in the source array */
-		bit_arr->offset = rule->rule_id_size_bits;
+		bit_arr->offset = device->profile->RULE_ID_SIZE;
 	} else {
 		/* indicate initial offset in the source array */
-		bit_arr->offset = device->uncomp_rule_id_size_bits;
+		bit_arr->offset = device->profile->RULE_ID_SIZE;
 		DEBUG_PRINTF("no rule was found \n");
 	}
 
@@ -1149,7 +1149,7 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 
 	/* copy rule id */
 	uint8_t compressed_id[4] = { 0 };
-	little_end_uint8_from_uint32(compressed_id, device->uncomp_rule_id); /* copy the uint32_t to a uint8_t array */
+	little_end_uint8_from_uint32(compressed_id, device->profile->RULE_ID_SIZE); /* copy the uint32_t to a uint8_t array */
 
 	uint8_t new_header_length = 0;
 
@@ -1157,9 +1157,9 @@ uint16_t schc_decompress(schc_bitarray_t* bit_arr, uint8_t *buf,
 	 * we have no way of knowing which layers were selected at the compression side
 	 * e.g. using ICMPv6 packets and CoAP packets
 	 */
-	if (compare_bits(bit_arr->ptr, compressed_id, device->uncomp_rule_id_size_bits)) { /* uncompressed packet, copy uncompressed headers */
-		copy_bits(buf, 0, bit_arr->ptr, device->uncomp_rule_id_size_bits,
-				  bit_arr->bit_len - device->uncomp_rule_id_size_bits);
+	if (compare_bits(bit_arr->ptr, compressed_id, device->profile->RULE_ID_SIZE)) { /* uncompressed packet, copy uncompressed headers */
+		copy_bits(buf, 0, bit_arr->ptr, device->profile->RULE_ID_SIZE,
+				  bit_arr->bit_len - device->profile->RULE_ID_SIZE);
 	} else if (rule == NULL) {
 		// did not find any matching rule but uncompressed rule does not fit either.
 		return 0;

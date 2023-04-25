@@ -184,8 +184,6 @@ struct schc_layer_rule_t {
 struct schc_compression_rule_t {
 	/* the rule id, can be maximum 4 bytes wide, defined by the profile */
 	uint32_t rule_id;
-	/* the rule id size in bits */
-	uint8_t rule_id_size_bits;
 #if USE_IP6 == 1
 	/* a pointer to the IPv6 rule */
 	const struct schc_ipv6_rule_t* ipv6_rule;
@@ -226,6 +224,8 @@ struct schc_fragmentation_rule_t {
 struct schc_profile_t {
 	/* the rule id size in bits */
 	uint8_t RULE_ID_SIZE;
+	/* the uncompressed rule id */
+	uint8_t UNCOMPRESSED_RULE_ID;
 	/* the dtag size in bits */
 	uint8_t DTAG_SIZE;
 };
@@ -235,8 +235,6 @@ struct schc_device {
 	uint32_t device_id;
 	/* the rule id to use when a packet remains uncompressed */
 	uint32_t uncomp_rule_id;
-	/* the rule id size when a packet remains uncompressed in bits */
-	uint8_t uncomp_rule_id_size_bits;
 	/* the total number of compression rules for a device */
 	uint8_t compression_rule_count;
 	/* a pointer to the collection of compression rules for a device */
