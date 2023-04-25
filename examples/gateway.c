@@ -148,7 +148,7 @@ void end_rx_callback(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("end_rx_callback(): decompress packet \n");
 	bit_arr.ptr = compressed_packet;
 
-	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device_id, packetlen, UP);
+	new_packet_len = schc_decompress(&bit_arr, decomp_packet, conn->device->device_id, packetlen, UP);
 	if (new_packet_len <= 0) { /* some error occured */
 		exit(1);
 	}
@@ -212,7 +212,7 @@ static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
  * The timer used by the SCHC library to time out the reception of fragments
  * should have multiple timers for a device
  */
-static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg),
+static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(void* arg),
 		uint32_t delay, void *arg) {
 	uint16_t delay_sec = delay / 1000;
 
@@ -232,12 +232,12 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 
 	struct timer_node * timer_tx = start_timer(delay_sec, &timer_handler, TIMER_SINGLE_SHOT, cb_t_);
 	if(timer_tx == 0) {
-		DEBUG_PRINTF("set_rx_timer(): could not allocate memory for timer \n");
+		DEBUG_PRINTF("set_rx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
 		conn->timer_ctx = timer_tx;
 		DEBUG_PRINTF(
-				"set_rx_timer(): schedule rx callback in %d s\n", delay_sec);
+				"set_rx_timer_callback(): schedule rx callback in %d s\n", delay_sec);
 	}
 }
 
@@ -248,29 +248,8 @@ static void set_rx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 void remove_timer_entry_callback(schc_fragmentation_t *conn) {
 	struct timer_node * timer_id = (struct timer_node *) conn->timer_ctx;
 	stop_timer(timer_id);
-	DEBUG_PRINTF("remove_timer_entry_callback(): remove timer entry for device with id %d \n", conn->device_id);
-}
-
-void received_packet(uint8_t* data, uint16_t length, uint32_t device_id) {
-	struct schc_device *device = get_device_by_id(device_id); /* get the device based on the id */
-	schc_fragmentation_t *conn = schc_input((uint8_t*) data, length, device); /* get active connection based on device */
-
-	if(!conn) { /* error occured; shutdown */
-		exit(1);
-	}
-
-	if (conn) { /* fragment received; reassemble */
-		conn->post_timer_task = &set_rx_timer;
-		conn->dc = 20000; /* retransmission timer: used for timeouts */
-
-		if (conn->fragmentation_rule->mode == NOT_FRAGMENTED) { /* packet was not fragmented; do not reassemble */
-			end_rx_callback(conn);
-		} else {
-			int ret = schc_reassemble(conn);
-			if(ret && conn->fragmentation_rule->mode == NO_ACK){ /* use the connection to reassemble */
-				end_rx_callback(conn); /* final packet arrived, for other reliability modes called by callback timers */
-			}
-		}
+	if(conn->device) {
+		DEBUG_PRINTF("remove_timer_entry_callback(): remove timer entry for device with id %d \n", conn->device->device_id);
 	}
 }
 
@@ -296,11 +275,12 @@ uint8_t rx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 }
 
 void free_connection_callback(schc_fragmentation_t *conn) {
-	DEBUG_PRINTF("free_connection_callback(): freeing connections for device %d\n", conn->device_id);
+	DEBUG_PRINTF("free_connection_callback(): freeing connections for device %d\n", conn->device->device_id);
 }
 
 void socket_receive_callback(char * data, int len) {
-	received_packet(data, len, CLIENT_DEVICE_ID);
+	struct schc_device *device = get_device_by_id(CLIENT_DEVICE_ID); /* get the device based on the id; usually based on MAC address */
+	schc_fragmentation_t *conn = schc_input((uint8_t*) data, len, device); /* get active connection based on device */
 }
 
 int main() {
@@ -326,6 +306,8 @@ int main() {
 	cb_conn.send 				= &tx_send_callback;
 	cb_conn.end_rx 				= &end_rx_callback;
 	cb_conn.remove_timer_entry 	= &remove_timer_entry_callback;
+	cb_conn.post_timer_task 	= &set_rx_timer_callback;
+	cb_conn.dc 					= 20000; /* duty cycle timer; schedules the next state machine check */
 #if DYNAMIC_MEMORY
 	cb_conn.free_conn_cb		= &free_connection_callback;
 #endif

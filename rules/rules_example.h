@@ -236,6 +236,7 @@ const struct schc_fragmentation_rule_t fragmentation_rule_1 = {
 		.MAX_WND_FCN = 0, 	/* maximum fragments per window */
 		.WINDOW_SIZE = 0,
 		.inactivity_timer_ms = 10000,
+		.retransmission_timer_ms = 5000,
 		.RCS_SIZE_BYTES = 4
 };
 
@@ -247,6 +248,7 @@ const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
 		.MAX_WND_FCN = 0,
 		.WINDOW_SIZE = 0,
 		.inactivity_timer_ms = 10000,
+		.retransmission_timer_ms = 5000,
 		.RCS_SIZE_BYTES = 4
 };
 
@@ -258,6 +260,7 @@ const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
 		.MAX_WND_FCN = 6,
 		.WINDOW_SIZE = 3,
 		.inactivity_timer_ms = 10000,
+		.retransmission_timer_ms = 5000,
 		.RCS_SIZE_BYTES = 4,
 		.tile_size = 12 /* only required when using ACK ON ERROR */
 };
@@ -270,6 +273,7 @@ const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
 		.MAX_WND_FCN = 6,
 		.WINDOW_SIZE = 3,
 		.inactivity_timer_ms = 10000,
+		.retransmission_timer_ms = 5000,
 		.RCS_SIZE_BYTES = 4
 };
 

@@ -217,6 +217,8 @@ struct schc_fragmentation_rule_t {
 	uint16_t tile_size;
 	/* the inactivity timer expiration time in ms */
 	uint32_t inactivity_timer_ms;
+	/* the retransmission timer expiration time in ms */
+	uint32_t retransmission_timer_ms;
 	/* the RCS size in bytes */
 	uint8_t RCS_SIZE_BYTES;
 };
