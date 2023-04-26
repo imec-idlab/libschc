@@ -87,7 +87,7 @@ void stop_timer(struct timer_node * timer_id)
 
     if (node == NULL) return;
 
-    close(node->fd);
+    int ret = close(node->fd);
 
     if(node == g_head)
     {

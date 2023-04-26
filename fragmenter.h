@@ -89,7 +89,6 @@ typedef struct schc_fragmentation_ack_t {
 	uint8_t mic;
 	/* the fcn value this ack belongs to */
 	uint8_t fcn;
-
 } schc_fragmentation_ack_t;
 
 typedef struct schc_fragmentation_t schc_fragmentation_t;
@@ -123,9 +122,11 @@ struct schc_fragmentation_t {
 	/* fragment index counter */
 	uint8_t frag_cnt;
 	/* the bitmap of the fragments sent */
-	uint8_t bitmap[BITMAP_SIZE_BYTES];
+	uint8_t bitmap[MAX_WINDOWS][BITMAP_SIZE_BYTES];
 	/* the number of transmission attempts */
 	uint8_t attempts;
+	/* the Ack-On-Error sync counter */
+	uint8_t sync;
 	/* the current state for the sending device */
 	tx_state TX_STATE;
 	/* the current state for the receiving device */
@@ -163,6 +164,7 @@ struct schc_fragmentation_t {
 	uint16_t window_tiles[MAX_WINDOW_SIZE];
 	/* the total number of fragments sent */
 	uint8_t total_fragments;
+	/* the device the connection belongs to */
 	struct schc_device* device;
 };
 

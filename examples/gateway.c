@@ -203,6 +203,7 @@ static void set_tx_timer(schc_fragmentation_t *conn, void (*callback)(void* arg)
 		DEBUG_PRINTF("set_tx_timer(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
+		conn->timer_ctx = timer_tx;
 		DEBUG_PRINTF(
 				"set_tx_timer(): schedule next tx state check in %d s \n\n", delay_sec);
 	}

@@ -245,7 +245,8 @@ const struct schc_fragmentation_rule_t fragmentation_rule_2 = {
 		.WINDOW_SIZE = 0,
 		.inactivity_timer_ms = 10000,
 		.retransmission_timer_ms = 5000,
-		.RCS_SIZE_BYTES = 4
+		.RCS_SIZE_BYTES = 4,
+		.tile_size = 51
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
@@ -258,7 +259,7 @@ const struct schc_fragmentation_rule_t fragmentation_rule_3 = {
 		.inactivity_timer_ms = 10000,
 		.retransmission_timer_ms = 5000,
 		.RCS_SIZE_BYTES = 4,
-		.tile_size = 12 /* only required when using ACK ON ERROR */
+		.tile_size = 12
 };
 
 const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
@@ -270,19 +271,20 @@ const struct schc_fragmentation_rule_t fragmentation_rule_4 = {
 		.WINDOW_SIZE = 3,
 		.inactivity_timer_ms = 10000,
 		.retransmission_timer_ms = 5000,
-		.RCS_SIZE_BYTES = 4
+		.RCS_SIZE_BYTES = 4,
+		.tile_size = 12
 };
 
 const struct schc_profile_t profile_lorawan = {
-	.RULE_ID_SIZE = 8,
-	.UNCOMPRESSED_RULE_ID = 22,
-	.DTAG_SIZE = 0
+		.RULE_ID_SIZE = 8,
+		.UNCOMPRESSED_RULE_ID = 22,
+		.DTAG_SIZE = 0
 };
 
 const struct schc_profile_t profile_dtag = {
-	.RULE_ID_SIZE = 8,
-	.UNCOMPRESSED_RULE_ID = 0,
-	.DTAG_SIZE = 1
+		.RULE_ID_SIZE = 8,
+		.UNCOMPRESSED_RULE_ID = 0,
+		.DTAG_SIZE = 1
 };
 
 /* save compression rules in flash */

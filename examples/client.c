@@ -25,9 +25,9 @@
 #define CLIENT_DEVICE_ID  			1 /* this will usually be linked to a MAC address in the rule configuration */
 
 #define COMPRESS					1 /* start fragmentation with or without compression first */
-#define TRIGGER_PACKET_LOST			0
+#define TRIGGER_PACKET_LOST			1
 #define TRIGGER_MIC_CHECK			0
-#define TRIGGER_CHANGE_MTU			0
+#define TRIGGER_CHANGE_TILE_SIZE	0
 #define CONCURRENT_TRANSMISSIONS	0
 #define TEST_SEND_ABORT 			0
 
@@ -119,7 +119,7 @@ void compare_decompressed_buffer(uint8_t* decomp_packet, uint16_t new_packet_len
 void duty_cycle_callback(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("duty_cycle_callback() callback\n");
 	int ret = SCHC_SUCCESS;
-#if TRIGGER_CHANGE_MTU
+#if TRIGGER_CHANGE_TILE_SIZE
 	ret = schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
 #endif
 	schc_fragment(conn);
@@ -215,6 +215,7 @@ static void set_tx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
 		DEBUG_PRINTF("set_tx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
+		conn->timer_ctx = timer_tx;
 		DEBUG_PRINTF(
 				"set_tx_timer_callback(): schedule next tx state check in %d s \n\n", delay_sec);
 	}
@@ -247,6 +248,7 @@ static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
 		DEBUG_PRINTF("set_rx_timer_callback(): could not allocate memory for timer \n");
 		exit(0);
 	} else {
+		conn->timer_ctx = timer_tx;
 		DEBUG_PRINTF(
 				"set_rx_timer_callback(): schedule rx callback in %d s \n", delay_sec);
 	}
@@ -259,6 +261,7 @@ static void set_rx_timer_callback(schc_fragmentation_t *conn, void (*callback)(v
 void remove_timer_entry(schc_fragmentation_t *conn) {
 	struct timer_node * timer_id = (struct timer_node *) conn->timer_ctx;
 	stop_timer(timer_id);
+	
 	if(conn->device) {
 		DEBUG_PRINTF("remove_timer_entry(): remove timer entry for device with id %d \n", conn->device->device_id);
 	}
@@ -273,7 +276,7 @@ void remove_timer_entry(schc_fragmentation_t *conn) {
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	/* test cases for client */
-	if( (tx_conn->frag_cnt == 3 && tx_conn->TX_STATE == SEND)) {
+	if( (tx_conn->frag_cnt == 7 && tx_conn->TX_STATE == SEND)) {
 #if TRIGGER_PACKET_LOST
 		/* do not send to udp server */
 		DEBUG_PRINTF("tx_send_callback(): dropping packet\n");
@@ -316,13 +319,14 @@ static void socket_receive_callback(char* data, int len) {
 
 static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit_arr, uint32_t device_id) {
 	/* L2 connection information */
-	conn->tile_size					= 51; /* network driver MTU */
+	conn->tile_size					= 12; /* network driver MTU */
 	conn->dc 						= 1000; /* duty cycle in ms */
 
 	/* SCHC callbacks */
 	conn->send 						= &tx_send_callback;
 	conn->end_tx					= &end_tx_callback;
 	conn->post_timer_task 			= &set_tx_timer_callback;
+	conn->remove_timer_entry 		= &remove_timer_entry;
 	conn->duty_cycle_cb 			= &duty_cycle_callback;
 
 	/* SCHC connection information */
