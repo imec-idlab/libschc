@@ -30,6 +30,7 @@
 #define TRIGGER_CHANGE_TILE_SIZE	0
 #define CONCURRENT_TRANSMISSIONS	0
 #define TEST_SEND_ABORT 			0
+#define TEST_RECEIVER_ABORT   		0
 
 #define MAX_PACKET_LENGTH			256
 #define MAX_TIMERS					256
@@ -120,9 +121,16 @@ void duty_cycle_callback(schc_fragmentation_t *conn) {
 	DEBUG_PRINTF("duty_cycle_callback() callback\n");
 	int ret = SCHC_SUCCESS;
 #if TRIGGER_CHANGE_TILE_SIZE
-	ret = schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
+	// todo
+	// not supported yet
+	// ret = schc_set_tile_size(conn, 51); /* change the tile size mid-fragmentation to SF12 */
 #endif
-	schc_fragment(conn);
+
+#if TEST_SEND_ABORT
+	DEBUG_PRINTF("tx_send_callback(): sending abort !!\n");
+	schc_sender_abort(tx_conn);
+	RUN = 0;
+#endif
 }
 
 /*
@@ -276,25 +284,24 @@ void remove_timer_entry(schc_fragmentation_t *conn) {
  */
 uint8_t tx_send_callback(uint8_t* data, uint16_t length, uint32_t device_id) {
 	/* test cases for client */
-	if( (tx_conn->frag_cnt == 7 && tx_conn->TX_STATE == SEND)) {
-#if TRIGGER_PACKET_LOST
-		/* do not send to udp server */
-		DEBUG_PRINTF("tx_send_callback(): dropping packet\n");
-    	return 1;
-#elif TRIGGER_MIC_CHECK
-	 /* change byte 2 to mimic bit fault during transmission and transmit */
-		DEBUG_PRINTF("tx_send_callback(): invoking bit fault\n");
-		data[2] = data[2] + 1; 
-#endif
-	}
-#if TEST_SEND_ABORT
-	if( (tx_conn->frag_cnt == 2 && tx_conn->TX_STATE == SEND) ) {
-		DEBUG_PRINTF("tx_send_callback(): sending abort\n");
-		schc_send_abort(tx_conn);
-		RUN = 0;
+#if TEST_RECEIVER_ABORT
+	if(tx_conn->frag_cnt > 1) { 
+		/* let the connection time out on the receiving end */
+		DEBUG_PRINTF("tx_send_callback(): dropping packet !!\n");
 		return 1;
 	}
 #endif
+	if( (tx_conn->frag_cnt == 4 || tx_conn->frag_cnt == 7 || tx_conn->frag_cnt == 14 || tx_conn->frag_cnt == 20) && tx_conn->TX_STATE == SEND) {
+#if TRIGGER_PACKET_LOST
+		/* do not send to udp server */
+		DEBUG_PRINTF("tx_send_callback(): dropping packet !!\n");
+    	return 1;
+#elif TRIGGER_MIC_CHECK
+	 /* change byte 2 to mimic bit fault during transmission and transmit */
+		DEBUG_PRINTF("tx_send_callback(): invoking bit fault !!\n");
+		data[2] = data[2] + 1; 
+#endif
+	}
 
 	DEBUG_PRINTF("tx_send_callback(): transmitting packet with length %d for device %d \n", length, device_id);
 
@@ -319,7 +326,7 @@ static void socket_receive_callback(char* data, int len) {
 
 static void set_connection_info(schc_fragmentation_t* conn, schc_bitarray_t* bit_arr, uint32_t device_id) {
 	/* L2 connection information */
-	conn->tile_size					= 12; /* network driver MTU */
+	conn->tile_size					= 12; /* tile size for No-Ack and Ack-Always; for Ack-On-Error defined by the rule */
 	conn->dc 						= 1000; /* duty cycle in ms */
 
 	/* SCHC callbacks */

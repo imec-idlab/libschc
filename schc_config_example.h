@@ -43,14 +43,11 @@
 /* the number of ack attempts */
 #define MAX_ACK_REQUESTS				3
 
-/* the number of FCN bits */
-#define FCN_SIZE_BITS					3
-
-/* the number of DTAG bits */
-#define DTAG_SIZE_BITS					0
-
 /* the length of the bitmap */
 #define BITMAP_SIZE_BYTES				2 // pow(2, FCN_SIZE_BITS) / 8
+
+/* the maximum allowed windows */
+#define MAX_WINDOWS                     8
 
 /* the maximum window size */
 #define MAX_WINDOW_SIZE                 64

@@ -162,8 +162,10 @@ struct schc_fragmentation_t {
 	uint16_t tile_size;
 	/* keep track of the tiles per window */
 	uint16_t window_tiles[MAX_WINDOW_SIZE];
-	/* the total number of fragments sent */
-	uint8_t total_fragments;
+	/* the window an all-1 belongs to */
+	uint8_t all1_window;
+	/* the total number of transmissions */
+	uint8_t total_transmissions;
 	/* the device the connection belongs to */
 	struct schc_device* device;
 };
@@ -183,7 +185,8 @@ void schc_ack_input(uint8_t* data, schc_fragmentation_t* tx_conn);
 schc_fragmentation_t* schc_fragment_input(uint8_t* data, uint16_t len, struct schc_device* device);
 
 int8_t schc_set_tile_size(schc_fragmentation_t* conn, uint16_t tile_size);
-int8_t schc_send_abort(schc_fragmentation_t* conn);
+int8_t schc_sender_abort(schc_fragmentation_t* conn);
+int8_t schc_receiver_abort(schc_fragmentation_t* conn);
 schc_fragmentation_t* schc_get_connection(uint32_t device_id);
 struct schc_fragmentation_rule_t* get_fragmentation_rule_by_reliability_mode(reliability_mode mode, uint32_t device_id);
 
