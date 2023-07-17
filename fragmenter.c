@@ -130,7 +130,7 @@ static uint8_t get_fragmentation_header_length(schc_mbuf_t *mbuf, schc_fragmenta
  *
  */
 static void mbuf_print(schc_mbuf_t *head) {
-	uint8_t i = 0; uint8_t j;
+	uint8_t j;
 	schc_mbuf_t *curr = head;
 	while (curr != NULL) {
 		DEBUG_PRINTF("%d: %p\n", curr->frag_cnt, curr->ptr);
@@ -139,7 +139,6 @@ static void mbuf_print(schc_mbuf_t *head) {
 		}
 		DEBUG_PRINTF("\n");
 		curr = curr->next;
-		i++;
 	}
 }
 
